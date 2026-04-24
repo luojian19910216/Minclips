@@ -1,0 +1,1482 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		030D06AF2F3AE2C2003A0AB8 /* MCCShopDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030D06AE2F3AE2C2003A0AB8 /* MCCShopDetailController.swift */; };
+		030D06B02F3AE2C2003A0AB8 /* MCCShopDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030D06AE2F3AE2C2003A0AB8 /* MCCShopDetailController.swift */; };
+		03D2F3862F39DC15001F28A1 /* MCCShopHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3852F39DC15001F28A1 /* MCCShopHomeController.swift */; };
+		03D2F3872F39DC15001F28A1 /* MCCShopHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3852F39DC15001F28A1 /* MCCShopHomeController.swift */; };
+		03D2F3892F39DC5B001F28A1 /* MCCShopCategoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3882F39DC5B001F28A1 /* MCCShopCategoryController.swift */; };
+		03D2F38A2F39DC5B001F28A1 /* MCCShopCategoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3882F39DC5B001F28A1 /* MCCShopCategoryController.swift */; };
+		03D2F38C2F39DC6E001F28A1 /* MCCShopCartController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F38B2F39DC6E001F28A1 /* MCCShopCartController.swift */; };
+		03D2F38D2F39DC6E001F28A1 /* MCCShopCartController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F38B2F39DC6E001F28A1 /* MCCShopCartController.swift */; };
+		03D2F38F2F39DCAC001F28A1 /* MCCUserHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F38E2F39DCAC001F28A1 /* MCCUserHomeController.swift */; };
+		03D2F3902F39DCAC001F28A1 /* MCCUserHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F38E2F39DCAC001F28A1 /* MCCUserHomeController.swift */; };
+		03D9D0A63817DA37B87229E6 /* Pods_Minclips_D.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 413CC65523E70A841D7E6C8A /* Pods_Minclips_D.framework */; };
+		03F0195F2F8CB97F0096831D /* MCCAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0195E2F8CB97F0096831D /* MCCAppState.swift */; };
+		03F019602F8CB97F0096831D /* MCCAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0195E2F8CB97F0096831D /* MCCAppState.swift */; };
+		03F019622F8CF67C0096831D /* MCCLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019612F8CF67C0096831D /* MCCLaunchView.swift */; };
+		03F019632F8CF67C0096831D /* MCCLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019612F8CF67C0096831D /* MCCLaunchView.swift */; };
+		03F019652F8CF6A50096831D /* MCCGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019642F8CF6A50096831D /* MCCGuideView.swift */; };
+		03F019662F8CF6A50096831D /* MCCGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019642F8CF6A50096831D /* MCCGuideView.swift */; };
+		03F019682F8CF6E90096831D /* MCSGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019672F8CF6E90096831D /* MCSGuide.swift */; };
+		03F019692F8CF6E90096831D /* MCSGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019672F8CF6E90096831D /* MCSGuide.swift */; };
+		03F0196B2F8CF91A0096831D /* MCCGuideViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0196A2F8CF91A0096831D /* MCCGuideViewModel.swift */; };
+		03F0196C2F8CF91A0096831D /* MCCGuideViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0196A2F8CF91A0096831D /* MCCGuideViewModel.swift */; };
+		686EBC214DA29B9D78E427C8 /* Pods_Minclips_R.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88268EC85C6220BF5E9A10ED /* Pods_Minclips_R.framework */; };
+		959A695D1D1E2D4AA7550A53 /* Pods_Minclips_P.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0335A246D2DC973F502DDD40 /* Pods_Minclips_P.framework */; };
+		A1AB0FE7DD6E52D6A44ED061 /* Pods_Minclips_T.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF81274419AE998A3C9FC1F /* Pods_Minclips_T.framework */; };
+		F614F84F2F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F614F84E2F9B495600A31DB4 /* MCCBaseViewModel.swift */; };
+		F614F8502F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F614F84E2F9B495600A31DB4 /* MCCBaseViewModel.swift */; };
+		F614F8512F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F614F84E2F9B495600A31DB4 /* MCCBaseViewModel.swift */; };
+		F614F8522F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F614F84E2F9B495600A31DB4 /* MCCBaseViewModel.swift */; };
+		F65886702EF5475A00A094B5 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F65886652EF5475A00A094B5 /* Images.xcassets */; };
+		F65886722EF5475A00A094B5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F65886672EF5475A00A094B5 /* LaunchScreen.storyboard */; };
+		F65888C82EF5548800A094B5 /* MCCAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */; };
+		F65888C92EF5548800A094B5 /* MCCAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C62EF5548800A094B5 /* MCCAppConfig.swift */; };
+		F65888CA2EF5548800A094B5 /* MCCAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C62EF5548800A094B5 /* MCCAppConfig.swift */; };
+		F65889512EF8E26600A094B5 /* MCCAppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65889502EF8E26600A094B5 /* MCCAppRouter.swift */; };
+		F65889522EF8E26600A094B5 /* MCCAppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65889502EF8E26600A094B5 /* MCCAppRouter.swift */; };
+		F65889732EF8E8D800A094B5 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F65889722EF8E8D800A094B5 /* Colors.xcassets */; };
+		F65889742EF8E8D800A094B5 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F65889722EF8E8D800A094B5 /* Colors.xcassets */; };
+		F65889772EF8E93F00A094B5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889752EF8E93F00A094B5 /* InfoPlist.strings */; };
+		F65889782EF8E93F00A094B5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889752EF8E93F00A094B5 /* InfoPlist.strings */; };
+		F658897B2EF8E95900A094B5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889792EF8E95900A094B5 /* Localizable.strings */; };
+		F658897C2EF8E95900A094B5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889792EF8E95900A094B5 /* Localizable.strings */; };
+		F6588BB42EFA401200A094B5 /* MCCLaunchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB32EFA401200A094B5 /* MCCLaunchController.swift */; };
+		F6588BB52EFA401200A094B5 /* MCCLaunchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB32EFA401200A094B5 /* MCCLaunchController.swift */; };
+		F6588BB72EFA402000A094B5 /* MCCGuideController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB62EFA402000A094B5 /* MCCGuideController.swift */; };
+		F6588BB82EFA402000A094B5 /* MCCGuideController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB62EFA402000A094B5 /* MCCGuideController.swift */; };
+		F6588BBA2EFA402B00A094B5 /* MCCTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB92EFA402B00A094B5 /* MCCTabBarController.swift */; };
+		F6588BBB2EFA402B00A094B5 /* MCCTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB92EFA402B00A094B5 /* MCCTabBarController.swift */; };
+		F6588BBD2EFA41AF00A094B5 /* MCCConfigViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BBC2EFA41AF00A094B5 /* MCCConfigViewModel.swift */; };
+		F6588BBE2EFA41AF00A094B5 /* MCCConfigViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BBC2EFA41AF00A094B5 /* MCCConfigViewModel.swift */; };
+		F6D545FC2F90B9B8002C4F70 /* MCCGuideController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB62EFA402000A094B5 /* MCCGuideController.swift */; };
+		F6D545FE2F90B9B8002C4F70 /* MCCUserHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F38E2F39DCAC001F28A1 /* MCCUserHomeController.swift */; };
+		F6D546002F90B9B8002C4F70 /* MCCLaunchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB32EFA401200A094B5 /* MCCLaunchController.swift */; };
+		F6D546042F90B9B8002C4F70 /* MCCAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0195E2F8CB97F0096831D /* MCCAppState.swift */; };
+		F6D546062F90B9B8002C4F70 /* MCCAppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65889502EF8E26600A094B5 /* MCCAppRouter.swift */; };
+		F6D5460A2F90B9B8002C4F70 /* MCCShopCartController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F38B2F39DC6E001F28A1 /* MCCShopCartController.swift */; };
+		F6D5460D2F90B9B8002C4F70 /* MCCGuideViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0196A2F8CF91A0096831D /* MCCGuideViewModel.swift */; };
+		F6D5460F2F90B9B8002C4F70 /* MCCAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */; };
+		F6D546162F90B9B8002C4F70 /* MCSGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019672F8CF6E90096831D /* MCSGuide.swift */; };
+		F6D546172F90B9B8002C4F70 /* MCCTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB92EFA402B00A094B5 /* MCCTabBarController.swift */; };
+		F6D546192F90B9B8002C4F70 /* MCCGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019642F8CF6A50096831D /* MCCGuideView.swift */; };
+		F6D5461C2F90B9B8002C4F70 /* MCCShopDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030D06AE2F3AE2C2003A0AB8 /* MCCShopDetailController.swift */; };
+		F6D5461D2F90B9B8002C4F70 /* MCCShopCategoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3882F39DC5B001F28A1 /* MCCShopCategoryController.swift */; };
+		F6D546222F90B9B8002C4F70 /* MCCConfigViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BBC2EFA41AF00A094B5 /* MCCConfigViewModel.swift */; };
+		F6D546262F90B9B8002C4F70 /* MCCAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C62EF5548800A094B5 /* MCCAppConfig.swift */; };
+		F6D546452F90B9B8002C4F70 /* MCCLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019612F8CF67C0096831D /* MCCLaunchView.swift */; };
+		F6D5464A2F90B9B8002C4F70 /* MCCShopHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3852F39DC15001F28A1 /* MCCShopHomeController.swift */; };
+		F6D5464F2F90B9B8002C4F70 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889792EF8E95900A094B5 /* Localizable.strings */; };
+		F6D546502F90B9B8002C4F70 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F65889722EF8E8D800A094B5 /* Colors.xcassets */; };
+		F6D546512F90B9B8002C4F70 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889752EF8E93F00A094B5 /* InfoPlist.strings */; };
+		F6D546522F90B9B8002C4F70 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F65886652EF5475A00A094B5 /* Images.xcassets */; };
+		F6D546532F90B9B8002C4F70 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F65886672EF5475A00A094B5 /* LaunchScreen.storyboard */; };
+		F6D5465E2F90B9C9002C4F70 /* MCCGuideController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB62EFA402000A094B5 /* MCCGuideController.swift */; };
+		F6D546602F90B9C9002C4F70 /* MCCUserHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F38E2F39DCAC001F28A1 /* MCCUserHomeController.swift */; };
+		F6D546622F90B9C9002C4F70 /* MCCLaunchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB32EFA401200A094B5 /* MCCLaunchController.swift */; };
+		F6D546662F90B9C9002C4F70 /* MCCAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0195E2F8CB97F0096831D /* MCCAppState.swift */; };
+		F6D546682F90B9C9002C4F70 /* MCCAppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65889502EF8E26600A094B5 /* MCCAppRouter.swift */; };
+		F6D5466C2F90B9C9002C4F70 /* MCCShopCartController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F38B2F39DC6E001F28A1 /* MCCShopCartController.swift */; };
+		F6D5466F2F90B9C9002C4F70 /* MCCGuideViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0196A2F8CF91A0096831D /* MCCGuideViewModel.swift */; };
+		F6D546712F90B9C9002C4F70 /* MCCAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */; };
+		F6D546782F90B9C9002C4F70 /* MCSGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019672F8CF6E90096831D /* MCSGuide.swift */; };
+		F6D546792F90B9C9002C4F70 /* MCCTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB92EFA402B00A094B5 /* MCCTabBarController.swift */; };
+		F6D5467B2F90B9C9002C4F70 /* MCCGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019642F8CF6A50096831D /* MCCGuideView.swift */; };
+		F6D5467E2F90B9C9002C4F70 /* MCCShopDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030D06AE2F3AE2C2003A0AB8 /* MCCShopDetailController.swift */; };
+		F6D5467F2F90B9C9002C4F70 /* MCCShopCategoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3882F39DC5B001F28A1 /* MCCShopCategoryController.swift */; };
+		F6D546842F90B9C9002C4F70 /* MCCConfigViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BBC2EFA41AF00A094B5 /* MCCConfigViewModel.swift */; };
+		F6D546882F90B9C9002C4F70 /* MCCAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C62EF5548800A094B5 /* MCCAppConfig.swift */; };
+		F6D546A72F90B9C9002C4F70 /* MCCLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019612F8CF67C0096831D /* MCCLaunchView.swift */; };
+		F6D546AC2F90B9C9002C4F70 /* MCCShopHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3852F39DC15001F28A1 /* MCCShopHomeController.swift */; };
+		F6D546B12F90B9C9002C4F70 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889792EF8E95900A094B5 /* Localizable.strings */; };
+		F6D546B22F90B9C9002C4F70 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F65889722EF8E8D800A094B5 /* Colors.xcassets */; };
+		F6D546B32F90B9C9002C4F70 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889752EF8E93F00A094B5 /* InfoPlist.strings */; };
+		F6D546B42F90B9C9002C4F70 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F65886652EF5475A00A094B5 /* Images.xcassets */; };
+		F6D546B52F90B9C9002C4F70 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F65886672EF5475A00A094B5 /* LaunchScreen.storyboard */; };
+		F6D546D22F90E390002C4F70 /* MCCBottomSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D546D12F90E390002C4F70 /* MCCBottomSheetController.swift */; };
+		F6D546D32F90E390002C4F70 /* MCCBottomSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D546D12F90E390002C4F70 /* MCCBottomSheetController.swift */; };
+		F6D546D42F90E390002C4F70 /* MCCBottomSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D546D12F90E390002C4F70 /* MCCBottomSheetController.swift */; };
+		F6D546D52F90E390002C4F70 /* MCCBottomSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D546D12F90E390002C4F70 /* MCCBottomSheetController.swift */; };
+		F6D546E22F922579002C4F70 /* MCCPresentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D546E12F922579002C4F70 /* MCCPresentController.swift */; };
+		F6D546E32F922579002C4F70 /* MCCPresentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D546E12F922579002C4F70 /* MCCPresentController.swift */; };
+		F6D546E42F922579002C4F70 /* MCCPresentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D546E12F922579002C4F70 /* MCCPresentController.swift */; };
+		F6D546E52F922579002C4F70 /* MCCPresentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D546E12F922579002C4F70 /* MCCPresentController.swift */; };
+		F6D547002F95D17E002C4F70 /* MCCTopPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D546FF2F95D17E002C4F70 /* MCCTopPopController.swift */; };
+		F6D547012F95D17E002C4F70 /* MCCTopPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D546FF2F95D17E002C4F70 /* MCCTopPopController.swift */; };
+		F6D547022F95D17E002C4F70 /* MCCTopPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D546FF2F95D17E002C4F70 /* MCCTopPopController.swift */; };
+		F6D547032F95D17E002C4F70 /* MCCTopPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D546FF2F95D17E002C4F70 /* MCCTopPopController.swift */; };
+		F6D5471A2F9636F1002C4F70 /* MCCEaseInPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547192F9636F1002C4F70 /* MCCEaseInPopController.swift */; };
+		F6D5471B2F9636F1002C4F70 /* MCCEaseInPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547192F9636F1002C4F70 /* MCCEaseInPopController.swift */; };
+		F6D5471C2F9636F1002C4F70 /* MCCEaseInPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547192F9636F1002C4F70 /* MCCEaseInPopController.swift */; };
+		F6D5471D2F9636F1002C4F70 /* MCCEaseInPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547192F9636F1002C4F70 /* MCCEaseInPopController.swift */; };
+		F6D5475D2F9B462C002C4F70 /* MCCNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D5475C2F9B462C002C4F70 /* MCCNavigationController.swift */; };
+		F6D5475E2F9B462C002C4F70 /* MCCNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D5475C2F9B462C002C4F70 /* MCCNavigationController.swift */; };
+		F6D5475F2F9B462C002C4F70 /* MCCNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D5475C2F9B462C002C4F70 /* MCCNavigationController.swift */; };
+		F6D547602F9B462C002C4F70 /* MCCNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D5475C2F9B462C002C4F70 /* MCCNavigationController.swift */; };
+		F6D547642F9B478A002C4F70 /* MCCPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547612F9B478A002C4F70 /* MCCPopController.swift */; };
+		F6D547652F9B478A002C4F70 /* MCCSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547622F9B478A002C4F70 /* MCCSheetController.swift */; };
+		F6D547662F9B478A002C4F70 /* MCCViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547632F9B478A002C4F70 /* MCCViewController.swift */; };
+		F6D547672F9B478A002C4F70 /* MCCPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547612F9B478A002C4F70 /* MCCPopController.swift */; };
+		F6D547682F9B478A002C4F70 /* MCCSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547622F9B478A002C4F70 /* MCCSheetController.swift */; };
+		F6D547692F9B478A002C4F70 /* MCCViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547632F9B478A002C4F70 /* MCCViewController.swift */; };
+		F6D5476A2F9B478A002C4F70 /* MCCPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547612F9B478A002C4F70 /* MCCPopController.swift */; };
+		F6D5476B2F9B478A002C4F70 /* MCCSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547622F9B478A002C4F70 /* MCCSheetController.swift */; };
+		F6D5476C2F9B478A002C4F70 /* MCCViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547632F9B478A002C4F70 /* MCCViewController.swift */; };
+		F6D5476D2F9B478A002C4F70 /* MCCPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547612F9B478A002C4F70 /* MCCPopController.swift */; };
+		F6D5476E2F9B478A002C4F70 /* MCCSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547622F9B478A002C4F70 /* MCCSheetController.swift */; };
+		F6D5476F2F9B478A002C4F70 /* MCCViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547632F9B478A002C4F70 /* MCCViewController.swift */; };
+		F6D547712F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
+		F6D547722F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
+		F6D547732F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
+		F6D547742F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		030D06AE2F3AE2C2003A0AB8 /* MCCShopDetailController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShopDetailController.swift; sourceTree = "<group>"; };
+		0335A246D2DC973F502DDD40 /* Pods_Minclips_P.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Minclips_P.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		03D2F3852F39DC15001F28A1 /* MCCShopHomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShopHomeController.swift; sourceTree = "<group>"; };
+		03D2F3882F39DC5B001F28A1 /* MCCShopCategoryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShopCategoryController.swift; sourceTree = "<group>"; };
+		03D2F38B2F39DC6E001F28A1 /* MCCShopCartController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShopCartController.swift; sourceTree = "<group>"; };
+		03D2F38E2F39DCAC001F28A1 /* MCCUserHomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCUserHomeController.swift; sourceTree = "<group>"; };
+		03F0195E2F8CB97F0096831D /* MCCAppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCAppState.swift; sourceTree = "<group>"; };
+		03F019612F8CF67C0096831D /* MCCLaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCLaunchView.swift; sourceTree = "<group>"; };
+		03F019642F8CF6A50096831D /* MCCGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCGuideView.swift; sourceTree = "<group>"; };
+		03F019672F8CF6E90096831D /* MCSGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCSGuide.swift; sourceTree = "<group>"; };
+		03F0196A2F8CF91A0096831D /* MCCGuideViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCGuideViewModel.swift; sourceTree = "<group>"; };
+		0A875C4A01B9364B05E494FE /* Pods-Minclips_R.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_R.release.xcconfig"; path = "Target Support Files/Pods-Minclips_R/Pods-Minclips_R.release.xcconfig"; sourceTree = "<group>"; };
+		1C2C92D9866F31A0CB34F836 /* Pods-Minclips_T.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_T.release.xcconfig"; path = "Target Support Files/Pods-Minclips_T/Pods-Minclips_T.release.xcconfig"; sourceTree = "<group>"; };
+		413CC65523E70A841D7E6C8A /* Pods_Minclips_D.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Minclips_D.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		58707E0F0A8D42CFEABE176D /* Pods-Minclips_P.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_P.release.xcconfig"; path = "Target Support Files/Pods-Minclips_P/Pods-Minclips_P.release.xcconfig"; sourceTree = "<group>"; };
+		88268EC85C6220BF5E9A10ED /* Pods_Minclips_R.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Minclips_R.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8B54C93040CA0719D543B830 /* Pods-Minclips_D.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_D.debug.xcconfig"; path = "Target Support Files/Pods-Minclips_D/Pods-Minclips_D.debug.xcconfig"; sourceTree = "<group>"; };
+		9777C1A4F928B398B2C962C7 /* Pods-Minclips_R.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_R.debug.xcconfig"; path = "Target Support Files/Pods-Minclips_R/Pods-Minclips_R.debug.xcconfig"; sourceTree = "<group>"; };
+		CAF81274419AE998A3C9FC1F /* Pods_Minclips_T.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Minclips_T.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CBA4D02B7FA316776A765569 /* Pods-Minclips_T.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_T.debug.xcconfig"; path = "Target Support Files/Pods-Minclips_T/Pods-Minclips_T.debug.xcconfig"; sourceTree = "<group>"; };
+		F614F84E2F9B495600A31DB4 /* MCCBaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCBaseViewModel.swift; sourceTree = "<group>"; };
+		F658862B2EF5448300A094B5 /* Minclips_T.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Minclips_T.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F658865C2EF544CF00A094B5 /* Minclips_R.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Minclips_R.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F65886652EF5475A00A094B5 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		F65886662EF5475A00A094B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F658866C2EF5475A00A094B5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCAppDelegate.swift; sourceTree = "<group>"; };
+		F65888C62EF5548800A094B5 /* MCCAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCAppConfig.swift; sourceTree = "<group>"; };
+		F658894E2EF8E05300A094B5 /* Minclips_T.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Minclips_T.entitlements; sourceTree = "<group>"; };
+		F658894F2EF8E06400A094B5 /* Minclips_R.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Minclips_R.entitlements; sourceTree = "<group>"; };
+		F65889502EF8E26600A094B5 /* MCCAppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCAppRouter.swift; sourceTree = "<group>"; };
+		F65889722EF8E8D800A094B5 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
+		F65889762EF8E93F00A094B5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F658897A2EF8E95900A094B5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		F6588BB32EFA401200A094B5 /* MCCLaunchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCLaunchController.swift; sourceTree = "<group>"; };
+		F6588BB62EFA402000A094B5 /* MCCGuideController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCGuideController.swift; sourceTree = "<group>"; };
+		F6588BB92EFA402B00A094B5 /* MCCTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCTabBarController.swift; sourceTree = "<group>"; };
+		F6588BBC2EFA41AF00A094B5 /* MCCConfigViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCConfigViewModel.swift; sourceTree = "<group>"; };
+		F6D546592F90B9B8002C4F70 /* Minclips_D.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Minclips_D.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6D546BB2F90B9C9002C4F70 /* Minclips_P.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Minclips_P.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6D546D12F90E390002C4F70 /* MCCBottomSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCBottomSheetController.swift; sourceTree = "<group>"; };
+		F6D546E12F922579002C4F70 /* MCCPresentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCPresentController.swift; sourceTree = "<group>"; };
+		F6D546FF2F95D17E002C4F70 /* MCCTopPopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCTopPopController.swift; sourceTree = "<group>"; };
+		F6D547192F9636F1002C4F70 /* MCCEaseInPopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCEaseInPopController.swift; sourceTree = "<group>"; };
+		F6D5475C2F9B462C002C4F70 /* MCCNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCNavigationController.swift; sourceTree = "<group>"; };
+		F6D547612F9B478A002C4F70 /* MCCPopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCPopController.swift; sourceTree = "<group>"; };
+		F6D547622F9B478A002C4F70 /* MCCSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCSheetController.swift; sourceTree = "<group>"; };
+		F6D547632F9B478A002C4F70 /* MCCViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCViewController.swift; sourceTree = "<group>"; };
+		F6D547702F9B4796002C4F70 /* MCCBaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCBaseView.swift; sourceTree = "<group>"; };
+		F72C010043D4413B9E5D4761 /* Pods-Minclips_D.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_D.release.xcconfig"; path = "Target Support Files/Pods-Minclips_D/Pods-Minclips_D.release.xcconfig"; sourceTree = "<group>"; };
+		FD04B3C983B934D49261DA0A /* Pods-Minclips_P.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_P.debug.xcconfig"; path = "Target Support Files/Pods-Minclips_P/Pods-Minclips_P.debug.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F65886282EF5448300A094B5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1AB0FE7DD6E52D6A44ED061 /* Pods_Minclips_T.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F65886562EF544CF00A094B5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				686EBC214DA29B9D78E427C8 /* Pods_Minclips_R.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F6D5464C2F90B9B8002C4F70 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03D9D0A63817DA37B87229E6 /* Pods_Minclips_D.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F6D546AE2F90B9C9002C4F70 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				959A695D1D1E2D4AA7550A53 /* Pods_Minclips_P.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9CE34A688178D1C37603D5AB /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				8B54C93040CA0719D543B830 /* Pods-Minclips_D.debug.xcconfig */,
+				F72C010043D4413B9E5D4761 /* Pods-Minclips_D.release.xcconfig */,
+				FD04B3C983B934D49261DA0A /* Pods-Minclips_P.debug.xcconfig */,
+				58707E0F0A8D42CFEABE176D /* Pods-Minclips_P.release.xcconfig */,
+				9777C1A4F928B398B2C962C7 /* Pods-Minclips_R.debug.xcconfig */,
+				0A875C4A01B9364B05E494FE /* Pods-Minclips_R.release.xcconfig */,
+				CBA4D02B7FA316776A765569 /* Pods-Minclips_T.debug.xcconfig */,
+				1C2C92D9866F31A0CB34F836 /* Pods-Minclips_T.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		B0D36159DDD01BDC90144D9D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				413CC65523E70A841D7E6C8A /* Pods_Minclips_D.framework */,
+				0335A246D2DC973F502DDD40 /* Pods_Minclips_P.framework */,
+				88268EC85C6220BF5E9A10ED /* Pods_Minclips_R.framework */,
+				CAF81274419AE998A3C9FC1F /* Pods_Minclips_T.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F65886222EF5448300A094B5 = {
+			isa = PBXGroup;
+			children = (
+				F658894E2EF8E05300A094B5 /* Minclips_T.entitlements */,
+				F658894F2EF8E06400A094B5 /* Minclips_R.entitlements */,
+				F65888C32EF5548200A094B5 /* Minclips */,
+				F658862C2EF5448300A094B5 /* Products */,
+				9CE34A688178D1C37603D5AB /* Pods */,
+				B0D36159DDD01BDC90144D9D /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		F658862C2EF5448300A094B5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F658862B2EF5448300A094B5 /* Minclips_T.app */,
+				F658865C2EF544CF00A094B5 /* Minclips_R.app */,
+				F6D546592F90B9B8002C4F70 /* Minclips_D.app */,
+				F6D546BB2F90B9C9002C4F70 /* Minclips_P.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F65888C32EF5548200A094B5 /* Minclips */ = {
+			isa = PBXGroup;
+			children = (
+				F65888CC2EF5549B00A094B5 /* AppDelegate */,
+				F65889672EF8E46700A094B5 /* Classes */,
+				F65889662EF8E46200A094B5 /* Resources */,
+				F65889712EF8E82600A094B5 /* Supporting Files */,
+			);
+			path = Minclips;
+			sourceTree = "<group>";
+		};
+		F65888CC2EF5549B00A094B5 /* AppDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				03F0195E2F8CB97F0096831D /* MCCAppState.swift */,
+				F65888C62EF5548800A094B5 /* MCCAppConfig.swift */,
+				F65889502EF8E26600A094B5 /* MCCAppRouter.swift */,
+				F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */,
+			);
+			path = AppDelegate;
+			sourceTree = "<group>";
+		};
+		F65889662EF8E46200A094B5 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F658896C2EF8E5BC00A094B5 /* Fonts */,
+				F658896E2EF8E5E100A094B5 /* Colors */,
+				F658896D2EF8E5C300A094B5 /* Images */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		F65889672EF8E46700A094B5 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				F658896A2EF8E48600A094B5 /* Models */,
+				F65889692EF8E48300A094B5 /* Views */,
+				F65889682EF8E48000A094B5 /* ViewModels */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		F65889682EF8E48000A094B5 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				F614F84E2F9B495600A31DB4 /* MCCBaseViewModel.swift */,
+				03F0196A2F8CF91A0096831D /* MCCGuideViewModel.swift */,
+				F6588BBC2EFA41AF00A094B5 /* MCCConfigViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		F65889692EF8E48300A094B5 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F6588BAE2EFA372D00A094B5 /* View */,
+				F658896B2EF8E4A100A094B5 /* Controller */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		F658896A2EF8E48600A094B5 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				03F019672F8CF6E90096831D /* MCSGuide.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		F658896B2EF8E4A100A094B5 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				F6D5475C2F9B462C002C4F70 /* MCCNavigationController.swift */,
+				F6588BB92EFA402B00A094B5 /* MCCTabBarController.swift */,
+				F6D547632F9B478A002C4F70 /* MCCViewController.swift */,
+				F6D547622F9B478A002C4F70 /* MCCSheetController.swift */,
+				F6D547612F9B478A002C4F70 /* MCCPopController.swift */,
+				F6588BB32EFA401200A094B5 /* MCCLaunchController.swift */,
+				F6588BB62EFA402000A094B5 /* MCCGuideController.swift */,
+				03D2F3852F39DC15001F28A1 /* MCCShopHomeController.swift */,
+				03D2F3882F39DC5B001F28A1 /* MCCShopCategoryController.swift */,
+				03D2F38B2F39DC6E001F28A1 /* MCCShopCartController.swift */,
+				03D2F38E2F39DCAC001F28A1 /* MCCUserHomeController.swift */,
+				030D06AE2F3AE2C2003A0AB8 /* MCCShopDetailController.swift */,
+				F6D546E12F922579002C4F70 /* MCCPresentController.swift */,
+				F6D546D12F90E390002C4F70 /* MCCBottomSheetController.swift */,
+				F6D546FF2F95D17E002C4F70 /* MCCTopPopController.swift */,
+				F6D547192F9636F1002C4F70 /* MCCEaseInPopController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		F658896C2EF8E5BC00A094B5 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		F658896D2EF8E5C300A094B5 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				F65886652EF5475A00A094B5 /* Images.xcassets */,
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
+		F658896E2EF8E5E100A094B5 /* Colors */ = {
+			isa = PBXGroup;
+			children = (
+				F65889722EF8E8D800A094B5 /* Colors.xcassets */,
+			);
+			path = Colors;
+			sourceTree = "<group>";
+		};
+		F65889712EF8E82600A094B5 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F65886662EF5475A00A094B5 /* Info.plist */,
+				F65889752EF8E93F00A094B5 /* InfoPlist.strings */,
+				F65889792EF8E95900A094B5 /* Localizable.strings */,
+				F65886672EF5475A00A094B5 /* LaunchScreen.storyboard */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F6588BAE2EFA372D00A094B5 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				F6D547702F9B4796002C4F70 /* MCCBaseView.swift */,
+				03F019612F8CF67C0096831D /* MCCLaunchView.swift */,
+				03F019642F8CF6A50096831D /* MCCGuideView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F658862A2EF5448300A094B5 /* Minclips_T */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F658863E2EF5448400A094B5 /* Build configuration list for PBXNativeTarget "Minclips_T" */;
+			buildPhases = (
+				58BC50EA2FA7839633B1AD9E /* [CP] Check Pods Manifest.lock */,
+				F65886272EF5448300A094B5 /* Sources */,
+				F65886282EF5448300A094B5 /* Frameworks */,
+				F65886292EF5448300A094B5 /* Resources */,
+				8DC30CFC84DA87BCC77CAE88 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Minclips_T;
+			productName = Minclips;
+			productReference = F658862B2EF5448300A094B5 /* Minclips_T.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F65886532EF544CF00A094B5 /* Minclips_R */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F65886592EF544CF00A094B5 /* Build configuration list for PBXNativeTarget "Minclips_R" */;
+			buildPhases = (
+				F5E1411259FD39E307DBA306 /* [CP] Check Pods Manifest.lock */,
+				F65886552EF544CF00A094B5 /* Sources */,
+				F65886562EF544CF00A094B5 /* Frameworks */,
+				F65886582EF544CF00A094B5 /* Resources */,
+				72DA422956F7594497BE696C /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Minclips_R;
+			productName = Minclips;
+			productReference = F658865C2EF544CF00A094B5 /* Minclips_R.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F6D545F92F90B9B8002C4F70 /* Minclips_D */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F6D546562F90B9B8002C4F70 /* Build configuration list for PBXNativeTarget "Minclips_D" */;
+			buildPhases = (
+				36D0E437710279260F4A638E /* [CP] Check Pods Manifest.lock */,
+				F6D545FB2F90B9B8002C4F70 /* Sources */,
+				F6D5464C2F90B9B8002C4F70 /* Frameworks */,
+				F6D5464E2F90B9B8002C4F70 /* Resources */,
+				BA637F64023F37326FB35252 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Minclips_D;
+			productName = Minclips;
+			productReference = F6D546592F90B9B8002C4F70 /* Minclips_D.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F6D5465B2F90B9C9002C4F70 /* Minclips_P */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F6D546B82F90B9C9002C4F70 /* Build configuration list for PBXNativeTarget "Minclips_P" */;
+			buildPhases = (
+				606CF2F107943B4C56538634 /* [CP] Check Pods Manifest.lock */,
+				F6D5465D2F90B9C9002C4F70 /* Sources */,
+				F6D546AE2F90B9C9002C4F70 /* Frameworks */,
+				F6D546B02F90B9C9002C4F70 /* Resources */,
+				2BA30B65186D890DCD89A6C0 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Minclips_P;
+			productName = Minclips;
+			productReference = F6D546BB2F90B9C9002C4F70 /* Minclips_P.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F65886232EF5448300A094B5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2610;
+				LastUpgradeCheck = 2610;
+				TargetAttributes = {
+					F658862A2EF5448300A094B5 = {
+						CreatedOnToolsVersion = 26.1;
+					};
+					F65886532EF544CF00A094B5 = {
+						LastSwiftMigration = 2610;
+					};
+				};
+			};
+			buildConfigurationList = F65886262EF5448300A094B5 /* Build configuration list for PBXProject "Minclips" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F65886222EF5448300A094B5;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = F658862C2EF5448300A094B5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F6D545F92F90B9B8002C4F70 /* Minclips_D */,
+				F658862A2EF5448300A094B5 /* Minclips_T */,
+				F6D5465B2F90B9C9002C4F70 /* Minclips_P */,
+				F65886532EF544CF00A094B5 /* Minclips_R */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F65886292EF5448300A094B5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F658897B2EF8E95900A094B5 /* Localizable.strings in Resources */,
+				F65889732EF8E8D800A094B5 /* Colors.xcassets in Resources */,
+				F65889772EF8E93F00A094B5 /* InfoPlist.strings in Resources */,
+				F65886702EF5475A00A094B5 /* Images.xcassets in Resources */,
+				F65886722EF5475A00A094B5 /* LaunchScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F65886582EF544CF00A094B5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F65889742EF8E8D800A094B5 /* Colors.xcassets in Resources */,
+				F658897C2EF8E95900A094B5 /* Localizable.strings in Resources */,
+				F65889782EF8E93F00A094B5 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F6D5464E2F90B9B8002C4F70 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6D5464F2F90B9B8002C4F70 /* Localizable.strings in Resources */,
+				F6D546502F90B9B8002C4F70 /* Colors.xcassets in Resources */,
+				F6D546512F90B9B8002C4F70 /* InfoPlist.strings in Resources */,
+				F6D546522F90B9B8002C4F70 /* Images.xcassets in Resources */,
+				F6D546532F90B9B8002C4F70 /* LaunchScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F6D546B02F90B9C9002C4F70 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6D546B12F90B9C9002C4F70 /* Localizable.strings in Resources */,
+				F6D546B22F90B9C9002C4F70 /* Colors.xcassets in Resources */,
+				F6D546B32F90B9C9002C4F70 /* InfoPlist.strings in Resources */,
+				F6D546B42F90B9C9002C4F70 /* Images.xcassets in Resources */,
+				F6D546B52F90B9C9002C4F70 /* LaunchScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2BA30B65186D890DCD89A6C0 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Minclips_P/Pods-Minclips_P-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Minclips_P/Pods-Minclips_P-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Minclips_P/Pods-Minclips_P-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		36D0E437710279260F4A638E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Minclips_D-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		58BC50EA2FA7839633B1AD9E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Minclips_T-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		606CF2F107943B4C56538634 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Minclips_P-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		72DA422956F7594497BE696C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Minclips_R/Pods-Minclips_R-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Minclips_R/Pods-Minclips_R-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Minclips_R/Pods-Minclips_R-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8DC30CFC84DA87BCC77CAE88 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Minclips_T/Pods-Minclips_T-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Minclips_T/Pods-Minclips_T-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Minclips_T/Pods-Minclips_T-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BA637F64023F37326FB35252 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Minclips_D/Pods-Minclips_D-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Minclips_D/Pods-Minclips_D-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Minclips_D/Pods-Minclips_D-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F5E1411259FD39E307DBA306 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Minclips_R-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F65886272EF5448300A094B5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6588BB82EFA402000A094B5 /* MCCGuideController.swift in Sources */,
+				03D2F3902F39DCAC001F28A1 /* MCCUserHomeController.swift in Sources */,
+				F6588BB42EFA401200A094B5 /* MCCLaunchController.swift in Sources */,
+				03F019602F8CB97F0096831D /* MCCAppState.swift in Sources */,
+				F65889512EF8E26600A094B5 /* MCCAppRouter.swift in Sources */,
+				03D2F38D2F39DC6E001F28A1 /* MCCShopCartController.swift in Sources */,
+				03F0196C2F8CF91A0096831D /* MCCGuideViewModel.swift in Sources */,
+				F6D5476A2F9B478A002C4F70 /* MCCPopController.swift in Sources */,
+				F6D5476B2F9B478A002C4F70 /* MCCSheetController.swift in Sources */,
+				F6D5476C2F9B478A002C4F70 /* MCCViewController.swift in Sources */,
+				F65888C82EF5548800A094B5 /* MCCAppDelegate.swift in Sources */,
+				F614F84F2F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */,
+				03F019692F8CF6E90096831D /* MCSGuide.swift in Sources */,
+				F6D546D42F90E390002C4F70 /* MCCBottomSheetController.swift in Sources */,
+				F6588BBA2EFA402B00A094B5 /* MCCTabBarController.swift in Sources */,
+				F6D547602F9B462C002C4F70 /* MCCNavigationController.swift in Sources */,
+				03F019662F8CF6A50096831D /* MCCGuideView.swift in Sources */,
+				030D06B02F3AE2C2003A0AB8 /* MCCShopDetailController.swift in Sources */,
+				03D2F38A2F39DC5B001F28A1 /* MCCShopCategoryController.swift in Sources */,
+				F6588BBD2EFA41AF00A094B5 /* MCCConfigViewModel.swift in Sources */,
+				F6D5471B2F9636F1002C4F70 /* MCCEaseInPopController.swift in Sources */,
+				F6D547712F9B4796002C4F70 /* MCCBaseView.swift in Sources */,
+				F6D547032F95D17E002C4F70 /* MCCTopPopController.swift in Sources */,
+				F65888C92EF5548800A094B5 /* MCCAppConfig.swift in Sources */,
+				F6D546E42F922579002C4F70 /* MCCPresentController.swift in Sources */,
+				03F019632F8CF67C0096831D /* MCCLaunchView.swift in Sources */,
+				03D2F3862F39DC15001F28A1 /* MCCShopHomeController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F65886552EF544CF00A094B5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F614F8522F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */,
+				F6D547722F9B4796002C4F70 /* MCCBaseView.swift in Sources */,
+				03D2F38C2F39DC6E001F28A1 /* MCCShopCartController.swift in Sources */,
+				F6588BB52EFA401200A094B5 /* MCCLaunchController.swift in Sources */,
+				F6D547022F95D17E002C4F70 /* MCCTopPopController.swift in Sources */,
+				03F019622F8CF67C0096831D /* MCCLaunchView.swift in Sources */,
+				F6D5471C2F9636F1002C4F70 /* MCCEaseInPopController.swift in Sources */,
+				03F0196B2F8CF91A0096831D /* MCCGuideViewModel.swift in Sources */,
+				F6D546E22F922579002C4F70 /* MCCPresentController.swift in Sources */,
+				03D2F3892F39DC5B001F28A1 /* MCCShopCategoryController.swift in Sources */,
+				03D2F38F2F39DCAC001F28A1 /* MCCUserHomeController.swift in Sources */,
+				F6D546D22F90E390002C4F70 /* MCCBottomSheetController.swift in Sources */,
+				F65888CA2EF5548800A094B5 /* MCCAppConfig.swift in Sources */,
+				03F0195F2F8CB97F0096831D /* MCCAppState.swift in Sources */,
+				F65889522EF8E26600A094B5 /* MCCAppRouter.swift in Sources */,
+				03F019682F8CF6E90096831D /* MCSGuide.swift in Sources */,
+				F6D5475F2F9B462C002C4F70 /* MCCNavigationController.swift in Sources */,
+				030D06AF2F3AE2C2003A0AB8 /* MCCShopDetailController.swift in Sources */,
+				03F019652F8CF6A50096831D /* MCCGuideView.swift in Sources */,
+				F6D547642F9B478A002C4F70 /* MCCPopController.swift in Sources */,
+				F6D547652F9B478A002C4F70 /* MCCSheetController.swift in Sources */,
+				F6D547662F9B478A002C4F70 /* MCCViewController.swift in Sources */,
+				03D2F3872F39DC15001F28A1 /* MCCShopHomeController.swift in Sources */,
+				F6588BBB2EFA402B00A094B5 /* MCCTabBarController.swift in Sources */,
+				F6588BBE2EFA41AF00A094B5 /* MCCConfigViewModel.swift in Sources */,
+				F6588BB72EFA402000A094B5 /* MCCGuideController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F6D545FB2F90B9B8002C4F70 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6D545FC2F90B9B8002C4F70 /* MCCGuideController.swift in Sources */,
+				F6D545FE2F90B9B8002C4F70 /* MCCUserHomeController.swift in Sources */,
+				F6D546002F90B9B8002C4F70 /* MCCLaunchController.swift in Sources */,
+				F6D546042F90B9B8002C4F70 /* MCCAppState.swift in Sources */,
+				F6D546062F90B9B8002C4F70 /* MCCAppRouter.swift in Sources */,
+				F6D5460A2F90B9B8002C4F70 /* MCCShopCartController.swift in Sources */,
+				F6D5460D2F90B9B8002C4F70 /* MCCGuideViewModel.swift in Sources */,
+				F6D547672F9B478A002C4F70 /* MCCPopController.swift in Sources */,
+				F6D547682F9B478A002C4F70 /* MCCSheetController.swift in Sources */,
+				F6D547692F9B478A002C4F70 /* MCCViewController.swift in Sources */,
+				F6D5460F2F90B9B8002C4F70 /* MCCAppDelegate.swift in Sources */,
+				F614F8502F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */,
+				F6D546162F90B9B8002C4F70 /* MCSGuide.swift in Sources */,
+				F6D546D52F90E390002C4F70 /* MCCBottomSheetController.swift in Sources */,
+				F6D546172F90B9B8002C4F70 /* MCCTabBarController.swift in Sources */,
+				F6D5475E2F9B462C002C4F70 /* MCCNavigationController.swift in Sources */,
+				F6D546192F90B9B8002C4F70 /* MCCGuideView.swift in Sources */,
+				F6D5461C2F90B9B8002C4F70 /* MCCShopDetailController.swift in Sources */,
+				F6D5461D2F90B9B8002C4F70 /* MCCShopCategoryController.swift in Sources */,
+				F6D546222F90B9B8002C4F70 /* MCCConfigViewModel.swift in Sources */,
+				F6D5471D2F9636F1002C4F70 /* MCCEaseInPopController.swift in Sources */,
+				F6D547732F9B4796002C4F70 /* MCCBaseView.swift in Sources */,
+				F6D547002F95D17E002C4F70 /* MCCTopPopController.swift in Sources */,
+				F6D546262F90B9B8002C4F70 /* MCCAppConfig.swift in Sources */,
+				F6D546E52F922579002C4F70 /* MCCPresentController.swift in Sources */,
+				F6D546452F90B9B8002C4F70 /* MCCLaunchView.swift in Sources */,
+				F6D5464A2F90B9B8002C4F70 /* MCCShopHomeController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F6D5465D2F90B9C9002C4F70 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6D5465E2F90B9C9002C4F70 /* MCCGuideController.swift in Sources */,
+				F6D546602F90B9C9002C4F70 /* MCCUserHomeController.swift in Sources */,
+				F6D546622F90B9C9002C4F70 /* MCCLaunchController.swift in Sources */,
+				F6D546662F90B9C9002C4F70 /* MCCAppState.swift in Sources */,
+				F6D546682F90B9C9002C4F70 /* MCCAppRouter.swift in Sources */,
+				F6D5466C2F90B9C9002C4F70 /* MCCShopCartController.swift in Sources */,
+				F6D5466F2F90B9C9002C4F70 /* MCCGuideViewModel.swift in Sources */,
+				F6D5476D2F9B478A002C4F70 /* MCCPopController.swift in Sources */,
+				F6D5476E2F9B478A002C4F70 /* MCCSheetController.swift in Sources */,
+				F6D5476F2F9B478A002C4F70 /* MCCViewController.swift in Sources */,
+				F6D546712F90B9C9002C4F70 /* MCCAppDelegate.swift in Sources */,
+				F614F8512F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */,
+				F6D546782F90B9C9002C4F70 /* MCSGuide.swift in Sources */,
+				F6D546D32F90E390002C4F70 /* MCCBottomSheetController.swift in Sources */,
+				F6D546792F90B9C9002C4F70 /* MCCTabBarController.swift in Sources */,
+				F6D5475D2F9B462C002C4F70 /* MCCNavigationController.swift in Sources */,
+				F6D5467B2F90B9C9002C4F70 /* MCCGuideView.swift in Sources */,
+				F6D5467E2F90B9C9002C4F70 /* MCCShopDetailController.swift in Sources */,
+				F6D5467F2F90B9C9002C4F70 /* MCCShopCategoryController.swift in Sources */,
+				F6D546842F90B9C9002C4F70 /* MCCConfigViewModel.swift in Sources */,
+				F6D5471A2F9636F1002C4F70 /* MCCEaseInPopController.swift in Sources */,
+				F6D547742F9B4796002C4F70 /* MCCBaseView.swift in Sources */,
+				F6D547012F95D17E002C4F70 /* MCCTopPopController.swift in Sources */,
+				F6D546882F90B9C9002C4F70 /* MCCAppConfig.swift in Sources */,
+				F6D546E32F922579002C4F70 /* MCCPresentController.swift in Sources */,
+				F6D546A72F90B9C9002C4F70 /* MCCLaunchView.swift in Sources */,
+				F6D546AC2F90B9C9002C4F70 /* MCCShopHomeController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		F65886672EF5475A00A094B5 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F658866C2EF5475A00A094B5 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		F65889752EF8E93F00A094B5 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F65889762EF8E93F00A094B5 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		F65889792EF8E95900A094B5 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F658897A2EF8E95900A094B5 /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		F658863F2EF5448400A094B5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CBA4D02B7FA316776A765569 /* Pods-Minclips_T.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = NO;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Minclips_T.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YB343Y6P2H;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					"TEST=1",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Minclips/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Minclips_T;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.00.00;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zhanqi.minclips.test;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG ENV_T";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F65886402EF5448400A094B5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C2C92D9866F31A0CB34F836 /* Pods-Minclips_T.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = NO;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Minclips_T.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YB343Y6P2H;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					"TEST=1",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Minclips/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Minclips_T;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.00.00;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zhanqi.minclips.test;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = ENV_T;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		F65886412EF5448400A094B5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 8J8CAUE4QY;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F65886422EF5448400A094B5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 8J8CAUE4QY;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F658865A2EF544CF00A094B5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9777C1A4F928B398B2C962C7 /* Pods-Minclips_R.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Minclips_R.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YB343Y6P2H;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					"PRODUCT=1",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Minclips/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Minclips;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.00.00;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zhanqi.minclips;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG ENV_R";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F658865B2EF544CF00A094B5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0A875C4A01B9364B05E494FE /* Pods-Minclips_R.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Minclips_R.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YB343Y6P2H;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					"PRODUCT=1",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Minclips/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Minclips;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.00.00;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zhanqi.minclips;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = ENV_R;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		F6D546572F90B9B8002C4F70 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8B54C93040CA0719D543B830 /* Pods-Minclips_D.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = NO;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Minclips_T.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8J8CAUE4QY;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					"TEST=1",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Minclips/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Minclips_D;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.00.00;
+				PRODUCT_BUNDLE_IDENTIFIER = com.luojian.demo.dev;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG ENV_D";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F6D546582F90B9B8002C4F70 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F72C010043D4413B9E5D4761 /* Pods-Minclips_D.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = NO;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Minclips_T.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8J8CAUE4QY;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					"TEST=1",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Minclips/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Minclips_D;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.00.00;
+				PRODUCT_BUNDLE_IDENTIFIER = com.luojian.demo.dev;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = ENV_D;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		F6D546B92F90B9C9002C4F70 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FD04B3C983B934D49261DA0A /* Pods-Minclips_P.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = NO;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Minclips_R.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YB343Y6P2H;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					"TEST=1",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Minclips/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Minclips_P;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.00.00;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zhanqi.minclips.pre;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG ENV_P";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F6D546BA2F90B9C9002C4F70 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 58707E0F0A8D42CFEABE176D /* Pods-Minclips_P.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = NO;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Minclips_R.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = YB343Y6P2H;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"COCOAPODS=1",
+					"TEST=1",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Minclips/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Minclips_P;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.00.00;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zhanqi.minclips.pre;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = ENV_P;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F65886262EF5448300A094B5 /* Build configuration list for PBXProject "Minclips" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F65886412EF5448400A094B5 /* Debug */,
+				F65886422EF5448400A094B5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F658863E2EF5448400A094B5 /* Build configuration list for PBXNativeTarget "Minclips_T" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F658863F2EF5448400A094B5 /* Debug */,
+				F65886402EF5448400A094B5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F65886592EF544CF00A094B5 /* Build configuration list for PBXNativeTarget "Minclips_R" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F658865A2EF544CF00A094B5 /* Debug */,
+				F658865B2EF544CF00A094B5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F6D546562F90B9B8002C4F70 /* Build configuration list for PBXNativeTarget "Minclips_D" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F6D546572F90B9B8002C4F70 /* Debug */,
+				F6D546582F90B9B8002C4F70 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F6D546B82F90B9C9002C4F70 /* Build configuration list for PBXNativeTarget "Minclips_P" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F6D546B92F90B9C9002C4F70 /* Debug */,
+				F6D546BA2F90B9C9002C4F70 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F65886232EF5448300A094B5 /* Project object */;
+}

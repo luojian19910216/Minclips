@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bundle exec *)",
+      "Bash(xcodebuild -list -workspace Minclips.xcworkspace)",
+      "Bash(find /Users/luojian/Desktop/Demo/Minclips -name \"Info.plist\" -exec grep -l \"SceneDelegate\\\\|AppDelegate\" {} \\\\;)",
+      "Bash(xargs -0 -I {} perl /tmp/mcc_rename.pl {})",
+      "Bash(set -e)",
+      "Bash(xcodebuild -workspace Minclips.xcworkspace -scheme Minclips_D -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' build)",
+      "Bash(perl /tmp/mcc_pbxproj_rename.pl /Users/luojian/Desktop/Demo/Minclips.xcodeproj/project.pbxproj)",
+      "Bash(xargs -0 perl -i -pe ' *)",
+      "Bash(perl -e ' *)",
+      "Bash(perl -i -pe 's/\\(?<![A-Za-z0-9_]\\)GuideModel\\\\.swift\\\\b/MCSGuideModel.swift/g' Minclips.xcodeproj/project.pbxproj)",
+      "Bash(git mv *)",
+      "Bash(xargs -0 -n1 perl /tmp/strip_model_suffix.pl)",
+      "Bash(perl -i -pe 's/\\\\bMCSGuideModel\\\\.swift\\\\b/MCSGuide.swift/g' Minclips.xcodeproj/project.pbxproj)",
+      "Bash(echo \"exit=$?\")"
+    ]
+  }
+}

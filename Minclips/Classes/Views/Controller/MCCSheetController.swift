@@ -1,0 +1,33 @@
+//
+//  MCCSheetController.swift
+//
+
+import UIKit
+import PanModal
+
+open class MCCSheetController<View: MCCBaseView, ViewModel: MCCBaseViewModel>: MCCViewController<View, ViewModel>, MCPPopupPresentable, PanModalPresentable {
+    
+    // MARK: - Life Cycle
+    
+    open override func mcvc_init() {
+        modalPresentationStyle = .custom
+        transitioningDelegate = PanModalPresentationDelegate.default
+    }
+        
+    // MARK: - PanModalPresentable
+    
+    open var panScrollable: UIScrollView? { nil }
+    
+    open var shortFormHeight: PanModalHeight { longFormHeight }
+    
+    open var longFormHeight: PanModalHeight { .contentHeight(300) }
+    
+    open var cornerRadius: CGFloat { 16 }
+    
+    open var showDragIndicator: Bool { true }
+    
+    open var isHapticFeedbackEnabled: Bool { false }
+    
+    open var allowsExtendedPanScrolling: Bool { false }
+    
+}
