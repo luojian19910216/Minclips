@@ -28,12 +28,10 @@ public struct MCSFeedListRequest: Codable {
 public struct MCSFeedLikeListRequest: Codable {
     ///
     public init() {}
-    ///
-    public var pageSize: Int = 20
-    ///
-    public var pageNumber: Int = 1
-    ///
-    public var isTool: Bool = false
+    /// pageSize
+    public var itemsPerPage: Int = 20
+    /// pageNumber
+    public var pageIndex: Int = 1
 }
 
 ///
