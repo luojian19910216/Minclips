@@ -20,10 +20,6 @@ public final class MCCTemplateAPIManager {
 
 extension MCCTemplateAPIManager {
     ///
-    public func pageHome(with requestModel: MCSTemplateListRequest) -> AnyPublisher<MCSList<MCSTemplateItem>, MCENetworkError> {
-        networkManager.request(.pageHome(requestModel))
-    }
-    ///
     public func customLabelList() -> AnyPublisher<MCSList<MCSTemplateLabelItem>, MCENetworkError> {
         networkManager.request(.customLabelList)
     }
@@ -42,18 +38,6 @@ extension MCCTemplateAPIManager {
     ///
     public func viewHistory(with requestModel: MCSTemplateListRequest) -> AnyPublisher<MCSList<MCSTemplateItem>, MCENetworkError> {
         networkManager.request(.viewHistory(requestModel))
-    }
-    ///
-    public func usedByWorks(with requestModel: MCSTemplateListRequest) -> AnyPublisher<MCSList<MCSTemplateItem>, MCENetworkError> {
-        networkManager.request(.usedByWorks(requestModel))
-    }
-    ///
-    public func proList(with requestModel: MCSTemplateDetailRequest) -> AnyPublisher<MCSList<MCSTemplateItem>, MCENetworkError> {
-        networkManager.request(.proList(requestModel))
-    }
-    ///
-    public func inspirationList(with requestModel: MCSTemplateDetailRequest) -> AnyPublisher<MCSList<MCSTemplateItem>, MCENetworkError> {
-        networkManager.request(.inspirationList(requestModel))
     }
     ///
     public func detail(with requestModel: MCSTemplateDetailRequest) -> AnyPublisher<MCSTemplateItem, MCENetworkError> {

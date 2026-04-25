@@ -18,8 +18,6 @@ public struct MCSTemplateListRequest: Codable {
     public var limit: Int = 20
     ///
     public var lastId: String?
-    /// 首页传
-    public var lastHomePageSort: String?
     /// 模版流传
     public var customId: String?
     /// 搜索传

@@ -8,8 +8,6 @@ import Moya
 ///
 public enum MCETemplateAPI {
     ///
-    case pageHome(_ requestModel: MCSTemplateListRequest)
-    ///
     case customLabelList
     ///
     case customList(_ requestModel: MCSTemplateListRequest)
@@ -19,12 +17,6 @@ public enum MCETemplateAPI {
     case search(_ requestModel: MCSTemplateListRequest)
     ///
     case viewHistory(_ requestModel: MCSTemplateListRequest)
-    ///
-    case usedByWorks(_ requestModel: MCSTemplateListRequest)
-    /// 非会员&成功作品的推荐
-    case proList(_ requestModel: MCSTemplateDetailRequest)
-    /// 生成中/失败作品的推荐
-    case inspirationList(_ requestModel: MCSTemplateDetailRequest)
     ///
     case detail(_ requestModel: MCSTemplateDetailRequest)
     ///
@@ -48,15 +40,11 @@ extension MCETemplateAPI: TargetType {
     ///
     public var path: String {
         switch self {
-        case .pageHome: return "/template/pageHome"
         case .customLabelList: return "/customTemplate/labelList"
         case .customList: return "/customTemplate/list"
         case .searchKeywords: return "/template/searchKeywords"
         case .search: return "/template/search"
         case .viewHistory: return "/template/viewHistory"
-        case .usedByWorks: return "/template/usedByWorks"
-        case .proList: return "/template/proList"
-        case .inspirationList: return "/template/inspiration"
         case .detail: return "/template/detail"
         case .report: return "/template/report"
         case .like: return "/like/like"
@@ -73,15 +61,11 @@ extension MCETemplateAPI: TargetType {
     public var task: Task {
         var parameters: [String: Any]?
         switch self {
-        case .pageHome(let requestModel): parameters = requestModel.toDictionary()
         case .customLabelList: break
         case .customList(let requestModel): parameters = requestModel.toDictionary()
         case .searchKeywords: break
         case .search(let requestModel): parameters = requestModel.toDictionary()
         case .viewHistory(let requestModel): parameters = requestModel.toDictionary()
-        case .usedByWorks(let requestModel): parameters = requestModel.toDictionary()
-        case .proList(let requestModel): parameters = requestModel.toDictionary()
-        case .inspirationList(let requestModel): parameters = requestModel.toDictionary()
         case .detail(let requestModel): parameters = requestModel.toDictionary()
         case .report(let requestModel): parameters = requestModel.toDictionary()
         case .like(let requestModel): parameters = requestModel.toDictionary()
