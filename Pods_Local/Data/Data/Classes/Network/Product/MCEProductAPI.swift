@@ -23,7 +23,7 @@ extension MCEProductAPI: TargetType {
     ///
     public var path: String {
         switch self {
-        case .findAll: return "/gwx/v1/shop/offer/selection"
+        case .findAll: return "/gwx/v1/shop/subscription/catalog"
         case .payCallback: return "/gwx/v1/shop/billing/notify"
         case .paySinglePurchase: return "/gwx/v1/shop/billing/once"
         }
