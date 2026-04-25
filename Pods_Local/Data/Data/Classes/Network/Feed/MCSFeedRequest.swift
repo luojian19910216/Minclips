@@ -8,19 +8,19 @@ import Foundation
 public struct MCSFeedListRequest: Codable {
     ///
     public init() {}
-    /// 是否是首次安装
+    ///
     public var isFirstInstall: Bool = false
-    /// 是否是冷启动
+    ///
     public var isColdStart: Bool = false
-    /// 来源
+    ///
     public var source: String?
+    /// limit
+    public var itemsPerPage: Int = 20
+    /// lastId
+    public var resumeAfterId: String?
+    /// customId
+    public var customRefId: String?
     ///
-    public var limit: Int = 20
-    ///
-    public var lastId: String?
-    /// 模版流传
-    public var customId: String?
-    /// 搜索传
     public var keyword: String?
 }
 
