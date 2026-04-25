@@ -20,8 +20,8 @@ public struct MCSFeedListRequest: Codable {
     public var resumeAfterId: String?
     /// customId
     public var customRefId: String?
-    ///
-    public var keyword: String?
+    /// keyword
+    public var searchText: String?
 }
 
 ///

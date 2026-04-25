@@ -80,18 +80,18 @@ public struct MCSCfToolboxGroup: Codable, MCPDefaultInitializable {
 public struct MCSCfToolboxItem: Codable, MCPDefaultInitializable {
     ///
     public init() {}
-    ///
-    @MCSSafeString public var id: String
-    ///
-    @MCSSafeString public var sign: String
-    ///
-    @MCSSafeString public var name: String
-    ///
-    @MCSSafeString public var icon: String
-    ///
-    @MCSSafeString public var iconMini: String
-    ///
-    @MCSSafeString public var iconMax: String
+    /// id
+    @MCSSafeString public var toolId: String
+//    ///
+//    @MCSSafeString public var sign: String
+//    ///
+//    @MCSSafeString public var name: String
+//    ///
+//    @MCSSafeString public var icon: String
+//    ///
+//    @MCSSafeString public var iconMini: String
+//    ///
+//    @MCSSafeString public var iconMax: String
 //    ///
 //    @MCSSafeString public var templateId: String
 //    ///
