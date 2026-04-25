@@ -47,19 +47,19 @@ public enum MCEEnvironment {
     ///
     public var baseAPIUrl: String {
         switch self {
-        case .D: return "https://api-rd.pixmo.online"
-        case .T: return "https://api-rd.pixmo.online"
-        case .P: return "https://api-pub.pixmo.online"
-        case .R: return "https://api.pixmo.online"
+        case .D: return "https://gw-rd.minclips.video"
+        case .T: return "https://gw-rd.minclips.video"
+        case .P: return "https://gw-rd.minclips.video"
+        case .R: return "https://gw.minclips.video"
         }
     }
     ///
     public var pushAPIUrl: String {
         switch self {
-        case .D: return "https://push-rd.pixmo.online"
-        case .T: return "https://push-rd.pixmo.online"
-        case .P: return "https://push.pixmo.online"
-        case .R: return "https://push.pixmo.online"
+        case .D: return "https://push-rd.minclips.video"
+        case .T: return "https://push-rd.minclips.video"
+        case .P: return "https://push.minclips.video"
+        case .R: return "https://push.minclips.video"
         }
     }
     ///
