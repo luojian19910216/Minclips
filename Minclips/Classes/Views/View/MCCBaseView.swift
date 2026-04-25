@@ -11,8 +11,6 @@ public protocol MCPViewInit {
     func mcvw_setupUI()
     ///
     func mcvw_bind()
-    ///
-    func mcvw_dealloc()
 }
 
 open class MCCBaseView: UIView, MCPViewInit {
@@ -45,7 +43,6 @@ open class MCCBaseView: UIView, MCPViewInit {
     }
     
     deinit {
-        mcvw_dealloc()
         print("View deinit（\(classForCoder)）")
     }
     
@@ -54,8 +51,6 @@ open class MCCBaseView: UIView, MCPViewInit {
     open func mcvw_setupUI() {}
 
     open func mcvw_bind() {}
-
-    open func mcvw_dealloc() {}
 
 }
 
@@ -90,7 +85,6 @@ open class MCCBaseCollectionReusableView: UICollectionReusableView, MCPViewInit 
     }
     
     deinit {
-        mcvw_dealloc()
         print("View deinit（\(classForCoder)）")
     }
     
@@ -99,8 +93,6 @@ open class MCCBaseCollectionReusableView: UICollectionReusableView, MCPViewInit 
     open func mcvw_setupUI() {}
 
     open func mcvw_bind() {}
-
-    open func mcvw_dealloc() {}
     
 }
 
@@ -135,7 +127,6 @@ open class MCCBaseCollectionViewCell: UICollectionViewCell, MCPViewInit {
     }
     
     deinit {
-        mcvw_dealloc()
         print("View deinit（\(classForCoder)）")
     }
     
@@ -144,8 +135,6 @@ open class MCCBaseCollectionViewCell: UICollectionViewCell, MCPViewInit {
     open func mcvw_setupUI() {}
 
     open func mcvw_bind() {}
-
-    open func mcvw_dealloc() {}
     
 }
 

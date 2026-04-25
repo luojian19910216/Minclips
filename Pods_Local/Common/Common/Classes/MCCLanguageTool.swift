@@ -47,7 +47,6 @@ public class MCCLanguageTool: NSObject {
         currentLanguage = language
         NotificationCenter.default.post(name: .languageUpdated, object: nil)
         UserDefaults.standard.set(language.code, forKey: "com.minclips.locale.code")
-        UserDefaults.standard.synchronize()
     }
 
 }

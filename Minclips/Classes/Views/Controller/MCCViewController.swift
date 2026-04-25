@@ -28,11 +28,11 @@ public protocol MCPViewControllerInitProtocol {
     func mcvc_bindService()
     ///
     func mcvc_loadData()
-    ///
-    func mcvc_dealloc()
 }
 
 open class MCCViewControllerCore: UIViewController, MCPViewControllerInitProtocol, MCPNavigationControllerTransactionDelegate {
+    
+    private var notificationCancellables = Set<AnyCancellable>()
     
     // MARK: - Autorotate
     
@@ -133,8 +133,6 @@ open class MCCViewControllerCore: UIViewController, MCPViewControllerInitProtoco
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(self)
-        self.mcvc_dealloc()
         print("Controller deinit（\(self.classForCoder), title: \(self.title ?? "")）")
     }
     
@@ -163,16 +161,17 @@ open class MCCViewControllerCore: UIViewController, MCPViewControllerInitProtoco
     
     open func mcvc_loadData() {}
     
-    open func mcvc_dealloc() {}
-    
     // MARK: - Other Method
         
     private func registerNotifications() {
-        NotificationCenter.default.addObserver(forName: .languageUpdated, object: nil, queue: .main) { [weak self] _ in
-            guard let self = self else {return}
-            self.mcvc_configureNav()
-            self.mcvc_setupLocalization()
-        }
+        NotificationCenter.default.publisher(for: .languageUpdated)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let self = self else { return }
+                self.mcvc_configureNav()
+                self.mcvc_setupLocalization()
+            }
+            .store(in: &notificationCancellables)
     }
     
 }

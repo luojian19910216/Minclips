@@ -47,7 +47,7 @@ public enum MCEEnvironment {
     ///
     public var baseAPIUrl: String {
         switch self {
-        case .D: return "http://192.168.85.142:8080"
+        case .D: return "https://api-rd.pixmo.online"
         case .T: return "https://api-rd.pixmo.online"
         case .P: return "https://api-pub.pixmo.online"
         case .R: return "https://api.pixmo.online"
@@ -56,9 +56,9 @@ public enum MCEEnvironment {
     ///
     public var pushAPIUrl: String {
         switch self {
-        case .D: return ""
+        case .D: return "https://push-rd.pixmo.online"
         case .T: return "https://push-rd.pixmo.online"
-        case .P: return ""
+        case .P: return "https://push.pixmo.online"
         case .R: return "https://push.pixmo.online"
         }
     }
