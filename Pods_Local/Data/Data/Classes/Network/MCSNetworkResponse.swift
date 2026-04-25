@@ -7,16 +7,19 @@ import Foundation
 ///
 public struct MCSNetworkResponse<T: Decodable>: Decodable {
     ///
+    @MCSSafeString
+    public var clientAction: String = ""
+    ///
     @MCSSafeInt
-    public var code: Int
+    public var statusCode: Int
     ///
     @MCSSafeString
-    public var message: String
+    public var statusText: String
     ///
-    public var data: T?
+    public var payload: T?
     ///
     @MCSSafeString
-    public var serverTime: String = ""
+    public var respondedAt: String = ""
 }
 
 ///

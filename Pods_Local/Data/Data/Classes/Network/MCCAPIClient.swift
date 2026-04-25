@@ -51,19 +51,19 @@ public final class MCCAPIClient<Target: TargetType> {
             }
             .decode(type: MCSNetworkResponse<T>.self, decoder: JSONDecoder.api)
             .tryMap { response in
-                guard response.code == MCENetworkCode.success.rawValue else {
-                    if response.code == MCENetworkCode.loginExpired.rawValue {
+                guard response.statusCode == MCENetworkCode.success.rawValue else {
+                    if response.statusCode == MCENetworkCode.loginExpired.rawValue {
                         throw MCENetworkError.loginExpired
                     }
-                    if response.code == MCENetworkCode.tokenExpired.rawValue {
+                    if response.statusCode == MCENetworkCode.tokenExpired.rawValue {
                         throw MCENetworkError.tokenExpired
                     }
-                    throw MCENetworkError.serverError(code: response.code, message: response.message)
+                    throw MCENetworkError.serverError(code: response.statusCode, message: response.statusText)
                 }
                 if T.self == MCSEmpty.self {
                     return MCSEmpty() as! T
                 }
-                guard let data = response.data else {
+                guard let data = response.payload else {
                     throw MCENetworkError.parseError("Data empty")
                 }
                 return data
