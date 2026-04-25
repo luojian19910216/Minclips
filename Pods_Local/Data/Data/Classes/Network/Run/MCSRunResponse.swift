@@ -1,33 +1,33 @@
 //
-//  WorkResponseModel.swift
+//  MCSRunResponse.swift
 //
 
 import Foundation
 
 ///
-public struct MCSWorkItem: Codable, MCPDefaultInitializable {
+public struct MCSRunItem: Codable, MCPDefaultInitializable {
     ///
     public init() {}
     ///
     @MCSSafeDate public var createTime: Date
-    ///
-    @MCSSafeString public var id: String = ""
-    ///
-    @MCSSafeString public var taskId: String = ""
-    ///
-    @MCSSafeEnum public var status: MCEWorkStatus
-    ///
-    @MCSSafeEnum public var failCode: MCEWorkFailCode
-    ///
-    @MCSSafeString public var failReason: String = ""
-    ///
-    @MCSSafeString public var imageUrl: String = ""
-    ///
-    @MCSSafeString public var coverUrl: String = ""
-    ///
-    @MCSSafeArray public var result: [MCSWorkResult]
-    ///
-    @MCSSafeEnum public var clarity: MCEClarity
+    /// id
+    @MCSSafeString public var runId: String = ""
+//    ///
+//    @MCSSafeString public var taskId: String = ""
+//    ///
+//    @MCSSafeEnum public var status: MCERunStatus
+//    ///
+//    @MCSSafeEnum public var failCode: MCERunFailCode
+//    ///
+//    @MCSSafeString public var failReason: String = ""
+//    ///
+//    @MCSSafeString public var imageUrl: String = ""
+//    ///
+//    @MCSSafeString public var coverUrl: String = ""
+//    ///
+//    @MCSSafeArray public var result: [MCSRunResult]
+//    ///
+//    @MCSSafeEnum public var clarity: MCEClarity
 //    ///
 //    public var templateId: String = ""
 //    ///
@@ -44,11 +44,12 @@ public struct MCSWorkItem: Codable, MCPDefaultInitializable {
 //    public var is_free: Bool = false
 //    ///
 //    public var inputs: [AnyHashable: Any] = [:]
+//    ///
 //    public var isAi: String = ""
 }
 
 ///
-public struct MCSWorkResult: Codable, MCPDefaultInitializable {
+public struct MCSRunResult: Codable, MCPDefaultInitializable {
     ///
     public init() {}
     ///
@@ -64,7 +65,7 @@ public struct MCSWorkResult: Codable, MCPDefaultInitializable {
 }
 
 ///
-public enum MCEWorkStatus: Int, CaseIterable, Codable, MCPDefaultInitializable {
+public enum MCERunStatus: Int, CaseIterable, Codable, MCPDefaultInitializable {
     ///
     case generating = 1
     ///
@@ -74,7 +75,7 @@ public enum MCEWorkStatus: Int, CaseIterable, Codable, MCPDefaultInitializable {
 }
 
 ///
-public enum MCEWorkFailCode: String, CaseIterable, Codable, MCPDefaultInitializable {
+public enum MCERunFailCode: String, CaseIterable, Codable, MCPDefaultInitializable {
     ///
     case fail
     ///

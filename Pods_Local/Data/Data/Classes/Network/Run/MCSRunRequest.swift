@@ -1,11 +1,11 @@
 //
-//  WorkRequestModel.swift
+//  MCSRunRequest.swift
 //
 
 import Foundation
 
 ///
-public struct MCSWorkCreateRequest: Codable {
+public struct MCSRunCreateRequest: Codable {
     ///
     public init() {}
     ///
@@ -29,39 +29,35 @@ public struct MCSWorkCreateRequest: Codable {
 }
 
 ///
-public struct MCSWorkListRequest: Codable {
+public struct MCSRunListRequest: Codable {
     ///
     public init() {}
-    ///
-    public var limit: Int = 20
-    ///
-    public var lastId: String?
-    /// image/video
-    public var resultType: String?
-    /// 2: success
-    public var status: String?
+    /// limit
+    public var itemsPerPage: Int = 20
+    /// lastId
+    public var resumeAfterId: String?
 }
 
 ///
-public struct MCSWorkInfosRequest: Codable {
+public struct MCSRunInfosRequest: Codable {
     ///
     public init() {}
-    ///
-    public var workIds: [String] = []
+    /// workIds
+    public var workIdList: [String] = []
 }
 
 ///
-public struct MCSWorkInfoRequest: Codable {
+public struct MCSRunInfoRequest: Codable {
     ///
     public init() {}
-    ///
-    public var workId: String = ""
+    /// workId
+    public var workRef: String = ""
 }
 
 ///
-public struct MCSWorkDeleteRequest: Codable {
+public struct MCSRunDeleteRequest: Codable {
     ///
     public init() {}
-    ///
-    public var workId: String = ""
+    /// workId
+    public var workRef: String = ""
 }

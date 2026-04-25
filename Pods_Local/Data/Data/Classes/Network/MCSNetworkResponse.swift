@@ -38,8 +38,8 @@ public struct MCSList<T: Decodable>: Decodable {
             return
         }
         if let keyedContainer = try? decoder.container(keyedBy: CodingKeys.self) {
-            if let list = try? keyedContainer.decode([T].self, forKey: .list) {
-                self.items = list
+            if let items = try? keyedContainer.decode([T].self, forKey: .items) {
+                self.items = items
                 return
             }
         }
@@ -47,7 +47,7 @@ public struct MCSList<T: Decodable>: Decodable {
     }
     ///
     private enum CodingKeys: String, CodingKey {
-        case list
+        case items
     }
 }
 
