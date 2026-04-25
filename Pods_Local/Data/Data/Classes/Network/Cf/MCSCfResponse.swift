@@ -8,79 +8,63 @@ import Foundation
 public struct MCSCfLauncherResponse: Codable, MCPDefaultInitializable {
     ///
     public init() {}
-    ///
-    @MCSSafeArray public var iconList: [MCSBannerItem]
-    ///
-    @MCSSafeArray public var barList: [MCSBannerItem]
-    ///
-    @MCSSafeArray public var bannerList: [MCSBannerItem]
-    ///
-    @MCSSafeArray public var newBannerList: [MCSBannerItem]
-    ///
-    @MCSSafeArray public var userCard: [MCSBannerItem]
-    ///
-    @MCSSafeArray public var extensionList: [MCSBannerGroup]
-    ///
-//    @MCSSafeBool public var appStoreReviewSwitch: Bool
-//    ///
-//    @MCSSafeBool public var appStoreProductReviewSwitch: Bool
-//    ///
-//    @MCSSafeString public var firstGuide: String
-//    ///
-//    @MCSSafeString public var guide: String
-//    ///
-//    @MCSSafeString public var subGuide: String
-//    ///
-//    @MCSSafeString public var bindEmail: String
-//    ///
-//    @MCSSafeEnum public var create_ab_20251208: MCEAB
-//    ///
-//    @MCSSafeEnum public var subscribe_ab_20251117: MCEAB
-//    ///
-//    @MCSSafeEnum public var discount_subscribe_ab_20260112: MCEAB
-//    ///
-//    @MCSSafeEnum public var purchase_credits_ab_20260119: MCEAB
-//    ///
-//    @MCSSafeEnum public var subscribe2_new_ab_20260130: MCEAB
-//    ///
-//    @MCSSafeEnum public var weekly_upgrade_ab_20260304: MCEAB
+    /// appStoreReviewSwitch
+    @MCSSafeBool public var appStoreMask: Bool
+    /// appStoreProductReviewSwitch
+    @MCSSafeBool public var appStoreIapMask: Bool
+    /// guide
+    @MCSSafeString public var walkthroughConfig: String
+    /// firstGuide
+    @MCSSafeString public var firstWalkthroughConfig: String
+    /// subGuide
+    @MCSSafeString public var weeklySubscriberWalkthrough: String
+    /// bindEmail
+    @MCSSafeString public var emailBindUrl: String
+//    /// iconList
+//    @MCSSafeArray public var dockIcons: [MCSBannerItem]
+//    /// bannerList
+//    @MCSSafeArray public var homeBanners: [MCSBannerItem]
+//    /// newBannerList
+//    @MCSSafeArray public var featureBanners: [MCSBannerItem]
+//    /// barList
+//    @MCSSafeArray public var tabBarConfig: [MCSBannerItem]
+//    /// userCard
+//    @MCSSafeArray public var userCreditCards: [MCSBannerItem]
+//    /// extensionList
+//    @MCSSafeArray public var extensionBar: [MCSBannerGroup]
 }
 
-///
-public struct MCSBannerGroup: Codable {
-    ///
-    @MCSSafeEnum public var location: MCEBannerLocation
-    ///
-    @MCSSafeArray public var items: [MCSBannerItem]
-}
-
-///
-public enum MCEBannerLocation: String, CaseIterable, Codable, MCPDefaultInitializable {
-    ///
-    case unknown
-    ///
-    case settings
-    ///
-    case homePageBottom
-}
-
-///
-public struct MCSBannerItem: Codable, MCPDefaultInitializable {
-    ///
-    public init() {}
-    ///
-    @MCSSafeString public var sign: String
-    ///
-    @MCSSafeString public var name: String
-    ///
-    @MCSSafeString public var iconUrl: String
-    ///
-    @MCSSafeString public var coverUrl: String
-    ///
-    @MCSSafeString public var deepLink: String
-    ///
-    public var imageUrl: String { !coverUrl.isEmpty ? coverUrl : iconUrl }
-}
+/////
+//public struct MCSBannerGroup: Codable {
+//    ///
+//    @MCSSafeEnum public var location: MCEBannerLocation
+//    ///
+//    @MCSSafeArray public var items: [MCSBannerItem]
+//}
+//
+/////
+//public enum MCEBannerLocation: String, CaseIterable, Codable, MCPDefaultInitializable {
+//    ///
+//    case unknown
+//}
+//
+/////
+//public struct MCSBannerItem: Codable, MCPDefaultInitializable {
+//    ///
+//    public init() {}
+//    ///
+//    @MCSSafeString public var sign: String
+//    ///
+//    @MCSSafeString public var name: String
+//    ///
+//    @MCSSafeString public var iconUrl: String
+//    ///
+//    @MCSSafeString public var coverUrl: String
+//    ///
+//    @MCSSafeString public var deepLink: String
+//    ///
+//    public var imageUrl: String { !coverUrl.isEmpty ? coverUrl : iconUrl }
+//}
 
 ///
 public struct MCSCfToolboxGroup: Codable, MCPDefaultInitializable {
