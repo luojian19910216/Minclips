@@ -34,12 +34,10 @@ public final class MCCCustomAccessTokenInterceptor: MCPAccessTokenRefreshable {
     public func refreshToken(_ error: MCENetworkError) -> AnyPublisher<Void, MCENetworkError> {
         Future<AnyPublisher<Void, MCENetworkError>, Never> { promise in
             Task {
-                /// 已有续期 / 登录重试
                 if let publisher = await self.state.publisher() {
                     promise(.success(publisher))
                     return
                 }
-                /// 创建续期 / 重新登录 publisher
                 let publisher = self.applyAuthRecovery(for: error)
                     .handleEvents(
                         receiveCompletion: { _ in

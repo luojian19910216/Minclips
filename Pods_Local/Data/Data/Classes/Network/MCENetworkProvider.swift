@@ -43,5 +43,5 @@ enum MCENetworkProvider {
     ///
     static let pushProvider = makeProvider(MCEPushAPI.self)
     ///
-    static let configProvider = makeProvider(MCEConfigAPI.self)
+    static let cfProvider = makeProvider(MCECfAPI.self)
 }

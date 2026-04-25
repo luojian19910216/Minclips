@@ -1,11 +1,11 @@
 //
-//  ConfigResponseModel.swift
+//  MCSCfResponse.swift
 //
 
 import Foundation
 
 ///
-public struct MCSConfigAppResponse: Codable, MCPDefaultInitializable {
+public struct MCSCfLauncherResponse: Codable, MCPDefaultInitializable {
     ///
     public init() {}
     ///
@@ -83,17 +83,17 @@ public struct MCSBannerItem: Codable, MCPDefaultInitializable {
 }
 
 ///
-public struct MCSConfigToolsGroup: Codable, MCPDefaultInitializable {
+public struct MCSCfToolboxGroup: Codable, MCPDefaultInitializable {
     ///
     public init() {}
     ///
     @MCSSafeString public var name: String
     ///
-    @MCSSafeArray public var item: [MCSConfigToolsItemp]
+    @MCSSafeArray public var item: [MCSCfToolboxItem]
 }
 
 ///
-public struct MCSConfigToolsItemp: Codable, MCPDefaultInitializable {
+public struct MCSCfToolboxItem: Codable, MCPDefaultInitializable {
     ///
     public init() {}
     ///
@@ -121,33 +121,32 @@ public struct MCSConfigToolsItemp: Codable, MCPDefaultInitializable {
 }
 
 ///
-public struct MCSConfigOssstsResponse: Codable, MCPDefaultInitializable {
+public struct MCSCfOssTokenResponse: Codable, MCPDefaultInitializable {
     ///
     public init() {}
-    ///
-    @MCSSafeString public var accessKeyId: String
-    ///
-    @MCSSafeString public var accessKeySecret: String
-    ///
-    @MCSSafeString public var securityToken: String
-    ///
-    @MCSSafeString public var endpoint: String
-    ///
-    @MCSSafeString public var region: String
-    ///
+    /// accessKeyId
+    @MCSSafeString public var cloudAccessKeyId: String
+    /// accessKeySecret
+    @MCSSafeString public var cloudSecretKey: String
+    /// securityToken
+    @MCSSafeString public var sessionToken: String
+    /// expiration
+    @MCSSafeString public var expiresAt: String
+    /// objectKey
+    @MCSSafeString public var objectPath: String
+    /// uploadUrl
+    @MCSSafeString public var uploadTargetUrl: String
+    /// bucketName
     @MCSSafeString public var bucketName: String
-    ///
-    @MCSSafeString public var objectKey: String
-    ///
-    @MCSSafeString public var expiration: String
-    ///
-    @MCSSafeString public var uploadUrl: String
+    /// endpoint
+    @MCSSafeString public var endpoint: String
+    /// region
+    @MCSSafeString public var region: String
 }
 
 ///
-public struct MCSConfigFileUploadResponse: Codable, MCPDefaultInitializable {
-    ///
+public struct MCSCfCdnObjectResponse: Codable, MCPDefaultInitializable {
     public init() {}
-    ///
-    @MCSSafeString public var cdnPath: String
+    /// cdnPath
+    @MCSSafeString public var cdnObjectPath: String
 }

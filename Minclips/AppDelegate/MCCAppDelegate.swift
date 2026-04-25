@@ -200,7 +200,7 @@ extension MCCAppDelegate {
         guard !MCCAppConfig.shared.configStatus else { return }
         Publishers
             .Zip(
-                MCCConfigAPIManager.shared.appConfig(),
+                MCCCfAPIManager.shared.launcher(),
                 MCCProductAPIManager.shared.findAll()
             )
             .sink { [weak self] completion in
