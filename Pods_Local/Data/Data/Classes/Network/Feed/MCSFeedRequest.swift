@@ -56,20 +56,20 @@ public struct MCSFeedReportRequest: Codable {
 public struct MCSFeedExposeRequest: Codable {
     ///
     public init() {}
-    ///
-    public var templates: [MCSFeedExposeItem]?
+    /// templates
+    public var exposureItems: [MCSFeedExposeItem]?
 }
 
 ///
 public struct MCSFeedExposeItem: Codable {
     ///
     public init() {}
-    ///
-    public var templateId: String = ""
-    ///
-    public var pageTitle: String = ""
-    ///
-    public var channel: String?
-    ///
-    public var eventTime: Int64 = 0
+    /// templateId
+    public var templateRef: String = ""
+    /// pageTitle
+    public var viewTitle: String = ""
+    /// channel
+    public var channelKey: String?
+    /// eventTime
+    public var eventAt: Int64 = 0
 }
