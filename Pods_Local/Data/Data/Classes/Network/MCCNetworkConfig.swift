@@ -89,23 +89,23 @@ public final class MCCNetworkConfig {
     }
     ///
     public lazy var defaultHeader: [String: String] = [
-        "platform": Self.platform,
-        "platform-brand": Self.platformBrand,
-        "platform-model": Self.platformModel,
-        "platform-v": Self.platformVersion,
-        "timezone": Self.timeZone.urlEncoded,
-        "carrier": "--",
-        "network-type": "--",
-        "app-name": Self.appName.lowercased(),
-        "bundle": Self.appBundleId,
-        "client-v": Self.appShortVersion,
-        "lang": "en",
-        "utm-source": "Apple",
-        "webview-ua": "",
-        "Content-Type": "application/json",
-        "device-id": MCCKeychainManager.shared.deviceId,
-        "te-device-id": MCCKeychainManager.shared.deviceId,
-        "te-distinct-id": MCCKeychainManager.shared.deviceId
+        "X-Mnc-Platform": Self.platform,
+        "X-Mnc-Client-Version": Self.appShortVersion,
+        "X-Mnc-Device-Id": MCCKeychainManager.shared.deviceId,
+        "X-Mnc-Platform-Version": Self.platformVersion,
+        "X-Mnc-Platform-Model": Self.platformModel,
+        "X-Mnc-Platform-Brand": Self.platformBrand,
+        "X-Mnc-Bundle": Self.appBundleId,
+        "X-Mnc-Network-Type": "--",
+        "X-Mnc-Utm-Source": "Apple",
+        "X-Mnc-Zone": Self.timeZone.urlEncoded,
+        "X-Mnc-Language": "en",
+        "X-Mnc-Carrier": "--",
+        "X-Mnc-Webview-Ua": "",
+        "X-Mnc-App-Name": Self.appName.lowercased(),
+        "X-Te-Device-Id": MCCKeychainManager.shared.deviceId,
+        "X-Te-Distinct-Id": MCCKeychainManager.shared.deviceId,
+        "Content-Type": "application/json"
     ]
     ///
     public static var platform: String = "iOS"

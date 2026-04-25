@@ -29,10 +29,10 @@ public class MCCAppDelegate: UIResponder, UIApplicationDelegate {
         MCCNetworkConfig.shared.start(with: .current, environment: .current)
         MCCAppConfig.shared.$networkType
             .removeDuplicates()
-            .sink { MCCNetworkConfig.shared.defaultHeader["network-type"] = $0 }
+            .sink { MCCNetworkConfig.shared.defaultHeader["X-Mnc-Network-Type"] = $0 }
             .store(in: &cancellables)
         MCCLanguageTool.shared.$currentLanguage
-            .sink { MCCNetworkConfig.shared.defaultHeader["lang"] = $0.codeToService }
+            .sink { MCCNetworkConfig.shared.defaultHeader["X-Mnc-Language"] = $0.codeToService }
             .store(in: &cancellables)
 
         MCCDatabaseManager.shared.initialization()

@@ -25,7 +25,7 @@ public struct MCSCustomAccessTokenPlugin: PluginType {
         let authValue = [authorizationType.value, tokenClosure(realTarget)].filter {!$0.isEmpty}.joined(separator: " ")
         guard !authValue.isEmpty else { return request }
         var request = request
-        request.addValue(authValue, forHTTPHeaderField: "access-token")
+        request.addValue(authValue, forHTTPHeaderField: "X-Mnc-Access-Token")
         return request
     }
 }

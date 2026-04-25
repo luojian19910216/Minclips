@@ -41,8 +41,6 @@ enum MCENetworkProvider {
     ///
     static let productProvider = makeProvider(MCEProductAPI.self)
     ///
-    static let rewardProvider = makeProvider(MCERewardAPI.self)
-    ///
     static let pushProvider = makeProvider(MCEPushAPI.self)
     ///
     static let configProvider = makeProvider(MCEConfigAPI.self)

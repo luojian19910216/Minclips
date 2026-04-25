@@ -37,13 +37,13 @@
 		F614F8522F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F614F84E2F9B495600A31DB4 /* MCCBaseViewModel.swift */; };
 		F65886702EF5475A00A094B5 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F65886652EF5475A00A094B5 /* Images.xcassets */; };
 		F65886722EF5475A00A094B5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F65886672EF5475A00A094B5 /* LaunchScreen.storyboard */; };
+		F65886732EF5475A00A094B5 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F65886652EF5475A00A094B5 /* Images.xcassets */; };
+		F65886742EF5475A00A094B5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F65886672EF5475A00A094B5 /* LaunchScreen.storyboard */; };
 		F65888C82EF5548800A094B5 /* MCCAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */; };
 		F65888C92EF5548800A094B5 /* MCCAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C62EF5548800A094B5 /* MCCAppConfig.swift */; };
 		F65888CA2EF5548800A094B5 /* MCCAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C62EF5548800A094B5 /* MCCAppConfig.swift */; };
 		F65889512EF8E26600A094B5 /* MCCAppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65889502EF8E26600A094B5 /* MCCAppRouter.swift */; };
 		F65889522EF8E26600A094B5 /* MCCAppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65889502EF8E26600A094B5 /* MCCAppRouter.swift */; };
-		F65889732EF8E8D800A094B5 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F65889722EF8E8D800A094B5 /* Colors.xcassets */; };
-		F65889742EF8E8D800A094B5 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F65889722EF8E8D800A094B5 /* Colors.xcassets */; };
 		F65889772EF8E93F00A094B5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889752EF8E93F00A094B5 /* InfoPlist.strings */; };
 		F65889782EF8E93F00A094B5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889752EF8E93F00A094B5 /* InfoPlist.strings */; };
 		F658897B2EF8E95900A094B5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889792EF8E95900A094B5 /* Localizable.strings */; };
@@ -64,6 +64,7 @@
 		F6D5460A2F90B9B8002C4F70 /* MCCShopCartController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F38B2F39DC6E001F28A1 /* MCCShopCartController.swift */; };
 		F6D5460D2F90B9B8002C4F70 /* MCCGuideViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0196A2F8CF91A0096831D /* MCCGuideViewModel.swift */; };
 		F6D5460F2F90B9B8002C4F70 /* MCCAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */; };
+		F6D5467A2F90B9B8002C4F70 /* MCCAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */; };
 		F6D546162F90B9B8002C4F70 /* MCSGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019672F8CF6E90096831D /* MCSGuide.swift */; };
 		F6D546172F90B9B8002C4F70 /* MCCTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB92EFA402B00A094B5 /* MCCTabBarController.swift */; };
 		F6D546192F90B9B8002C4F70 /* MCCGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019642F8CF6A50096831D /* MCCGuideView.swift */; };
@@ -74,7 +75,6 @@
 		F6D546452F90B9B8002C4F70 /* MCCLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019612F8CF67C0096831D /* MCCLaunchView.swift */; };
 		F6D5464A2F90B9B8002C4F70 /* MCCShopHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3852F39DC15001F28A1 /* MCCShopHomeController.swift */; };
 		F6D5464F2F90B9B8002C4F70 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889792EF8E95900A094B5 /* Localizable.strings */; };
-		F6D546502F90B9B8002C4F70 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F65889722EF8E8D800A094B5 /* Colors.xcassets */; };
 		F6D546512F90B9B8002C4F70 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889752EF8E93F00A094B5 /* InfoPlist.strings */; };
 		F6D546522F90B9B8002C4F70 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F65886652EF5475A00A094B5 /* Images.xcassets */; };
 		F6D546532F90B9B8002C4F70 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F65886672EF5475A00A094B5 /* LaunchScreen.storyboard */; };
@@ -96,7 +96,6 @@
 		F6D546A72F90B9C9002C4F70 /* MCCLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019612F8CF67C0096831D /* MCCLaunchView.swift */; };
 		F6D546AC2F90B9C9002C4F70 /* MCCShopHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3852F39DC15001F28A1 /* MCCShopHomeController.swift */; };
 		F6D546B12F90B9C9002C4F70 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889792EF8E95900A094B5 /* Localizable.strings */; };
-		F6D546B22F90B9C9002C4F70 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F65889722EF8E8D800A094B5 /* Colors.xcassets */; };
 		F6D546B32F90B9C9002C4F70 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889752EF8E93F00A094B5 /* InfoPlist.strings */; };
 		F6D546B42F90B9C9002C4F70 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F65886652EF5475A00A094B5 /* Images.xcassets */; };
 		F6D546B52F90B9C9002C4F70 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F65886672EF5475A00A094B5 /* LaunchScreen.storyboard */; };
@@ -170,7 +169,6 @@
 		F658894E2EF8E05300A094B5 /* Minclips_T.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Minclips_T.entitlements; sourceTree = "<group>"; };
 		F658894F2EF8E06400A094B5 /* Minclips_R.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Minclips_R.entitlements; sourceTree = "<group>"; };
 		F65889502EF8E26600A094B5 /* MCCAppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCAppRouter.swift; sourceTree = "<group>"; };
-		F65889722EF8E8D800A094B5 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		F65889762EF8E93F00A094B5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F658897A2EF8E95900A094B5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		F6588BB32EFA401200A094B5 /* MCCLaunchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCLaunchController.swift; sourceTree = "<group>"; };
@@ -303,7 +301,6 @@
 			isa = PBXGroup;
 			children = (
 				F658896C2EF8E5BC00A094B5 /* Fonts */,
-				F658896E2EF8E5E100A094B5 /* Colors */,
 				F658896D2EF8E5C300A094B5 /* Images */,
 			);
 			path = Resources;
@@ -382,14 +379,6 @@
 				F65886652EF5475A00A094B5 /* Images.xcassets */,
 			);
 			path = Images;
-			sourceTree = "<group>";
-		};
-		F658896E2EF8E5E100A094B5 /* Colors */ = {
-			isa = PBXGroup;
-			children = (
-				F65889722EF8E8D800A094B5 /* Colors.xcassets */,
-			);
-			path = Colors;
 			sourceTree = "<group>";
 		};
 		F65889712EF8E82600A094B5 /* Supporting Files */ = {
@@ -538,7 +527,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F658897B2EF8E95900A094B5 /* Localizable.strings in Resources */,
-				F65889732EF8E8D800A094B5 /* Colors.xcassets in Resources */,
 				F65889772EF8E93F00A094B5 /* InfoPlist.strings in Resources */,
 				F65886702EF5475A00A094B5 /* Images.xcassets in Resources */,
 				F65886722EF5475A00A094B5 /* LaunchScreen.storyboard in Resources */,
@@ -549,9 +537,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F65889742EF8E8D800A094B5 /* Colors.xcassets in Resources */,
 				F658897C2EF8E95900A094B5 /* Localizable.strings in Resources */,
 				F65889782EF8E93F00A094B5 /* InfoPlist.strings in Resources */,
+				F65886732EF5475A00A094B5 /* Images.xcassets in Resources */,
+				F65886742EF5475A00A094B5 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -560,7 +549,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F6D5464F2F90B9B8002C4F70 /* Localizable.strings in Resources */,
-				F6D546502F90B9B8002C4F70 /* Colors.xcassets in Resources */,
 				F6D546512F90B9B8002C4F70 /* InfoPlist.strings in Resources */,
 				F6D546522F90B9B8002C4F70 /* Images.xcassets in Resources */,
 				F6D546532F90B9B8002C4F70 /* LaunchScreen.storyboard in Resources */,
@@ -572,7 +560,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F6D546B12F90B9C9002C4F70 /* Localizable.strings in Resources */,
-				F6D546B22F90B9C9002C4F70 /* Colors.xcassets in Resources */,
 				F6D546B32F90B9C9002C4F70 /* InfoPlist.strings in Resources */,
 				F6D546B42F90B9C9002C4F70 /* Images.xcassets in Resources */,
 				F6D546B52F90B9C9002C4F70 /* LaunchScreen.storyboard in Resources */,
@@ -795,6 +782,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F6D5467A2F90B9B8002C4F70 /* MCCAppDelegate.swift in Sources */,
 				F614F8522F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */,
 				F6D547722F9B4796002C4F70 /* MCCBaseView.swift in Sources */,
 				03D2F38C2F39DC6E001F28A1 /* MCCShopCartController.swift in Sources */,
