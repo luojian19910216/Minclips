@@ -9,7 +9,7 @@ public struct MCSGuide: Codable, Hashable {
     ///
     public var id: String = UUID().uuidString
     ///
-    public var medio: String = ""
+    public var media: String = ""
     ///
     public var title: String = ""
     ///

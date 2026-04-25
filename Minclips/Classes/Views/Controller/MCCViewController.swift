@@ -75,7 +75,7 @@ open class MCCViewControllerCore: UIViewController, MCPViewControllerInitProtoco
         set {}
     }
     
-    // MARK: - Life Cycye
+    // MARK: - Life Cycle
     
     required
     public init?(coder: NSCoder) { fatalError() }
@@ -164,7 +164,7 @@ open class MCCViewControllerCore: UIViewController, MCPViewControllerInitProtoco
     open func mcvc_loadData() {}
     
     // MARK: - Other Method
-        
+    
     private func registerNotifications() {
         NotificationCenter.default.publisher(for: .languageUpdated)
             .receive(on: DispatchQueue.main)
@@ -193,7 +193,7 @@ open class MCCViewController<View: MCCBaseView, ViewModel: MCCBaseViewModel>: MC
         return self.view as! View
     }
     
-    // MARK: - Life Cycye
+    // MARK: - Life Cycle
     
     public override func loadView() {
         self.view = View()

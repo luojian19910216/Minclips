@@ -41,8 +41,6 @@ public final class MCCShotsViewModel: MCCBaseViewModel, ObservableObject {
     /// DEBUG 下可置 true 以概率失败标签请求，便于自测
     public var mcsv_debugSimulateTagFailure: Bool = false
 
-    // MARK: - 标签
-
     /// 拉标签；成功后会自动用 **第一个** 标签拉取列表；失败不拉列表。
     public func mcsv_loadTags() {
         tagsPhase = .loading
@@ -77,8 +75,6 @@ public final class MCCShotsViewModel: MCCBaseViewModel, ObservableObject {
             mcsv_loadList(tagId: id, isUserRefresh: false)
         }
     }
-
-    // MARK: - 列表
 
     /// 拉指定 tag 的列表；已缓存且非用户主动刷新时可直接用缓存（由调用方控制）。
     public func mcsv_loadList(tagId: String, isUserRefresh: Bool) {
@@ -121,8 +117,6 @@ public final class MCCShotsViewModel: MCCBaseViewModel, ObservableObject {
         tags[safe: selectedTagIndex]?.id
     }
 }
-
-// MARK: - Mock
 
 public extension MCCShotsViewModel {
 

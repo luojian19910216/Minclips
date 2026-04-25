@@ -7,26 +7,34 @@ import Combine
 
 public class MCCGuideController: MCCViewController<MCCGuideView, MCCGuideViewModel> {
     
-    // MARK: - Life Cycle
-    
-    public override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        self.viewModel.loadData()
-    }
-    
     // MARK: - Init
-    
-    public override func mcvc_setupLocalization() {
-        self.contentView.backgroundColor = .black
-    }
-    
+
     public override func mcvc_bindService() {
-        viewModel.$models
-            .sink { [weak self] models in
-                self?.contentView.models = models
+        self.contentView.bindInput(
+            MCCGuideViewInput(
+                models: self.viewModel.$models
+                    .receive(on: DispatchQueue.main)
+                    .eraseToAnyPublisher()
+            )
+        )
+        
+        self.contentView.output
+            .receive(on: DispatchQueue.main)
+            .sink { event in
+                switch event {
+                case .primaryTapped(_, _, let isLastPage):
+                    if isLastPage {
+                        MCCAppConfig.shared.guideFlag = true
+                    }
+                case .pageIndexChanged:
+                    break
+                }
             }
             .store(in: &cancellables)
+    }
+    
+    public override func mcvc_loadData() {
+        self.viewModel.loadData()
     }
     
 }

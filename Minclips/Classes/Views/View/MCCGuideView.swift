@@ -5,19 +5,41 @@
 import UIKit
 import Common
 import Combine
-import CombineCocoa
 import SnapKit
 
-public final class MCCGuideView: MCCBaseView {
-        
-    public var models: [MCSGuide] = [] {
-        didSet {
-            var snapshot = NSDiffableDataSourceSnapshot<MCESection, MCSGuide>()
-            snapshot.appendSections([.main])
-            snapshot.appendItems(models, toSection: .main)
-            dataSource.apply(snapshot, animatingDifferences: true)
-        }
+// MARK: - Input / Output
+
+public struct MCCGuideViewInput {
+    ///
+    public var models: AnyPublisher<[MCSGuide], Never>
+    ///
+    public init(models: AnyPublisher<[MCSGuide], Never>) {
+        self.models = models
     }
+}
+
+public enum MCCGuideViewOutput: Equatable {
+    ///
+    case primaryTapped(index: Int, model: MCSGuide, isLastPage: Bool)
+    ///
+    case pageIndexChanged(index: Int)
+}
+
+public final class MCCGuideView: MCCBaseView {
+    
+    // MARK: - Properties
+    
+    private var models: [MCSGuide] = []
+    
+    private var lastPrimaryAt: Date?
+    
+    private let outputSubject = PassthroughSubject<MCCGuideViewOutput, Never>()
+    
+    public var output: AnyPublisher<MCCGuideViewOutput, Never> {
+        outputSubject.eraseToAnyPublisher()
+    }
+    
+    // MARK: - Lazy
     
     public lazy var collectionView: UICollectionView = {
         let item: UICollectionView = .init(frame: .zero, collectionViewLayout: {
@@ -33,22 +55,20 @@ public final class MCCGuideView: MCCBaseView {
         item.bounces = false
         item.isPagingEnabled = true
         item.showsHorizontalScrollIndicator = false
+        item.delegate = self
         return item
     }()
     
     public lazy var dataSource: UICollectionViewDiffableDataSource<MCESection, MCSGuide> = {
-        let guideCellRegistration = UICollectionView.CellRegistration<MCCGuideCell, MCSGuide> { [weak self] cell, indexPath, model in
+        let guideCellRegistration = UICollectionView.CellRegistration<MCCGuideCell, MCSGuide> { cell, _, model in
             cell.titleLab.text = model.title
             cell.detailLab.text = model.detail
             cell.handleBtn.setTitle(model.handleBtnTitle, for: .normal)
-            cell.handleBtn.controlEventPublisher(for: .touchUpInside)
-                .throttle(for: .seconds(1), scheduler: RunLoop.main, latest: true)
-                .sink { _ in
-                    self?.onHandleBtnTap(model: model)
-                }
-                .store(in: &cell.cancellables)
+            cell.onPrimary = { [weak self] in
+                self?.handlePrimary(model: model)
+            }
         }
-        let dataSource: UICollectionViewDiffableDataSource<MCESection, MCSGuide> = .init(collectionView: collectionView) { [weak self] collectionView, indexPath, model in
+        let dataSource: UICollectionViewDiffableDataSource<MCESection, MCSGuide> = .init(collectionView: collectionView) { collectionView, indexPath, model in
             return collectionView.dequeueConfiguredReusableCell(
                 using: guideCellRegistration,
                 for: indexPath,
@@ -58,6 +78,8 @@ public final class MCCGuideView: MCCBaseView {
         return dataSource
     }()
     
+    // MARK: - Init
+    
     public override func mcvw_setupUI() {
         self.addSubview(self.collectionView)
         self.collectionView.snp.makeConstraints { make in
@@ -65,19 +87,75 @@ public final class MCCGuideView: MCCBaseView {
         }
     }
     
-    public func onHandleBtnTap(model: MCSGuide) {
-        guard let index = models.firstIndex(of: model) else { return }
-        if index < models.count - 1 {
-            let offsetX = MCCScreenSize.width * CGFloat(index + 1)
-            collectionView.setContentOffset(.init(x: offsetX, y: 0), animated: true)
-        } else {
-            MCCAppConfig.shared.guideFlag = true
-        }
+    public func bindInput(_ input: MCCGuideViewInput) {
+        input.models
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] models in
+                self?.applyModels(models)
+            }
+            .store(in: &cancellables)
     }
     
 }
 
+extension MCCGuideView: UICollectionViewDelegate {
+    ///
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        emitPageIfChanged()
+    }
+    ///
+    public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        emitPageIfChanged()
+    }
+}
+
+extension MCCGuideView {
+    
+    private func applyModels(_ models: [MCSGuide]) {
+        self.models = models
+        var snapshot = NSDiffableDataSourceSnapshot<MCESection, MCSGuide>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(models, toSection: .main)
+        dataSource.apply(snapshot, animatingDifferences: true)
+    }
+    
+    private func handlePrimary(model: MCSGuide) {
+        let now = Date()
+        if let last = lastPrimaryAt, now.timeIntervalSince(last) < 1 {
+            return
+        }
+        lastPrimaryAt = now
+        guard let index = models.firstIndex(where: { $0.id == model.id }) else { return }
+        let isLast = index == models.count - 1
+        outputSubject.send(.primaryTapped(index: index, model: model, isLastPage: isLast))
+        if !isLast {
+            let offsetX = MCCScreenSize.width * CGFloat(index + 1)
+            collectionView.setContentOffset(.init(x: offsetX, y: 0), animated: true)
+        }
+    }
+    
+    private func currentPageIndex() -> Int {
+        let w = MCCScreenSize.width
+        guard w > 0 else { return 0 }
+        return Int(round(collectionView.contentOffset.x / w))
+    }
+    
+    private func emitPageIfChanged() {
+        let page = min(max(0, currentPageIndex()), max(0, models.count - 1))
+        outputSubject.send(.pageIndexChanged(index: page))
+    }
+    
+}
+
+// MARK: - MCCGuideCell
+
 public final class MCCGuideCell: MCCBaseCollectionViewCell {
+    
+    // MARK: - Properties
+    
+    public var onPrimary: (() -> Void)?
+    
+    // MARK: - Lazy
     
     public lazy var titleLab: UILabel = {
         let item: UILabel = .init()
@@ -105,6 +183,8 @@ public final class MCCGuideCell: MCCBaseCollectionViewCell {
         return item
     }()
     
+    // MARK: - Init
+    
     public override func mcvw_setupUI() {
         self.contentView.addSubview(self.titleLab)
         self.titleLab.snp.makeConstraints { make in
@@ -124,6 +204,21 @@ public final class MCCGuideCell: MCCBaseCollectionViewCell {
             make.bottom.equalToSuperview().inset(MCCScreenSize.bottomSafeHeight + 16)
             make.height.equalTo(48)
         }
+        self.handleBtn.addTarget(self, action: #selector(mccg_handleBtnTouchUp), for: .touchUpInside)
+    }
+    
+    // MARK: - Life Cycle
+
+    public override func prepareForReuse() {
+        super.prepareForReuse()
+        onPrimary = nil
+    }
+    
+    // MARK: - Private
+
+    @objc
+    private func mccg_handleBtnTouchUp() {
+        onPrimary?()
     }
     
 }

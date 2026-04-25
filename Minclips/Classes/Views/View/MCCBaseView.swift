@@ -23,6 +23,12 @@ open class MCCBaseView: UIView, MCPViewInit {
     
     public var cancellables = Set<AnyCancellable>()
     
+    // MARK: - Init
+    
+    open func mcvw_setupUI() {}
+
+    open func mcvw_bind() {}
+    
     // MARK: - Life Cycle
     
     required
@@ -45,12 +51,6 @@ open class MCCBaseView: UIView, MCPViewInit {
     deinit {
         print("View deinit（\(classForCoder)）")
     }
-    
-    // MARK: - Init
-    
-    open func mcvw_setupUI() {}
-
-    open func mcvw_bind() {}
 
 }
 
@@ -60,6 +60,12 @@ open class MCCBaseCollectionReusableView: UICollectionReusableView, MCPViewInit 
     
     public var cancellables = Set<AnyCancellable>()
     
+    // MARK: - Init
+    
+    open func mcvw_setupUI() {}
+
+    open func mcvw_bind() {}
+    
     // MARK: - Life Cycle
     
     required
@@ -87,12 +93,6 @@ open class MCCBaseCollectionReusableView: UICollectionReusableView, MCPViewInit 
     deinit {
         print("View deinit（\(classForCoder)）")
     }
-    
-    // MARK: - Init
-    
-    open func mcvw_setupUI() {}
-
-    open func mcvw_bind() {}
     
 }
 
@@ -102,6 +102,12 @@ open class MCCBaseCollectionViewCell: UICollectionViewCell, MCPViewInit {
     
     public var cancellables = Set<AnyCancellable>()
     
+    // MARK: - Init
+    
+    open func mcvw_setupUI() {}
+
+    open func mcvw_bind() {}
+    
     // MARK: - Life Cycle
     
     required
@@ -129,12 +135,6 @@ open class MCCBaseCollectionViewCell: UICollectionViewCell, MCPViewInit {
     deinit {
         print("View deinit（\(classForCoder)）")
     }
-    
-    // MARK: - Init
-    
-    open func mcvw_setupUI() {}
-
-    open func mcvw_bind() {}
     
 }
 
