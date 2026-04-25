@@ -34,7 +34,7 @@ public class MCCTabBarController: UITabBarController {
     open override var childForStatusBarStyle: UIViewController? {
         return self.selectedViewController
     }
-       
+    
     // MARK: - NavigationBar
     
     public override var fd_prefersNavigationBarHidden: Bool {
@@ -69,19 +69,13 @@ public class MCCTabBarController: UITabBarController {
         return vc
     }()
     
-    public lazy var fourVC: MCCUserHomeController = {
-        let vc: MCCUserHomeController = .init()
-        vc.tabBarItem.image = UIImage.init(named: "ic_tab_home")?.withRenderingMode(.alwaysTemplate)
-        return vc
-    }()
-    
     // MARK: - Life Cycle
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         
         self.delegate = self
-        self.viewControllers = [firstVC, secondVC, thirdVC, fourVC]
+        self.viewControllers = [firstVC, secondVC, thirdVC]
         
         self.tabBar.mc_barStyle = .glassDark
         
@@ -93,7 +87,6 @@ public class MCCTabBarController: UITabBarController {
                 self.firstVC.tabBarItem.title = "标题"
                 self.secondVC.tabBarItem.title = "标题"
                 self.thirdVC.tabBarItem.title = "标题"
-                self.fourVC.tabBarItem.title = "标题"
             }
             .store(in: &cancellables)
     }
