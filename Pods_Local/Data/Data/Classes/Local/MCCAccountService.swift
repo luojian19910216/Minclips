@@ -26,14 +26,14 @@ public final class MCCAccountService {
     }
     ///
     private init() {
-        if let uid = UserDefaults.standard.string(forKey: MCEUserConfig.currentUid),
-           let user = MCCUserTableManager.shared.getUser(by: uid) {
+        if let id = UserDefaults.standard.string(forKey: MCEUserConfig.currentUid), !id.isEmpty,
+           let user = MCCUserTableManager.shared.getUser(by: id) {
             currentUser.send(user)
         }
     }
     ///
     public func login(user: MCSUser) {
-        UserDefaults.standard.set(user.uid, forKey: MCEUserConfig.currentUid)
+        UserDefaults.standard.set(user.userId, forKey: MCEUserConfig.currentUid)
         MCCUserTableManager.shared.saveUser(user)
         currentUser.send(user)
     }
@@ -44,7 +44,7 @@ public final class MCCAccountService {
     }
     ///
     public func updateCurrentUser(_ user: MCSUser) {
-        UserDefaults.standard.set(user.uid, forKey: MCEUserConfig.currentUid)
+        UserDefaults.standard.set(user.userId, forKey: MCEUserConfig.currentUid)
         MCCUserTableManager.shared.saveUser(user)
         currentUser.send(user)
     }

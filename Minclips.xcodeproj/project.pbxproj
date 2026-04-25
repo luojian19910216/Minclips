@@ -64,7 +64,6 @@
 		F6D5460A2F90B9B8002C4F70 /* MCCShopCartController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F38B2F39DC6E001F28A1 /* MCCShopCartController.swift */; };
 		F6D5460D2F90B9B8002C4F70 /* MCCGuideViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0196A2F8CF91A0096831D /* MCCGuideViewModel.swift */; };
 		F6D5460F2F90B9B8002C4F70 /* MCCAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */; };
-		F6D5467A2F90B9B8002C4F70 /* MCCAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */; };
 		F6D546162F90B9B8002C4F70 /* MCSGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019672F8CF6E90096831D /* MCSGuide.swift */; };
 		F6D546172F90B9B8002C4F70 /* MCCTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB92EFA402B00A094B5 /* MCCTabBarController.swift */; };
 		F6D546192F90B9B8002C4F70 /* MCCGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019642F8CF6A50096831D /* MCCGuideView.swift */; };
@@ -88,6 +87,7 @@
 		F6D546712F90B9C9002C4F70 /* MCCAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */; };
 		F6D546782F90B9C9002C4F70 /* MCSGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019672F8CF6E90096831D /* MCSGuide.swift */; };
 		F6D546792F90B9C9002C4F70 /* MCCTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB92EFA402B00A094B5 /* MCCTabBarController.swift */; };
+		F6D5467A2F90B9B8002C4F70 /* MCCAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */; };
 		F6D5467B2F90B9C9002C4F70 /* MCCGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019642F8CF6A50096831D /* MCCGuideView.swift */; };
 		F6D5467E2F90B9C9002C4F70 /* MCCShopDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030D06AE2F3AE2C2003A0AB8 /* MCCShopDetailController.swift */; };
 		F6D5467F2F90B9C9002C4F70 /* MCCShopCategoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3882F39DC5B001F28A1 /* MCCShopCategoryController.swift */; };
@@ -577,13 +577,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_P/Pods-Minclips_P-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_P/Pods-Minclips_P-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -664,13 +660,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_R/Pods-Minclips_R-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_R/Pods-Minclips_R-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -685,13 +677,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_T/Pods-Minclips_T-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_T/Pods-Minclips_T-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -706,13 +694,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_D/Pods-Minclips_D-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_D/Pods-Minclips_D-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

@@ -34,13 +34,13 @@ public final class MCCCustomAccessTokenInterceptor: MCPAccessTokenRefreshable {
     public func refreshToken(_ error: MCENetworkError) -> AnyPublisher<Void, MCENetworkError> {
         Future<AnyPublisher<Void, MCENetworkError>, Never> { promise in
             Task {
-                /// 已有 refresh
+                /// 已有续期 / 登录重试
                 if let publisher = await self.state.publisher() {
                     promise(.success(publisher))
                     return
                 }
-                /// 创建 refresh publisher
-                let publisher = self.refresh(with: error)
+                /// 创建续期 / 重新登录 publisher
+                let publisher = self.applyAuthRecovery(for: error)
                     .handleEvents(
                         receiveCompletion: { _ in
                             Task { await self.state.clear() }
@@ -59,21 +59,19 @@ public final class MCCCustomAccessTokenInterceptor: MCPAccessTokenRefreshable {
         .eraseToAnyPublisher()
     }
     ///
-    private func refresh(with error: MCENetworkError) -> AnyPublisher<Void, MCENetworkError> {
+    private func applyAuthRecovery(for error: MCENetworkError) -> AnyPublisher<Void, MCENetworkError> {
         let request: AnyPublisher<MCSUser, MCENetworkError>
         switch error {
         case .loginExpired:
-            var requestModel: MCSUserLoginRequest = .init()
-            requestModel.pushStatus = 2
-            request = MCCUserAPIManager.shared.login(with: requestModel)
+            request = MCCUmAPIManager.shared.identityEstablish()
         case .tokenExpired:
-            guard let refreshToken = MCCAccountService.shared.currentUser.value?.refreshToken else {
+            guard let reauthValue = MCCAccountService.shared.currentUser.value?.renewToken else {
                 return Fail(error: MCENetworkError.loginExpired)
                     .eraseToAnyPublisher()
             }
-            var requestModel: MCSUserRefreshRequest = .init()
-            requestModel.refreshToken = refreshToken
-            request = MCCUserAPIManager.shared.refresh(with: requestModel)
+            var requestModel = MCSUmCredentialRenewRequest()
+            requestModel.reauthKey = reauthValue
+            request = MCCUmAPIManager.shared.credentialRenew(with: requestModel)
         default:
             return Fail(error: error)
                 .eraseToAnyPublisher()

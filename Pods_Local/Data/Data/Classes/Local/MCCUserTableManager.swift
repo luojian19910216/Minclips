@@ -28,9 +28,9 @@ public final class MCCUserTableManager {
         }
     }
     ///
-    public func getUser(by uid: String) -> MCSUser? {
+    public func getUser(by userId: String) -> MCSUser? {
         do {
-            return try database.getObject(fromTable: MCSUser.tableName, where: MCSUser.Properties.uid == uid)
+            return try database.getObject(fromTable: MCSUser.tableName, where: MCSUser.Properties.userId == userId)
         } catch {
 #if DEBUG
             print("MCCUserTableManager getUser error: \(error)")
@@ -64,9 +64,9 @@ public final class MCCUserTableManager {
         }
     }
     /// 
-    public func deleteUser(by uid: String) -> Bool {
+    public func deleteUser(by userId: String) -> Bool {
         do {
-            try database.delete(fromTable: MCSUser.tableName, where: MCSUser.Properties.uid == uid)
+            try database.delete(fromTable: MCSUser.tableName, where: MCSUser.Properties.userId == userId)
             return true
         } catch {
 #if DEBUG

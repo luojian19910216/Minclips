@@ -20,7 +20,7 @@ enum MCENetworkProvider {
     private static func makePlugins(enableLogger: Bool = true) -> [PluginType] {
         var plugins: [PluginType] = [
             MCSCustomAccessTokenPlugin(tokenClosure: { _ in
-                MCCAccountService.shared.currentUser.value?.accessToken ?? ""
+                MCCAccountService.shared.currentUser.value?.authToken ?? ""
             })
         ]
         if enableLogger {
@@ -33,7 +33,7 @@ enum MCENetworkProvider {
         MoyaProvider<T>(session: makeSession(), plugins: makePlugins(enableLogger: enableLogger))
     }
     ///
-    static let userProvider = makeProvider(MCEUserAPI.self)
+    static let umProvider = makeProvider(MCEUmAPI.self)
     ///
     static let templateProvider = makeProvider(MCETemplateAPI.self)
     ///

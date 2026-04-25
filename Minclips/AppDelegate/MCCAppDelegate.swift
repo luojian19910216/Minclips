@@ -183,9 +183,7 @@ extension MCCAppDelegate {
             next?()
             return
         }
-        var requestModel: MCSUserLoginRequest = .init()
-        requestModel.pushStatus = MCCAppConfig.shared.apnsGranted ? 2 : 1
-        MCCUserAPIManager.shared.login(with: requestModel)
+        MCCUmAPIManager.shared.identityEstablish()
             .sink { [weak self] completion in
                 if case .failure = completion {
                     self?.showAlert()
@@ -339,4 +337,5 @@ extension MCCViewControllerCore {
 
         _configureNav()
     }
+    
 }
