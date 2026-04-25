@@ -21,46 +21,46 @@ public final class MCCTemplateAPIManager {
 extension MCCTemplateAPIManager {
     ///
     public func customLabelList() -> AnyPublisher<MCSList<MCSTemplateLabelItem>, MCENetworkError> {
-        networkManager.request(.customLabelList)
+        networkManager.request(.customLabels)
     }
     ///
     public func customList(with requestModel: MCSTemplateListRequest) -> AnyPublisher<MCSList<MCSTemplateItem>, MCENetworkError> {
-        networkManager.request(.customList(requestModel))
+        networkManager.request(.customItems(requestModel))
     }
     ///
     public func searchKeywords() -> AnyPublisher<[String], MCENetworkError> {
-        networkManager.request(.searchKeywords)
+        networkManager.request(.discoverLexicon)
     }
     ///
     public func search(with requestModel: MCSTemplateListRequest) -> AnyPublisher<MCSTemplateSearchResponse, MCENetworkError> {
-        networkManager.request(.search(requestModel))
+        networkManager.request(.discoverSearch(requestModel))
     }
     ///
     public func viewHistory(with requestModel: MCSTemplateListRequest) -> AnyPublisher<MCSList<MCSTemplateItem>, MCENetworkError> {
-        networkManager.request(.viewHistory(requestModel))
+        networkManager.request(.discoverFootprints(requestModel))
     }
     ///
     public func detail(with requestModel: MCSTemplateDetailRequest) -> AnyPublisher<MCSTemplateItem, MCENetworkError> {
-        networkManager.request(.detail(requestModel))
+        networkManager.request(.itemProfile(requestModel))
     }
     ///
     public func report(with requestModel: MCSTemplateReportRequest) -> AnyPublisher<MCSEmpty, MCENetworkError> {
-        networkManager.request(.report(requestModel))
+        networkManager.request(.itemReport(requestModel))
     }
     ///
     public func like(with requestModel: MCSTemplateDetailRequest) -> AnyPublisher<MCSEmpty, MCENetworkError> {
-        networkManager.request(.like(requestModel))
+        networkManager.request(.favorApply(requestModel))
     }
     ///
     public func dislike(with requestModel: MCSTemplateDetailRequest) -> AnyPublisher<MCSEmpty, MCENetworkError> {
-        networkManager.request(.dislike(requestModel))
+        networkManager.request(.favorCancel(requestModel))
     }
     ///
     public func likeList(with requestModel: MCSTemplateLikeListRequest) -> AnyPublisher<MCSList<MCSTemplateItem>, MCENetworkError> {
-        networkManager.request(.likeList(requestModel))
+        networkManager.request(.favorInventory(requestModel))
     }
     ///
     public func expose(with requestModel: MCSTemplateExposeRequest) -> AnyPublisher<MCSEmpty, MCENetworkError> {
-        networkManager.request(.expose(requestModel))
+        networkManager.request(.discoverImpress(requestModel))
     }
 }

@@ -7,27 +7,27 @@ import Moya
 
 public enum MCETemplateAPI {
     /// /customTemplate/labelList
-    case customLabelList
+    case customLabels
     /// /customTemplate/list
-    case customList(_ requestModel: MCSTemplateListRequest)
+    case customItems(_ requestModel: MCSTemplateListRequest)
     /// /template/searchKeywords
-    case searchKeywords
+    case discoverLexicon
     /// /template/search
-    case search(_ requestModel: MCSTemplateListRequest)
+    case discoverSearch(_ requestModel: MCSTemplateListRequest)
     /// /template/viewHistory
-    case viewHistory(_ requestModel: MCSTemplateListRequest)
+    case discoverFootprints(_ requestModel: MCSTemplateListRequest)
     /// /template/detail
-    case detail(_ requestModel: MCSTemplateDetailRequest)
+    case itemProfile(_ requestModel: MCSTemplateDetailRequest)
     /// /template/report
-    case report(_ requestModel: MCSTemplateReportRequest)
+    case itemReport(_ requestModel: MCSTemplateReportRequest)
     /// /like/like
-    case like(_ requestModel: MCSTemplateDetailRequest)
+    case favorApply(_ requestModel: MCSTemplateDetailRequest)
     /// /like/disLike
-    case dislike(_ requestModel: MCSTemplateDetailRequest)
+    case favorCancel(_ requestModel: MCSTemplateDetailRequest)
     /// /like/likeList
-    case likeList(_ requestModel: MCSTemplateLikeListRequest)
+    case favorInventory(_ requestModel: MCSTemplateLikeListRequest)
     /// /template/expose
-    case expose(_ requestModel: MCSTemplateExposeRequest)
+    case discoverImpress(_ requestModel: MCSTemplateExposeRequest)
 }
 
 ///
@@ -39,17 +39,17 @@ extension MCETemplateAPI: TargetType {
     ///
     public var path: String {
         switch self {
-        case .customLabelList: return "/gwx/v1/feed/custom/labels"
-        case .customList: return "/gwx/v1/feed/custom/items"
-        case .searchKeywords: return "/gwx/v1/feed/discover/lexicon"
-        case .search: return "/gwx/v1/feed/discover/search"
-        case .viewHistory: return "/gwx/v1/feed/discover/footprints"
-        case .detail: return "/gwx/v1/feed/item/profile"
-        case .report: return "/gwx/v1/feed/item/report"
-        case .like: return "/gwx/v1/engage/favor/apply"
-        case .dislike: return "/gwx/v1/engage/favor/cancel"
-        case .likeList: return "/gwx/v1/engage/favor/inventory"
-        case .expose: return "/gwx/v1/feed/discover/impress"
+        case .customLabels: return "/gwx/v1/feed/custom/labels"
+        case .customItems: return "/gwx/v1/feed/custom/items"
+        case .discoverLexicon: return "/gwx/v1/feed/discover/lexicon"
+        case .discoverSearch: return "/gwx/v1/feed/discover/search"
+        case .discoverFootprints: return "/gwx/v1/feed/discover/footprints"
+        case .itemProfile: return "/gwx/v1/feed/item/profile"
+        case .itemReport: return "/gwx/v1/feed/item/report"
+        case .favorApply: return "/gwx/v1/engage/favor/apply"
+        case .favorCancel: return "/gwx/v1/engage/favor/cancel"
+        case .favorInventory: return "/gwx/v1/engage/favor/inventory"
+        case .discoverImpress: return "/gwx/v1/feed/discover/impress"
         }
     }
     ///
@@ -60,17 +60,17 @@ extension MCETemplateAPI: TargetType {
     public var task: Task {
         var parameters: [String: Any]?
         switch self {
-        case .customLabelList: break
-        case .customList(let requestModel): parameters = requestModel.toDictionary()
-        case .searchKeywords: break
-        case .search(let requestModel): parameters = requestModel.toDictionary()
-        case .viewHistory(let requestModel): parameters = requestModel.toDictionary()
-        case .detail(let requestModel): parameters = requestModel.toDictionary()
-        case .report(let requestModel): parameters = requestModel.toDictionary()
-        case .like(let requestModel): parameters = requestModel.toDictionary()
-        case .dislike(let requestModel): parameters = requestModel.toDictionary()
-        case .likeList(let requestModel): parameters = requestModel.toDictionary()
-        case .expose(let requestModel): parameters = requestModel.toDictionary()
+        case .customLabels: break
+        case .customItems(let requestModel): parameters = requestModel.toDictionary()
+        case .discoverLexicon: break
+        case .discoverSearch(let requestModel): parameters = requestModel.toDictionary()
+        case .discoverFootprints(let requestModel): parameters = requestModel.toDictionary()
+        case .itemProfile(let requestModel): parameters = requestModel.toDictionary()
+        case .itemReport(let requestModel): parameters = requestModel.toDictionary()
+        case .favorApply(let requestModel): parameters = requestModel.toDictionary()
+        case .favorCancel(let requestModel): parameters = requestModel.toDictionary()
+        case .favorInventory(let requestModel): parameters = requestModel.toDictionary()
+        case .discoverImpress(let requestModel): parameters = requestModel.toDictionary()
         }
         return .requestParameters(parameters: parameters ?? [:], encoding: encoding)
     }
