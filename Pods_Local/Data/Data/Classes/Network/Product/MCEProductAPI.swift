@@ -7,11 +7,11 @@ import Moya
 
 ///
 public enum MCEProductAPI {
-    ///
+    /// /product/subscription/find/allV2
     case findAll
-    ///
+    /// /pay/callbackV2
     case payCallback(_ requestModel: MCSProductPayCallbackRequest)
-    ///
+    /// /mock/pay/single/purchase
     case paySinglePurchase(_ requestModel: MCSProductPayCallbackRequest)
 }
 
@@ -23,9 +23,9 @@ extension MCEProductAPI: TargetType {
     ///
     public var path: String {
         switch self {
-        case .findAll: return "/product/subscription/find/allV2"
-        case .payCallback: return "/pay/callbackV2"
-        case .paySinglePurchase: return "/pay/single/purchase"
+        case .findAll: return "/gwx/v1/shop/offer/selection"
+        case .payCallback: return "/gwx/v1/shop/billing/notify"
+        case .paySinglePurchase: return "/gwx/v1/shop/billing/once"
         }
     }
     ///
@@ -34,13 +34,12 @@ extension MCEProductAPI: TargetType {
     }
     ///
     public var task: Task {
-        var parameters: [String: Any]?
         switch self {
-        case .findAll: break
-        case .payCallback(let requestModel): parameters = requestModel.toDictionary()
-        case .paySinglePurchase(let requestModel): parameters = requestModel.toDictionary()
+        case .findAll:
+            return .requestPlain
+        case .payCallback(let requestModel), .paySinglePurchase(let requestModel):
+            return .requestParameters(parameters: requestModel.toDictionary() ?? [:], encoding: encoding)
         }
-        return .requestParameters(parameters: parameters ?? [:], encoding: encoding)
     }
     ///
     public var encoding: Alamofire.ParameterEncoding {

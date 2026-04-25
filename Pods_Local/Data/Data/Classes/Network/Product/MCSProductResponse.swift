@@ -311,36 +311,4 @@ public struct MCSPlacard: Codable, MCPDefaultInitializable {
     @MCSSafeBool public var highlight: Bool
     ///
     @MCSSafeString public var tailMarking: String
-    
-//    ///
-//    public func tailMarkingImage() -> UIImage? {
-//        if tailMarking.isEmpty {return nil}
-//        let textSize = (self.tailMarking as NSString).size(withAttributes: [.font: UIFont.systemFont(ofSize: 10)])
-//        
-//        let size = CGSize(
-//            width: textSize.width + 12,
-//            height: textSize.height + 2
-//        )
-//        
-//        let textRect = CGRect(
-//            x: 6,
-//            y: 1,
-//            width: textSize.width,
-//            height: textSize.height
-//        )
-//        
-//        UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
-//        let ctx = UIGraphicsGetCurrentContext()!
-//        let rect = CGRect(origin: .zero, size: size)
-//        let path = UIBezierPath(roundedRect: rect, cornerRadius: size.height / 2)
-//        UIColor.init(hex: 0xDBA29F, a: 0.2)!.setFill()
-//        path.fill()
-//        (self.tailMarking as NSString).draw(in: textRect, withAttributes: [
-//            .font: UIFont.systemFont(ofSize: 10),
-//            .foregroundColor: UIColor.init(hex: 0xDBA29F)!
-//        ])
-//        let image = UIGraphicsGetImageFromCurrentImageContext()
-//        UIGraphicsEndImageContext()
-//        return image
-//    }
 }

@@ -8,10 +8,10 @@ import Foundation
 public struct MCSProductPayCallbackRequest: Codable {
     ///
     public init() {}
-    ///
-    public var productId: String = ""
-    ///
-    public var transactionId: String = ""
-    ///
-    public var payment: Int = 1
+    /// productId
+    public var productKey: String = ""
+    /// transactionId
+    public var txnId: String = ""
+    /// payment
+    public var payPayload: Int = 1
 }
