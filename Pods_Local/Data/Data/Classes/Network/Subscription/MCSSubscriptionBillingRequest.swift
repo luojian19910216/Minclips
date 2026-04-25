@@ -1,11 +1,11 @@
 //
-//  ProductRequestModel.swift
+//  MCSSubscriptionBillingRequest.swift
 //
 
 import Foundation
 
 ///
-public struct MCSProductPayCallbackRequest: Codable {
+public struct MCSSubscriptionBillingRequest: Codable {
     ///
     public init() {}
     /// productId

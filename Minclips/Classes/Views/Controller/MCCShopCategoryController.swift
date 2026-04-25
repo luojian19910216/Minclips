@@ -21,7 +21,7 @@ public class MCCShopCategoryController: MCCViewController<MCCBaseView, MCCEmptyV
     }
     
     public override func mcvc_setupLocalization() {
-        self.view.backgroundColor = .red
+
     }
     
 }

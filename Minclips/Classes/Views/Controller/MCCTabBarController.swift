@@ -51,21 +51,24 @@ public class MCCTabBarController: UITabBarController {
     
     public var cancellables = Set<AnyCancellable>()
         
-    public lazy var firstVC: MCCShopHomeController = {
-        let vc: MCCShopHomeController = .init()
-        vc.tabBarItem.image = UIImage.init(named: "ic_tab_home")?.withRenderingMode(.alwaysTemplate)
+    public lazy var firstVC: MCCShotsController = {
+        let vc = MCCShotsController()
+        vc.tabBarItem.image = UIImage(named: "ic_tab_home")?.withRenderingMode(.alwaysTemplate)
+        vc.tabBarItem.title = "Shots"
         return vc
     }()
     
     public lazy var secondVC: MCCShopCategoryController = {
-        let vc: MCCShopCategoryController = .init()
-        vc.tabBarItem.image = UIImage.init(named: "ic_tab_home")?.withRenderingMode(.alwaysTemplate)
+        let vc = MCCShopCategoryController()
+        vc.tabBarItem.image = UIImage(named: "ic_tab_home")?.withRenderingMode(.alwaysTemplate)
+        vc.tabBarItem.title = "Tools"
         return vc
     }()
     
     public lazy var thirdVC: MCCShopCartController = {
-        let vc: MCCShopCartController = .init()
-        vc.tabBarItem.image = UIImage.init(named: "ic_tab_home")?.withRenderingMode(.alwaysTemplate)
+        let vc = MCCShopCartController()
+        vc.tabBarItem.image = UIImage(named: "ic_tab_home")?.withRenderingMode(.alwaysTemplate)
+        vc.tabBarItem.title = "Projects"
         return vc
     }()
     
@@ -84,9 +87,9 @@ public class MCCTabBarController: UITabBarController {
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 guard let self = self else { return }
-                self.firstVC.tabBarItem.title = "标题"
-                self.secondVC.tabBarItem.title = "标题"
-                self.thirdVC.tabBarItem.title = "标题"
+                self.firstVC.tabBarItem.title = "Shots"
+                self.secondVC.tabBarItem.title = "Tools"
+                self.thirdVC.tabBarItem.title = "Projects"
             }
             .store(in: &cancellables)
     }

@@ -135,6 +135,22 @@
 		F6D547722F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
 		F6D547732F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
 		F6D547742F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
+		F6E2B0212FA20301002C4F70 /* MCCShotsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0112FA20301002C4F70 /* MCCShotsViewModel.swift */; };
+		F6E2B0222FA20301002C4F70 /* MCCShotsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0112FA20301002C4F70 /* MCCShotsViewModel.swift */; };
+		F6E2B0232FA20301002C4F70 /* MCCShotsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0112FA20301002C4F70 /* MCCShotsViewModel.swift */; };
+		F6E2B0242FA20301002C4F70 /* MCCShotsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0112FA20301002C4F70 /* MCCShotsViewModel.swift */; };
+		F6E2B0252FA20301002C4F70 /* MCCShotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */; };
+		F6E2B0262FA20301002C4F70 /* MCCShotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */; };
+		F6E2B0272FA20301002C4F70 /* MCCShotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */; };
+		F6E2B0282FA20301002C4F70 /* MCCShotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */; };
+		F6E2B0292FA20301002C4F70 /* MCCShotsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0132FA20301002C4F70 /* MCCShotsController.swift */; };
+		F6E2B02A2FA20301002C4F70 /* MCCShotsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0132FA20301002C4F70 /* MCCShotsController.swift */; };
+		F6E2B02B2FA20301002C4F70 /* MCCShotsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0132FA20301002C4F70 /* MCCShotsController.swift */; };
+		F6E2B02C2FA20301002C4F70 /* MCCShotsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0132FA20301002C4F70 /* MCCShotsController.swift */; };
+		F6E2B03A2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0392FA20301002C4F70 /* MCCShotsListPageController.swift */; };
+		F6E2B03B2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0392FA20301002C4F70 /* MCCShotsListPageController.swift */; };
+		F6E2B03C2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0392FA20301002C4F70 /* MCCShotsListPageController.swift */; };
+		F6E2B03D2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0392FA20301002C4F70 /* MCCShotsListPageController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -186,6 +202,10 @@
 		F6D547622F9B478A002C4F70 /* MCCSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCSheetController.swift; sourceTree = "<group>"; };
 		F6D547632F9B478A002C4F70 /* MCCViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCViewController.swift; sourceTree = "<group>"; };
 		F6D547702F9B4796002C4F70 /* MCCBaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCBaseView.swift; sourceTree = "<group>"; };
+		F6E2B0112FA20301002C4F70 /* MCCShotsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsViewModel.swift; sourceTree = "<group>"; };
+		F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsView.swift; sourceTree = "<group>"; };
+		F6E2B0132FA20301002C4F70 /* MCCShotsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsController.swift; sourceTree = "<group>"; };
+		F6E2B0392FA20301002C4F70 /* MCCShotsListPageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsListPageController.swift; sourceTree = "<group>"; };
 		F72C010043D4413B9E5D4761 /* Pods-Minclips_D.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_D.release.xcconfig"; path = "Target Support Files/Pods-Minclips_D/Pods-Minclips_D.release.xcconfig"; sourceTree = "<group>"; };
 		FD04B3C983B934D49261DA0A /* Pods-Minclips_P.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_P.debug.xcconfig"; path = "Target Support Files/Pods-Minclips_P/Pods-Minclips_P.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -239,6 +259,17 @@
 				1C2C92D9866F31A0CB34F836 /* Pods-Minclips_T.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		A0B46A5B2F9C8FE800DAC813 /* AI */ = {
+			isa = PBXGroup;
+			children = (
+				F6E2B0112FA20301002C4F70 /* MCCShotsViewModel.swift */,
+				F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */,
+				F6E2B0132FA20301002C4F70 /* MCCShotsController.swift */,
+				F6E2B0392FA20301002C4F70 /* MCCShotsListPageController.swift */,
+			);
+			path = AI;
 			sourceTree = "<group>";
 		};
 		B0D36159DDD01BDC90144D9D /* Frameworks */ = {
@@ -309,6 +340,7 @@
 		F65889672EF8E46700A094B5 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				A0B46A5B2F9C8FE800DAC813 /* AI */,
 				F658896A2EF8E48600A094B5 /* Models */,
 				F65889692EF8E48300A094B5 /* Views */,
 				F65889682EF8E48000A094B5 /* ViewModels */,
@@ -759,6 +791,10 @@
 				F6D546E42F922579002C4F70 /* MCCPresentController.swift in Sources */,
 				03F019632F8CF67C0096831D /* MCCLaunchView.swift in Sources */,
 				03D2F3862F39DC15001F28A1 /* MCCShopHomeController.swift in Sources */,
+				F6E2B0212FA20301002C4F70 /* MCCShotsViewModel.swift in Sources */,
+				F6E2B0252FA20301002C4F70 /* MCCShotsView.swift in Sources */,
+				F6E2B0292FA20301002C4F70 /* MCCShotsController.swift in Sources */,
+				F6E2B03A2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -790,6 +826,10 @@
 				F6D547652F9B478A002C4F70 /* MCCSheetController.swift in Sources */,
 				F6D547662F9B478A002C4F70 /* MCCViewController.swift in Sources */,
 				03D2F3872F39DC15001F28A1 /* MCCShopHomeController.swift in Sources */,
+				F6E2B0222FA20301002C4F70 /* MCCShotsViewModel.swift in Sources */,
+				F6E2B0262FA20301002C4F70 /* MCCShotsView.swift in Sources */,
+				F6E2B02A2FA20301002C4F70 /* MCCShotsController.swift in Sources */,
+				F6E2B03B2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */,
 				F6588BBB2EFA402B00A094B5 /* MCCTabBarController.swift in Sources */,
 				F6588BBE2EFA41AF00A094B5 /* MCCCfViewModel.swift in Sources */,
 				F6588BB72EFA402000A094B5 /* MCCGuideController.swift in Sources */,
@@ -827,6 +867,10 @@
 				F6D546E52F922579002C4F70 /* MCCPresentController.swift in Sources */,
 				F6D546452F90B9B8002C4F70 /* MCCLaunchView.swift in Sources */,
 				F6D5464A2F90B9B8002C4F70 /* MCCShopHomeController.swift in Sources */,
+				F6E2B0232FA20301002C4F70 /* MCCShotsViewModel.swift in Sources */,
+				F6E2B0272FA20301002C4F70 /* MCCShotsView.swift in Sources */,
+				F6E2B02B2FA20301002C4F70 /* MCCShotsController.swift in Sources */,
+				F6E2B03C2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -861,6 +905,10 @@
 				F6D546E32F922579002C4F70 /* MCCPresentController.swift in Sources */,
 				F6D546A72F90B9C9002C4F70 /* MCCLaunchView.swift in Sources */,
 				F6D546AC2F90B9C9002C4F70 /* MCCShopHomeController.swift in Sources */,
+				F6E2B0242FA20301002C4F70 /* MCCShotsViewModel.swift in Sources */,
+				F6E2B0282FA20301002C4F70 /* MCCShotsView.swift in Sources */,
+				F6E2B02C2FA20301002C4F70 /* MCCShotsController.swift in Sources */,
+				F6E2B03D2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

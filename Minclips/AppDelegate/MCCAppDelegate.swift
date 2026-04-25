@@ -3,12 +3,12 @@
 //
 
 import UIKit
+import Data
+import Common
 import Alamofire
 import CoreTelephony
 import Combine
 import CombineExt
-import Common
-import Data
 import MJRefresh
 
 @main
@@ -201,7 +201,7 @@ extension MCCAppDelegate {
         Publishers
             .Zip(
                 MCCCfAPIManager.shared.launcher(),
-                MCCProductAPIManager.shared.findAll()
+                MCCSubscriptionAPIManager.shared.fetchSubscriptionCatalog()
             )
             .sink { [weak self] completion in
                 if case .failure = completion {
@@ -269,7 +269,7 @@ public class MCCSceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = scene as? UIWindowScene else { return }
         self.window = {
             let window = UIWindow(windowScene: windowScene)
-            window.backgroundColor = .black
+            window.backgroundColor = UIColor(hex: "0F0F12")
             window.tintColor = .systemBlue
             window.makeKeyAndVisible()
             return window

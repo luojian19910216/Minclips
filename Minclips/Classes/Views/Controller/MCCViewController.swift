@@ -89,6 +89,8 @@ open class MCCViewControllerCore: UIViewController, MCPViewControllerInitProtoco
     open override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.view.backgroundColor = UIColor(hex: "0F0F12")
+        
         self.mcvc_setupLocalization()
         self.mcvc_bindService()
         self.mcvc_loadData()
