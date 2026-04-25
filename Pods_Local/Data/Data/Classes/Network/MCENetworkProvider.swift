@@ -35,7 +35,7 @@ enum MCENetworkProvider {
     ///
     static let umProvider = makeProvider(MCEUmAPI.self)
     ///
-    static let templateProvider = makeProvider(MCETemplateAPI.self)
+    static let feedProvider = makeProvider(MCEFeedAPI.self)
     ///
     static let workProvider = makeProvider(MCEWorkAPI.self)
     ///

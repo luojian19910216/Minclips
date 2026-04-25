@@ -28,11 +28,11 @@ extension MCCCfAPIManager {
         networkManager.request(.studioToolbox)
     }
     ///
-    public func creationLegacy(with requestModel: MCSCfCreationLegacyRequest) -> AnyPublisher<MCSTemplateItem, MCENetworkError> {
+    public func creationLegacy(with requestModel: MCSCfCreationLegacyRequest) -> AnyPublisher<MCSFeedItem, MCENetworkError> {
         networkManager.request(.creationLegacy(requestModel))
     }
     ///
-    public func creationModern() -> AnyPublisher<MCSTemplateItem, MCENetworkError> {
+    public func creationModern() -> AnyPublisher<MCSFeedItem, MCENetworkError> {
         networkManager.request(.creationModern)
     }
     ///

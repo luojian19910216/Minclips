@@ -1,11 +1,11 @@
 //
-//  TemplateResponseModel.swift
+//  MCSFeedResponse.swift
 //
 
 import Foundation
 
 ///
-public struct MCSTemplateLabelItem: Codable, MCPDefaultInitializable {
+public struct MCSFeedLabelItem: Codable, MCPDefaultInitializable {
     ///
     public init() {}
     ///
@@ -21,17 +21,17 @@ public struct MCSTemplateLabelItem: Codable, MCPDefaultInitializable {
 }
 
 ///
-public struct MCSTemplateSearchResponse: Codable, MCPDefaultInitializable {
+public struct MCSFeedSearchResponse: Codable, MCPDefaultInitializable {
     ///
     public init() {}
     /// 是否是搜索结果，值反了
     @MCSSafeBool public var fromAppSearch: Bool
     ///
-    @MCSSafeArray public var list: [MCSTemplateItem]
+    @MCSSafeArray public var list: [MCSFeedItem]
 }
 
 ///
-public struct MCSTemplateItem: Codable, MCPDefaultInitializable {
+public struct MCSFeedItem: Codable, MCPDefaultInitializable {
     ///
     public init() {}
     ///

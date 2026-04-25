@@ -1,11 +1,11 @@
 //
-//  TemplateRequestModel.swift
+//  MCSFeedRequest.swift
 //
 
 import Foundation
 
 ///
-public struct MCSTemplateListRequest: Codable {
+public struct MCSFeedListRequest: Codable {
     ///
     public init() {}
     /// 是否是首次安装
@@ -25,7 +25,7 @@ public struct MCSTemplateListRequest: Codable {
 }
 
 ///
-public struct MCSTemplateLikeListRequest: Codable {
+public struct MCSFeedLikeListRequest: Codable {
     ///
     public init() {}
     ///
@@ -37,7 +37,7 @@ public struct MCSTemplateLikeListRequest: Codable {
 }
 
 ///
-public struct MCSTemplateDetailRequest: Codable {
+public struct MCSFeedDetailRequest: Codable {
     ///
     public init() {}
     ///
@@ -45,7 +45,7 @@ public struct MCSTemplateDetailRequest: Codable {
 }
 
 ///
-public struct MCSTemplateReportRequest: Codable {
+public struct MCSFeedReportRequest: Codable {
     ///
     public init() {}
     ///
@@ -55,15 +55,15 @@ public struct MCSTemplateReportRequest: Codable {
 }
 
 ///
-public struct MCSTemplateExposeRequest: Codable {
+public struct MCSFeedExposeRequest: Codable {
     ///
     public init() {}
     ///
-    public var templates: [MCSTemplateExposeItem]?
+    public var templates: [MCSFeedExposeItem]?
 }
 
 ///
-public struct MCSTemplateExposeItem: Codable {
+public struct MCSFeedExposeItem: Codable {
     ///
     public init() {}
     ///

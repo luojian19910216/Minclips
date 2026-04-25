@@ -1,37 +1,37 @@
 //
-//  MCETemplateAPI.swift
+//  MCEFeedAPI.swift
 //
 
 import Alamofire
 import Moya
 
-public enum MCETemplateAPI {
+public enum MCEFeedAPI {
     /// /customTemplate/labelList
     case customLabels
     /// /customTemplate/list
-    case customItems(_ requestModel: MCSTemplateListRequest)
+    case customItems(_ requestModel: MCSFeedListRequest)
     /// /template/searchKeywords
     case discoverLexicon
     /// /template/search
-    case discoverSearch(_ requestModel: MCSTemplateListRequest)
+    case discoverSearch(_ requestModel: MCSFeedListRequest)
     /// /template/viewHistory
-    case discoverFootprints(_ requestModel: MCSTemplateListRequest)
+    case discoverFootprints(_ requestModel: MCSFeedListRequest)
     /// /template/detail
-    case itemProfile(_ requestModel: MCSTemplateDetailRequest)
+    case itemProfile(_ requestModel: MCSFeedDetailRequest)
     /// /template/report
-    case itemReport(_ requestModel: MCSTemplateReportRequest)
+    case itemReport(_ requestModel: MCSFeedReportRequest)
     /// /like/like
-    case favorApply(_ requestModel: MCSTemplateDetailRequest)
+    case favorApply(_ requestModel: MCSFeedDetailRequest)
     /// /like/disLike
-    case favorCancel(_ requestModel: MCSTemplateDetailRequest)
+    case favorCancel(_ requestModel: MCSFeedDetailRequest)
     /// /like/likeList
-    case favorInventory(_ requestModel: MCSTemplateLikeListRequest)
+    case favorInventory(_ requestModel: MCSFeedLikeListRequest)
     /// /template/expose
-    case discoverImpress(_ requestModel: MCSTemplateExposeRequest)
+    case discoverImpress(_ requestModel: MCSFeedExposeRequest)
 }
 
 ///
-extension MCETemplateAPI: TargetType {
+extension MCEFeedAPI: TargetType {
     ///
     public var baseURL: URL {
         return URL(string: MCCNetworkConfig.shared.environment.baseAPIUrl)!
@@ -84,7 +84,7 @@ extension MCETemplateAPI: TargetType {
     }
 }
 
-extension MCETemplateAPI: AccessTokenAuthorizable {
+extension MCEFeedAPI: AccessTokenAuthorizable {
     ///
     public var authorizationType: AuthorizationType? {
         return .custom("")
