@@ -46,10 +46,10 @@ public struct MCSFeedDetailRequest: Codable {
 public struct MCSFeedReportRequest: Codable {
     ///
     public init() {}
-    ///
-    public var templateId: String = ""
-    ///
-    public var reportContent: String = ""
+    /// templateId
+    public var templateRef: String = ""
+    /// reportContent
+    public var reportBody: String = ""
 }
 
 ///
