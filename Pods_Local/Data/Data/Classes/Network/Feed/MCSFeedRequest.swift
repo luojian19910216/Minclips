@@ -38,8 +38,8 @@ public struct MCSFeedLikeListRequest: Codable {
 public struct MCSFeedDetailRequest: Codable {
     ///
     public init() {}
-    ///
-    public var templateId: String = ""
+    /// templateId
+    public var templateRef: String = ""
 }
 
 ///
