@@ -62,6 +62,8 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
 
     @objc
     private func mcpj_onSettingsTapped() {
+        let vc = MCCSettingsController()
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     private static func mcpj_fetchProjectTabTitlesSimulated() -> AnyPublisher<[MCCProjectSegment], Never> {

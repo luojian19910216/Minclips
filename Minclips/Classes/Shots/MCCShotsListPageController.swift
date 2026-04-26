@@ -22,7 +22,6 @@ private enum MCCShotsListLoadKind: Sendable {
     case initial
     case pullToRefresh
     case loadMore
-
 }
 
 public final class MCCShotsListPageController: MCCViewController<MCCShotsListPageView, MCCEmptyViewModel> {
@@ -246,6 +245,14 @@ extension MCCShotsListPageController: UICollectionViewDataSource, UICollectionVi
             mcvc_styleListCell(cell, item: item)
         }
         return cell
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let item = mcvc_listState.items[safe: indexPath.item] else { return }
+        collectionView.deselectItem(at: indexPath, animated: true)
+        let vc = MCCFeedDetailController()
+        vc.mcvc_feedItem = item
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     public func collectionView(
