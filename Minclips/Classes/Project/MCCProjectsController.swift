@@ -15,22 +15,15 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
 
     public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
-    public override func mcvc_init() {
-        fd_prefersNavigationBarHidden = false
-    }
-
     public override func mcvc_configureNav() {
-        guard let nav = navigationController else { return }
-        let item = navigationItem
-        title = nil
-        item.title = nil
-        item.largeTitleDisplayMode = .never
-        nav.navigationBar.prefersLargeTitles = false
-        item.leftBarButtonItem = MCCRootTabNavChrome.leftTitleBarButtonItem(
+        super.mcvc_configureNav()
+        
+        self.tabBarController?.navigationItem.leftBarButtonItem = MCCRootTabNavChrome.leftTitleBarButtonItem(
             title: "Projects",
             textColor: .white
         )
-        item.rightBarButtonItem = MCCRootTabNavChrome.settingsBarButtonItem(
+        
+        self.tabBarController?.navigationItem.rightBarButtonItem = MCCRootTabNavChrome.settingsBarButtonItem(
             target: self,
             action: #selector(mcpj_onSettingsTapped)
         )

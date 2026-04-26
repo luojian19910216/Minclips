@@ -91,10 +91,7 @@ extension MCCTabBarController: UITabBarControllerDelegate {
     }
 
     public func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        tabBarController.navigationController?.setNavigationBarHidden(
-            tabBarController.fd_prefersNavigationBarHidden,
-            animated: false
-        )
+        self.navigationController?.setNavigationBarHidden(self.fd_prefersNavigationBarHidden, animated: false)
     }
 
 }

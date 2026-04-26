@@ -12,24 +12,15 @@ public final class MCCToolsController: MCCViewController<MCCToolsView, MCCEmptyV
 
     public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
-    public override func mcvc_init() {
-        fd_prefersNavigationBarHidden = false
-    }
-
     public override func mcvc_configureNav() {
-        guard let nav = navigationController else { return }
-        nav.navigationBar.mc_shadowHidden = true
-        nav.navigationBar.mc_barStyle = .transparentLight
-        let item = navigationItem
-        title = nil
-        item.title = nil
-        item.largeTitleDisplayMode = .never
-        nav.navigationBar.prefersLargeTitles = false
-        item.leftBarButtonItem = MCCRootTabNavChrome.leftTitleBarButtonItem(
+        super.mcvc_configureNav()
+        
+        self.tabBarController?.navigationItem.leftBarButtonItem = MCCRootTabNavChrome.leftTitleBarButtonItem(
             title: "Studio",
             textColor: .white
         )
-        item.rightBarButtonItem = MCCRootTabNavChrome.proBarButtonItem(
+        
+        self.tabBarController?.navigationItem.rightBarButtonItem = MCCRootTabNavChrome.proBarButtonItem(
             target: self,
             action: #selector(mcvc_onProTapped),
             titleColor: .white
