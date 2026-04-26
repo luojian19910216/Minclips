@@ -1,18 +1,43 @@
 import UIKit
 import SnapKit
 
+public enum MCCShotsListItemMetrics {
+
+    /// 图片区域与标题间距
+    public static let imageToTitleSpacing: CGFloat = 8
+
+    /// 列表标题：字号 14pt，字重 400（`UIFont.Weight.regular`）。
+    public static let titleFont = UIFont.systemFont(ofSize: 14, weight: .regular)
+
+    public static let titleLineHeight: CGFloat = 16
+
+    public static let titleMaxLines = 2
+
+    /// 图片区域 高 / 宽
+    public static let imageHeightPerWidth: CGFloat = 4.0 / 3.0
+
+    public static func titleTextAttributes(textColor: UIColor) -> [NSAttributedString.Key: Any] {
+        let p = NSMutableParagraphStyle()
+        p.minimumLineHeight = titleLineHeight
+        p.maximumLineHeight = titleLineHeight
+        return [.font: titleFont, .paragraphStyle: p, .foregroundColor: textColor]
+    }
+
+}
+
 public final class MCCShotsListPageView: MCCBaseView {
 
-    public let mcvw_flow: UICollectionViewFlowLayout = {
-        let l = UICollectionViewFlowLayout()
-        l.minimumInteritemSpacing = 4
-        l.minimumLineSpacing = 8
+    public let mcvw_waterfallLayout: MCCShotsWaterfallLayout = {
+        let l = MCCShotsWaterfallLayout()
+        l.columnCount = 2
         l.sectionInset = UIEdgeInsets(top: 4, left: 4, bottom: 12, right: 4)
+        l.minimumInteritemSpacing = 4
+        l.minimumLineSpacing = 16
         return l
     }()
 
     public lazy var mcvw_collectionView: UICollectionView = {
-        let cv = UICollectionView(frame: .zero, collectionViewLayout: mcvw_flow)
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: mcvw_waterfallLayout)
         cv.alwaysBounceVertical = true
         cv.contentInsetAdjustmentBehavior = .always
         cv.register(MCCShotsListItemCell.self, forCellWithReuseIdentifier: MCCShotsListItemCell.mcvw_reuseId)
@@ -64,9 +89,15 @@ public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
         mcvw_proBadge.addSubview(mcvw_proIcon)
         mcvw_imageContainer.layer.cornerRadius = 12
         mcvw_imageContainer.clipsToBounds = true
-        mcvw_imageContainer.snp.makeConstraints { $0.top.leading.trailing.equalToSuperview() }
+        mcvw_imageContainer.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+            make.height.equalTo(mcvw_imageContainer.snp.width).multipliedBy(MCCShotsListItemMetrics.imageHeightPerWidth)
+        }
+        mcvw_titleLabel.font = MCCShotsListItemMetrics.titleFont
+        mcvw_titleLabel.numberOfLines = MCCShotsListItemMetrics.titleMaxLines
+        mcvw_titleLabel.lineBreakMode = .byTruncatingTail
         mcvw_titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(mcvw_imageContainer.snp.bottom).offset(6)
+            make.top.equalTo(mcvw_imageContainer.snp.bottom).offset(MCCShotsListItemMetrics.imageToTitleSpacing)
             make.leading.trailing.bottom.equalToSuperview()
         }
         mcvw_durationLabel.snp.makeConstraints { make in

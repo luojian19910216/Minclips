@@ -29,9 +29,31 @@ public struct MCSFeedSearchResponse: Codable, MCPDefaultInitializable {
 }
 
 ///
-public struct MCSFeedItem: Codable, MCPDefaultInitializable {
-    ///
-    public init() {}
+public struct MCSFeedItem: Codable {
     /// id
     @MCSSafeString public var itemId: String
+    /// name
+    @MCSSafeString public var itemTitle: String
+    /// media`
+    @MCSSafe public var videoAsset: MCSFeedVideoAssetShell
+}
+
+///
+public struct MCSFeedVideoAssetShell: Codable, MCPDefaultInitializable {
+    ///
+    public init() {}
+    /// width
+    @MCSSafeInt public var imageWidth: Int
+    /// height
+    @MCSSafeInt public var imageHeight: Int
+    /// mp4Audio
+    @MCSSafeBool public var hasMp4Audio: Bool
+    /// mp4Url
+    @MCSSafeString public var videoMp4Url: String
+    /// staticCoverUrl
+    @MCSSafeString public var posterImageUrl: String
+    /// webpUrl
+    @MCSSafeString public var webpImageUrl: String
+    /// 时长（秒），接口字段 `duration`
+    @MCSSafeInt public var duration: Int
 }

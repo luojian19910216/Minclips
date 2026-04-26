@@ -250,9 +250,14 @@ extension MCCProjectsListPageController: UICollectionViewDataSource, UICollectio
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        let inset: CGFloat = 16
-        let spacing: CGFloat = 8
-        let w = (collectionView.bounds.width - inset * 2 - spacing * 2) / 3
+        guard let flow = collectionViewLayout as? UICollectionViewFlowLayout else {
+            return CGSize(width: 100, height: 160)
+        }
+        let columns = 3
+        let inset = flow.sectionInset
+        let spacing = flow.minimumInteritemSpacing
+        let inner = collectionView.bounds.width - inset.left - inset.right
+        let w = (inner - spacing * CGFloat(columns - 1)) / CGFloat(columns)
         if w <= 0 { return CGSize(width: 100, height: 160) }
         let thumbH = w * 4 / 3
         return CGSize(width: floor(w), height: thumbH + 4 + 14)

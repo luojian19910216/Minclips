@@ -46,6 +46,7 @@ public final class MCCShotsListPageController: MCCViewController<MCCShotsListPag
         super.mcvc_bind()
         
         let cv = contentView.mcvw_collectionView
+        contentView.mcvw_waterfallLayout.delegate = self
         cv.dataSource = self
         cv.delegate = self
 
@@ -152,9 +153,6 @@ extension MCCShotsListPageController {
                     self.mcvc_listState.listState = state
                     if let m = state.model, !state.isLoading, state.error == nil {
                         var list = m.items
-                        if list.isEmpty {
-                            list = Self.mcvc_mockFeedItems()
-                        }
                         self.mcvc_listState.items = list
                         self.mcvc_listState.hasMore = list.count >= 20
                     }
@@ -196,15 +194,7 @@ extension MCCShotsListPageController {
         cv.isHidden = false
         cv.reloadData()
     }
-
-    private static func mcvc_mockFeedItems() -> [MCSFeedItem] {
-        (0..<10).map { i in
-            var it = MCSFeedItem()
-            it.itemId = "mock_shot_\(i)"
-            return it
-        }
-    }
-
+    
     private static func mcvc_placeholderHex(from id: String) -> String {
         var h: UInt = 0
         for c in id.unicodeScalars {
@@ -213,10 +203,30 @@ extension MCCShotsListPageController {
         return String(format: "%06X", h % 0xFFFFFF)
     }
 
+    private static func mcvc_formatVideoDurationLabel(seconds: Int) -> String {
+        let sec = max(0, seconds)
+        let h = sec / 3600
+        let m = (sec % 3600) / 60
+        let s = sec % 60
+        let inner: String
+        if h > 0 {
+            inner = String(format: "%d:%02d:%02d", h, m, s)
+        } else {
+            inner = String(format: "%d:%02d", m, s)
+        }
+        return " \(inner) "
+    }
+
     private func mcvc_styleListCell(_ cell: MCCShotsListItemCell, item: MCSFeedItem) {
         let hex = Self.mcvc_placeholderHex(from: item.itemId)
         cell.mcvw_imageContainer.backgroundColor = UIColor(hex: hex) ?? .darkGray
-        cell.mcvw_durationLabel.text = " 00:00 "
+        let durationSec = item.videoAsset.duration
+        if durationSec > 0 {
+            cell.mcvw_durationLabel.text = Self.mcvc_formatVideoDurationLabel(seconds: durationSec)
+            cell.mcvw_durationLabel.isHidden = false
+        } else {
+            cell.mcvw_durationLabel.isHidden = true
+        }
         cell.mcvw_durationLabel.font = .systemFont(ofSize: 11, weight: .semibold)
         cell.mcvw_durationLabel.textColor = .white
         cell.mcvw_durationLabel.backgroundColor = UIColor(white: 0, alpha: 0.45)
@@ -229,15 +239,36 @@ extension MCCShotsListPageController {
         cell.mcvw_proBadge.clipsToBounds = true
         cell.mcvw_proIcon.tintColor = .systemYellow
         cell.mcvw_proIcon.preferredSymbolConfiguration = UIImage.SymbolConfiguration(pointSize: 10, weight: .bold)
-        cell.mcvw_titleLabel.text = item.itemId
-        cell.mcvw_titleLabel.font = .systemFont(ofSize: 13, weight: .medium)
-        cell.mcvw_titleLabel.textColor = UIColor(hex: "FFFFFF")!
-        cell.mcvw_titleLabel.numberOfLines = 2
+        let titleColor = UIColor(hex: "FFFFFF")!
+        cell.mcvw_titleLabel.attributedText = NSAttributedString(
+            string: item.itemTitle,
+            attributes: MCCShotsListItemMetrics.titleTextAttributes(textColor: titleColor)
+        )
+    }
+
+    private func mcvc_heightForShotsItem(at index: Int, itemWidth: CGFloat) -> CGFloat {
+        let m = MCCShotsListItemMetrics.self
+        let title = mcvc_listState.items[safe: index]?.itemTitle ?? ""
+        let imageH = itemWidth * m.imageHeightPerWidth
+        let attrs = MCCShotsListItemMetrics.titleTextAttributes(textColor: .white)
+        let maxTextH = ceil(m.titleLineHeight * CGFloat(m.titleMaxLines))
+        let textH = min(
+            ceil(
+                (title as NSString).boundingRect(
+                    with: CGSize(width: itemWidth, height: .greatestFiniteMagnitude),
+                    options: [.usesLineFragmentOrigin, .usesFontLeading],
+                    attributes: attrs,
+                    context: nil
+                ).height
+            ),
+            maxTextH
+        )
+        return imageH + m.imageToTitleSpacing + textH
     }
 
 }
 
-extension MCCShotsListPageController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+extension MCCShotsListPageController: UICollectionViewDataSource, UICollectionViewDelegate {
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         mcvc_listState.items.count
@@ -261,21 +292,20 @@ extension MCCShotsListPageController: UICollectionViewDataSource, UICollectionVi
         navigationController?.pushViewController(vc, animated: true)
     }
 
-    public func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAt indexPath: IndexPath
-    ) -> CGSize {
-        let inset: CGFloat = 16
-        let spacing: CGFloat = 8
-        let w = (collectionView.bounds.width - inset * 2 - spacing) / 2
-        if w <= 0 { return CGSize(width: 160, height: 220) }
-        let thumbH = w * 4 / 3
-        return CGSize(width: w, height: thumbH + 6 + 40)
-    }
-
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         mcvc_forwardPagingScroll(scrollView)
+    }
+
+}
+
+extension MCCShotsListPageController: MCCShotsWaterfallLayoutDelegate {
+
+    public func waterfallLayout(
+        _ layout: MCCShotsWaterfallLayout,
+        heightForItemAt indexPath: IndexPath,
+        itemWidth: CGFloat
+    ) -> CGFloat {
+        mcvc_heightForShotsItem(at: indexPath.item, itemWidth: itemWidth)
     }
 
 }
