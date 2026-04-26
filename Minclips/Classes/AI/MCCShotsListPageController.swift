@@ -1,6 +1,6 @@
 //
 //  MCCShotsListPageController.swift
-//  单标签下双列列表：骨架、下拉刷新、错误重试。不持有 ViewModel，由 MCCShotsController 注入状态。
+//  单标签下双列列表：本页 MCCShotsListViewModel 拉取 feed；骨架、下拉刷新、上拉更多、空态。JXPaging 与 tab 由上层协调。
 //
 
 import UIKit
@@ -8,15 +8,33 @@ import SnapKit
 import Common
 import SkeletonView
 import MJRefresh
+import JXPagingView
+import Combine
+import Data
+import Common
 
 public final class MCCShotsListPageController: UIViewController {
 
-    public let mcsv_tagId: String
+    public let mcsv_labelItem: MCSFeedLabelItem
     public var mcsv_index: Int = 0
-    public var mcsv_onPullToRefresh: (() -> Void)?
-    public var mcsv_onListRetry: (() -> Void)?
+    public var mcsv_onListDidAppear: (() -> Void)?
 
-    private var mcsv_items: [MCCShotItem] = []
+    private let listViewModel = MCCShotsListViewModel()
+    private var mcsv_pagingScrollCallback: ((UIScrollView) -> Void)?
+    private var mcsv_uiCancellables = Set<AnyCancellable>()
+
+    private var mcsv_items: [MCSFeedItem] = []
+
+    public var mcsv_tagId: String { mcsv_labelItem.templateRef }
+
+    public init(labelItem: MCSFeedLabelItem) {
+        self.mcsv_labelItem = labelItem
+        super.init(nibName: nil, bundle: nil)
+        listViewModel.labelItem = labelItem
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError() }
 
     private lazy var flow: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
@@ -56,22 +74,28 @@ public final class MCCShotsListPageController: UIViewController {
         return b
     }()
 
-    public init(tagId: String) {
-        self.mcsv_tagId = tagId
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) { fatalError() }
+    private let emptyView = UIView()
+    private let emptyLabel: UILabel = {
+        let l = UILabel()
+        l.text = "暂无内容"
+        l.textColor = UIColor(hex: "8E8E93")
+        l.font = .systemFont(ofSize: 15, weight: .regular)
+        l.textAlignment = .center
+        l.numberOfLines = 0
+        return l
+    }()
 
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
         view.addSubview(collectionView)
         view.addSubview(errorView)
+        view.addSubview(emptyView)
         errorView.addSubview(errorLabel)
         errorView.addSubview(retryButton)
+        emptyView.addSubview(emptyLabel)
         errorView.isHidden = true
+        emptyView.isHidden = true
         collectionView.snp.makeConstraints { $0.edges.equalToSuperview() }
         errorView.snp.makeConstraints { $0.center.equalToSuperview() }
         errorLabel.snp.makeConstraints { make in
@@ -81,24 +105,61 @@ public final class MCCShotsListPageController: UIViewController {
             make.top.equalTo(errorLabel.snp.bottom).offset(12)
             make.centerX.bottom.equalToSuperview()
         }
+        emptyView.snp.makeConstraints { $0.center.equalToSuperview() }
+        emptyLabel.snp.makeConstraints { $0.edges.equalToSuperview() }
+
         let header = MJRefreshNormalHeader { [weak self] in
-            self?.mcsv_onPullToRefresh?()
+            self?.listViewModel.mcsv_load(kind: .pullToRefresh)
         }
         header.lastUpdatedTimeLabel?.isHidden = true
         collectionView.mj_header = header
+
+        let footer = MJRefreshAutoNormalFooter { [weak self] in
+            self?.listViewModel.mcsv_load(kind: .loadMore)
+        }
+        collectionView.mj_footer = footer
+
+        mcsv_bindListViewModel()
+        listViewModel.mcsv_load(kind: .initial)
     }
 
-    /// 由 Controller 根据 ViewModel 变化调用。
-    public func mcsv_applyListState(items: [MCCShotItem], isLoading: Bool, listError: String?) {
+    private func mcsv_bindListViewModel() {
+        Publishers.CombineLatest4(
+            listViewModel.$items,
+            listViewModel.$listState,
+            listViewModel.$isLoadingMore,
+            listViewModel.$hasMore
+        )
+        .sink { [weak self] items, listState, isLoadingMore, hasMore in
+            self?.mcsv_applyListState(
+                items: items,
+                listState: listState,
+                isLoadingMore: isLoadingMore,
+                hasMore: hasMore
+            )
+        }
+        .store(in: &mcsv_uiCancellables)
+    }
+
+    private func mcsv_applyListState(
+        items: [MCSFeedItem],
+        listState: MCSLoadState<MCSList<MCSFeedItem>>,
+        isLoadingMore: Bool,
+        hasMore: Bool
+    ) {
         mcsv_items = items
-        if !isLoading {
+        if !listState.isLoading {
             collectionView.mj_header?.endRefreshing()
         }
-        let hasErr = listError != nil && !(listError?.isEmpty ?? true)
-        let showSkeleton = items.isEmpty && isLoading && !hasErr
+
+        let hasErr = listState.error != nil && items.isEmpty && !listState.isLoading
+        let showSkeleton = items.isEmpty && listState.isLoading && listState.error == nil
+
         if showSkeleton {
             errorView.isHidden = true
+            emptyView.isHidden = true
             collectionView.isHidden = false
+            collectionView.mj_footer?.isHidden = true
             if !collectionView.isSkeletonActive {
                 collectionView.showAnimatedGradientSkeleton()
             }
@@ -109,11 +170,36 @@ public final class MCCShotsListPageController: UIViewController {
             }
             if hasErr, items.isEmpty {
                 errorView.isHidden = false
+                emptyView.isHidden = true
                 collectionView.isHidden = true
-                errorLabel.text = listError
+                errorLabel.text = listState.error.map { err in
+                    (err as LocalizedError).errorDescription ?? err.localizedDescription
+                }
+                collectionView.mj_footer?.isHidden = true
+            } else if !hasErr, items.isEmpty, !listState.isLoading, !isLoadingMore {
+                errorView.isHidden = true
+                emptyView.isHidden = false
+                collectionView.isHidden = true
+                collectionView.mj_footer?.isHidden = true
             } else {
                 errorView.isHidden = true
+                emptyView.isHidden = true
                 collectionView.isHidden = false
+                if !listState.isLoading {
+                    if items.isEmpty {
+                        collectionView.mj_footer?.isHidden = true
+                    } else {
+                        collectionView.mj_footer?.isHidden = false
+                        if !isLoadingMore {
+                            if hasMore {
+                                collectionView.mj_footer?.resetNoMoreData()
+                                collectionView.mj_footer?.endRefreshing()
+                            } else {
+                                collectionView.mj_footer?.endRefreshingWithNoMoreData()
+                            }
+                        }
+                    }
+                }
                 collectionView.reloadData()
             }
         }
@@ -121,7 +207,7 @@ public final class MCCShotsListPageController: UIViewController {
 
     @objc
     private func mcsv_tapRetry() {
-        mcsv_onListRetry?()
+        listViewModel.mcsv_load(kind: .pullToRefresh)
     }
 }
 
@@ -152,6 +238,25 @@ extension MCCShotsListPageController: UICollectionViewDataSource, UICollectionVi
         if w <= 0 { return CGSize(width: 160, height: 220) }
         let thumbH = w * 4 / 3
         return CGSize(width: w, height: thumbH + 6 + 40)
+    }
+
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        mcsv_pagingScrollCallback?(scrollView)
+    }
+}
+
+extension MCCShotsListPageController: JXPagingViewListViewDelegate {
+
+    public func listView() -> UIView { view }
+
+    public func listScrollView() -> UIScrollView { collectionView }
+
+    public func listViewDidScrollCallback(callback: @escaping (UIScrollView) -> Void) {
+        mcsv_pagingScrollCallback = callback
+    }
+
+    public func listDidAppear() {
+        mcsv_onListDidAppear?()
     }
 }
 
@@ -210,11 +315,20 @@ private final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
         proBadge.isHidden = true
         proIcon.snp.makeConstraints { $0.center.equalToSuperview() }
     }
-    fileprivate func mcsv_apply(item: MCCShotItem) {
-        imageContainer.backgroundColor = UIColor(hex: item.mockThumbHex) ?? .darkGray
-        durationLabel.text = " \(item.durationText) "
-        proBadge.isHidden = !item.isPro
-        titleLabel.text = item.title
+    fileprivate func mcsv_apply(item: MCSFeedItem) {
+        let hex = Self.mcsv_placeholderHex(from: item.itemId)
+        imageContainer.backgroundColor = UIColor(hex: hex) ?? .darkGray
+        durationLabel.text = " 00:00 "
+        proBadge.isHidden = true
+        titleLabel.text = item.itemId
+    }
+
+    private static func mcsv_placeholderHex(from id: String) -> String {
+        var h: UInt = 0
+        for c in id.unicodeScalars {
+            h = h &* 31 &+ UInt(c.value)
+        }
+        return String(format: "%06X", h % 0xFFFFFF)
     }
     public override func prepareForReuse() {
         super.prepareForReuse()

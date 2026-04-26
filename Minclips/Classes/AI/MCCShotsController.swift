@@ -1,6 +1,5 @@
 //
 //  MCCShotsController.swift
-//  导航栏大标题 + PRO；UIPageViewController 与横滑标签联动；View 不持 ViewModel。
 //
 
 import UIKit
@@ -8,18 +7,14 @@ import SnapKit
 import Common
 import Combine
 import FDFullscreenPopGesture
+import JXPagingView
+import Data
 
 public final class MCCShotsController: MCCViewController<MCCShotsView, MCCShotsViewModel> {
 
     public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
-    private let pageViewController = UIPageViewController(
-        transitionStyle: .scroll,
-        navigationOrientation: .horizontal,
-        options: [UIPageViewController.OptionsKey.interPageSpacing: 0]
-    )
-    private var listPages: [MCCShotsListPageController] = []
-    private var mcsv_isProgrammaticPageChange = false
+    private var mcsv_pagingView: JXPagingView?
 
     public override func mcvc_bindService() {
         super.mcvc_bindService()
@@ -33,115 +28,85 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCShotsV
 
     public override func viewDidLoad() {
         super.viewDidLoad()
-        mcsv_setupPageViewController()
+        mcsv_setupPaging()
         mcsv_wireViewInputs()
     }
 
     @objc
     private func mcsv_tapPro() {}
 
-    private func mcsv_setupPageViewController() {
-        addChild(pageViewController)
-        contentView.mcsv_pageContainer.addSubview(pageViewController.view)
-        pageViewController.view.snp.makeConstraints { $0.edges.equalToSuperview() }
-        pageViewController.didMove(toParent: self)
-        pageViewController.dataSource = self
-        pageViewController.delegate = self
+    private func mcsv_setupPaging() {
+        let pv = JXPagingView(delegate: self, listContainerType: .scrollView)
+        pv.allowsCacheList = true
+        mcsv_pagingView = pv
+        contentView.mcsv_hostPagingView(pv)
     }
 
     private func mcsv_subscribe() {
-        Publishers.CombineLatest3(
-            viewModel.$tags,
-            viewModel.$tagsPhase,
+        Publishers.CombineLatest(
+            viewModel.$tagsState,
             viewModel.$selectedTagIndex
         )
         .removeDuplicates { a, b in
-            a.0 == b.0 && a.1 == b.1 && a.2 == b.2
+            a.0.isLoading == b.0.isLoading
+                && a.0.model?.items.map(\.templateRef) == b.0.model?.items.map(\.templateRef)
+                && a.0.error?.localizedDescription == b.0.error?.localizedDescription
+                && a.1 == b.1
         }
-        .receive(on: DispatchQueue.main)
-        .sink { [weak self] tags, phase, index in
-            self?.mcsv_onTagsOrPhaseChange(tags: tags, phase: phase, selectedIndex: index)
-        }
-        .store(in: &cancellables)
-
-        Publishers.CombineLatest3(
-            viewModel.$listByTagId,
-            viewModel.$listLoadingTagIds,
-            viewModel.$listErrorByTagId
-        )
-        .receive(on: DispatchQueue.main)
-        .sink { [weak self] _, _, _ in
-            self?.mcsv_refreshAllListPages()
+        .sink { [weak self] state, index in
+            self?.mcsv_onTagsOrPhaseChange(tagsState: state, selectedIndex: index)
         }
         .store(in: &cancellables)
 
         viewModel.$selectedTagIndex
             .removeDuplicates()
             .dropFirst()
-            .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 self?.contentView.mcsv_scrollSelectedTagToCenter(animated: true)
             }
             .store(in: &cancellables)
     }
 
-    private func mcsv_onTagsOrPhaseChange(tags: [MCCShotTag], phase: MCCShotsTagsPhase, selectedIndex: Int) {
-        let titles = tags.map { $0.title }
+    private func mcsv_onTagsOrPhaseChange(tagsState: MCSLoadState<MCSList<MCSFeedLabelItem>>, selectedIndex: Int) {
+        let labelItems = tagsState.model?.items ?? []
         let idx: Int
-        if titles.isEmpty {
+        if labelItems.isEmpty {
             idx = 0
         } else {
-            idx = min(max(0, selectedIndex), tags.count - 1)
+            idx = min(max(0, selectedIndex), labelItems.count - 1)
         }
-        contentView.mcsv_applyTagStrip(phase: phase, tagTitles: titles, selectedIndex: idx)
-        if case .success = phase, !tags.isEmpty {
-            mcsv_ensureListPagesIfNeeded()
+        contentView.mcsv_applyTagStrip(tagsState: tagsState, selectedIndex: idx)
+        guard let pv = mcsv_pagingView else { return }
+        if tagsState.model != nil, !labelItems.isEmpty, tagsState.error == nil {
+            pv.defaultSelectedIndex = idx
+            pv.reloadData()
+            mcsv_pagingScrollToIndexIfVisible(idx, animated: false)
         } else {
-            mcsv_tearDownListPages()
+            pv.reloadData()
         }
     }
 
-    private func mcsv_ensureListPagesIfNeeded() {
-        let tags = viewModel.tags
-        let needsRebuild = listPages.count != tags.count
-            || zip(listPages, tags).contains { $0.mcsv_tagId != $1.id }
-        if needsRebuild {
-            mcsv_tearDownListPages()
-            listPages = tags.map { MCCShotsListPageController(tagId: $0.id) }
-            for (i, p) in listPages.enumerated() {
-                p.mcsv_index = i
-                let tagId = p.mcsv_tagId
-                p.mcsv_onPullToRefresh = { [weak self] in
-                    self?.viewModel.mcsv_loadList(tagId: tagId, isUserRefresh: true)
-                }
-                p.mcsv_onListRetry = p.mcsv_onPullToRefresh
-            }
+    private func mcsv_pagingScrollToIndexIfVisible(_ index: Int, animated: Bool) {
+        guard let c0 = contentView.mcsv_pagingListContainer, index >= 0 else { return }
+        let apply: () -> Void = { [weak self] in
+            guard let c = self?.contentView.mcsv_pagingListContainer, c.bounds.width > 0 else { return }
+            c.scrollView.setContentOffset(
+                CGPoint(x: CGFloat(index) * c.bounds.width, y: 0),
+                animated: animated
+            )
         }
-        pageViewController.dataSource = self
-        if let first = listPages.first, !mcsv_isProgrammaticPageChange,
-            needsRebuild || pageViewController.viewControllers?.isEmpty != false
-        {
-            mcsv_isProgrammaticPageChange = true
-            pageViewController.setViewControllers([first], direction: .forward, animated: false) { [weak self] _ in
-                self?.mcsv_isProgrammaticPageChange = false
-            }
+        apply()
+        if c0.bounds.width <= 0 {
+            DispatchQueue.main.async(execute: apply)
         }
-        mcsv_refreshAllListPages()
     }
 
-    private func mcsv_tearDownListPages() {
-        listPages = []
-        pageViewController.dataSource = nil
-    }
-
-    private func mcsv_refreshAllListPages() {
-        for p in listPages {
-            let id = p.mcsv_tagId
-            let items = viewModel.listByTagId[id] ?? []
-            let loading = viewModel.listLoadingTagIds.contains(id)
-            let err = viewModel.listErrorByTagId[id]
-            p.mcsv_applyListState(items: items, isLoading: loading, listError: err)
+    private func mcsv_pagingListDidShow(at index: Int) {
+        guard index >= 0, index < viewModel.labelItems.count else { return }
+        if viewModel.selectedTagIndex != index {
+            viewModel.mcsv_selectTag(at: index)
         }
+        contentView.mcsv_scrollSelectedTagToCenter(animated: true)
     }
 
     private func mcsv_wireViewInputs() {
@@ -159,7 +124,7 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCShotsV
     }
 
     private func mcsv_gotoPage(at index: Int, animated: Bool) {
-        guard index >= 0, index < listPages.count else { return }
+        guard index >= 0, index < viewModel.labelItems.count else { return }
         let old = viewModel.selectedTagIndex
         if index == old, animated {
             contentView.mcsv_scrollSelectedTagToCenter(animated: true)
@@ -167,54 +132,50 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCShotsV
         }
         if index == old { return }
         viewModel.mcsv_selectTag(at: index)
-        let direction: UIPageViewController.NavigationDirection = index > old ? .forward : .reverse
-        mcsv_isProgrammaticPageChange = true
-        pageViewController.setViewControllers(
-            [listPages[index]], direction: direction, animated: animated
-        ) { [weak self] _ in
-            self?.mcsv_isProgrammaticPageChange = false
+        if let c = contentView.mcsv_pagingListContainer, index < viewModel.labelItems.count {
+            c.didClickSelectedItem(at: index)
+        }
+        if let c = contentView.mcsv_pagingListContainer, c.bounds.width > 0 {
+            c.scrollView.setContentOffset(
+                CGPoint(x: CGFloat(index) * c.bounds.width, y: 0),
+                animated: animated
+            )
         }
     }
 }
 
-// MARK: - UIPageViewControllerDataSource & Delegate
+// MARK: - JXPagingViewDelegate
 
-extension MCCShotsController: UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+extension MCCShotsController: JXPagingViewDelegate {
 
-    public func pageViewController(
-        _ pageViewController: UIPageViewController,
-        viewControllerBefore viewController: UIViewController
-    ) -> UIViewController? {
-        guard let cur = viewController as? MCCShotsListPageController,
-            let i = listPages.firstIndex(where: { $0 === cur }),
-            i > 0
-        else { return nil }
-        return listPages[i - 1]
+    public func tableHeaderViewHeight(in pagingView: JXPagingView) -> Int { 0 }
+
+    public func tableHeaderView(in pagingView: JXPagingView) -> UIView { UIView() }
+
+    public func heightForPinSectionHeader(in pagingView: JXPagingView) -> Int { 44 }
+
+    public func viewForPinSectionHeader(in pagingView: JXPagingView) -> UIView {
+        contentView.mcsv_pinHeaderView
     }
 
-    public func pageViewController(
-        _ pageViewController: UIPageViewController,
-        viewControllerAfter viewController: UIViewController
-    ) -> UIViewController? {
-        guard let cur = viewController as? MCCShotsListPageController,
-            let i = listPages.firstIndex(where: { $0 === cur }),
-            i < listPages.count - 1
-        else { return nil }
-        return listPages[i + 1]
+    public func numberOfLists(in pagingView: JXPagingView) -> Int {
+        if viewModel.tagsState.isLoading { return 0 }
+        if viewModel.tagsState.error != nil { return 0 }
+        return viewModel.labelItems.count
     }
 
-    public func pageViewController(
-        _ pageViewController: UIPageViewController,
-        didFinishAnimating finished: Bool,
-        previousViewControllers: [UIViewController],
-        transitionCompleted completed: Bool
-    ) {
-        guard completed, !mcsv_isProgrammaticPageChange,
-            let current = pageViewController.viewControllers?.first as? MCCShotsListPageController,
-            let idx = listPages.firstIndex(where: { $0 === current })
-        else { return }
-        if idx != viewModel.selectedTagIndex {
-            viewModel.mcsv_selectTag(at: idx)
+    public func pagingView(_ pagingView: JXPagingView, listIdentifierAtIndex index: Int) -> String? {
+        guard viewModel.labelItems.indices.contains(index) else { return nil }
+        return viewModel.labelItems[index].templateRef
+    }
+
+    public func pagingView(_ pagingView: JXPagingView, initListAtIndex index: Int) -> JXPagingViewListViewDelegate {
+        let labelItem = viewModel.labelItems[index]
+        let list = MCCShotsListPageController(labelItem: labelItem)
+        list.mcsv_index = index
+        list.mcsv_onListDidAppear = { [weak self] in
+            self?.mcsv_pagingListDidShow(at: index)
         }
+        return list
     }
 }

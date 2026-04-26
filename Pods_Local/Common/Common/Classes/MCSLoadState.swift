@@ -9,11 +9,11 @@ import Data
 ///
 public struct MCSLoadState<T> {
     ///
-    var isLoading: Bool = false
+    public var isLoading: Bool = false
     ///
-    var error: MCENetworkError?
+    public var error: MCENetworkError?
     ///
-    var model: T?
+    public var model: T?
     ///
     public init(isLoading: Bool = false, error: MCENetworkError? = nil, model: T? = nil) {
         self.isLoading = isLoading
@@ -36,3 +36,4 @@ extension Publisher {
             .eraseToAnyPublisher()
     }
 }
+

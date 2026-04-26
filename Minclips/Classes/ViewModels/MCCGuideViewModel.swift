@@ -16,4 +16,5 @@ public final class MCCGuideViewModel: MCCBaseViewModel {
             .init(media: "", title: "啊说大话山东科技阿是", detail: "啊说大话山东科技阿是", handleBtnTitle: "asdad"),
         ]
     }
+    
 }

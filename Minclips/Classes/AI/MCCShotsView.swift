@@ -1,12 +1,15 @@
 //
 //  MCCShotsView.swift
-//  横滑标签 + 列表区域容器；不持有 ViewModel。导航栏在 Controller 配置。
+//  分类条作为 JXPaging 悬浮 Header；JXPagingView 由 Controller 创建并 mcsv_hostPagingView 嵌入。导航栏在 Controller 配置。
 //
 
 import UIKit
 import SnapKit
 import Common
 import Combine
+import JXPagingView
+import Data
+import SDWebImage
 
 public final class MCCShotsView: MCCBaseView {
 
@@ -24,8 +27,8 @@ public final class MCCShotsView: MCCBaseView {
 
     // MARK: - 展示
 
-    private var mcsv_phase: MCCShotsTagsPhase = .idle
-    private var mcsv_tagTitles: [String] = []
+    private var mcsv_tagLoadState = MCSLoadState<MCSList<MCSFeedLabelItem>>()
+    private var mcsv_labelItems: [MCSFeedLabelItem] = []
     private var mcsv_selectedIndex: Int = 0
 
     private let tagsLoading = UIActivityIndicatorView(style: .large)
@@ -72,86 +75,90 @@ public final class MCCShotsView: MCCBaseView {
         return cv
     }()
 
-    /// 嵌入 UIPageViewController 的 `view`。
-    public let mcsv_pageContainer: UIView = {
+    /// 给 `JXPagingView` 的 `viewForPinSectionHeader` 用；内部含横向标签。勿直接加进 MCCShotsView 层级，由 JXP 持有。
+    public let mcsv_pinHeaderView: UIView = {
         let v = UIView()
-        v.clipsToBounds = true
         v.backgroundColor = .clear
+        v.frame = CGRect(x: 0, y: 0, width: 0, height: 44)
         return v
     }()
 
+    private var mcsv_pagingViewRef: JXPagingView?
+    public var mcsv_pagingListContainer: JXPagingListContainerView? { mcsv_pagingViewRef?.listContainerView }
+
     public override func mcvw_setupUI() {
         backgroundColor = UIColor(hex: "000000")
+        mcsv_pinHeaderView.addSubview(tagCollection)
+        tagCollection.snp.makeConstraints { $0.edges.equalToSuperview() }
         addSubview(tagsLoading)
         addSubview(tagsErrorStack)
         tagsErrorStack.addArrangedSubview(tagsErrorLabel)
         tagsErrorStack.addArrangedSubview(tagsRetryButton)
-        addSubview(tagCollection)
-        addSubview(mcsv_pageContainer)
         tagsLoading.snp.makeConstraints { $0.centerX.equalToSuperview(); $0.top.equalTo(safeAreaLayoutGuide.snp.top).offset(12) }
         tagsErrorStack.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(24)
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(8)
-        }
-        tagCollection.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top)
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(44)
-        }
-        mcsv_pageContainer.snp.makeConstraints { make in
-            make.top.equalTo(tagCollection.snp.bottom).offset(8)
-            make.leading.trailing.bottom.equalToSuperview()
         }
         tagCollection.dataSource = self
         tagCollection.delegate = self
         mcsv_syncTagsVisibility()
     }
 
-    public func mcsv_applyTagStrip(phase: MCCShotsTagsPhase, tagTitles: [String], selectedIndex: Int) {
-        mcsv_phase = phase
-        mcsv_tagTitles = tagTitles
-        mcsv_selectedIndex = min(max(0, selectedIndex), max(0, tagTitles.count - 1))
+    public func mcsv_hostPagingView(_ pagingView: JXPagingView) {
+        mcsv_pagingViewRef = pagingView
+        pagingView.backgroundColor = .clear
+        if pagingView.superview == nil {
+            addSubview(pagingView)
+        }
+        pagingView.snp.remakeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide.snp.top)
+            make.leading.trailing.bottom.equalToSuperview()
+        }
+        bringSubviewToFront(tagsLoading)
+        bringSubviewToFront(tagsErrorStack)
+    }
+
+    public func mcsv_applyTagStrip(tagsState: MCSLoadState<MCSList<MCSFeedLabelItem>>, selectedIndex: Int) {
+        mcsv_tagLoadState = tagsState
+        mcsv_labelItems = tagsState.model?.items ?? []
+        mcsv_selectedIndex = min(max(0, selectedIndex), max(0, mcsv_labelItems.count - 1))
         mcsv_syncTagsVisibility()
         tagCollection.reloadData()
         mcsv_scrollSelectedTagToCenter(animated: false)
     }
 
     public func mcsv_scrollSelectedTagToCenter(animated: Bool) {
-        guard mcsv_tagTitles.indices.contains(mcsv_selectedIndex) else { return }
+        guard mcsv_labelItems.indices.contains(mcsv_selectedIndex) else { return }
         let p = IndexPath(item: mcsv_selectedIndex, section: 0)
         tagCollection.layoutIfNeeded()
         tagCollection.scrollToItem(at: p, at: .centeredHorizontally, animated: animated)
     }
 
     private func mcsv_syncTagsVisibility() {
-        switch mcsv_phase {
-        case .idle:
-            tagsLoading.isHidden = true
-            tagsLoading.stopAnimating()
-            tagsErrorStack.isHidden = true
-            tagCollection.isHidden = true
-            mcsv_pageContainer.isHidden = true
-        case .loading:
+        let s = mcsv_tagLoadState
+        if s.isLoading {
             tagsLoading.isHidden = false
             tagsLoading.startAnimating()
             tagsErrorStack.isHidden = true
-            tagCollection.isHidden = true
-            mcsv_pageContainer.isHidden = true
-        case .failure:
+            mcsv_pagingViewRef?.isHidden = true
+        } else if s.error != nil {
             tagsLoading.isHidden = true
             tagsLoading.stopAnimating()
-            if case .failure(let msg) = mcsv_phase {
-                tagsErrorLabel.text = msg
+            tagsErrorLabel.text = s.error.map { err in
+                (err as LocalizedError).errorDescription ?? err.localizedDescription
             }
             tagsErrorStack.isHidden = false
-            tagCollection.isHidden = true
-            mcsv_pageContainer.isHidden = true
-        case .success:
+            mcsv_pagingViewRef?.isHidden = true
+        } else if s.model != nil {
             tagsLoading.isHidden = true
             tagsLoading.stopAnimating()
             tagsErrorStack.isHidden = true
-            tagCollection.isHidden = mcsv_tagTitles.isEmpty
-            mcsv_pageContainer.isHidden = mcsv_tagTitles.isEmpty
+            mcsv_pagingViewRef?.isHidden = mcsv_labelItems.isEmpty
+        } else {
+            tagsLoading.isHidden = true
+            tagsLoading.stopAnimating()
+            tagsErrorStack.isHidden = true
+            mcsv_pagingViewRef?.isHidden = true
         }
     }
 
@@ -164,15 +171,16 @@ public final class MCCShotsView: MCCBaseView {
 extension MCCShotsView: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        mcsv_tagTitles.count
+        mcsv_labelItems.count
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: MCCShotsTagCell.mcsv_reuseId, for: indexPath
         ) as! MCCShotsTagCell
-        if let t = mcsv_tagTitles[safe: indexPath.item] {
-            cell.mcsv_apply(title: t, selected: indexPath.item == mcsv_selectedIndex)
+        if let it = mcsv_labelItems[safe: indexPath.item] {
+            let icon = it.iconImageUrl.isEmpty ? nil : it.iconImageUrl
+            cell.mcsv_apply(title: it.title, iconURL: icon, selected: indexPath.item == mcsv_selectedIndex)
         }
         return cell
     }
@@ -186,13 +194,14 @@ extension MCCShotsView: UICollectionViewDataSource, UICollectionViewDelegate, UI
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        if let t = mcsv_tagTitles[safe: indexPath.item] {
-            let w = (t as NSString).size(
-                withAttributes: [.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
-            ).width
-            return CGSize(width: w + 4, height: 32)
-        }
-        return .zero
+        guard let it = mcsv_labelItems[safe: indexPath.item] else { return .zero }
+        let t = it.title
+        let textW = (t as NSString).size(
+            withAttributes: [.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
+        ).width
+        let hasIcon = !it.iconImageUrl.isEmpty
+        let extra: CGFloat = hasIcon ? 18 + 4 : 0
+        return CGSize(width: textW + 4 + extra, height: 32)
     }
 }
 
@@ -200,18 +209,50 @@ extension MCCShotsView: UICollectionViewDataSource, UICollectionViewDelegate, UI
 
 private final class MCCShotsTagCell: MCCBaseCollectionViewCell {
     fileprivate static let mcsv_reuseId = "MCCShotsTagCell"
+    private let iconView: UIImageView = {
+        let v = UIImageView()
+        v.contentMode = .scaleAspectFit
+        v.isHidden = true
+        v.layer.cornerRadius = 2
+        v.clipsToBounds = true
+        return v
+    }()
     private let label = UILabel()
     public override func mcvw_setupUI() {
+        contentView.addSubview(iconView)
         contentView.addSubview(label)
-        label.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview()
-            make.centerY.equalToSuperview()
+        iconView.snp.makeConstraints { make in
+            make.leading.centerY.equalToSuperview()
+            make.size.equalTo(18)
         }
     }
-    fileprivate func mcsv_apply(title: String, selected: Bool) {
+    fileprivate func mcsv_apply(title: String, iconURL: String?, selected: Bool) {
+        let hasIcon = iconURL != nil && !(iconURL?.isEmpty ?? true)
+        iconView.isHidden = !hasIcon
+        if hasIcon, let s = iconURL, let u = URL(string: s) {
+            iconView.sd_setImage(with: u, placeholderImage: nil)
+        } else {
+            iconView.sd_cancelCurrentImageLoad()
+            iconView.image = nil
+        }
+        if hasIcon {
+            label.snp.remakeConstraints { make in
+                make.leading.equalTo(iconView.snp.trailing).offset(4)
+                make.trailing.centerY.equalToSuperview()
+            }
+        } else {
+            label.snp.remakeConstraints { make in
+                make.leading.trailing.centerY.equalToSuperview()
+            }
+        }
         label.text = title
         label.font = .systemFont(ofSize: 16, weight: selected ? .semibold : .regular)
         label.textColor = selected ? UIColor(hex: "FFFFFF") : UIColor(hex: "8E8E93")
+    }
+    public override func prepareForReuse() {
+        super.prepareForReuse()
+        iconView.sd_cancelCurrentImageLoad()
+        iconView.image = nil
     }
 }
 
