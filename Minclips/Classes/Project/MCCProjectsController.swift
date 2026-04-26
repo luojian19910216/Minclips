@@ -46,11 +46,17 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
     }
 
     public override func mcvc_configureNav() {
-        tabBarController?.navigationItem.title = "Projects"
-        let gear = UIImage(systemName: "gearshape")
-        tabBarController?.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: gear,
-            style: .plain,
+        guard let nav = navigationController else { return }
+        let item = navigationItem
+        title = nil
+        item.title = nil
+        item.largeTitleDisplayMode = .never
+        nav.navigationBar.prefersLargeTitles = false
+        item.leftBarButtonItem = MCCRootTabNavChrome.leftTitleBarButtonItem(
+            title: "Projects",
+            textColor: .white
+        )
+        item.rightBarButtonItem = MCCRootTabNavChrome.settingsBarButtonItem(
             target: self,
             action: #selector(mcpj_onSettingsTapped)
         )
@@ -63,7 +69,14 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
     public override func viewDidLoad() {
         super.viewDidLoad()
         contentView.mcpj_setupPagingView(delegate: self)
-        mcpj_applyRootStyle()
+    }
+
+    public override func mcvc_setupLocalization() {
+        super.mcvc_setupLocalization()
+        view.backgroundColor = UIColor(hex: "000000")!
+        contentView.backgroundColor = view.backgroundColor
+        contentView.mcpj_tagCollection.backgroundColor = .clear
+        contentView.mcpj_pinHeaderView.backgroundColor = .clear
     }
 
     public override func mcvc_bind() {
@@ -108,13 +121,6 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
                 self.mcpj_reloadPagingForTags()
             }
             .store(in: &cancellables)
-    }
-
-    private func mcpj_applyRootStyle() {
-        view.backgroundColor = UIColor(hex: "000000")
-        contentView.backgroundColor = UIColor(hex: "000000")
-        contentView.mcpj_tagCollection.backgroundColor = .clear
-        contentView.mcpj_pinHeaderView.backgroundColor = .clear
     }
 
     private func mcpj_syncTagChrome() {
@@ -287,8 +293,8 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
         return String(format: "%06X", h % 0xFFFFFF)
     }
 
-    private static func mcpj_styleRunCell(_ cell: MCCProjectsRunCell, item: MCSRunItem) {
-        let hex = mcpj_placeholderHex(from: item.runId)
+    private func mcpj_styleRunCell(_ cell: MCCProjectsRunCell, item: MCSRunItem) {
+        let hex = Self.mcpj_placeholderHex(from: item.runId)
         cell.mcpj_imageContainer.backgroundColor = UIColor(hex: hex) ?? .darkGray
         cell.mcpj_captionLabel.text = item.runId
         cell.mcpj_captionLabel.textColor = UIColor(white: 1, alpha: 0.55)
@@ -303,7 +309,9 @@ extension MCCProjectsController: JXPagingViewDelegate {
 
     public func tableHeaderView(in pagingView: JXPagingView) -> UIView { UIView() }
 
-    public func heightForPinSectionHeader(in pagingView: JXPagingView) -> Int { 44 }
+    public func heightForPinSectionHeader(in pagingView: JXPagingView) -> Int {
+        Int(ceil(MCCScreenSize.statusBarHeight))
+    }
 
     public func viewForPinSectionHeader(in pagingView: JXPagingView) -> UIView {
         contentView.mcpj_pinHeaderView
@@ -353,7 +361,7 @@ extension MCCProjectsController: UICollectionViewDataSource, UICollectionViewDel
         ) as! MCCProjectsRunCell
         if let ref = mcpj_listRefByCollectionObjectId[ObjectIdentifier(collectionView)],
            let item = mcpj_listStateByRef[ref]?.items[safe: indexPath.item] {
-            Self.mcpj_styleRunCell(cell, item: item)
+            mcpj_styleRunCell(cell, item: item)
         }
         return cell
     }
@@ -365,8 +373,11 @@ extension MCCProjectsController: UICollectionViewDataSource, UICollectionViewDel
         if let it = mcpj_segmentItems[safe: indexPath.item] {
             let selected = indexPath.item == mcpj_selectedTagIndex
             cell.mcsv_titleLabel.text = it.title
-            cell.mcsv_titleLabel.font = .systemFont(ofSize: 16, weight: selected ? .semibold : .regular)
-            cell.mcsv_titleLabel.textColor = selected ? UIColor(hex: "FFFFFF") : UIColor(hex: "8E8E93")
+            cell.mcsv_titleLabel.font = .systemFont(
+                ofSize: 16,
+                weight: selected ? .semibold : .regular
+            )
+            cell.mcsv_titleLabel.textColor = selected ? UIColor(hex: "FFFFFF")! : UIColor(hex: "8E8E93")!
             cell.mcsv_iconView.isHidden = true
             cell.mcsv_iconView.sd_cancelCurrentImageLoad()
             cell.mcsv_iconView.image = nil
@@ -387,8 +398,9 @@ extension MCCProjectsController: UICollectionViewDataSource, UICollectionViewDel
         if collectionView === contentView.mcpj_tagCollection {
             guard let it = mcpj_segmentItems[safe: indexPath.item] else { return .zero }
             let t = it.title
+            let fs: CGFloat = 16
             let textW = (t as NSString).size(
-                withAttributes: [.font: UIFont.systemFont(ofSize: 16, weight: .medium)]
+                withAttributes: [.font: UIFont.systemFont(ofSize: fs, weight: .medium)]
             ).width
             return CGSize(width: textW + 4, height: 32)
         }

@@ -285,7 +285,7 @@ public class MCCSceneDelegate: UIResponder, UIWindowSceneDelegate {
                 case .guide:
                     self.window?.rootViewController = MCCGuideController.init()
                 case .main:
-                    self.window?.rootViewController = MCCNavigationController.init(rootViewController: MCCTabBarController.init())
+                    self.window?.rootViewController = MCCTabBarController()
                 }
             }
             .store(in: &cancellables)

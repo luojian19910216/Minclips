@@ -53,10 +53,13 @@ public final class MCCScreenSize {
         keyWindow?.safeAreaInsets.bottom ?? 0
     }
     
-    private static var statusBarHeight: CGFloat {
-        UIApplication.shared.connectedScenes
+    /// 状态栏区域高度（与 `statusBarManager.statusBarFrame` 一致；不可用时回退为安全区顶或 20）
+    public static var statusBarHeight: CGFloat {
+        let h = UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
             .first?.statusBarManager?.statusBarFrame.height ?? 0
+        if h > 0 { return h }
+        return keyWindow?.safeAreaInsets.top ?? 20
     }
     
     public static var navigationBarHeight: CGFloat {

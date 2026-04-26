@@ -38,12 +38,22 @@ public class MCCTabBarController: UITabBarController {
     // MARK: - NavigationBar
     
     public override var fd_prefersNavigationBarHidden: Bool {
-        get { self.selectedViewController?.fd_prefersNavigationBarHidden ?? false }
+        get {
+            if let nav = self.selectedViewController as? UINavigationController {
+                return nav.topViewController?.fd_prefersNavigationBarHidden ?? false
+            }
+            return self.selectedViewController?.fd_prefersNavigationBarHidden ?? false
+        }
         set {}
     }
     
     public override var fd_interactivePopDisabled: Bool {
-        get { self.selectedViewController?.fd_interactivePopDisabled ?? false }
+        get {
+            if let nav = self.selectedViewController as? UINavigationController {
+                return nav.topViewController?.fd_interactivePopDisabled ?? false
+            }
+            return self.selectedViewController?.fd_interactivePopDisabled ?? false
+        }
         set {}
     }
     
@@ -54,14 +64,14 @@ public class MCCTabBarController: UITabBarController {
     public lazy var firstVC: MCCShotsController = {
         let vc = MCCShotsController()
         vc.tabBarItem.image = UIImage(named: "ic_tab_home")?.withRenderingMode(.alwaysTemplate)
-        vc.tabBarItem.title = "Shots"
+        vc.tabBarItem.title = "Shorts"
         return vc
     }()
     
-    public lazy var secondVC: MCCViewController = {
-        let vc = MCCViewController()
+    public lazy var secondVC: MCCToolsController = {
+        let vc = MCCToolsController()
         vc.tabBarItem.image = UIImage(named: "ic_tab_home")?.withRenderingMode(.alwaysTemplate)
-        vc.tabBarItem.title = "Tools"
+        vc.tabBarItem.title = "Studio"
         return vc
     }()
     
@@ -78,7 +88,13 @@ public class MCCTabBarController: UITabBarController {
         super.viewDidLoad()
         
         self.delegate = self
-        self.viewControllers = [firstVC, secondVC, thirdVC]
+        let firstNav = MCCNavigationController(rootViewController: firstVC)
+        firstNav.tabBarItem = firstVC.tabBarItem
+        let secondNav = MCCNavigationController(rootViewController: secondVC)
+        secondNav.tabBarItem = secondVC.tabBarItem
+        let thirdNav = MCCNavigationController(rootViewController: thirdVC)
+        thirdNav.tabBarItem = thirdVC.tabBarItem
+        self.viewControllers = [firstNav, secondNav, thirdNav]
         
         self.tabBar.mc_barStyle = .glassDark
         
@@ -87,8 +103,8 @@ public class MCCTabBarController: UITabBarController {
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 guard let self = self else { return }
-                self.firstVC.tabBarItem.title = "Shots"
-                self.secondVC.tabBarItem.title = "Tools"
+                self.firstVC.tabBarItem.title = "Shorts"
+                self.secondVC.tabBarItem.title = "Studio"
                 self.thirdVC.tabBarItem.title = "Projects"
             }
             .store(in: &cancellables)
@@ -103,7 +119,10 @@ extension MCCTabBarController: UITabBarControllerDelegate {
     }
     
     public func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        self.navigationController?.setNavigationBarHidden(self.fd_prefersNavigationBarHidden, animated: false)
+        (viewController as? UINavigationController)?.setNavigationBarHidden(
+            self.fd_prefersNavigationBarHidden,
+            animated: false
+        )
     }
     
 }

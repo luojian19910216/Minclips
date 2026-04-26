@@ -1,4 +1,5 @@
 import UIKit
+import Common
 import SnapKit
 import JXPagingView
 import SDWebImage
@@ -24,7 +25,8 @@ public final class MCCShotsView: MCCBaseView {
 
     public let mcsv_pinHeaderView: UIView = {
         let v = UIView()
-        v.frame = CGRect(x: 0, y: 0, width: 0, height: 44)
+        let h = max(20, MCCScreenSize.statusBarHeight)
+        v.frame = CGRect(x: 0, y: 0, width: 0, height: h)
         return v
     }()
 
@@ -39,6 +41,7 @@ public final class MCCShotsView: MCCBaseView {
 
     public func mcsv_setupPagingView(delegate: JXPagingViewDelegate) {
         let pv = JXPagingView(delegate: delegate, listContainerType: .scrollView)
+        pv.mainTableView.backgroundColor = .clear
         pv.allowsCacheList = true
         mcsv_pagingViewRef = pv
         if pv.superview == nil {

@@ -1,4 +1,5 @@
 import UIKit
+import Common
 import SnapKit
 import JXPagingView
 
@@ -23,7 +24,8 @@ public final class MCCProjectsView: MCCBaseView {
 
     public let mcpj_pinHeaderView: UIView = {
         let v = UIView()
-        v.frame = CGRect(x: 0, y: 0, width: 0, height: 44)
+        let h = max(20, MCCScreenSize.statusBarHeight)
+        v.frame = CGRect(x: 0, y: 0, width: 0, height: h)
         return v
     }()
 
@@ -38,6 +40,7 @@ public final class MCCProjectsView: MCCBaseView {
 
     public func mcpj_setupPagingView(delegate: JXPagingViewDelegate) {
         let pv = JXPagingView(delegate: delegate, listContainerType: .scrollView)
+        pv.mainTableView.backgroundColor = .clear
         pv.allowsCacheList = true
         mcpj_pagingViewRef = pv
         if pv.superview == nil {

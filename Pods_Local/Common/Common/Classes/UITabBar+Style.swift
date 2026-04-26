@@ -48,8 +48,10 @@ extension UITabBar {
             switch mc_barStyle {
             case .glassDark:
                 barTintColor = UIColor.black.withAlphaComponent(0.6)
-                normalTintColor = UIColor.green
-                selectedTintColor = UIColor.red
+                // 与选中态同色，避免仅当前 Tab 高亮、其余呈「未选」色
+                let accent = UIColor.white
+                normalTintColor = accent
+                selectedTintColor = accent
             }
 
             let appearance = UITabBarAppearance()
@@ -74,6 +76,9 @@ extension UITabBar {
 
             self.standardAppearance = appearance
             self.scrollEdgeAppearance = appearance
+
+            self.tintColor = selectedTintColor
+            self.unselectedItemTintColor = normalTintColor
 
             self.isTranslucent = true
         }

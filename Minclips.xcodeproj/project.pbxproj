@@ -147,6 +147,14 @@
 		F6E2C12D2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */; };
 		F6E2C12E2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */; };
 		F6E2C12F2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */; };
+		F6E2C2102FC0020002C4F70 /* MCCToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2002FC0020002C4F70 /* MCCToolsView.swift */; };
+		F6E2C2112FC0020002C4F70 /* MCCToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2002FC0020002C4F70 /* MCCToolsView.swift */; };
+		F6E2C2122FC0020002C4F70 /* MCCToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2002FC0020002C4F70 /* MCCToolsView.swift */; };
+		F6E2C2132FC0020002C4F70 /* MCCToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2002FC0020002C4F70 /* MCCToolsView.swift */; };
+		F6E2C2142FC0020002C4F70 /* MCCToolsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2012FC0020002C4F70 /* MCCToolsController.swift */; };
+		F6E2C2152FC0020002C4F70 /* MCCToolsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2012FC0020002C4F70 /* MCCToolsController.swift */; };
+		F6E2C2162FC0020002C4F70 /* MCCToolsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2012FC0020002C4F70 /* MCCToolsController.swift */; };
+		F6E2C2172FC0020002C4F70 /* MCCToolsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2012FC0020002C4F70 /* MCCToolsController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -201,6 +209,8 @@
 		F6E2C1012FC0010002C4F70 /* MCCProjectsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProjectsController.swift; sourceTree = "<group>"; };
 		F6E2C1022FC0010002C4F70 /* MCCProjectsListPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProjectsListPageView.swift; sourceTree = "<group>"; };
 		F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProjectsListPageController.swift; sourceTree = "<group>"; };
+		F6E2C2002FC0020002C4F70 /* MCCToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCToolsView.swift; sourceTree = "<group>"; };
+		F6E2C2012FC0020002C4F70 /* MCCToolsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCToolsController.swift; sourceTree = "<group>"; };
 		F72C010043D4413B9E5D4761 /* Pods-Minclips_D.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_D.release.xcconfig"; path = "Target Support Files/Pods-Minclips_D/Pods-Minclips_D.release.xcconfig"; sourceTree = "<group>"; };
 		FD04B3C983B934D49261DA0A /* Pods-Minclips_P.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_P.debug.xcconfig"; path = "Target Support Files/Pods-Minclips_P/Pods-Minclips_P.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -256,7 +266,7 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		A0B46A5B2F9C8FE800DAC813 /* AI */ = {
+		A0B46A5B2F9C8FE800DAC813 /* Shots */ = {
 			isa = PBXGroup;
 			children = (
 				F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */,
@@ -264,7 +274,7 @@
 				F6E2B04A2FA20501002C4F70 /* MCCShotsListPageView.swift */,
 				F6E2B0392FA20301002C4F70 /* MCCShotsListPageController.swift */,
 			);
-			path = AI;
+			path = Shots;
 			sourceTree = "<group>";
 		};
 		B0D36159DDD01BDC90144D9D /* Frameworks */ = {
@@ -335,7 +345,8 @@
 		F65889672EF8E46700A094B5 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				A0B46A5B2F9C8FE800DAC813 /* AI */,
+				A0B46A5B2F9C8FE800DAC813 /* Shots */,
+				F6E2C0F12FC0020002C4F70 /* Tools */,
 				F6E2C0F02FC0010002C4F70 /* Project */,
 				F658896A2EF8E48600A094B5 /* Models */,
 				F65889692EF8E48300A094B5 /* Views */,
@@ -434,6 +445,15 @@
 				F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */,
 			);
 			path = Project;
+			sourceTree = "<group>";
+		};
+		F6E2C0F12FC0020002C4F70 /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				F6E2C2002FC0020002C4F70 /* MCCToolsView.swift */,
+				F6E2C2012FC0020002C4F70 /* MCCToolsController.swift */,
+			);
+			path = Tools;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -812,6 +832,8 @@
 				F6E2C1242FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
 				F6E2C1282FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
 				F6E2C12C2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
+				F6E2C2102FC0020002C4F70 /* MCCToolsView.swift in Sources */,
+				F6E2C2142FC0020002C4F70 /* MCCToolsController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -846,6 +868,8 @@
 				F6E2C1252FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
 				F6E2C1292FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
 				F6E2C12D2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
+				F6E2C2112FC0020002C4F70 /* MCCToolsView.swift in Sources */,
+				F6E2C2152FC0020002C4F70 /* MCCToolsController.swift in Sources */,
 				F6588BBB2EFA402B00A094B5 /* MCCTabBarController.swift in Sources */,
 				F6588BBE2EFA41AF00A094B5 /* MCCCfViewModel.swift in Sources */,
 				F6588BB72EFA402000A094B5 /* MCCGuideController.swift in Sources */,
@@ -886,6 +910,8 @@
 				F6E2C1262FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
 				F6E2C12A2FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
 				F6E2C12E2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
+				F6E2C2122FC0020002C4F70 /* MCCToolsView.swift in Sources */,
+				F6E2C2162FC0020002C4F70 /* MCCToolsController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -923,6 +949,8 @@
 				F6E2C1272FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
 				F6E2C12B2FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
 				F6E2C12F2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
+				F6E2C2132FC0020002C4F70 /* MCCToolsView.swift in Sources */,
+				F6E2C2172FC0020002C4F70 /* MCCToolsController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
