@@ -35,7 +35,7 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
 
     public override func mcvc_setupLocalization() {
         super.mcvc_setupLocalization()
-        view.backgroundColor = UIColor(hex: "000000")!
+
         contentView.backgroundColor = view.backgroundColor
         contentView.mcvw_tagCollection.backgroundColor = .clear
         contentView.mcvw_pinHeaderView.backgroundColor = .clear
@@ -138,19 +138,14 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
     }
 
     private func mcvc_dequeueTagCell(_ collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MCCShotsTagCell.mcvw_reuseId, for: indexPath
-        ) as! MCCShotsTagCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MCCShotsTagCell.mcvw_reuseId, for: indexPath) as! MCCShotsTagCell
         if let it = mcvc_labelItems[safe: indexPath.item] {
             let selected = indexPath.item == mcvc_selectedTagIndex
 
             let iconUrl = it.iconImageUrl.isEmpty ? nil : it.iconImageUrl
             cell.mcvw_titleLabel.text = it.title
-            cell.mcvw_titleLabel.font = .systemFont(
-                ofSize: 16,
-                weight: selected ? .semibold : .regular
-            )
-            cell.mcvw_titleLabel.textColor = selected ? UIColor(hex: "FFFFFF")! : UIColor(hex: "8E8E93")!
+            cell.mcvw_titleLabel.font = .systemFont(ofSize: 16, weight: selected ? .semibold : .regular)
+            cell.mcvw_titleLabel.textColor = selected ? UIColor.white : UIColor.white.withAlphaComponent(0.48)
             if let urlStr = iconUrl, let u = URL(string: urlStr) {
                 cell.mcvw_iconView.isHidden = false
                 cell.mcvw_iconView.sd_setImage(with: u, placeholderImage: nil)

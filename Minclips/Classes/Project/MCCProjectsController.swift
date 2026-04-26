@@ -162,16 +162,11 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
     }
 
     private func mcpj_dequeueTagCell(_ collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MCCProjectsTagCell.mcvw_reuseId, for: indexPath
-        ) as! MCCProjectsTagCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MCCProjectsTagCell.mcvw_reuseId, for: indexPath) as! MCCProjectsTagCell
         if let it = mcpj_segmentItems[safe: indexPath.item] {
             let selected = indexPath.item == mcpj_selectedTagIndex
             cell.mcvw_titleLabel.text = it.title
-            cell.mcvw_titleLabel.font = .systemFont(
-                ofSize: 16,
-                weight: selected ? .semibold : .regular
-            )
+            cell.mcvw_titleLabel.font = .systemFont(ofSize: 16, weight: selected ? .semibold : .regular)
             cell.mcvw_titleLabel.textColor = selected ? UIColor(hex: "FFFFFF")! : UIColor(hex: "8E8E93")!
             cell.mcvw_iconView.isHidden = true
             cell.mcvw_iconView.sd_cancelCurrentImageLoad()
