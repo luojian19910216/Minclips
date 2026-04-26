@@ -2,15 +2,26 @@ import UIKit
 import SnapKit
 import MJRefresh
 import JXPagingView
+import Combine
+import Common
+import Data
 
-public protocol MCCProjectsListPageHost: AnyObject {
+private struct MCCProjectListState {
 
-    func mcpj_listPageDidLoad(_ list: MCCProjectsListPageController)
+    var items: [MCSRunItem] = []
 
-    func mcpj_listRequestRefresh(_ list: MCCProjectsListPageController)
+    var hasMore: Bool = false
 
-    func mcpj_listRequestLoadMore(_ list: MCCProjectsListPageController)
+    var listState: MCSLoadState<MCSList<MCSRunItem>> = MCSLoadState()
 
+    var isLoadingMore: Bool = false
+
+}
+
+private enum MCCProjectListLoadKind: Sendable {
+    case initial
+    case pullToRefresh
+    case loadMore
 }
 
 public final class MCCProjectsListPageController: MCCViewController<MCCProjectsListPageView, MCCEmptyViewModel> {
@@ -21,27 +32,39 @@ public final class MCCProjectsListPageController: MCCViewController<MCCProjectsL
 
     public var mcpj_onListDidAppear: (() -> Void)?
 
-    public weak var mcpj_listHost: MCCProjectsListPageHost?
-
     private var mcpj_pagingScrollCallback: ((UIScrollView) -> Void)?
 
-    public override func viewDidLoad() {
-        super.viewDidLoad()
+    private var mcpj_listState = MCCProjectListState()
+
+    public override func mcvc_setupLocalization() {
+        super.mcvc_setupLocalization()
+        view.backgroundColor = .clear
+        contentView.mcpj_collectionView.backgroundColor = .clear
+    }
+
+    public override func mcvc_bind() {
+        super.mcvc_bind()
         let cv = contentView.mcpj_collectionView
+        cv.dataSource = self
+        cv.delegate = self
+
         let header = MJRefreshNormalHeader { [weak self] in
-            guard let self = self else { return }
-            self.mcpj_listHost?.mcpj_listRequestRefresh(self)
+            self?.mcpj_loadRunList(kind: .pullToRefresh)
         }
         header.lastUpdatedTimeLabel?.isHidden = true
         cv.mj_header = header
 
         let footer = MJRefreshAutoNormalFooter { [weak self] in
-            guard let self = self else { return }
-            self.mcpj_listHost?.mcpj_listRequestLoadMore(self)
+            self?.mcpj_loadRunList(kind: .loadMore)
         }
         cv.mj_footer = footer
+    }
 
-        mcpj_listHost?.mcpj_listPageDidLoad(self)
+    public override func mcvc_loadData() {
+        super.mcvc_loadData()
+        // JXPaging 在 initList 里先赋值 segment，再触发加载；未赋值则不请求避免 crash。
+        guard mcpj_segment != nil else { return }
+        mcpj_loadRunList(kind: .initial)
     }
 
 }
@@ -66,6 +89,185 @@ extension MCCProjectsListPageController {
 
     public func mcpj_forwardPagingScroll(_ scrollView: UIScrollView) {
         mcpj_pagingScrollCallback?(scrollView)
+    }
+
+}
+
+// MARK: - 列表请求（本页自管）
+
+extension MCCProjectsListPageController {
+
+    private func mcpj_loadRunList(kind: MCCProjectListLoadKind) {
+        guard mcpj_segment != nil else { return }
+        var st = mcpj_listState
+        switch kind {
+        case .initial:
+            if !st.items.isEmpty { return }
+            if st.listState.isLoading { return }
+        case .pullToRefresh:
+            if st.listState.isLoading { return }
+        case .loadMore:
+            if !st.hasMore { return }
+            if st.listState.isLoading { return }
+            if st.isLoadingMore { return }
+        }
+
+        if kind == .loadMore {
+            st.isLoadingMore = true
+            mcpj_listState = st
+            mcpj_applyListUI()
+            var request = MCSRunListRequest()
+            request.itemsPerPage = 20
+            if let last = st.items.last, !last.runId.isEmpty {
+                request.resumeAfterId = last.runId
+            }
+            MCCRunAPIManager.shared.inventory(with: request)
+                .sink(
+                    receiveCompletion: { [weak self] _ in
+                        guard let self = self else { return }
+                        self.mcpj_listState.isLoadingMore = false
+                        self.mcpj_applyListUI()
+                    },
+                    receiveValue: { [weak self] list in
+                        guard let self = self else { return }
+                        self.mcpj_listState.isLoadingMore = false
+                        self.mcpj_listState.items += list.items
+                        self.mcpj_listState.hasMore = list.items.count >= 20
+                        self.mcpj_applyListUI()
+                    }
+                )
+                .store(in: &cancellables)
+        } else {
+            var request = MCSRunListRequest()
+            request.itemsPerPage = 20
+            MCCRunAPIManager.shared.inventory(with: request)
+                .asLoadState()
+                .sink { [weak self] state in
+                    guard let self = self else { return }
+                    self.mcpj_listState.listState = state
+                    if let m = state.model, !state.isLoading, state.error == nil {
+                        var list = m.items
+                        if list.isEmpty {
+                            list = Self.mcpj_mockRunItems()
+                        }
+                        self.mcpj_listState.items = list
+                        self.mcpj_listState.hasMore = list.count >= 20
+                    }
+                    self.mcpj_applyListUI()
+                }
+                .store(in: &cancellables)
+        }
+    }
+
+    private func mcpj_applyListUI() {
+        let st = mcpj_listState
+        let items = st.items
+        let listState = st.listState
+        let isLoadingMore = st.isLoadingMore
+        let hasMore = st.hasMore
+        let cv = contentView.mcpj_collectionView
+        if !listState.isLoading {
+            cv.mj_header?.endRefreshing()
+        }
+        if !listState.isLoading {
+            if items.isEmpty {
+                cv.mj_footer?.isHidden = true
+            } else {
+                cv.mj_footer?.isHidden = false
+                if !isLoadingMore {
+                    if hasMore {
+                        cv.mj_footer?.resetNoMoreData()
+                        cv.mj_footer?.endRefreshing()
+                    } else {
+                        cv.mj_footer?.endRefreshingWithNoMoreData()
+                    }
+                }
+            }
+        }
+        cv.isHidden = false
+        cv.reloadData()
+    }
+
+    private static func mcpj_mockRunItems() -> [MCSRunItem] {
+        (0..<10).map { i in
+            var it = MCSRunItem()
+            it.runId = "mock_run_\(i)"
+            it.createTime = Date(timeIntervalSince1970: TimeInterval(1_700_000_000 + i))
+            return it
+        }
+    }
+
+    private static func mcpj_placeholderHex(from id: String) -> String {
+        var h: UInt = 0
+        for c in id.unicodeScalars {
+            h = h &* 31 &+ UInt(c.value)
+        }
+        return String(format: "%06X", h % 0xFFFFFF)
+    }
+
+    private func mcpj_styleRunCell(_ cell: MCCProjectsRunCell, item: MCSRunItem) {
+        let hex = Self.mcpj_placeholderHex(from: item.runId)
+        cell.mcpj_imageContainer.backgroundColor = UIColor(hex: hex) ?? .darkGray
+        cell.mcpj_captionLabel.text = item.runId
+        cell.mcpj_captionLabel.textColor = UIColor(white: 1, alpha: 0.55)
+        cell.mcpj_thumbView.image = nil
+    }
+
+}
+
+// MARK: - Collection
+
+extension MCCProjectsListPageController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        mcpj_listState.items.count
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: MCCProjectsRunCell.mcpj_reuseId, for: indexPath
+        ) as! MCCProjectsRunCell
+        if let item = mcpj_listState.items[safe: indexPath.item] {
+            mcpj_styleRunCell(cell, item: item)
+        }
+        return cell
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let item = mcpj_listState.items[safe: indexPath.item] else { return }
+        collectionView.deselectItem(at: indexPath, animated: true)
+        let title = item.runId.isEmpty ? "Project" : item.runId
+        let kind: MCCCreationResultKind = indexPath.item % 2 == 0
+            ? .successImage
+            : .successVideo(totalDuration: 15)
+        let vc = MCCCreationResultController(navigationTitle: title, kind: kind)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+
+    public func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        let inset: CGFloat = 16
+        let spacing: CGFloat = 8
+        let w = (collectionView.bounds.width - inset * 2 - spacing * 2) / 3
+        if w <= 0 { return CGSize(width: 100, height: 160) }
+        let thumbH = w * 4 / 3
+        return CGSize(width: floor(w), height: thumbH + 4 + 14)
+    }
+
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        mcpj_forwardPagingScroll(scrollView)
+    }
+
+}
+
+private extension Array {
+
+    subscript(safe index: Int) -> Element? {
+        guard index >= 0, index < count else { return nil }
+        return self[index]
     }
 
 }

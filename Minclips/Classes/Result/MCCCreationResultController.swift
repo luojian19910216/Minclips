@@ -9,6 +9,17 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
     public let mccr_pageTitle: String
     public let mccr_kind: MCCCreationResultKind
 
+    private lazy var mccr_navTitleLabel: UILabel = {
+        let t = UILabel()
+        t.textColor = .white
+        t.font = .systemFont(ofSize: 17, weight: .semibold)
+        t.textAlignment = .center
+        t.numberOfLines = 1
+        t.adjustsFontSizeToFitWidth = true
+        t.minimumScaleFactor = 0.75
+        return t
+    }()
+
     public init(navigationTitle: String, kind: MCCCreationResultKind) {
         self.mccr_pageTitle = navigationTitle
         self.mccr_kind = kind
@@ -51,14 +62,16 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
         item.title = nil
         item.largeTitleDisplayMode = .never
         nav.navigationBar.prefersLargeTitles = false
-        let t = UILabel()
-        t.text = mccr_pageTitle
-        t.textColor = .white
-        t.font = .systemFont(ofSize: 17, weight: .semibold)
-        t.sizeToFit()
-        item.titleView = t
+        mccr_navTitleLabel.text = mccr_pageTitle
+        mccr_navTitleLabel.sizeToFit()
+        item.titleView = mccr_navTitleLabel
         item.leftBarButtonItem = mccr_barCircleItem(systemName: "chevron.left", action: #selector(mccr_onBack))
-        item.rightBarButtonItem = mccr_barCircleItem(systemName: "trash", action: #selector(mccr_onDelete))
+        switch mccr_kind {
+        case .successImage, .successVideo:
+            item.rightBarButtonItem = mccr_barCircleItem(systemName: "trash", action: #selector(mccr_onDelete))
+        case .failed, .restricted:
+            item.rightBarButtonItem = nil
+        }
         mccr_syncNavWithDeletePanel(contentView.mccr_isDeletePanelVisible)
     }
 
@@ -91,7 +104,12 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
 
     @objc
     private func mccr_onDelete() {
-        contentView.mccr_setDeletePanelVisible(true)
+        switch mccr_kind {
+        case .successImage, .successVideo:
+            contentView.mccr_setDeletePanelVisible(true)
+        case .failed, .restricted:
+            break
+        }
     }
 
     @objc

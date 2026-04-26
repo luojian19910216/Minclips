@@ -3,27 +3,7 @@ import Common
 import Combine
 import FDFullscreenPopGesture
 import JXPagingView
-import Data
-import MJRefresh
 import SDWebImage
-
-private struct MCCProjectListState {
-
-    var items: [MCSRunItem] = []
-
-    var hasMore: Bool = false
-
-    var listState: MCSLoadState<MCSList<MCSRunItem>> = MCSLoadState()
-
-    var isLoadingMore: Bool = false
-
-}
-
-private enum MCCProjectListLoadKind: Sendable {
-    case initial
-    case pullToRefresh
-    case loadMore
-}
 
 public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyViewModel> {
 
@@ -32,12 +12,6 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
     private var mcpj_tagsLoadState: MCSLoadState<[MCCProjectSegment]> = MCSLoadState()
 
     private var mcpj_selectedTagIndex: Int = 0
-
-    private var mcpj_listStateByRef: [String: MCCProjectListState] = [:]
-
-    private var mcpj_listPageByRef: [String: MCCProjectsListPageController] = [:]
-
-    private var mcpj_listRefByCollectionObjectId: [ObjectIdentifier: String] = [:]
 
     private var mcpj_segmentItems: [MCCProjectSegment] { mcpj_tagsLoadState.model ?? [] }
 
@@ -192,126 +166,23 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
         }
     }
 
-    private func mcpj_loadRunList(_ refId: String, kind: MCCProjectListLoadKind) {
-        var st = mcpj_listStateByRef[refId] ?? MCCProjectListState()
-        switch kind {
-        case .initial:
-            if !st.items.isEmpty { return }
-            if st.listState.isLoading { return }
-        case .pullToRefresh:
-            if st.listState.isLoading { return }
-        case .loadMore:
-            if !st.hasMore { return }
-            if st.listState.isLoading { return }
-            if st.isLoadingMore { return }
+    private func mcpj_dequeueTagCell(_ collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: MCCShotsTagCell.mcsv_reuseId, for: indexPath
+        ) as! MCCShotsTagCell
+        if let it = mcpj_segmentItems[safe: indexPath.item] {
+            let selected = indexPath.item == mcpj_selectedTagIndex
+            cell.mcsv_titleLabel.text = it.title
+            cell.mcsv_titleLabel.font = .systemFont(
+                ofSize: 16,
+                weight: selected ? .semibold : .regular
+            )
+            cell.mcsv_titleLabel.textColor = selected ? UIColor(hex: "FFFFFF")! : UIColor(hex: "8E8E93")!
+            cell.mcsv_iconView.isHidden = true
+            cell.mcsv_iconView.sd_cancelCurrentImageLoad()
+            cell.mcsv_iconView.image = nil
         }
-
-        if kind == .loadMore {
-            st.isLoadingMore = true
-            mcpj_listStateByRef[refId] = st
-            mcpj_applyListUI(refId: refId)
-            var request = MCSRunListRequest()
-            request.itemsPerPage = 20
-            if let last = st.items.last, !last.runId.isEmpty {
-                request.resumeAfterId = last.runId
-            }
-            MCCRunAPIManager.shared.inventory(with: request)
-                .sink(
-                    receiveCompletion: { [weak self] _ in
-                        guard let self = self else { return }
-                        var s = self.mcpj_listStateByRef[refId] ?? MCCProjectListState()
-                        s.isLoadingMore = false
-                        self.mcpj_listStateByRef[refId] = s
-                        self.mcpj_applyListUI(refId: refId)
-                    },
-                    receiveValue: { [weak self] list in
-                        guard let self = self else { return }
-                        var s = self.mcpj_listStateByRef[refId] ?? MCCProjectListState()
-                        s.isLoadingMore = false
-                        s.items += list.items
-                        s.hasMore = list.items.count >= 20
-                        self.mcpj_listStateByRef[refId] = s
-                        self.mcpj_applyListUI(refId: refId)
-                    }
-                )
-                .store(in: &cancellables)
-        } else {
-            var request = MCSRunListRequest()
-            request.itemsPerPage = 20
-            MCCRunAPIManager.shared.inventory(with: request)
-                .asLoadState()
-                .sink { [weak self] state in
-                    guard let self = self else { return }
-                    var s = self.mcpj_listStateByRef[refId] ?? MCCProjectListState()
-                    s.listState = state
-                    if let m = state.model, !state.isLoading, state.error == nil {
-                        var list = m.items
-                        if list.isEmpty {
-                            list = Self.mcpj_mockRunItems()
-                        }
-                        s.items = list
-                        s.hasMore = list.count >= 20
-                    }
-                    self.mcpj_listStateByRef[refId] = s
-                    self.mcpj_applyListUI(refId: refId)
-                }
-                .store(in: &cancellables)
-        }
-    }
-
-    private func mcpj_applyListUI(refId: String) {
-        guard let list = mcpj_listPageByRef[refId] else { return }
-        let st = mcpj_listStateByRef[refId] ?? MCCProjectListState()
-        let items = st.items
-        let listState = st.listState
-        let isLoadingMore = st.isLoadingMore
-        let hasMore = st.hasMore
-        let cv = list.contentView.mcpj_collectionView
-        if !listState.isLoading {
-            cv.mj_header?.endRefreshing()
-        }
-        if !listState.isLoading {
-            if items.isEmpty {
-                cv.mj_footer?.isHidden = true
-            } else {
-                cv.mj_footer?.isHidden = false
-                if !isLoadingMore {
-                    if hasMore {
-                        cv.mj_footer?.resetNoMoreData()
-                        cv.mj_footer?.endRefreshing()
-                    } else {
-                        cv.mj_footer?.endRefreshingWithNoMoreData()
-                    }
-                }
-            }
-        }
-        cv.isHidden = false
-        cv.reloadData()
-    }
-
-    private static func mcpj_mockRunItems() -> [MCSRunItem] {
-        (0..<10).map { i in
-            var it = MCSRunItem()
-            it.runId = "mock_run_\(i)"
-            it.createTime = Date(timeIntervalSince1970: TimeInterval(1_700_000_000 + i))
-            return it
-        }
-    }
-
-    private static func mcpj_placeholderHex(from id: String) -> String {
-        var h: UInt = 0
-        for c in id.unicodeScalars {
-            h = h &* 31 &+ UInt(c.value)
-        }
-        return String(format: "%06X", h % 0xFFFFFF)
-    }
-
-    private func mcpj_styleRunCell(_ cell: MCCProjectsRunCell, item: MCSRunItem) {
-        let hex = Self.mcpj_placeholderHex(from: item.runId)
-        cell.mcpj_imageContainer.backgroundColor = UIColor(hex: hex) ?? .darkGray
-        cell.mcpj_captionLabel.text = item.runId
-        cell.mcpj_captionLabel.textColor = UIColor(white: 1, alpha: 0.55)
-        cell.mcpj_thumbView.image = nil
+        return cell
     }
 
 }
@@ -344,12 +215,9 @@ extension MCCProjectsController: JXPagingViewDelegate {
         let list = MCCProjectsListPageController()
         list.mcpj_segment = seg
         list.mcpj_index = index
-        list.mcpj_listHost = self
         list.mcpj_onListDidAppear = { [weak self] in
             self?.mcpj_pagingListDidShow(at: index)
         }
-        let ref = seg.ref
-        mcpj_listPageByRef[ref] = list
         return list
     }
 
@@ -358,60 +226,15 @@ extension MCCProjectsController: JXPagingViewDelegate {
 extension MCCProjectsController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView === contentView.mcpj_tagCollection {
-            return mcpj_segmentItems.count
-        }
-        guard let ref = mcpj_listRefByCollectionObjectId[ObjectIdentifier(collectionView)] else { return 0 }
-        return mcpj_listStateByRef[ref]?.items.count ?? 0
+        mcpj_segmentItems.count
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView === contentView.mcpj_tagCollection {
-            return mcpj_dequeueTagCell(collectionView, indexPath: indexPath)
-        }
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MCCProjectsRunCell.mcpj_reuseId, for: indexPath
-        ) as! MCCProjectsRunCell
-        if let ref = mcpj_listRefByCollectionObjectId[ObjectIdentifier(collectionView)],
-           let item = mcpj_listStateByRef[ref]?.items[safe: indexPath.item] {
-            mcpj_styleRunCell(cell, item: item)
-        }
-        return cell
-    }
-
-    private func mcpj_dequeueTagCell(_ collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MCCShotsTagCell.mcsv_reuseId, for: indexPath
-        ) as! MCCShotsTagCell
-        if let it = mcpj_segmentItems[safe: indexPath.item] {
-            let selected = indexPath.item == mcpj_selectedTagIndex
-            cell.mcsv_titleLabel.text = it.title
-            cell.mcsv_titleLabel.font = .systemFont(
-                ofSize: 16,
-                weight: selected ? .semibold : .regular
-            )
-            cell.mcsv_titleLabel.textColor = selected ? UIColor(hex: "FFFFFF")! : UIColor(hex: "8E8E93")!
-            cell.mcsv_iconView.isHidden = true
-            cell.mcsv_iconView.sd_cancelCurrentImageLoad()
-            cell.mcsv_iconView.image = nil
-        }
-        return cell
+        mcpj_dequeueTagCell(collectionView, indexPath: indexPath)
     }
 
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if collectionView === contentView.mcpj_tagCollection {
-            mcpj_gotoPage(at: indexPath.item, animated: true)
-            return
-        }
-        guard let ref = mcpj_listRefByCollectionObjectId[ObjectIdentifier(collectionView)],
-              let item = mcpj_listStateByRef[ref]?.items[safe: indexPath.item] else { return }
-        collectionView.deselectItem(at: indexPath, animated: true)
-        let title = item.runId.isEmpty ? "Project" : item.runId
-        let kind: MCCCreationResultKind = indexPath.item % 2 == 0
-            ? .successImage
-            : .successVideo(totalDuration: 15)
-        let vc = MCCCreationResultController(navigationTitle: title, kind: kind)
-        navigationController?.pushViewController(vc, animated: true)
+        mcpj_gotoPage(at: indexPath.item, animated: true)
     }
 
     public func collectionView(
@@ -419,52 +242,13 @@ extension MCCProjectsController: UICollectionViewDataSource, UICollectionViewDel
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        if collectionView === contentView.mcpj_tagCollection {
-            guard let it = mcpj_segmentItems[safe: indexPath.item] else { return .zero }
-            let t = it.title
-            let fs: CGFloat = 16
-            let textW = (t as NSString).size(
-                withAttributes: [.font: UIFont.systemFont(ofSize: fs, weight: .medium)]
-            ).width
-            return CGSize(width: textW + 4, height: 32)
-        }
-        let inset: CGFloat = 16
-        let spacing: CGFloat = 8
-        let w = (collectionView.bounds.width - inset * 2 - spacing * 2) / 3
-        if w <= 0 { return CGSize(width: 100, height: 160) }
-        let thumbH = w * 4 / 3
-        return CGSize(width: floor(w), height: thumbH + 4 + 14)
-    }
-
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard let cv = scrollView as? UICollectionView,
-              let ref = mcpj_listRefByCollectionObjectId[ObjectIdentifier(cv)],
-              let list = mcpj_listPageByRef[ref] else { return }
-        list.mcpj_forwardPagingScroll(scrollView)
-    }
-
-}
-
-extension MCCProjectsController: MCCProjectsListPageHost {
-
-    public func mcpj_listPageDidLoad(_ list: MCCProjectsListPageController) {
-        list.view.backgroundColor = .clear
-        let cv = list.contentView.mcpj_collectionView
-        cv.backgroundColor = .clear
-        let ref = list.mcpj_segment.ref
-        mcpj_listPageByRef[ref] = list
-        mcpj_listRefByCollectionObjectId[ObjectIdentifier(cv)] = ref
-        cv.dataSource = self
-        cv.delegate = self
-        mcpj_loadRunList(ref, kind: .initial)
-    }
-
-    public func mcpj_listRequestRefresh(_ list: MCCProjectsListPageController) {
-        mcpj_loadRunList(list.mcpj_segment.ref, kind: .pullToRefresh)
-    }
-
-    public func mcpj_listRequestLoadMore(_ list: MCCProjectsListPageController) {
-        mcpj_loadRunList(list.mcpj_segment.ref, kind: .loadMore)
+        guard let it = mcpj_segmentItems[safe: indexPath.item] else { return .zero }
+        let t = it.title
+        let fs: CGFloat = 16
+        let textW = (t as NSString).size(
+            withAttributes: [.font: UIFont.systemFont(ofSize: fs, weight: .medium)]
+        ).width
+        return CGSize(width: textW + 4, height: 32)
     }
 
 }

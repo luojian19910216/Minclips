@@ -500,6 +500,18 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         }
     }
 
+    /// 切换 kind / 语言刷新时收起删除浮层，避免错误态仍挡屏或与导航不同步。
+    private func mccr_resetDeletePanelForNewKind() {
+        let wasVisible = mccr_isDeletePanelVisible
+        mccr_isDeletePanelVisible = false
+        mccr_deleteDim.isHidden = true
+        mccr_deleteCard.alpha = 1
+        mccr_deleteCard.transform = .identity
+        if wasVisible {
+            mccr_onDeletePanelChange?(false)
+        }
+    }
+
     private func setPlaceholderImage() {
         if mccr_imageView.image != nil { return }
         mccr_imageView.image = Self.mccr_placeholderGradient()
@@ -553,6 +565,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
     }
 
     public func mccr_apply(kind: MCCCreationResultKind) {
+        mccr_resetDeletePanelForNewKind()
         switch kind {
         case .failed:
             mccr_applyErrorChrome()
