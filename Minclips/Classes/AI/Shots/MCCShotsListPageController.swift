@@ -283,10 +283,9 @@ extension MCCShotsListPageController {
         cell.mcvw_proBadge.clipsToBounds = true
         cell.mcvw_proIcon.tintColor = .systemYellow
         cell.mcvw_proIcon.preferredSymbolConfiguration = UIImage.SymbolConfiguration(pointSize: 10, weight: .bold)
-        let titleColor = UIColor.hex_d3d0cd
         cell.mcvw_titleLabel.attributedText = NSAttributedString(
             string: item.itemTitle,
-            attributes: MCCShotsListItemMetrics.titleTextAttributes(textColor: titleColor)
+            attributes: MCCShotsListItemMetrics.titleTextAttributes(textColor: .white)
         )
     }
 

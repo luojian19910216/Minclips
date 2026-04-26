@@ -46,9 +46,9 @@ public final class MCCShotsListPageView: MCCBaseView {
     public lazy var mcvw_waterfallLayout: MCCShotsWaterfallLayout = {
         let l = MCCShotsWaterfallLayout()
         l.columnCount = 2
-        l.sectionInset = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
+        l.sectionInset = UIEdgeInsets(top: 4, left: 4, bottom: 0, right: 4)
         l.minimumInteritemSpacing = 4
-        l.minimumLineSpacing = 4
+        l.minimumLineSpacing = 16
         return l
     }()
 
