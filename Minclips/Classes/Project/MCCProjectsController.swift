@@ -407,7 +407,10 @@ extension MCCProjectsController: UICollectionViewDataSource, UICollectionViewDel
               let item = mcpj_listStateByRef[ref]?.items[safe: indexPath.item] else { return }
         collectionView.deselectItem(at: indexPath, animated: true)
         let title = item.runId.isEmpty ? "Project" : item.runId
-        let vc = MCCCreationResultController(navigationTitle: title, kind: .failed)
+        let kind: MCCCreationResultKind = indexPath.item % 2 == 0
+            ? .successImage
+            : .successVideo(totalDuration: 15)
+        let vc = MCCCreationResultController(navigationTitle: title, kind: kind)
         navigationController?.pushViewController(vc, animated: true)
     }
 

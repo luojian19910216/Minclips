@@ -3,7 +3,7 @@ import Common
 import FDFullscreenPopGesture
 import SnapKit
 
-/// 生成结果 / 错误态（纯 UI，业务与接口后续再接）
+/// 生成结果：失败 / 限制 / 成功（图片或视频）。成功态 UI 对齐设计稿；业务与接口可后续接入。
 public final class MCCCreationResultController: MCCViewController<MCCCreationResultView, MCCEmptyViewModel> {
 
     public let mccr_pageTitle: String
@@ -13,6 +13,7 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
         self.mccr_pageTitle = navigationTitle
         self.mccr_kind = kind
         super.init()
+        hidesBottomBarWhenPushed = true
     }
 
     public required init?(coder: NSCoder) { fatalError() }
@@ -22,7 +23,7 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
     public override func mcvc_init() {
         fd_prefersNavigationBarHidden = false
     }
-    
+
     public override func mcvc_setupLocalization() {
         super.mcvc_setupLocalization()
         view.backgroundColor = UIColor(hex: "121212")
@@ -33,6 +34,13 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
     public override func mcvc_bind() {
         super.mcvc_bind()
         contentView.mccr_actionButton.addTarget(self, action: #selector(mccr_onPrimaryAction), for: .touchUpInside)
+        contentView.mccr_deleteConfirmButton.addTarget(self, action: #selector(mccr_onDeleteConfirmed), for: .touchUpInside)
+        contentView.mccr_onDeletePanelChange = { [weak self] visible in
+            self?.mccr_syncNavWithDeletePanel(visible)
+        }
+        contentView.mccr_onSuccessToolbar = { [weak self] action in
+            self?.mccr_handleSuccessToolbar(action)
+        }
     }
 
     public override func mcvc_configureNav() {
@@ -51,6 +59,12 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
         item.titleView = t
         item.leftBarButtonItem = mccr_barCircleItem(systemName: "chevron.left", action: #selector(mccr_onBack))
         item.rightBarButtonItem = mccr_barCircleItem(systemName: "trash", action: #selector(mccr_onDelete))
+        mccr_syncNavWithDeletePanel(contentView.mccr_isDeletePanelVisible)
+    }
+
+    private func mccr_syncNavWithDeletePanel(_ visible: Bool) {
+        navigationItem.titleView?.isHidden = visible
+        navigationItem.rightBarButtonItem?.customView?.isHidden = visible
     }
 
     private func mccr_barCircleItem(systemName: String, action: Selector) -> UIBarButtonItem {
@@ -68,14 +82,33 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
 
     @objc
     private func mccr_onBack() {
+        if contentView.mccr_isDeletePanelVisible {
+            contentView.mccr_setDeletePanelVisible(false)
+            return
+        }
         navigationController?.popViewController(animated: true)
     }
 
     @objc
     private func mccr_onDelete() {
+        contentView.mccr_setDeletePanelVisible(true)
+    }
+
+    @objc
+    private func mccr_onDeleteConfirmed() {
+        contentView.mccr_setDeletePanelVisible(false)
+        navigationController?.popViewController(animated: true)
     }
 
     @objc
     private func mccr_onPrimaryAction() {
+    }
+
+    private func mccr_handleSuccessToolbar(_ action: MCCCreationSuccessToolbarAction) {
+        switch action {
+        case .retry: break
+        case .edit: break
+        case .save: break
+        }
     }
 }
