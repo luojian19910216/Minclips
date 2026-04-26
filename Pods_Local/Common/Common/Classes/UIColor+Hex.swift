@@ -7,10 +7,6 @@ import UIKit
 
 extension UIColor {
 
-    /// 由十六进制字符串创建颜色；支持带或不带 `#`。
-    /// - 3 位：`#RGB`（每位重复成 `RR GG BB`）
-    /// - 6 位：`#RRGGBB`（`alpha` 使用参数，默认 1）
-    /// - 8 位：`#RRGGBBAA`（最后两位为 alpha，`alpha` 参数忽略）
     public convenience init?(hex: String, alpha: CGFloat = 1) {
         var s = hex.trimmingCharacters(in: .whitespacesAndNewlines)
         if s.hasPrefix("#") { s.removeFirst() }

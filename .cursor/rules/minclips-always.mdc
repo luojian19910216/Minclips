@@ -16,4 +16,15 @@ alwaysApply: true
   - **禁止**：在**同一套页面**里混用「控制器却用 `mcvw_`」「视图却用 `mcvc_`」，或让 **`contentView.mcvc_…`** 指向 View 成员。
   - **模块区分**：靠类型名（如 `MCCShotsView`），不靠 `mcsv_`/`mcpj_` 等额外缩写；**新写与重构**优先统一为 `mcvc_`/`mcvw_`。个别文件若仍残留旧前缀，改动该文件时顺带对齐。
   - **存量**：逐步迁移；新代码一律按本规范。
+- **单文件代码分布**（主类型 `final class` / `class` 本体 + `extension`，自上而下；**不要用 `// MARK:`**，靠空行分段即可）：
+  1. **数据属性**：模型、请求参数、与 UI 无关的 `private`/`public` 存储属性（含 Combine 订阅容器等）。
+  2. **视图相关属性**：`lazy var`、子视图引用、仅与布局/展示相关的属性（若在独立 `MCC*View` 里，则视图文件内写子视图与布局成员）。
+  3. **状态栏**：`preferredStatusBarStyle`、`prefersStatusBarHidden`、`childForStatusBarStyle` 等。
+  4. **`init` / `required init`**：`init()`、`init(coder:)` 等。
+  5. **生命周期**：**`mcvc_*`** 按 **`MCPViewControllerInitProtocol`** 声明顺序：`mcvc_init` → `mcvc_configureNav` → `mcvc_setupLocalization` → `mcvc_bind` → `mcvc_loadData`。若有仅在本页使用的系统回调（如 `viewDidLoad`），写在 **`mcvc_configureNav` 之后、`mcvc_setupLocalization` 之前**。**`mcvw_*`** 仍在对应 View / Cell 里按 `mcvw_setupUI` / `mcvw_bind` 等习惯顺序排列。
+  6. 其后的 **`extension`** 顺序：
+     - **协议实现**：`extension Type: ProtocolA, ProtocolB { }`（UITableView/UICollectionView delegate、JXPaging 等）。
+     - **其他方法**：业务私有辅助、`@objc` 动作、工具函数等（可用 `private extension Type`）。
+     - **网络**：API 调用、请求组装、`sink`/`Task` 等与远端数据相关的实现放在**最后一个** extension（或文件末尾）。
+  - **View / Cell 文件**：同样先 **属性（子视图、状态）** → **`init`** → **`mcvw_setupUI` / `mcvw_bind` / `prepareForReuse`**；再按 **协议 extension → 其他 → 网络**。
 - **细节**: 更具体的架构与模块约定见同目录下 `minclips-architecture.mdc`（编辑 `Minclips/**` 下 Swift 时会附带）。

@@ -85,7 +85,6 @@ public final class MCCNetworkConfig {
     ///
     public var environment: MCEEnvironment = .current
     ///
-    /// 为 `true` 时 `MCCLoggerPlugin` 在控制台输出请求、耗时、状态码与**响应体**；数据层联调时可在 `AppDelegate` 等处设为 `true`（**勿**在正式对客版本长期开启）。
     public var isRequestLoggingEnabled: Bool = {
 #if DEBUG
         return true

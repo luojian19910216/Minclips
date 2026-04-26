@@ -6,9 +6,9 @@ import Data
 
 public final class MCCToolsController: MCCViewController<MCCToolsView, MCCEmptyViewModel> {
 
-    private var mctb_groups: [MCSCfToolboxGroup] = []
+    private var mcvc_groups: [MCSCfToolboxGroup] = []
 
-    private var mctb_items: [MCSCfToolboxItem] = []
+    private var mcvc_items: [MCSCfToolboxItem] = []
 
     public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
@@ -16,30 +16,10 @@ public final class MCCToolsController: MCCViewController<MCCToolsView, MCCEmptyV
         fd_prefersNavigationBarHidden = false
     }
 
-    public override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-
-    public override func mcvc_setupLocalization() {
-        super.mcvc_setupLocalization()
-        view.backgroundColor = UIColor(hex: "0F0F12")!
-        contentView.backgroundColor = view.backgroundColor
-    }
-
-    public override func mcvc_bind() {
-        super.mcvc_bind()
-        let cv = contentView.mcpj_collectionView
-        cv.dataSource = self
-        cv.delegate = self
-    }
-
-    public override func mcvc_loadData() {
-        super.mcvc_loadData()
-        mctb_loadStudioToolbox()
-    }
-
     public override func mcvc_configureNav() {
         guard let nav = navigationController else { return }
+        nav.navigationBar.mc_shadowHidden = true
+        nav.navigationBar.mc_barStyle = .transparentLight
         let item = navigationItem
         title = nil
         item.title = nil
@@ -56,23 +36,41 @@ public final class MCCToolsController: MCCViewController<MCCToolsView, MCCEmptyV
         )
     }
 
+    public override func mcvc_setupLocalization() {
+        super.mcvc_setupLocalization()
+        view.backgroundColor = UIColor(hex: "0F0F12")!
+        contentView.backgroundColor = view.backgroundColor
+    }
+
+    public override func mcvc_bind() {
+        super.mcvc_bind()
+        let cv = contentView.mcvw_collectionView
+        cv.dataSource = self
+        cv.delegate = self
+    }
+
+    public override func mcvc_loadData() {
+        super.mcvc_loadData()
+        mcvc_loadStudioToolbox()
+    }
+
 }
 
 extension MCCToolsController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        mctb_items.count
+        mcvc_items.count
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MCCToolTextCell.mcpj_id,
+            withReuseIdentifier: MCCToolTextCell.mcvw_id,
             for: indexPath
         ) as! MCCToolTextCell
-        let item = mctb_items[indexPath.item]
-        cell.mcpj_textLabel.text = item.code
-        cell.mcpj_textLabel.textColor = UIColor.white
-        cell.mcpj_textLabel.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        let item = mcvc_items[indexPath.item]
+        cell.mcvw_textLabel.text = item.code
+        cell.mcvw_textLabel.textColor = UIColor.white
+        cell.mcvw_textLabel.font = UIFont.systemFont(ofSize: 12, weight: .regular)
         cell.contentView.backgroundColor = UIColor(white: 0.12, alpha: 1)
         return cell
     }
@@ -82,35 +80,44 @@ extension MCCToolsController: UICollectionViewDataSource, UICollectionViewDelega
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        mctb_itemSize(in: collectionView)
+        mcvc_itemSize(in: collectionView)
     }
 
 }
 
 private extension MCCToolsController {
 
-    func mctb_loadStudioToolbox() {
+    func mcvc_loadStudioToolbox() {
         MCCCfAPIManager.shared.studioToolbox()
             .asLoadState()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] s in
                 guard let self = self else { return }
                 if let m = s.model, !s.isLoading {
-                    self.mctb_groups = m.items
-                    self.mctb_items = self.mctb_groups.first?.item ?? []
+                    self.mcvc_groups = m.items
+                    self.mcvc_items = self.mcvc_groups.first?.item ?? []
                 } else if s.error != nil {
-                    self.mctb_groups = []
-                    self.mctb_items = []
+                    self.mcvc_groups = []
+                    self.mcvc_items = []
                 }
-                self.contentView.mcpj_collectionView.reloadData()
+                self.contentView.mcvw_collectionView.reloadData()
             }
             .store(in: &cancellables)
     }
 
-    func mctb_itemSize(in collectionView: UICollectionView) -> CGSize {
-        let sideInset: CGFloat = 32
-        let w = max(0, collectionView.bounds.width - sideInset)
-        return CGSize(width: w, height: 300)
+    func mcvc_itemSize(in collectionView: UICollectionView) -> CGSize {
+        guard let flow = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else {
+            return CGSize(width: 100, height: 120)
+        }
+
+        let inset = flow.sectionInset
+
+        let spacing = flow.minimumInteritemSpacing
+
+        let inner = collectionView.bounds.width - inset.left - inset.right - spacing
+
+        let colW = max(0, floor(inner / 2))
+        return CGSize(width: colW, height: 120)
     }
 
 }

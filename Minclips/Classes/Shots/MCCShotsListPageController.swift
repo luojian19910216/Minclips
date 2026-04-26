@@ -22,6 +22,7 @@ private enum MCCShotsListLoadKind: Sendable {
     case initial
     case pullToRefresh
     case loadMore
+
 }
 
 public final class MCCShotsListPageController: MCCViewController<MCCShotsListPageView, MCCEmptyViewModel> {
@@ -230,7 +231,6 @@ extension MCCShotsListPageController {
     }
 
 }
-
 
 extension MCCShotsListPageController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 

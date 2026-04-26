@@ -5,7 +5,6 @@
 import UIKit
 
 public final class MCCScreenSize {
-
     
     public static var keyWindow: UIWindow? {
         UIApplication.shared.connectedScenes
@@ -14,11 +13,9 @@ public final class MCCScreenSize {
             .first { $0.isKeyWindow }
     }
     
-    
     public static var isDark: Bool {
         keyWindow?.traitCollection.userInterfaceStyle == .dark
     }
-    
 
     public static var scale: CGFloat {
         UIScreen.main.scale
@@ -49,7 +46,6 @@ public final class MCCScreenSize {
         keyWindow?.safeAreaInsets.bottom ?? 0
     }
     
-    /// 状态栏区域高度（与 `statusBarManager.statusBarFrame` 一致；不可用时回退为安全区顶或 20）
     public static var statusBarHeight: CGFloat {
         let h = UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }

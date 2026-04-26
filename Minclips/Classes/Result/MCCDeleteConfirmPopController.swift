@@ -1,12 +1,6 @@
-//
-//  MCCDeleteConfirmPopController.swift
-//  Minclips
-//
-
 import UIKit
 import Common
 import SnapKit
-
 
 public final class MCCDeleteConfirmPopView: MCCBasePopView {
 
@@ -53,8 +47,8 @@ public final class MCCDeleteConfirmPopView: MCCBasePopView {
             make.height.equalTo(44)
         }
     }
-}
 
+}
 
 public final class MCCDeleteConfirmPopController: MCCPopController<MCCDeleteConfirmPopView, MCCEmptyViewModel> {
 
@@ -85,4 +79,5 @@ public final class MCCDeleteConfirmPopController: MCCPopController<MCCDeleteConf
     public func mccd_setDeleteEnabled(_ enabled: Bool) {
         contentView.mccd_deleteButton.isEnabled = enabled
     }
+
 }

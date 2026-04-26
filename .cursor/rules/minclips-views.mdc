@@ -32,6 +32,10 @@ alwaysApply: false
 - 本文件所涉 **View / Cell / `MCCBasePopView` 子类**：属性、子视图、非协议要求的实例方法一律 **`mcvw_`**。
 - **Controller** 通过 **`contentView.mcvw_…`** 访问上述成员；控制器自身逻辑仍用 **`mcvc_`**（见 **`minclips-always.mdc`**、**`minclips-architecture.mdc`**「命名规范」）。
 
+## 文件内顺序
+
+- 与 **`minclips-always.mdc`「单文件代码分布」** 一致：View/Cell 先 **属性** → **`init`** → **`mcvw_setupUI` / `mcvw_bind` / `prepareForReuse`**；再 **协议 extension** → **其他** → **网络**（若有）。不用 `// MARK:`。
+
 ## 注释
 
 - 与全局规则一致：新代码避免中文注释与 `// MARK:`。

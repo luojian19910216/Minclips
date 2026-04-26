@@ -1,12 +1,7 @@
-//
-//  MCCGuideController.swift
-//
-
 import UIKit
 import Combine
 
 public class MCCGuideController: MCCViewController<MCCGuideView, MCCGuideViewModel> {
-    
 
     public override func mcvc_bind() {
         self.contentView.bindInput(
@@ -16,7 +11,7 @@ public class MCCGuideController: MCCViewController<MCCGuideView, MCCGuideViewMod
                     .eraseToAnyPublisher()
             )
         )
-        
+
         self.contentView.output
             .receive(on: DispatchQueue.main)
             .sink { event in
@@ -25,15 +20,16 @@ public class MCCGuideController: MCCViewController<MCCGuideView, MCCGuideViewMod
                     if isLastPage {
                         MCCAppConfig.shared.guideFlag = true
                     }
+
                 case .pageIndexChanged:
                     break
                 }
             }
             .store(in: &cancellables)
     }
-    
+
     public override func mcvc_loadData() {
         self.viewModel.loadData()
     }
-    
+
 }

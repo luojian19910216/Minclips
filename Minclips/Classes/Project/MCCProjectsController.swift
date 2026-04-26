@@ -7,13 +7,13 @@ import SDWebImage
 
 public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyViewModel> {
 
-    public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
-
     private var mcpj_tagsLoadState: MCSLoadState<[MCCProjectSegment]> = MCSLoadState()
 
     private var mcpj_selectedTagIndex: Int = 0
 
     private var mcpj_segmentItems: [MCCProjectSegment] { mcpj_tagsLoadState.model ?? [] }
+
+    public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
     public override func mcvc_init() {
         fd_prefersNavigationBarHidden = false
@@ -34,10 +34,6 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
             target: self,
             action: #selector(mcpj_onSettingsTapped)
         )
-    }
-
-    @objc
-    private func mcpj_onSettingsTapped() {
     }
 
     public override func viewDidLoad() {
@@ -62,6 +58,10 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
     public override func mcvc_loadData() {
         super.mcvc_loadData()
         mcpj_requestProjectTabTitles()
+    }
+
+    @objc
+    private func mcpj_onSettingsTapped() {
     }
 
     private static func mcpj_fetchProjectTabTitlesSimulated() -> AnyPublisher<[MCCProjectSegment], Never> {
@@ -108,6 +108,7 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
 
     private func mcpj_reloadPagingForTags() {
         let segs = mcpj_segmentItems
+
         let idx: Int
         if segs.isEmpty {
             idx = 0
@@ -212,6 +213,7 @@ extension MCCProjectsController: JXPagingViewDelegate {
 
     public func pagingView(_ pagingView: JXPagingView, initListAtIndex index: Int) -> JXPagingViewListViewDelegate {
         let seg = mcpj_segmentItems[index]
+
         let list = MCCProjectsListPageController()
         list.mcpj_segment = seg
         list.mcpj_index = index
@@ -244,7 +246,9 @@ extension MCCProjectsController: UICollectionViewDataSource, UICollectionViewDel
     ) -> CGSize {
         guard let it = mcpj_segmentItems[safe: indexPath.item] else { return .zero }
         let t = it.title
+
         let fs: CGFloat = 16
+
         let textW = (t as NSString).size(
             withAttributes: [.font: UIFont.systemFont(ofSize: fs, weight: .medium)]
         ).width

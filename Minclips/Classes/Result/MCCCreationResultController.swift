@@ -8,7 +8,9 @@ import SnapKit
 public final class MCCCreationResultController: MCCViewController<MCCCreationResultView, MCCEmptyViewModel> {
 
     public let mccr_pageTitle: String
+
     public let mccr_workRef: String
+
     public let mccr_kind: MCCCreationResultKind
 
     private lazy var mccr_navTitleLabel: UILabel = {
@@ -22,6 +24,8 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
         return t
     }()
 
+    public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
+
     public init(navigationTitle: String, kind: MCCCreationResultKind, workRef: String? = nil) {
         self.mccr_pageTitle = navigationTitle
         self.mccr_workRef = workRef ?? navigationTitle
@@ -32,25 +36,8 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
 
     public required init?(coder: NSCoder) { fatalError() }
 
-    public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
-
     public override func mcvc_init() {
         fd_prefersNavigationBarHidden = false
-    }
-
-    public override func mcvc_setupLocalization() {
-        super.mcvc_setupLocalization()
-        view.backgroundColor = UIColor(hex: "121212")
-        contentView.backgroundColor = view.backgroundColor
-        contentView.mccr_apply(kind: mccr_kind)
-    }
-
-    public override func mcvc_bind() {
-        super.mcvc_bind()
-        contentView.mccr_actionButton.addTarget(self, action: #selector(mccr_onPrimaryAction), for: .touchUpInside)
-        contentView.mccr_onSuccessToolbar = { [weak self] action in
-            self?.mccr_handleSuccessToolbar(action)
-        }
     }
 
     public override func mcvc_configureNav() {
@@ -66,6 +53,21 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
         item.titleView = mccr_navTitleLabel
         item.leftBarButtonItem = mccr_barCircleItem(systemName: "chevron.left", action: #selector(mccr_onBack))
         item.rightBarButtonItem = mccr_barCircleItem(systemName: "trash", action: #selector(mccr_onDelete))
+    }
+
+    public override func mcvc_setupLocalization() {
+        super.mcvc_setupLocalization()
+        view.backgroundColor = UIColor(hex: "121212")
+        contentView.backgroundColor = view.backgroundColor
+        contentView.mccr_apply(kind: mccr_kind)
+    }
+
+    public override func mcvc_bind() {
+        super.mcvc_bind()
+        contentView.mccr_actionButton.addTarget(self, action: #selector(mccr_onPrimaryAction), for: .touchUpInside)
+        contentView.mccr_onSuccessToolbar = { [weak self] action in
+            self?.mccr_handleSuccessToolbar(action)
+        }
     }
 
     private func mccr_barCircleItem(systemName: String, action: Selector) -> UIBarButtonItem {
@@ -105,6 +107,7 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
             pop?.mccd_setDeleteEnabled(true)
             return
         }
+
         var request = MCSRunDeleteRequest()
         request.workRef = ref
         MCCRunAPIManager.shared.retire(with: request)
@@ -131,8 +134,11 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
     private func mccr_handleSuccessToolbar(_ action: MCCCreationSuccessToolbarAction) {
         switch action {
         case .retry: break
+
         case .edit: break
+
         case .save: break
         }
     }
+
 }

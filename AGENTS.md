@@ -6,6 +6,7 @@
 |------|------|
 | 主导航 | `MCCNavigationController` → `MCCTabBarController`；tab 内不再嵌多套 nav |
 | **命名** | **`mcvc_`** = 控制器自有 + 子页对外字段；**`mcvw_`** = View/Cell/Pop 自有；**`contentView.mcvw_…`**；模块靠类型名区分（详见 `minclips-always.mdc`） |
+| **代码分布** | 主类：**数据属性 → 视图属性 → 状态栏 → init → 生命周期**；**extension**：**协议 → 其他方法 → 网络**；不用 `MARK`（见 `minclips-always.mdc`） |
 | 控制器 | 用 `mcvc_*` 生命周期钩子；初始化以 `mcvc_*` 钩子为准 |
 | 视图 | `MCCBaseView`：`mcvw_setupUI` / `mcvw_bind`；`MCCViewController` ↔ `contentView` |
 | 弹窗 | **底部进入** → `MCCSheetController` + PanModal + `MCCBaseView`；**其他** → `MCCPopController` + `MCCBasePopView` |

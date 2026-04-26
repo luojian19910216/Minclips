@@ -13,7 +13,6 @@ public enum MCETabBarStyle: Int {
 
 extension UITabBar {
 
-
     public var mc_shadowHidden: Bool {
         get {
             return objc_getAssociatedObject(self, &mc_shadowHiddenKey) as? Bool ?? false
@@ -21,14 +20,12 @@ extension UITabBar {
         set {
             objc_setAssociatedObject(self, &mc_shadowHiddenKey, newValue, .OBJC_ASSOCIATION_COPY_NONATOMIC)
 
-            // 设置阴影
             self.layer.shadowColor = UIColor.black.cgColor
             self.layer.shadowOpacity = newValue ? 0.0 : 0.1
             self.layer.shadowRadius = 2
             self.layer.shadowOffset = .zero
         }
     }
-
 
     public var mc_barStyle: MCETabBarStyle {
         get {
@@ -37,7 +34,6 @@ extension UITabBar {
         set {
             objc_setAssociatedObject(self, &mc_barStyleKey, newValue.rawValue, .OBJC_ASSOCIATION_COPY_NONATOMIC)
 
-            // 设置风格
             var barTintColor: UIColor!
             var normalTintColor: UIColor!
             var selectedTintColor: UIColor!

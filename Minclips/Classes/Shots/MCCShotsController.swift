@@ -8,13 +8,13 @@ import SDWebImage
 
 public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyViewModel> {
 
-    public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
-
     private var mcvc_tagsState = MCSLoadState<MCSList<MCSFeedLabelItem>>()
 
     private var mcvc_selectedTagIndex: Int = 0
 
     private var mcvc_labelItems: [MCSFeedLabelItem] { mcvc_tagsState.model?.items ?? [] }
+
+    public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
     public override func mcvc_init() {
         fd_prefersNavigationBarHidden = false
@@ -22,6 +22,8 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
 
     public override func mcvc_configureNav() {
         guard let nav = navigationController else { return }
+        nav.navigationBar.mc_shadowHidden = true
+        nav.navigationBar.mc_barStyle = .transparentLight
         let item = navigationItem
         title = nil
         item.title = nil
@@ -86,6 +88,7 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
 
     private func mcvc_reloadPagingForTags() {
         let labelItems = mcvc_labelItems
+
         let idx: Int
         if labelItems.isEmpty {
             idx = 0
@@ -150,6 +153,7 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
         ) as! MCCShotsTagCell
         if let it = mcvc_labelItems[safe: indexPath.item] {
             let selected = indexPath.item == mcvc_selectedTagIndex
+
             let iconUrl = it.iconImageUrl.isEmpty ? nil : it.iconImageUrl
             cell.mcvw_titleLabel.text = it.title
             cell.mcvw_titleLabel.font = .systemFont(
@@ -196,6 +200,7 @@ extension MCCShotsController: JXPagingViewDelegate {
 
     public func pagingView(_ pagingView: JXPagingView, initListAtIndex index: Int) -> JXPagingViewListViewDelegate {
         let labelItem = mcvc_labelItems[index]
+
         let list = MCCShotsListPageController()
         list.mcvc_labelItem = labelItem
         list.mcvc_index = index
@@ -228,11 +233,14 @@ extension MCCShotsController: UICollectionViewDataSource, UICollectionViewDelega
     ) -> CGSize {
         guard let it = mcvc_labelItems[safe: indexPath.item] else { return .zero }
         let t = it.title
+
         let fs: CGFloat = 16
+
         let textW = (t as NSString).size(
             withAttributes: [.font: UIFont.systemFont(ofSize: fs, weight: .medium)]
         ).width
         let hasIcon = !it.iconImageUrl.isEmpty
+
         let extra: CGFloat = hasIcon ? 18 + 4 : 0
         return CGSize(width: textW + 4 + extra, height: 32)
     }

@@ -7,12 +7,14 @@ public enum MCCCreationResultKind {
     case restricted
     case successImage
     case successVideo(totalDuration: TimeInterval)
+
 }
 
 public enum MCCCreationSuccessToolbarAction: Int {
     case retry = 0
     case edit = 1
     case save = 2
+
 }
 
 private final class MCCFrameStripCell: UICollectionViewCell {
@@ -54,6 +56,7 @@ private final class MCCFrameStripCell: UICollectionViewCell {
         mcc_thumbView.isHidden = isAddSlot
         mcc_thumbView.image = image
     }
+
 }
 
 public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -78,7 +81,9 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
     }()
 
     private let mccr_iconBase = UIView()
+
     private let mccr_filmImageView = UIImageView()
+
     private let mccr_badgeImageView = UIImageView()
 
     private let mccr_statusStack: UIStackView = {
@@ -125,6 +130,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
     }()
 
     private let mccr_actionIconView = UIImageView()
+
     private let mccr_actionAvatarView: UIImageView = {
         let iv = UIImageView()
         iv.isHidden = true
@@ -146,7 +152,6 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     private var mccr_didConfigureFilm: Bool = false
 
-
     private let mccr_successPill: UIVisualEffectView = {
         let v = UIVisualEffectView(effect: UIBlurEffect(style: .systemChromeMaterialDark))
         v.layer.cornerRadius = 28
@@ -167,6 +172,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
     public private(set) var mccr_successActionButtons: [UIButton] = []
 
     private let mccr_videoChrome = UIView()
+
     private let mccr_timeLabel: UILabel = {
         let l = UILabel()
         l.font = .monospacedDigitSystemFont(ofSize: 12, weight: .medium)
@@ -176,6 +182,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     private let mccr_playButton: UIButton = {
         let b = UIButton(type: .system)
+
         let c = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
         b.setImage(UIImage(systemName: "play.fill", withConfiguration: c), for: .normal)
         b.tintColor = .white
@@ -184,6 +191,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     private let mccr_volumeButton: UIButton = {
         let b = UIButton(type: .system)
+
         let c = UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)
         b.setImage(UIImage(systemName: "speaker.wave.2.fill", withConfiguration: c), for: .normal)
         b.tintColor = .white
@@ -212,8 +220,11 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
     }()
 
     private var mccr_frameImages: [UIImage] = []
+
     private var mccr_videoDuration: TimeInterval = 15
+
     private var mccr_isVideoMode: Bool = false
+
     private var mccr_isPlaying: Bool = false
 
     public var mccr_onSuccessToolbar: ((MCCCreationSuccessToolbarAction) -> Void)?
@@ -341,6 +352,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_successActionButtons.removeAll()
         mccr_editThumbHost = nil
         let cfg = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
+
         let specs: [(String, String, MCCCreationSuccessToolbarAction, Bool)] = [
             ("sparkles", "Retry", .retry, false),
             ("", "Edit", .edit, true),
@@ -373,6 +385,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
                     make.size.equalTo(24)
                 }
             }
+
             let lab = UILabel()
             lab.text = title
             lab.font = .systemFont(ofSize: 11, weight: .medium)
@@ -410,6 +423,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
     private func mccr_togglePlay() {
         mccr_isPlaying.toggle()
         let c = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
+
         let name = mccr_isPlaying ? "pause.fill" : "play.fill"
         mccr_playButton.setImage(UIImage(systemName: name, withConfiguration: c), for: .normal)
     }
@@ -426,12 +440,17 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     static func mccr_placeholderGradient() -> UIImage {
         let w: CGFloat = 3
+
         let h: CGFloat = 4
+
         let r = UIGraphicsImageRenderer(size: CGSize(width: w, height: h))
         return r.image { ctx in
             let c1 = UIColor(red: 0.12, green: 0.18, blue: 0.35, alpha: 1).cgColor
+
             let c2 = UIColor(red: 0.05, green: 0.06, blue: 0.12, alpha: 1).cgColor
+
             let arr = [c1, c2] as CFArray
+
             let locs: [CGFloat] = [0, 1]
             if let g = CGGradient(
                 colorsSpace: CGColorSpaceCreateDeviceRGB(),
@@ -551,7 +570,9 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     private func mccr_formatClock(_ t: TimeInterval) -> String {
         let s = max(0, Int((t + 0.5).rounded(.down)))
+
         let m = s / 60
+
         let r = s % 60
         return String(format: "%02d:%02d", m, r)
     }
@@ -559,10 +580,15 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
     private static func mccr_stripImages(count: Int, duration: TimeInterval) -> [UIImage] {
         (0..<count).map { i in
             let t = CGFloat(i) / CGFloat(max(1, count - 1))
+
             let hue = CGFloat(i) / CGFloat(count) * 0.12 + 0.55
+
             let sat: CGFloat = 0.35
+
             let bri: CGFloat = 0.35 + t * 0.25
+
             let c = UIColor(hue: hue, saturation: sat, brightness: bri, alpha: 1)
+
             let r = UIGraphicsImageRenderer(size: CGSize(width: 48, height: 64))
             return r.image { ctx in
                 c.setFill()
@@ -605,8 +631,11 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_titleLabel.text = "Restricted"
         mccr_titleLabel.textColor = .systemOrange
         let first = "There are copyright risks associated with your character"
+
         let second = "Your credits have been restored"
+
         let full = first + "\n" + second
+
         let a = NSMutableAttributedString(string: full, attributes: [
             .font: UIFont.systemFont(ofSize: 14, weight: .regular),
             .foregroundColor: UIColor(white: 1, alpha: 0.6)
@@ -637,7 +666,6 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         }
         mccr_actionTitleLabel.text = "Edit"
     }
-
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         mccr_frameImages.count + 1

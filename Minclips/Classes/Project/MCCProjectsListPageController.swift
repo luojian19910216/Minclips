@@ -22,6 +22,7 @@ private enum MCCProjectListLoadKind: Sendable {
     case initial
     case pullToRefresh
     case loadMore
+
 }
 
 public final class MCCProjectsListPageController: MCCViewController<MCCProjectsListPageView, MCCEmptyViewModel> {
@@ -211,7 +212,6 @@ extension MCCProjectsListPageController {
     }
 
 }
-
 
 extension MCCProjectsListPageController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 

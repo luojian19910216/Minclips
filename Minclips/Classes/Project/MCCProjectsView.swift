@@ -25,6 +25,7 @@ public final class MCCProjectsView: MCCBaseView {
 
     public let mcvw_pinHeaderView: UIView = {
         let v = UIView()
+
         let h = max(20, MCCScreenSize.statusBarHeight)
         v.frame = CGRect(x: 0, y: 0, width: 0, height: h)
         return v

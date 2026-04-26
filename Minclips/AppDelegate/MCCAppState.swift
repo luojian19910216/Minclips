@@ -1,23 +1,20 @@
-//
-//  MCEAppState.swift
-//
-
 import Foundation
 import Combine
 import CombineExt
 
 public enum MCEAppState {
     case launch, guide, main
+
 }
 
 public final class MCCAppStateStore {
-    ///
+    
     public static let shared: MCCAppStateStore = .init()
-    ///
+    
     @Published public private(set) var appState: MCEAppState = .launch
-    ///
+    
     private var cancellables = Set<AnyCancellable>()
-    ///
+
     private init() {
         [
             MCCAppConfig.shared.$networkStatus.eraseToAnyPublisher(),
@@ -51,4 +48,5 @@ public final class MCCAppStateStore {
             }
             .store(in: &cancellables)
     }
+
 }

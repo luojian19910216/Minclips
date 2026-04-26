@@ -1,7 +1,3 @@
-//
-//  MCCAppDelegate.swift
-//
-
 import UIKit
 import Data
 import Common
@@ -15,17 +11,17 @@ import MJRefresh
 public class MCCAppDelegate: UIResponder, UIApplicationDelegate {
 
     private var cancellables = Set<AnyCancellable>()
-    
+
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
+
         MCCViewControllerCore.swizzle()
-        
+
         MCCLanguageTool.languages = [.en]
         MCCLanguageTool.defaultLanguage = .en
         MCCLanguageTool.shared.$currentLanguage
             .sink { MJRefreshConfig.default.languageCode = $0.code }
             .store(in: &cancellables)
-        
+
         MCCNetworkConfig.shared.start(with: .current, environment: .current)
         MCCAppConfig.shared.$networkType
             .removeDuplicates()
@@ -56,16 +52,16 @@ public class MCCAppDelegate: UIResponder, UIApplicationDelegate {
             .filter { $0 && !$1.isEmpty }
             .sink { [weak self] _, _ in self?.pushRegister() }
             .store(in: &cancellables)
-        
+
         self.observeNetworkReachability()
-//        self.attAuth()
-        
+
         return true
     }
 
     public func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
+
 }
 
 extension MCCAppDelegate {
@@ -107,72 +103,6 @@ extension MCCAppDelegate {
             }
         }
     }
-    
-//    public func attAuth() {
-//        let status = ATTrackingManager.trackingAuthorizationStatus
-//        switch status {
-//        case .notDetermined:
-//            print("att status is notDetermined")
-//            MCCAppConfig.shared.attGranted = false
-//            MCCAppConfig.shared.attStatus = false
-//        case .denied, .restricted:
-//            print("att status is denied/restricted")
-//            MCCAppConfig.shared.attGranted = false
-//            MCCAppConfig.shared.attStatus = true
-//        case .authorized:
-//            print("att status is authorized")
-//            MCCAppConfig.shared.attGranted = true
-//            MCCAppConfig.shared.attStatus = true
-//        @unknown default:
-//            print("att status is unknown")
-//            MCCAppConfig.shared.attGranted = false
-//            MCCAppConfig.shared.attStatus = true
-//        }
-//    }
-//
-//    public func attRequest() {
-//        ATTrackingManager.requestTrackingAuthorization { status in
-//            switch status {
-//            case .notDetermined:
-//                print("att status is notDetermined")
-//                MCCAppConfig.shared.attGranted = false
-//                MCCAppConfig.shared.attStatus = false
-//            case .denied, .restricted:
-//                print("att status is denied/restricted")
-//                MCCAppConfig.shared.attGranted = false
-//                MCCAppConfig.shared.attStatus = true
-//            case .authorized:
-//                print("att status is authorized")
-//                MCCAppConfig.shared.attGranted = true
-//                MCCAppConfig.shared.attStatus = true
-//            @unknown default:
-//                print("att status is unknown")
-//                MCCAppConfig.shared.attGranted = false
-//                MCCAppConfig.shared.attStatus = true
-//            }
-//        }
-//    }
-//
-//    public func apnsAuthAndRequest() {
-//        UNUserNotificationCenter.current().getNotificationSettings { settings in
-//            switch settings.authorizationStatus {
-//            case .notDetermined:
-//                UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-//                    print("apns status is \(granted)")
-//                    MCCAppConfig.shared.apnsGranted = granted
-//                    MCCAppConfig.shared.apnsStatus = true
-//                }
-//            case .authorized:
-//                print("apns status is \(true)")
-//                MCCAppConfig.shared.apnsGranted = true
-//                MCCAppConfig.shared.apnsStatus = true
-//            default:
-//                print("apns status is \(false)")
-//                MCCAppConfig.shared.apnsGranted = false
-//                MCCAppConfig.shared.apnsStatus = true
-//            }
-//        }
-//    }
 
     private func loadData() {
         self.login(next: self.config)
@@ -257,6 +187,7 @@ extension MCCAppDelegate {
         }())
         UIViewController.topViewController()?.present(alert, animated: true, completion: nil)
     }
+
 }
 
 public class MCCSceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -290,18 +221,7 @@ public class MCCSceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
             .store(in: &cancellables)
     }
-    
-//    public func sceneDidBecomeActive(_ scene: UIScene) {
-//        DispatchQueue.main.async {
-//            guard MCCAppConfig.shared.networkStatus else {return}
-//            if !MCCAppConfig.shared.attStatus {
-//                self.attRequest()
-//                return
-//            }
-//            self.apnsAuthAndRequest()
-//        }
-//    }
-    
+
 }
 
 extension MCCViewControllerCore {
@@ -326,6 +246,7 @@ extension MCCViewControllerCore {
         switch style {
         case .transparentDark: return .darkContent
         case .transparentLight: return .lightContent
+        case .opaqueLight: return .darkContent
         }
     }
 
@@ -337,5 +258,5 @@ extension MCCViewControllerCore {
 
         _configureNav()
     }
-    
+
 }
