@@ -115,6 +115,10 @@
 		F6D547722F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
 		F6D547732F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
 		F6D547742F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
+		F6E3B1022FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3B1012FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift */; };
+		F6E3B1032FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3B1012FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift */; };
+		F6E3B1042FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3B1012FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift */; };
+		F6E3B1052FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3B1012FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift */; };
 		F6E2B0252FA20301002C4F70 /* MCCShotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */; };
 		F6E2B0262FA20301002C4F70 /* MCCShotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */; };
 		F6E2B0272FA20301002C4F70 /* MCCShotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */; };
@@ -229,6 +233,7 @@
 		F6D547622F9B478A002C4F70 /* MCCSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCSheetController.swift; sourceTree = "<group>"; };
 		F6D547632F9B478A002C4F70 /* MCCViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCViewController.swift; sourceTree = "<group>"; };
 		F6D547702F9B4796002C4F70 /* MCCBaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCBaseView.swift; sourceTree = "<group>"; };
+		F6E3B1012FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCGradientHomeSkeletonOverlay.swift; sourceTree = "<group>"; };
 		F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsView.swift; sourceTree = "<group>"; };
 		F6E2B0132FA20301002C4F70 /* MCCShotsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsController.swift; sourceTree = "<group>"; };
 		F6E2B0392FA20301002C4F70 /* MCCShotsListPageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsListPageController.swift; sourceTree = "<group>"; };
@@ -469,6 +474,7 @@
 			isa = PBXGroup;
 			children = (
 				F6D547702F9B4796002C4F70 /* MCCBaseView.swift */,
+				F6E3B1012FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift */,
 				03F019612F8CF67C0096831D /* MCCLaunchView.swift */,
 				03F019642F8CF6A50096831D /* MCCGuideView.swift */,
 			);
@@ -878,6 +884,7 @@
 				F6588BBD2EFA41AF00A094B5 /* MCCCfViewModel.swift in Sources */,
 				F6D5471B2F9636F1002C4F70 /* MCCEaseInPopController.swift in Sources */,
 				F6D547712F9B4796002C4F70 /* MCCBaseView.swift in Sources */,
+				F6E3B1022FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift in Sources */,
 				F6D547032F95D17E002C4F70 /* MCCTopPopController.swift in Sources */,
 				F65888C92EF5548800A094B5 /* MCCAppConfig.swift in Sources */,
 				F6D546E42F922579002C4F70 /* MCCPresentController.swift in Sources */,
@@ -909,6 +916,7 @@
 				F6D5467A2F90B9B8002C4F70 /* MCCAppDelegate.swift in Sources */,
 				F614F8522F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */,
 				F6D547722F9B4796002C4F70 /* MCCBaseView.swift in Sources */,
+				F6E3B1032FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift in Sources */,
 				F6588BB52EFA401200A094B5 /* MCCLaunchController.swift in Sources */,
 				F6D547022F95D17E002C4F70 /* MCCTopPopController.swift in Sources */,
 				03F019622F8CF67C0096831D /* MCCLaunchView.swift in Sources */,
@@ -970,6 +978,7 @@
 				F6D546222F90B9B8002C4F70 /* MCCCfViewModel.swift in Sources */,
 				F6D5471D2F9636F1002C4F70 /* MCCEaseInPopController.swift in Sources */,
 				F6D547732F9B4796002C4F70 /* MCCBaseView.swift in Sources */,
+				F6E3B1042FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift in Sources */,
 				F6D547002F95D17E002C4F70 /* MCCTopPopController.swift in Sources */,
 				F6D546262F90B9B8002C4F70 /* MCCAppConfig.swift in Sources */,
 				F6D546E52F922579002C4F70 /* MCCPresentController.swift in Sources */,
@@ -1016,6 +1025,7 @@
 				F6D546842F90B9C9002C4F70 /* MCCCfViewModel.swift in Sources */,
 				F6D5471A2F9636F1002C4F70 /* MCCEaseInPopController.swift in Sources */,
 				F6D547742F9B4796002C4F70 /* MCCBaseView.swift in Sources */,
+				F6E3B1052FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift in Sources */,
 				F6D547012F95D17E002C4F70 /* MCCTopPopController.swift in Sources */,
 				F6D546882F90B9C9002C4F70 /* MCCAppConfig.swift in Sources */,
 				F6D546E32F922579002C4F70 /* MCCPresentController.swift in Sources */,

@@ -59,9 +59,11 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
         mcvc_selectedTagIndex = 0
         MCCFeedAPIManager.shared.customLabels()
             .asLoadState()
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] s in
                 guard let self = self else { return }
                 self.mcvc_tagsState = s
+                self.contentView.mcvw_setTabHomeSkeletonVisible(s.isLoading)
                 self.mcvc_syncTagChrome()
                 self.mcvc_reloadPagingForTags()
             }

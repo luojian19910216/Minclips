@@ -19,9 +19,25 @@ public final class MCCShotsListPageView: MCCBaseView {
         return cv
     }()
 
+    public lazy var mcvw_skeletonOverlay: MCCGradientHomeSkeletonOverlay = {
+        MCCGradientHomeSkeletonOverlay(style: .doubleColumnGrid)
+    }()
+
     public override func mcvw_setupUI() {
         addSubview(mcvw_collectionView)
         mcvw_collectionView.snp.makeConstraints { $0.edges.equalToSuperview() }
+
+        addSubview(mcvw_skeletonOverlay)
+        mcvw_skeletonOverlay.snp.makeConstraints { $0.edges.equalToSuperview() }
+        mcvw_skeletonOverlay.isHidden = true
+    }
+
+    public func mcvw_setListSkeletonVisible(_ visible: Bool) {
+        if visible {
+            mcvw_skeletonOverlay.mcvw_showHomeSkeleton()
+        } else {
+            mcvw_skeletonOverlay.mcvw_hideHomeSkeleton()
+        }
     }
 
 }

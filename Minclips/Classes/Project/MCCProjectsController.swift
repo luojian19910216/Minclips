@@ -80,12 +80,14 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
 
     private func mcpj_requestProjectTabTitles() {
         mcpj_tagsLoadState = MCSLoadState(isLoading: true, error: nil, model: nil)
+        contentView.mcvw_setTabHomeSkeletonVisible(true)
         Self.mcpj_fetchProjectTabTitlesSimulated()
             .map { segs in MCSLoadState(isLoading: false, error: nil, model: segs) }
             .receive(on: DispatchQueue.main)
             .sink { [weak self] s in
                 guard let self = self else { return }
                 self.mcpj_tagsLoadState = s
+                self.contentView.mcvw_setTabHomeSkeletonVisible(s.isLoading)
                 self.mcpj_syncTagChrome()
                 self.mcpj_reloadPagingForTags()
             }

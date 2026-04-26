@@ -53,6 +53,7 @@ public final class MCCToolsController: MCCViewController<MCCToolsView, MCCEmptyV
             .receive(on: DispatchQueue.main)
             .sink { [weak self] s in
                 guard let self = self else { return }
+                self.contentView.mcvw_setListSkeletonVisible(s.isLoading && self.mcvc_items.isEmpty)
                 if let m = s.model, !s.isLoading {
                     self.mcvc_groups = m.items
                 } else if s.error != nil {

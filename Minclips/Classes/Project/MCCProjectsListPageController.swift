@@ -140,6 +140,7 @@ extension MCCProjectsListPageController {
             request.itemsPerPage = 20
             MCCRunAPIManager.shared.inventory(with: request)
                 .asLoadState()
+                .receive(on: DispatchQueue.main)
                 .sink { [weak self] state in
                     guard let self = self else { return }
                     self.mcpj_listState.listState = state
@@ -164,6 +165,7 @@ extension MCCProjectsListPageController {
         let isLoadingMore = st.isLoadingMore
         let hasMore = st.hasMore
         let cv = contentView.mcvw_collectionView
+        contentView.mcvw_setListSkeletonVisible(listState.isLoading && items.isEmpty)
         if !listState.isLoading {
             cv.mj_header?.endRefreshing()
         }

@@ -145,6 +145,7 @@ extension MCCShotsListPageController {
             request.customRefId = refId
             MCCFeedAPIManager.shared.customItems(with: request)
                 .asLoadState()
+                .receive(on: DispatchQueue.main)
                 .sink { [weak self] state in
                     guard let self = self else { return }
                     self.mcvc_listState.listState = state
@@ -169,6 +170,7 @@ extension MCCShotsListPageController {
         let isLoadingMore = st.isLoadingMore
         let hasMore = st.hasMore
         let cv = contentView.mcvw_collectionView
+        contentView.mcvw_setListSkeletonVisible(listState.isLoading && items.isEmpty)
         if !listState.isLoading {
             cv.mj_header?.endRefreshing()
         }
