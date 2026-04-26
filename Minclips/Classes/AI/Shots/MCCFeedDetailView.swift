@@ -35,16 +35,13 @@ public final class MCCFeedDetailView: MCCBaseView {
         mcvw_mediaContainer.clipsToBounds = true
         mcvw_mediaContainer.addSubview(mcvw_posterImageView)
         mcvw_mediaContainer.addSubview(mcvw_webpImageView)
-        mcvw_mediaContainer.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(8)
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.height.equalTo(mcvw_mediaContainer.snp.width).multipliedBy(MCCShotsListItemMetrics.imageHeightPerWidth)
-        }
+        mcvw_applyMediaHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth)
         mcvw_posterImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
         mcvw_webpImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
 
     public func mcvw_configure(feedItem: MCSFeedItem, webpHandoff: MCCWebpPlaybackHandoff?, thumbnailPixelSize: CGSize) {
+        mcvw_applyMediaHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth(videoAsset: feedItem.videoAsset))
         let ctx: [SDWebImageContextOption: Any] = [
             .imageThumbnailPixelSize: NSValue(cgSize: thumbnailPixelSize),
             .imagePreserveAspectRatio: true
@@ -68,6 +65,14 @@ public final class MCCFeedDetailView: MCCBaseView {
             mcvw_webpImageView.sd_cancelCurrentImageLoad()
             mcvw_webpImageView.image = nil
             mcvw_webpImageView.isHidden = true
+        }
+    }
+
+    private func mcvw_applyMediaHeightPerWidth(_ ratio: CGFloat) {
+        mcvw_mediaContainer.snp.remakeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(8)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(mcvw_mediaContainer.snp.width).multipliedBy(ratio)
         }
     }
 

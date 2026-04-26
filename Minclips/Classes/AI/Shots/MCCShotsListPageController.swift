@@ -249,20 +249,22 @@ extension MCCShotsListPageController {
         return " \(inner) "
     }
 
-    private func mcvc_feedThumbnailPixelSize(forCollectionWidth width: CGFloat) -> CGSize {
+    private func mcvc_feedThumbnailPixelSize(forCollectionWidth width: CGFloat, video: MCSFeedVideoAssetShell) -> CGSize {
         let layout = contentView.mcvw_waterfallLayout
         let w = width > 0 ? width : UIScreen.main.bounds.width
         let inner = w - layout.sectionInset.left - layout.sectionInset.right
         let cols = max(1, layout.columnCount)
         let colW = (inner - CGFloat(cols - 1) * layout.minimumInteritemSpacing) / CGFloat(cols)
-        return MCCShotsListItemMetrics.feedImageThumbnailPixelSize(columnWidthPoints: max(1, colW))
+        let ratio = MCCShotsListItemMetrics.imageHeightPerWidth(videoAsset: video)
+        return MCCShotsListItemMetrics.feedImageThumbnailPixelSize(columnWidthPoints: max(1, colW), heightPerWidth: ratio)
     }
 
     private func mcvc_styleListCell(_ cell: MCCShotsListItemCell, item: MCSFeedItem, collectionView: UICollectionView) {
         let hex = Self.mcvc_placeholderHex(from: item.itemId)
         cell.mcvw_imageContainer.backgroundColor = UIColor(hex: hex) ?? .darkGray
         let a = item.videoAsset
-        let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width)
+        cell.mcvw_setImageHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth(videoAsset: a))
+        let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width, video: a)
         cell.mcvw_applyPosterOnly(posterUrl: a.posterImageUrl, thumbnailPixelSize: thumbPx)
         let durationSec = item.videoAsset.duration
         if durationSec > 0 {
@@ -292,7 +294,8 @@ extension MCCShotsListPageController {
     private func mcvc_heightForItem(_ item: MCSFeedItem, itemWidth: CGFloat) -> CGFloat {
         let m = MCCShotsListItemMetrics.self
         let title = item.itemTitle
-        let imageH = itemWidth * m.imageHeightPerWidth
+        let ratio = m.imageHeightPerWidth(videoAsset: item.videoAsset)
+        let imageH = itemWidth * ratio
         let attrs = MCCShotsListItemMetrics.titleTextAttributes(textColor: UIColor.hex_d3d0cd)
         let maxTextH = ceil(m.titleLineHeight * CGFloat(m.titleMaxLines))
         let textH = min(
@@ -341,7 +344,7 @@ extension MCCShotsListPageController: UICollectionViewDataSource, UICollectionVi
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let cell = cell as? MCCShotsListItemCell,
               let item = mcvc_listState.items[safe: indexPath.item] else { return }
-        let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width)
+        let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width, video: item.videoAsset)
         cell.mcvw_applyWebpAnimated(webpUrl: item.videoAsset.webpImageUrl, thumbnailPixelSize: thumbPx)
     }
 
@@ -360,24 +363,21 @@ extension MCCShotsListPageController: UICollectionViewDataSourcePrefetching {
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         let items = mcvc_listState.items
         let cvW = collectionView.bounds.width
-        let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: cvW > 0 ? cvW : view.bounds.width)
-        let ctx = MCCShotsListItemMetrics.sdPosterThumbnailContext(thumbnailPixelSize: thumbPx)
-        var urls: [URL] = []
-        urls.reserveCapacity(indexPaths.count)
+        let cvWidth = cvW > 0 ? cvW : view.bounds.width
         for indexPath in indexPaths {
             guard let item = items[safe: indexPath.item] else { continue }
             let s = item.videoAsset.posterImageUrl
             guard !s.isEmpty, let u = URL(string: s) else { continue }
-            urls.append(u)
+            let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: cvWidth, video: item.videoAsset)
+            let ctx = MCCShotsListItemMetrics.sdPosterThumbnailContext(thumbnailPixelSize: thumbPx)
+            SDWebImagePrefetcher.shared.prefetchURLs(
+                [u],
+                options: MCCShotsListItemMetrics.sdPosterLoadOptions,
+                context: ctx,
+                progress: nil,
+                completed: nil
+            )
         }
-        guard !urls.isEmpty else { return }
-        SDWebImagePrefetcher.shared.prefetchURLs(
-            urls,
-            options: MCCShotsListItemMetrics.sdPosterLoadOptions,
-            context: ctx,
-            progress: nil,
-            completed: nil
-        )
     }
 
 }

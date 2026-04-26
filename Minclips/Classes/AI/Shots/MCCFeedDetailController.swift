@@ -41,7 +41,10 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         guard !mcvc_didApplyDetailMedia, let item = mcvc_feedItem else { return }
         mcvc_didApplyDetailMedia = true
         let w = max(1, view.bounds.width)
-        let thumbPx = MCCShotsListItemMetrics.feedImageThumbnailPixelSize(columnWidthPoints: w)
+        let inset: CGFloat = 16
+        let colW = max(1, w - inset * 2)
+        let ratio = MCCShotsListItemMetrics.imageHeightPerWidth(videoAsset: item.videoAsset)
+        let thumbPx = MCCShotsListItemMetrics.feedImageThumbnailPixelSize(columnWidthPoints: colW, heightPerWidth: ratio)
         contentView.mcvw_configure(feedItem: item, webpHandoff: mcvc_webpHandoff, thumbnailPixelSize: thumbPx)
     }
 

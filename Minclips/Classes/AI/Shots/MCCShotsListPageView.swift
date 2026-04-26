@@ -1,6 +1,7 @@
 import UIKit
 import SnapKit
 import SDWebImage
+import Data
 
 public enum MCCShotsListItemMetrics {
 
@@ -14,6 +15,15 @@ public enum MCCShotsListItemMetrics {
 
     public static let imageHeightPerWidth: CGFloat = 4.0 / 3.0
 
+    public static func imageHeightPerWidth(videoAsset: MCSFeedVideoAssetShell) -> CGFloat {
+        let w = videoAsset.imageWidth
+        let h = videoAsset.imageHeight
+        if w > 0, h > 0 {
+            return CGFloat(h) / CGFloat(w)
+        }
+        return imageHeightPerWidth
+    }
+
     public static func titleTextAttributes(textColor: UIColor) -> [NSAttributedString.Key: Any] {
         let p = NSMutableParagraphStyle()
         p.minimumLineHeight = titleLineHeight
@@ -21,10 +31,10 @@ public enum MCCShotsListItemMetrics {
         return [.font: titleFont, .paragraphStyle: p, .foregroundColor: textColor]
     }
 
-    public static func feedImageThumbnailPixelSize(columnWidthPoints: CGFloat) -> CGSize {
+    public static func feedImageThumbnailPixelSize(columnWidthPoints: CGFloat, heightPerWidth: CGFloat = imageHeightPerWidth) -> CGSize {
         let scale = UIScreen.main.scale
         let ptW = max(1, columnWidthPoints)
-        let ptH = ptW * imageHeightPerWidth
+        let ptH = ptW * heightPerWidth
         return CGSize(width: ptW * scale, height: ptH * scale)
     }
 
@@ -123,10 +133,7 @@ public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
         mcvw_imageContainer.clipsToBounds = true
         mcvw_posterImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
         mcvw_webpImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
-        mcvw_imageContainer.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview()
-            make.height.equalTo(mcvw_imageContainer.snp.width).multipliedBy(MCCShotsListItemMetrics.imageHeightPerWidth)
-        }
+        mcvw_setImageHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth)
         mcvw_titleLabel.font = MCCShotsListItemMetrics.titleFont
         mcvw_titleLabel.numberOfLines = MCCShotsListItemMetrics.titleMaxLines
         mcvw_titleLabel.lineBreakMode = .byTruncatingTail
@@ -146,10 +153,18 @@ public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
 
     public override func prepareForReuse() {
         super.prepareForReuse()
+        mcvw_setImageHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth)
         mcvw_proBadge.isHidden = true
         mcvw_posterImageView.sd_cancelCurrentImageLoad()
         mcvw_posterImageView.image = nil
         mcvw_clearWebpAnimated()
+    }
+
+    public func mcvw_setImageHeightPerWidth(_ ratio: CGFloat) {
+        mcvw_imageContainer.snp.remakeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+            make.height.equalTo(mcvw_imageContainer.snp.width).multipliedBy(ratio)
+        }
     }
 
     public func mcvw_applyPosterOnly(posterUrl: String, thumbnailPixelSize: CGSize) {
