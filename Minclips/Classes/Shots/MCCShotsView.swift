@@ -9,7 +9,7 @@ public final class MCCShotsView: MCCBaseView {
     public let mcvw_tagFlowLayout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
         l.scrollDirection = .horizontal
-        l.minimumInteritemSpacing = 12
+        l.minimumInteritemSpacing = 24
         l.minimumLineSpacing = 0
         return l
     }()
@@ -24,13 +24,10 @@ public final class MCCShotsView: MCCBaseView {
     }()
 
     public let mcvw_pinHeaderView: UIView = {
-        let v = UIView()
-
-        let h = max(20, MCCScreenSize.statusBarHeight)
-        v.frame = CGRect(x: 0, y: 0, width: 0, height: h)
+        let v = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 48))
         return v
     }()
-
+    
     private var mcvw_pagingViewRef: JXPagingListRefreshView?
 
     public var mcvw_pagingListContainer: JXPagingListContainerView? { mcvw_pagingViewRef?.listContainerView }
@@ -98,25 +95,23 @@ public final class MCCShotsTagCell: MCCBaseCollectionViewCell {
 
     public static let mcvw_reuseId = "MCCShotsTagCell"
 
-    public let mcvw_iconView: SDAnimatedImageView = {
-        let v = SDAnimatedImageView()
-        v.contentMode = .scaleAspectFit
-        v.isHidden = true
-        v.layer.cornerRadius = 2
-        v.clipsToBounds = true
-        return v
-    }()
-
-    public let mcvw_titleLabel = UILabel()
-
     private let mcvw_rowStack: UIStackView = {
         let s = UIStackView()
         s.axis = .horizontal
         s.alignment = .center
-        s.spacing = 4
+        s.spacing = 6
         return s
     }()
+    
+    public let mcvw_iconView: SDAnimatedImageView = {
+        let v = SDAnimatedImageView()
+        v.contentMode = .scaleAspectFit
+        v.isHidden = true
+        return v
+    }()
 
+    public let mcvw_titleLabel = UILabel()
+    
     public override func mcvw_setupUI() {
         contentView.addSubview(mcvw_rowStack)
         mcvw_rowStack.addArrangedSubview(mcvw_iconView)

@@ -44,6 +44,7 @@ public final class MCCShotsListPageController: MCCViewController<MCCShotsListPag
 
     public override func mcvc_bind() {
         super.mcvc_bind()
+        
         let cv = contentView.mcvw_collectionView
         cv.dataSource = self
         cv.delegate = self

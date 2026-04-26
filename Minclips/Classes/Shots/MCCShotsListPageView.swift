@@ -5,9 +5,9 @@ public final class MCCShotsListPageView: MCCBaseView {
 
     public let mcvw_flow: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
-        l.minimumInteritemSpacing = 8
-        l.minimumLineSpacing = 10
-        l.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 20, right: 16)
+        l.minimumInteritemSpacing = 4
+        l.minimumLineSpacing = 8
+        l.sectionInset = UIEdgeInsets(top: 4, left: 4, bottom: 12, right: 4)
         return l
     }()
 
