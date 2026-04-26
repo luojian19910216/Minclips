@@ -260,7 +260,9 @@ extension MCCViewControllerCore {
     open func _configureNav() {
         self.navigationController?.navigationBar.mc_shadowHidden = true
         self.navigationController?.navigationBar.mc_barStyle = .transparentLight
-        self.navigationItem.leftBarButtonItem = self.mcvc_needLeftBarButtonItem() ? .init(image: .init(named: "ic_nav_back")?.withRenderingMode(.alwaysTemplate), style: .plain, target: self, action: #selector(mcvc_leftBarButtonItemAction)) : .init(customView: UIView())
+        self.navigationItem.leftBarButtonItem = self.mcvc_needLeftBarButtonItem()
+            ? .init(image: .init(named: "ic_nav_back")?.withRenderingMode(.alwaysTemplate), style: .plain, target: self, action: #selector(mcvc_leftBarButtonItemAction))
+            : nil
 
         _configureNav()
     }

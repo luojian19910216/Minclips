@@ -26,6 +26,11 @@ public final class MCCToolsController: MCCViewController<MCCToolsView, MCCEmptyV
         )
     }
 
+    @objc public func mcvc_onProTapped() {
+        let vc: MCCProController = .init()
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+
     public override func mcvc_setupLocalization() {
         super.mcvc_setupLocalization()
         view.backgroundColor = UIColor(hex: "0F0F12")!

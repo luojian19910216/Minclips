@@ -141,12 +141,6 @@ open class MCCViewControllerCore: UIViewController, MCPViewControllerInitProtoco
     @objc
     open func mcvc_rightBarButtonItemAction() {}
 
-    @objc
-    open func mcvc_onProTapped() {
-        let vc = MCCProController()
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-
     open func mcvc_setupLocalization() {}
 
     open func mcvc_bind() {}
@@ -205,29 +199,6 @@ public enum MCCRootTabNavChrome {
         action: Selector,
         titleColor: UIColor = .white
     ) -> UIBarButtonItem {
-        if #available(iOS 15.0, *) {
-            var config = UIButton.Configuration.plain()
-            config.title = "PRO"
-            config.image = UIImage(named: "ic_nav_pro")?.withRenderingMode(.alwaysTemplate)
-            config.imagePlacement = .leading
-            config.imagePadding = 5
-            config.baseForegroundColor = titleColor
-            config.cornerStyle = .capsule
-            config.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 14, bottom: 8, trailing: 16)
-            let titleFont = UIFont.systemFont(ofSize: 14, weight: .semibold)
-            config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
-                var out = incoming
-                out.font = titleFont
-                return out
-            }
-            let b = UIButton(configuration: config)
-            b.addTarget(target, action: action, for: .touchUpInside)
-            let item = UIBarButtonItem(customView: b)
-            if #available(iOS 26.0, *) {
-                item.hidesSharedBackground = false
-            }
-            return item
-        }
         let b: UIButton = .init()
         b.frame = .init(x: 0, y: 0, width: 76, height: 44)
         b.setImage(UIImage(named: "ic_nav_pro"), for: .normal)

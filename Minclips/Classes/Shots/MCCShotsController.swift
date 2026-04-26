@@ -28,6 +28,11 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
         )
     }
 
+    @objc public func mcvc_onProTapped() {
+        let vc: MCCProController = .init()
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+
     public override func viewDidLoad() {
         super.viewDidLoad()
         contentView.mcvw_setupPagingView(delegate: self)
