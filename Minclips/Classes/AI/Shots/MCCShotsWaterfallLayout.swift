@@ -10,7 +10,6 @@ public protocol MCCShotsWaterfallLayoutDelegate: AnyObject {
 
 }
 
-/// 双列瀑布流：每条 item 高度由 delegate 提供，新 item 落在当前总高度更短的一列。
 public final class MCCShotsWaterfallLayout: UICollectionViewLayout {
 
     public weak var delegate: MCCShotsWaterfallLayoutDelegate?
@@ -21,7 +20,6 @@ public final class MCCShotsWaterfallLayout: UICollectionViewLayout {
 
     public var minimumInteritemSpacing: CGFloat = 4
 
-    /// 同一列内相邻 cell 的垂直间距
     public var minimumLineSpacing: CGFloat = 4
 
     private var cache: [UICollectionViewLayoutAttributes] = []
@@ -87,7 +85,6 @@ public final class MCCShotsWaterfallLayout: UICollectionViewLayout {
 
     public override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
         guard let cv = collectionView else { return false }
-        // 滑动时只有 bounds.origin 变，width 不变；若此处总返回 true，会每帧 invalidate → 全量 prepare → 极度卡顿、cell 闪烁。
         return newBounds.size.width != cv.bounds.size.width
     }
 

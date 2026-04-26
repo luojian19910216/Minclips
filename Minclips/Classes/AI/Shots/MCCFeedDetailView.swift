@@ -4,7 +4,6 @@ import SnapKit
 import SDWebImage
 import Data
 
-/// 列表里正在播的 WebP 状态，用于详情页无缝续播（同一 `UIImage` + 帧位置）。
 public struct MCCWebpPlaybackHandoff {
     public let image: UIImage
     public let frameIndex: UInt

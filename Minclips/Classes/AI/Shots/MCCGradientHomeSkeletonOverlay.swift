@@ -10,7 +10,7 @@ private enum MCCHomeSkeletonAppearance {
 }
 
 public final class MCCGradientHomeSkeletonOverlay: UIView {
-
+    
     public enum MCCStyle {
         case tagsAndDoubleColumn
         case singleColumnList
@@ -49,7 +49,6 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
     required init?(coder: NSCoder) { fatalError() }
 
     public func mcvw_showHomeSkeleton() {
-        // 加载态会多次回调；重复 show 会反复停/开渐变动画，容易卡顿、闪一下。
         guard isHidden else { return }
         hideSkeleton()
         isHidden = false
@@ -89,7 +88,6 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
         }
     }
 
-    /// 行数按常见一屏高度估算（含 `spacing`），偏大一号避免露底
     private static let mcvw_rowCountTagsAndDoubleGrid = 8
 
     private static let mcvw_rowCountSingleColumn = 16

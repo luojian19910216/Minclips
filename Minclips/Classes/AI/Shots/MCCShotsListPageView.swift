@@ -4,17 +4,14 @@ import SDWebImage
 
 public enum MCCShotsListItemMetrics {
 
-    /// 图片区域与标题间距
     public static let imageToTitleSpacing: CGFloat = 8
 
-    /// 列表标题：字号 14pt，字重 400（`UIFont.Weight.regular`）。
     public static let titleFont = UIFont.systemFont(ofSize: 14, weight: .regular)
 
     public static let titleLineHeight: CGFloat = 16
 
     public static let titleMaxLines = 2
 
-    /// 图片区域 高 / 宽
     public static let imageHeightPerWidth: CGFloat = 4.0 / 3.0
 
     public static func titleTextAttributes(textColor: UIColor) -> [NSAttributedString.Key: Any] {
@@ -24,7 +21,6 @@ public enum MCCShotsListItemMetrics {
         return [.font: titleFont, .paragraphStyle: p, .foregroundColor: textColor]
     }
 
-    /// 与 cell 图片区一致的 **物理像素** 尺寸，供 SDWebImage `imageThumbnailPixelSize` 缩略图解码。
     public static func feedImageThumbnailPixelSize(columnWidthPoints: CGFloat) -> CGSize {
         let scale = UIScreen.main.scale
         let ptW = max(1, columnWidthPoints)
@@ -32,13 +28,10 @@ public enum MCCShotsListItemMetrics {
         return CGSize(width: ptW * scale, height: ptH * scale)
     }
 
-    /// 列表静态封面：下载队列优先（先于 WebP 等资源）。
     public static let sdPosterLoadOptions: SDWebImageOptions = [.highPriority]
 
-    /// 列表 WebP 动图：低优先，避免抢带宽、影响封面与首屏。
     public static let sdWebpAnimatedLoadOptions: SDWebImageOptions = [.lowPriority]
 
-    /// 列表静态封面 `sd_setImage` / `SDWebImagePrefetcher` 共用，保证预取与展示命中同一套缓存键与缩略解码。
     public static func sdPosterThumbnailContext(thumbnailPixelSize: CGSize) -> [SDWebImageContextOption: Any] {
         [
             .imageThumbnailPixelSize: NSValue(cgSize: thumbnailPixelSize),
@@ -96,7 +89,6 @@ public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
 
     public let mcvw_imageContainer = UIView()
 
-    /// 静态封面（`posterImageUrl` / staticCoverUrl）
     public let mcvw_posterImageView: UIImageView = {
         let v = UIImageView()
         v.contentMode = .scaleAspectFill
@@ -104,7 +96,6 @@ public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
         return v
     }()
 
-    /// WebP 动图（`webpImageUrl`）
     public let mcvw_webpImageView: SDAnimatedImageView = {
         let v = SDAnimatedImageView()
         v.contentMode = .scaleAspectFill
@@ -161,7 +152,6 @@ public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
         mcvw_clearWebpAnimated()
     }
 
-    /// `cellForItem`：仅静态封面，并清掉动图层，避免复用残留。
     public func mcvw_applyPosterOnly(posterUrl: String, thumbnailPixelSize: CGSize) {
         mcvw_clearWebpAnimated()
         mcvw_posterImageView.isHidden = false
@@ -179,7 +169,6 @@ public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
         }
     }
 
-    /// `willDisplay`：叠加载 WebP 动图（不用缩略图解码上下文，避免动图被解成单帧）。`thumbnailPixelSize` 保留与调用方一致，暂不参与 WebP 解码。
     public func mcvw_applyWebpAnimated(webpUrl: String, thumbnailPixelSize _: CGSize) {
         guard let u = URL(string: webpUrl), !webpUrl.isEmpty else {
             mcvw_clearWebpAnimated()
@@ -195,13 +184,11 @@ public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
                 guard let self = self else { return }
                 guard error == nil, image != nil else { return }
                 self.mcvw_webpImageView.startAnimating()
-                // 动图叠在封面上会「两重」；解码成功后只显示 WebP。
                 self.mcvw_posterImageView.isHidden = true
             }
         )
     }
 
-    /// `didEndDisplaying`：取消动图请求并移除展示，省内存与解码。
     public func mcvw_clearWebpAnimated() {
         mcvw_webpImageView.sd_cancelCurrentImageLoad()
         mcvw_webpImageView.image = nil
@@ -209,7 +196,6 @@ public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
         mcvw_posterImageView.isHidden = false
     }
 
-    /// 进入详情前抓取当前 WebP 帧，供详情 `seek` 续播；未加载或非动图时返回 `nil`。
     public func mcvw_captureWebpPlaybackHandoff() -> MCCWebpPlaybackHandoff? {
         guard !mcvw_webpImageView.isHidden, let image = mcvw_webpImageView.image else { return nil }
         guard image.sd_imageFrameCount > 1 else { return nil }

@@ -36,7 +36,6 @@ public final class MCCShotsListPageController: MCCViewController<MCCShotsListPag
 
     private var mcvc_listState = MCCShotsListState()
 
-    /// 已应用到 `collectionView` 的 `itemId` 顺序；用于避免重复 `reloadData`、加载更多时用 `insertItems`。
     private var mcvc_appliedItemIds: [String] = []
 
     public override func mcvc_setupLocalization() {

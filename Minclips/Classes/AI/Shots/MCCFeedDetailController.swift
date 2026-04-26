@@ -8,7 +8,6 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
     public var mcvc_feedItem: MCSFeedItem!
 
-    /// 从列表 cell 带入的 WebP 播放进度；`nil` 时详情内按 URL 重新拉取。
     public var mcvc_webpHandoff: MCCWebpPlaybackHandoff?
 
     private var mcvc_didApplyDetailMedia = false
