@@ -7,6 +7,8 @@ import UIKit
 
 extension UIColor {
 
+    public static let hex_d3d0cd = UIColor(hex: "D3D0CD")!
+
     public convenience init?(hex: String, alpha: CGFloat = 1) {
         var s = hex.trimmingCharacters(in: .whitespacesAndNewlines)
         if s.hasPrefix("#") { s.removeFirst() }

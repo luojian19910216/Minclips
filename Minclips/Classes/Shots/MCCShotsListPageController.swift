@@ -217,9 +217,21 @@ extension MCCShotsListPageController {
         return " \(inner) "
     }
 
-    private func mcvc_styleListCell(_ cell: MCCShotsListItemCell, item: MCSFeedItem) {
+    private func mcvc_feedThumbnailPixelSize(forCollectionWidth width: CGFloat) -> CGSize {
+        let layout = contentView.mcvw_waterfallLayout
+        let w = width > 0 ? width : UIScreen.main.bounds.width
+        let inner = w - layout.sectionInset.left - layout.sectionInset.right
+        let cols = max(1, layout.columnCount)
+        let colW = (inner - CGFloat(cols - 1) * layout.minimumInteritemSpacing) / CGFloat(cols)
+        return MCCShotsListItemMetrics.feedImageThumbnailPixelSize(columnWidthPoints: max(1, colW))
+    }
+
+    private func mcvc_styleListCell(_ cell: MCCShotsListItemCell, item: MCSFeedItem, collectionView: UICollectionView) {
         let hex = Self.mcvc_placeholderHex(from: item.itemId)
         cell.mcvw_imageContainer.backgroundColor = UIColor(hex: hex) ?? .darkGray
+        let a = item.videoAsset
+        let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width)
+        cell.mcvw_applyPosterOnly(posterUrl: a.posterImageUrl, thumbnailPixelSize: thumbPx)
         let durationSec = item.videoAsset.duration
         if durationSec > 0 {
             cell.mcvw_durationLabel.text = Self.mcvc_formatVideoDurationLabel(seconds: durationSec)
@@ -239,7 +251,7 @@ extension MCCShotsListPageController {
         cell.mcvw_proBadge.clipsToBounds = true
         cell.mcvw_proIcon.tintColor = .systemYellow
         cell.mcvw_proIcon.preferredSymbolConfiguration = UIImage.SymbolConfiguration(pointSize: 10, weight: .bold)
-        let titleColor = UIColor(hex: "FFFFFF")!
+        let titleColor = UIColor.hex_d3d0cd
         cell.mcvw_titleLabel.attributedText = NSAttributedString(
             string: item.itemTitle,
             attributes: MCCShotsListItemMetrics.titleTextAttributes(textColor: titleColor)
@@ -250,7 +262,7 @@ extension MCCShotsListPageController {
         let m = MCCShotsListItemMetrics.self
         let title = mcvc_listState.items[safe: index]?.itemTitle ?? ""
         let imageH = itemWidth * m.imageHeightPerWidth
-        let attrs = MCCShotsListItemMetrics.titleTextAttributes(textColor: .white)
+        let attrs = MCCShotsListItemMetrics.titleTextAttributes(textColor: UIColor.hex_d3d0cd)
         let maxTextH = ceil(m.titleLineHeight * CGFloat(m.titleMaxLines))
         let textH = min(
             ceil(
@@ -279,7 +291,7 @@ extension MCCShotsListPageController: UICollectionViewDataSource, UICollectionVi
             withReuseIdentifier: MCCShotsListItemCell.mcvw_reuseId, for: indexPath
         ) as! MCCShotsListItemCell
         if let item = mcvc_listState.items[safe: indexPath.item] {
-            mcvc_styleListCell(cell, item: item)
+            mcvc_styleListCell(cell, item: item, collectionView: collectionView)
         }
         return cell
     }
@@ -289,7 +301,21 @@ extension MCCShotsListPageController: UICollectionViewDataSource, UICollectionVi
         collectionView.deselectItem(at: indexPath, animated: true)
         let vc = MCCFeedDetailController()
         vc.mcvc_feedItem = item
+        if let cell = collectionView.cellForItem(at: indexPath) as? MCCShotsListItemCell {
+            vc.mcvc_webpHandoff = cell.mcvw_captureWebpPlaybackHandoff()
+        }
         navigationController?.pushViewController(vc, animated: true)
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard let cell = cell as? MCCShotsListItemCell,
+              let item = mcvc_listState.items[safe: indexPath.item] else { return }
+        let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width)
+        cell.mcvw_applyWebpAnimated(webpUrl: item.videoAsset.webpImageUrl, thumbnailPixelSize: thumbPx)
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        (cell as? MCCShotsListItemCell)?.mcvw_clearWebpAnimated()
     }
 
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
