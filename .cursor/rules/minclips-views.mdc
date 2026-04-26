@@ -27,9 +27,10 @@ alwaysApply: false
 
 - 通过 **`sd_setImage`** 加载 **URL 内容** 的视图（封面、图标、动图/WebP 等）使用 **`SDAnimatedImageView`**（`UIImageView` 子类），以便 **GIF / 动图 WebP** 正常播放；仅本地 `UIImage` / SF Symbol 的仍用 **`UIImageView`** 即可。
 
-## 命名
+## 命名（mcvw）
 
-- View / Cell / Pop 视图子类上的属性、子视图、lazy 成员：**`mcvw_`**。详见 **`minclips-always.mdc`**「命名前缀」；不要用 `mcsv_`、`mcpj_` 等业务向缩写。
+- 本文件所涉 **View / Cell / `MCCBasePopView` 子类**：属性、子视图、非协议要求的实例方法一律 **`mcvw_`**。
+- **Controller** 通过 **`contentView.mcvw_…`** 访问上述成员；控制器自身逻辑仍用 **`mcvc_`**（见 **`minclips-always.mdc`**、**`minclips-architecture.mdc`**「命名规范」）。
 
 ## 注释
 

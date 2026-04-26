@@ -9,9 +9,11 @@ alwaysApply: true
 - **新代码注释**: 不要中文注释；不要 `// MARK:` 分区注释（含英文）。保留必要英文文档时尽量极简。
 - **执行**: 用户要的是可运行结果时，优先直接改代码/跑命令，不要只给操作步骤。
 - **范围**: 只改与当前任务相关的文件，避免顺手大重构；风格与周边文件一致（命名、`import`、缩进）。
-- **命名前缀**（Minclips / `MCC*`）：
-  - **`mc`**：工程缩写，体现在类型名 `MCC…` 上。
-  - **`vc`**：属于 **`UIViewController` / `MCC*Controller` 子类**的自有实例属性、自有私有方法 → 统一 **`mcvc_`**（与 `MCPViewControllerInitProtocol` 里 `mcvc_init`、`mcvc_bind` 等同一条约定）。
-  - **`vw`**：属于 **`UIView` / `MCC*View` / Cell / `MCCBasePopView` 子类**的自有实例属性、自有私有方法 → 统一 **`mcvw_`**（与 `MCPViewInit` 里 `mcvw_setupUI`、`mcvw_bind` 一致）。
-  - **不要**再为业务另造与 `mc` 无关的缩写前缀（如 `mcsv_`、`mcpj_`、`mccr_`）；模块归属放在**类型名**里即可，类内只用 `mcvc_` 或 `mcvw_`。存量文件若仍是旧前缀，新改动与后续重构逐步对齐。
+- **命名规范：`mc` + `vc` / `vw`**（Minclips 工程内自定义类型，类型名已用 `MCC…`）：
+  - **`mcvc_`**：**控制器**侧——`MCC*Controller` 子类上的**自有**实例属性、**自有**私有方法（不含系统/三方协议强制方法名）。与 **`MCPViewControllerInitProtocol`** 中的 `mcvc_init`、`mcvc_bind`、`mcvc_loadData` 等同一条线，只是协议方法无下划线后的随机后缀。
+  - **`mcvw_`**：**视图**侧——`MCC*View`、`MCCBaseCollectionViewCell`、`MCCBasePopView` 等子类上的**自有**子视图、lazy 属性、**自有**实例方法（与 **`MCPViewInit`** 的 `mcvw_setupUI`、`mcvw_bind` 一致）。
+  - **配对写法**：在 `MCCViewController<SomeView, …>` 里访问根视图统一 **`contentView.mcvw_…`**（属性/方法均在 `SomeView` 上用 `mcvw_`）。父控制器创建子列表控制器后，给子控制器填的对外字段用 **`mcvc_`**，例如 `list.mcvc_labelItem = …`。
+  - **禁止**：在**同一套页面**里混用「控制器却用 `mcvw_`」「视图却用 `mcvc_`」，或让 **`contentView.mcvc_…`** 指向 View 成员。
+  - **模块区分**：靠类型名（如 `MCCShotsView`），不靠 `mcsv_`/`mcpj_` 等额外缩写；**新写与重构**优先统一为 `mcvc_`/`mcvw_`。个别文件若仍残留旧前缀，改动该文件时顺带对齐。
+  - **存量**：逐步迁移；新代码一律按本规范。
 - **细节**: 更具体的架构与模块约定见同目录下 `minclips-architecture.mdc`（编辑 `Minclips/**` 下 Swift 时会附带）。
