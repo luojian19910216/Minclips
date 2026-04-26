@@ -68,25 +68,40 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
             let tag = UIView()
             mcvw_skeletonize(tag, radius: 8, height: 32)
             mcvw_stack.addArrangedSubview(tag)
-            for _ in 0..<4 {
-                mcvw_stack.addArrangedSubview(mcvw_makeDoubleColumnRow(thumbHeight: 120))
+            for _ in 0..<Self.mcvw_rowCountTagsAndDoubleGrid {
+                mcvw_stack.addArrangedSubview(mcvw_makeDoubleColumnRow(thumbHeight: Self.mcvw_doubleColumnThumbHeight))
             }
         case .singleColumnList:
-            for _ in 0..<10 {
+            for _ in 0..<Self.mcvw_rowCountSingleColumn {
                 let row = UIView()
-                mcvw_skeletonize(row, radius: 6, height: 56)
+                mcvw_skeletonize(row, radius: 6, height: Self.mcvw_singleColumnRowHeight)
                 mcvw_stack.addArrangedSubview(row)
             }
         case .doubleColumnGrid:
-            for _ in 0..<4 {
-                mcvw_stack.addArrangedSubview(mcvw_makeDoubleColumnRow(thumbHeight: 120))
+            for _ in 0..<Self.mcvw_rowCountDoubleGrid {
+                mcvw_stack.addArrangedSubview(mcvw_makeDoubleColumnRow(thumbHeight: Self.mcvw_doubleColumnThumbHeight))
             }
         case .tripleColumnGrid:
-            for _ in 0..<5 {
-                mcvw_stack.addArrangedSubview(mcvw_makeTripleColumnRow(blockHeight: 116))
+            for _ in 0..<Self.mcvw_rowCountTripleGrid {
+                mcvw_stack.addArrangedSubview(mcvw_makeTripleColumnRow(blockHeight: Self.mcvw_tripleColumnBlockHeight))
             }
         }
     }
+
+    /// 行数按常见一屏高度估算（含 `spacing`），偏大一号避免露底
+    private static let mcvw_rowCountTagsAndDoubleGrid = 8
+
+    private static let mcvw_rowCountSingleColumn = 16
+
+    private static let mcvw_rowCountDoubleGrid = 8
+
+    private static let mcvw_rowCountTripleGrid = 10
+
+    private static let mcvw_doubleColumnThumbHeight: CGFloat = 128
+
+    private static let mcvw_singleColumnRowHeight: CGFloat = 56
+
+    private static let mcvw_tripleColumnBlockHeight: CGFloat = 122
 
     private func mcvw_skeletonize(_ v: UIView, radius: CGFloat, height: CGFloat) {
         v.isSkeletonable = true

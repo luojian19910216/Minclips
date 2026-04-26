@@ -171,6 +171,9 @@ extension MCCShotsListPageController {
         let hasMore = st.hasMore
         let cv = contentView.mcvw_collectionView
         contentView.mcvw_setListSkeletonVisible(listState.isLoading && items.isEmpty)
+        if listState.isLoading && items.isEmpty {
+            cv.mj_footer?.isHidden = true
+        }
         if !listState.isLoading {
             cv.mj_header?.endRefreshing()
         }
