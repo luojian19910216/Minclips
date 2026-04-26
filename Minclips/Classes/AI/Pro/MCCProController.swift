@@ -6,10 +6,6 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
     
     public override var transactionStyle: MCETransactionStyle { .bottom }
     
-    public override func mcvc_init() {
-        fd_prefersNavigationBarHidden = false
-    }
-
     public override func mcvc_needLeftBarButtonItem() -> Bool {false}
 
     public override func mcvc_configureNav() {
