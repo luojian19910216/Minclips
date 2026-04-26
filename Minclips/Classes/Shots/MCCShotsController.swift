@@ -10,11 +10,11 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
 
     public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
-    private var mcsv_tagsState = MCSLoadState<MCSList<MCSFeedLabelItem>>()
+    private var mcvc_tagsState = MCSLoadState<MCSList<MCSFeedLabelItem>>()
 
-    private var mcsv_selectedTagIndex: Int = 0
+    private var mcvc_selectedTagIndex: Int = 0
 
-    private var mcsv_labelItems: [MCSFeedLabelItem] { mcsv_tagsState.model?.items ?? [] }
+    private var mcvc_labelItems: [MCSFeedLabelItem] { mcvc_tagsState.model?.items ?? [] }
 
     public override func mcvc_init() {
         fd_prefersNavigationBarHidden = false
@@ -40,69 +40,69 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
 
     public override func viewDidLoad() {
         super.viewDidLoad()
-        contentView.mcsv_setupPagingView(delegate: self)
+        contentView.mcvw_setupPagingView(delegate: self)
     }
 
     public override func mcvc_setupLocalization() {
         super.mcvc_setupLocalization()
         view.backgroundColor = UIColor(hex: "000000")!
         contentView.backgroundColor = view.backgroundColor
-        contentView.mcsv_tagCollection.backgroundColor = .clear
-        contentView.mcsv_pinHeaderView.backgroundColor = .clear
+        contentView.mcvw_tagCollection.backgroundColor = .clear
+        contentView.mcvw_pinHeaderView.backgroundColor = .clear
     }
 
     public override func mcvc_bind() {
         super.mcvc_bind()
-        contentView.mcsv_tagCollection.dataSource = self
-        contentView.mcsv_tagCollection.delegate = self
+        contentView.mcvw_tagCollection.dataSource = self
+        contentView.mcvw_tagCollection.delegate = self
     }
 
     public override func mcvc_loadData() {
         super.mcvc_loadData()
-        mcsv_loadTags()
+        mcvc_loadTags()
     }
 
-    private func mcsv_loadTags() {
-        mcsv_selectedTagIndex = 0
+    private func mcvc_loadTags() {
+        mcvc_selectedTagIndex = 0
         MCCFeedAPIManager.shared.customLabels()
             .asLoadState()
             .sink { [weak self] s in
                 guard let self = self else { return }
-                self.mcsv_tagsState = s
-                self.mcsv_syncTagChrome()
-                self.mcsv_reloadPagingForTags()
+                self.mcvc_tagsState = s
+                self.mcvc_syncTagChrome()
+                self.mcvc_reloadPagingForTags()
             }
             .store(in: &cancellables)
     }
 
-    private func mcsv_syncTagChrome() {
-        contentView.mcsv_setPagingHidden(mcsv_labelItems.isEmpty)
-        contentView.mcsv_tagCollection.reloadData()
-        let idx = min(mcsv_selectedTagIndex, max(0, mcsv_labelItems.count - 1))
-        if mcsv_labelItems.indices.contains(idx) {
-            contentView.mcsv_scrollTagToIndex(idx, animated: false)
+    private func mcvc_syncTagChrome() {
+        contentView.mcvw_setPagingHidden(mcvc_labelItems.isEmpty)
+        contentView.mcvw_tagCollection.reloadData()
+        let idx = min(mcvc_selectedTagIndex, max(0, mcvc_labelItems.count - 1))
+        if mcvc_labelItems.indices.contains(idx) {
+            contentView.mcvw_scrollTagToIndex(idx, animated: false)
         }
     }
 
-    private func mcsv_reloadPagingForTags() {
-        let labelItems = mcsv_labelItems
+    private func mcvc_reloadPagingForTags() {
+        let labelItems = mcvc_labelItems
         let idx: Int
         if labelItems.isEmpty {
             idx = 0
         } else {
-            idx = min(max(0, mcsv_selectedTagIndex), labelItems.count - 1)
+            idx = min(max(0, mcvc_selectedTagIndex), labelItems.count - 1)
         }
-        mcsv_selectedTagIndex = idx
-        contentView.mcsv_applyPagingTagReload(selectedIndex: idx, hasLabels: !labelItems.isEmpty)
+        mcvc_selectedTagIndex = idx
+        contentView.mcvw_applyPagingTagReload(selectedIndex: idx, hasLabels: !labelItems.isEmpty)
         if !labelItems.isEmpty {
-            mcsv_pagingScrollToIndexIfVisible(idx, animated: false)
+            mcvc_pagingScrollToIndexIfVisible(idx, animated: false)
         }
     }
 
-    private func mcsv_pagingScrollToIndexIfVisible(_ index: Int, animated: Bool) {
-        guard let c0 = contentView.mcsv_pagingListContainer, index >= 0 else { return }
+    private func mcvc_pagingScrollToIndexIfVisible(_ index: Int, animated: Bool) {
+        guard let c0 = contentView.mcvw_pagingListContainer, index >= 0 else { return }
         let apply: () -> Void = { [weak self] in
-            guard let c = self?.contentView.mcsv_pagingListContainer, c.bounds.width > 0 else { return }
+            guard let c = self?.contentView.mcvw_pagingListContainer, c.bounds.width > 0 else { return }
             c.scrollView.setContentOffset(
                 CGPoint(x: CGFloat(index) * c.bounds.width, y: 0),
                 animated: animated
@@ -114,29 +114,29 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
         }
     }
 
-    private func mcsv_pagingListDidShow(at index: Int) {
-        guard index >= 0, index < mcsv_labelItems.count else { return }
-        if mcsv_selectedTagIndex != index {
-            mcsv_selectedTagIndex = index
+    private func mcvc_pagingListDidShow(at index: Int) {
+        guard index >= 0, index < mcvc_labelItems.count else { return }
+        if mcvc_selectedTagIndex != index {
+            mcvc_selectedTagIndex = index
         }
-        contentView.mcsv_tagCollection.reloadData()
-        contentView.mcsv_scrollTagToIndex(index, animated: true)
+        contentView.mcvw_tagCollection.reloadData()
+        contentView.mcvw_scrollTagToIndex(index, animated: true)
     }
 
-    private func mcsv_gotoPage(at index: Int, animated: Bool) {
-        guard index >= 0, index < mcsv_labelItems.count else { return }
-        let old = mcsv_selectedTagIndex
+    private func mcvc_gotoPage(at index: Int, animated: Bool) {
+        guard index >= 0, index < mcvc_labelItems.count else { return }
+        let old = mcvc_selectedTagIndex
         if index == old, animated {
-            contentView.mcsv_scrollTagToIndex(index, animated: true)
+            contentView.mcvw_scrollTagToIndex(index, animated: true)
             return
         }
         if index == old { return }
-        mcsv_selectedTagIndex = index
-        contentView.mcsv_tagCollection.reloadData()
-        if let c = contentView.mcsv_pagingListContainer, index < mcsv_labelItems.count {
+        mcvc_selectedTagIndex = index
+        contentView.mcvw_tagCollection.reloadData()
+        if let c = contentView.mcvw_pagingListContainer, index < mcvc_labelItems.count {
             c.didClickSelectedItem(at: index)
         }
-        if let c = contentView.mcsv_pagingListContainer, c.bounds.width > 0 {
+        if let c = contentView.mcvw_pagingListContainer, c.bounds.width > 0 {
             c.scrollView.setContentOffset(
                 CGPoint(x: CGFloat(index) * c.bounds.width, y: 0),
                 animated: animated
@@ -144,26 +144,26 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
         }
     }
 
-    private func mcsv_dequeueTagCell(_ collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell {
+    private func mcvc_dequeueTagCell(_ collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MCCShotsTagCell.mcsv_reuseId, for: indexPath
+            withReuseIdentifier: MCCShotsTagCell.mcvw_reuseId, for: indexPath
         ) as! MCCShotsTagCell
-        if let it = mcsv_labelItems[safe: indexPath.item] {
-            let selected = indexPath.item == mcsv_selectedTagIndex
+        if let it = mcvc_labelItems[safe: indexPath.item] {
+            let selected = indexPath.item == mcvc_selectedTagIndex
             let iconUrl = it.iconImageUrl.isEmpty ? nil : it.iconImageUrl
-            cell.mcsv_titleLabel.text = it.title
-            cell.mcsv_titleLabel.font = .systemFont(
+            cell.mcvw_titleLabel.text = it.title
+            cell.mcvw_titleLabel.font = .systemFont(
                 ofSize: 16,
                 weight: selected ? .semibold : .regular
             )
-            cell.mcsv_titleLabel.textColor = selected ? UIColor(hex: "FFFFFF")! : UIColor(hex: "8E8E93")!
+            cell.mcvw_titleLabel.textColor = selected ? UIColor(hex: "FFFFFF")! : UIColor(hex: "8E8E93")!
             if let urlStr = iconUrl, let u = URL(string: urlStr) {
-                cell.mcsv_iconView.isHidden = false
-                cell.mcsv_iconView.sd_setImage(with: u, placeholderImage: nil)
+                cell.mcvw_iconView.isHidden = false
+                cell.mcvw_iconView.sd_setImage(with: u, placeholderImage: nil)
             } else {
-                cell.mcsv_iconView.isHidden = true
-                cell.mcsv_iconView.sd_cancelCurrentImageLoad()
-                cell.mcsv_iconView.image = nil
+                cell.mcvw_iconView.isHidden = true
+                cell.mcvw_iconView.sd_cancelCurrentImageLoad()
+                cell.mcvw_iconView.image = nil
             }
         }
         return cell
@@ -182,25 +182,25 @@ extension MCCShotsController: JXPagingViewDelegate {
     }
 
     public func viewForPinSectionHeader(in pagingView: JXPagingView) -> UIView {
-        contentView.mcsv_pinHeaderView
+        contentView.mcvw_pinHeaderView
     }
 
     public func numberOfLists(in pagingView: JXPagingView) -> Int {
-        mcsv_labelItems.count
+        mcvc_labelItems.count
     }
 
     public func pagingView(_ pagingView: JXPagingView, listIdentifierAtIndex index: Int) -> String? {
-        guard mcsv_labelItems.indices.contains(index) else { return nil }
-        return mcsv_labelItems[index].templateRef
+        guard mcvc_labelItems.indices.contains(index) else { return nil }
+        return mcvc_labelItems[index].templateRef
     }
 
     public func pagingView(_ pagingView: JXPagingView, initListAtIndex index: Int) -> JXPagingViewListViewDelegate {
-        let labelItem = mcsv_labelItems[index]
+        let labelItem = mcvc_labelItems[index]
         let list = MCCShotsListPageController()
-        list.mcsv_labelItem = labelItem
-        list.mcsv_index = index
-        list.mcsv_onListDidAppear = { [weak self] in
-            self?.mcsv_pagingListDidShow(at: index)
+        list.mcvc_labelItem = labelItem
+        list.mcvc_index = index
+        list.mcvc_onListDidAppear = { [weak self] in
+            self?.mcvc_pagingListDidShow(at: index)
         }
         return list
     }
@@ -210,15 +210,15 @@ extension MCCShotsController: JXPagingViewDelegate {
 extension MCCShotsController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        mcsv_labelItems.count
+        mcvc_labelItems.count
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        mcsv_dequeueTagCell(collectionView, indexPath: indexPath)
+        mcvc_dequeueTagCell(collectionView, indexPath: indexPath)
     }
 
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        mcsv_gotoPage(at: indexPath.item, animated: true)
+        mcvc_gotoPage(at: indexPath.item, animated: true)
     }
 
     public func collectionView(
@@ -226,7 +226,7 @@ extension MCCShotsController: UICollectionViewDataSource, UICollectionViewDelega
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        guard let it = mcsv_labelItems[safe: indexPath.item] else { return .zero }
+        guard let it = mcvc_labelItems[safe: indexPath.item] else { return .zero }
         let t = it.title
         let fs: CGFloat = 16
         let textW = (t as NSString).size(

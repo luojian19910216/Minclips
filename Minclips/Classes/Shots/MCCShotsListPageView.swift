@@ -3,7 +3,7 @@ import SnapKit
 
 public final class MCCShotsListPageView: MCCBaseView {
 
-    public let mcsv_flow: UICollectionViewFlowLayout = {
+    public let mcvw_flow: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
         l.minimumInteritemSpacing = 8
         l.minimumLineSpacing = 10
@@ -11,61 +11,61 @@ public final class MCCShotsListPageView: MCCBaseView {
         return l
     }()
 
-    public lazy var mcsv_collectionView: UICollectionView = {
-        let cv = UICollectionView(frame: .zero, collectionViewLayout: mcsv_flow)
+    public lazy var mcvw_collectionView: UICollectionView = {
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: mcvw_flow)
         cv.alwaysBounceVertical = true
         cv.contentInsetAdjustmentBehavior = .always
-        cv.register(MCCShotsListItemCell.self, forCellWithReuseIdentifier: MCCShotsListItemCell.mcsv_reuseId)
+        cv.register(MCCShotsListItemCell.self, forCellWithReuseIdentifier: MCCShotsListItemCell.mcvw_reuseId)
         return cv
     }()
 
     public override func mcvw_setupUI() {
-        addSubview(mcsv_collectionView)
-        mcsv_collectionView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        addSubview(mcvw_collectionView)
+        mcvw_collectionView.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
 
 }
 
 public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
 
-    public static let mcsv_reuseId = "MCCShotsListItemCell"
+    public static let mcvw_reuseId = "MCCShotsListItemCell"
 
-    public let mcsv_imageContainer = UIView()
+    public let mcvw_imageContainer = UIView()
 
-    public let mcsv_durationLabel = UILabel()
+    public let mcvw_durationLabel = UILabel()
 
-    public let mcsv_proBadge = UIView()
+    public let mcvw_proBadge = UIView()
 
-    public let mcsv_proIcon = UIImageView(image: UIImage(systemName: "diamond.fill"))
+    public let mcvw_proIcon = UIImageView(image: UIImage(systemName: "diamond.fill"))
 
-    public let mcsv_titleLabel = UILabel()
+    public let mcvw_titleLabel = UILabel()
 
     public override func mcvw_setupUI() {
-        contentView.addSubview(mcsv_imageContainer)
-        contentView.addSubview(mcsv_titleLabel)
-        mcsv_imageContainer.addSubview(mcsv_durationLabel)
-        mcsv_imageContainer.addSubview(mcsv_proBadge)
-        mcsv_proBadge.addSubview(mcsv_proIcon)
-        mcsv_imageContainer.layer.cornerRadius = 12
-        mcsv_imageContainer.clipsToBounds = true
-        mcsv_imageContainer.snp.makeConstraints { $0.top.leading.trailing.equalToSuperview() }
-        mcsv_titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(mcsv_imageContainer.snp.bottom).offset(6)
+        contentView.addSubview(mcvw_imageContainer)
+        contentView.addSubview(mcvw_titleLabel)
+        mcvw_imageContainer.addSubview(mcvw_durationLabel)
+        mcvw_imageContainer.addSubview(mcvw_proBadge)
+        mcvw_proBadge.addSubview(mcvw_proIcon)
+        mcvw_imageContainer.layer.cornerRadius = 12
+        mcvw_imageContainer.clipsToBounds = true
+        mcvw_imageContainer.snp.makeConstraints { $0.top.leading.trailing.equalToSuperview() }
+        mcvw_titleLabel.snp.makeConstraints { make in
+            make.top.equalTo(mcvw_imageContainer.snp.bottom).offset(6)
             make.leading.trailing.bottom.equalToSuperview()
         }
-        mcsv_durationLabel.snp.makeConstraints { make in
+        mcvw_durationLabel.snp.makeConstraints { make in
             make.top.leading.equalToSuperview().offset(6)
         }
-        mcsv_proBadge.snp.makeConstraints { make in
+        mcvw_proBadge.snp.makeConstraints { make in
             make.trailing.bottom.equalToSuperview().inset(6)
             make.size.equalTo(24)
         }
-        mcsv_proIcon.snp.makeConstraints { $0.center.equalToSuperview() }
+        mcvw_proIcon.snp.makeConstraints { $0.center.equalToSuperview() }
     }
 
     public override func prepareForReuse() {
         super.prepareForReuse()
-        mcsv_proBadge.isHidden = true
+        mcvw_proBadge.isHidden = true
     }
 
 }

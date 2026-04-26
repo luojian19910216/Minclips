@@ -6,7 +6,7 @@ import SDWebImage
 
 public final class MCCShotsView: MCCBaseView {
 
-    public let mcsv_tagFlowLayout: UICollectionViewFlowLayout = {
+    public let mcvw_tagFlowLayout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
         l.scrollDirection = .horizontal
         l.minimumInteritemSpacing = 12
@@ -14,36 +14,36 @@ public final class MCCShotsView: MCCBaseView {
         return l
     }()
 
-    public lazy var mcsv_tagCollection: UICollectionView = {
-        let cv = UICollectionView(frame: .zero, collectionViewLayout: mcsv_tagFlowLayout)
+    public lazy var mcvw_tagCollection: UICollectionView = {
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: mcvw_tagFlowLayout)
         cv.showsHorizontalScrollIndicator = false
         cv.alwaysBounceHorizontal = true
         cv.contentInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        cv.register(MCCShotsTagCell.self, forCellWithReuseIdentifier: MCCShotsTagCell.mcsv_reuseId)
+        cv.register(MCCShotsTagCell.self, forCellWithReuseIdentifier: MCCShotsTagCell.mcvw_reuseId)
         return cv
     }()
 
-    public let mcsv_pinHeaderView: UIView = {
+    public let mcvw_pinHeaderView: UIView = {
         let v = UIView()
         let h = max(20, MCCScreenSize.statusBarHeight)
         v.frame = CGRect(x: 0, y: 0, width: 0, height: h)
         return v
     }()
 
-    private var mcsv_pagingViewRef: JXPagingListRefreshView?
+    private var mcvw_pagingViewRef: JXPagingListRefreshView?
 
-    public var mcsv_pagingListContainer: JXPagingListContainerView? { mcsv_pagingViewRef?.listContainerView }
+    public var mcvw_pagingListContainer: JXPagingListContainerView? { mcvw_pagingViewRef?.listContainerView }
 
     public override func mcvw_setupUI() {
-        mcsv_pinHeaderView.addSubview(mcsv_tagCollection)
-        mcsv_tagCollection.snp.makeConstraints { $0.edges.equalToSuperview() }
+        mcvw_pinHeaderView.addSubview(mcvw_tagCollection)
+        mcvw_tagCollection.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
 
-    public func mcsv_setupPagingView(delegate: JXPagingViewDelegate) {
+    public func mcvw_setupPagingView(delegate: JXPagingViewDelegate) {
         let pv = JXPagingListRefreshView(delegate: delegate, listContainerType: .scrollView)
         pv.mainTableView.backgroundColor = .clear
         pv.allowsCacheList = true
-        mcsv_pagingViewRef = pv
+        mcvw_pagingViewRef = pv
         if pv.superview == nil {
             addSubview(pv)
         }
@@ -53,31 +53,31 @@ public final class MCCShotsView: MCCBaseView {
         }
     }
 
-    public func mcsv_setPagingHidden(_ hidden: Bool) {
-        mcsv_pagingViewRef?.isHidden = hidden
+    public func mcvw_setPagingHidden(_ hidden: Bool) {
+        mcvw_pagingViewRef?.isHidden = hidden
     }
 
-    public func mcsv_applyPagingTagReload(selectedIndex: Int, hasLabels: Bool) {
-        guard let pv = mcsv_pagingViewRef else { return }
+    public func mcvw_applyPagingTagReload(selectedIndex: Int, hasLabels: Bool) {
+        guard let pv = mcvw_pagingViewRef else { return }
         if hasLabels {
             pv.defaultSelectedIndex = selectedIndex
         }
         pv.reloadData()
     }
 
-    public func mcsv_scrollTagToIndex(_ index: Int, animated: Bool) {
+    public func mcvw_scrollTagToIndex(_ index: Int, animated: Bool) {
         let p = IndexPath(item: index, section: 0)
-        mcsv_tagCollection.layoutIfNeeded()
-        mcsv_tagCollection.scrollToItem(at: p, at: .centeredHorizontally, animated: animated)
+        mcvw_tagCollection.layoutIfNeeded()
+        mcvw_tagCollection.scrollToItem(at: p, at: .centeredHorizontally, animated: animated)
     }
 
 }
 
 public final class MCCShotsTagCell: MCCBaseCollectionViewCell {
 
-    public static let mcsv_reuseId = "MCCShotsTagCell"
+    public static let mcvw_reuseId = "MCCShotsTagCell"
 
-    public let mcsv_iconView: SDAnimatedImageView = {
+    public let mcvw_iconView: SDAnimatedImageView = {
         let v = SDAnimatedImageView()
         v.contentMode = .scaleAspectFit
         v.isHidden = true
@@ -86,9 +86,9 @@ public final class MCCShotsTagCell: MCCBaseCollectionViewCell {
         return v
     }()
 
-    public let mcsv_titleLabel = UILabel()
+    public let mcvw_titleLabel = UILabel()
 
-    private let mcsv_rowStack: UIStackView = {
+    private let mcvw_rowStack: UIStackView = {
         let s = UIStackView()
         s.axis = .horizontal
         s.alignment = .center
@@ -97,17 +97,17 @@ public final class MCCShotsTagCell: MCCBaseCollectionViewCell {
     }()
 
     public override func mcvw_setupUI() {
-        contentView.addSubview(mcsv_rowStack)
-        mcsv_rowStack.addArrangedSubview(mcsv_iconView)
-        mcsv_rowStack.addArrangedSubview(mcsv_titleLabel)
-        mcsv_iconView.snp.makeConstraints { $0.size.equalTo(18) }
-        mcsv_rowStack.snp.makeConstraints { $0.edges.equalToSuperview() }
+        contentView.addSubview(mcvw_rowStack)
+        mcvw_rowStack.addArrangedSubview(mcvw_iconView)
+        mcvw_rowStack.addArrangedSubview(mcvw_titleLabel)
+        mcvw_iconView.snp.makeConstraints { $0.size.equalTo(18) }
+        mcvw_rowStack.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
 
     public override func prepareForReuse() {
         super.prepareForReuse()
-        mcsv_iconView.sd_cancelCurrentImageLoad()
-        mcsv_iconView.image = nil
+        mcvw_iconView.sd_cancelCurrentImageLoad()
+        mcvw_iconView.image = nil
     }
 
 }
