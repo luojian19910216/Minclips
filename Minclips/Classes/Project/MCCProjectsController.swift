@@ -18,10 +18,7 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
     public override func mcvc_configureNav() {
         super.mcvc_configureNav()
         
-        self.tabBarController?.navigationItem.leftBarButtonItem = MCCRootTabNavChrome.leftTitleBarButtonItem(
-            title: "Projects",
-            textColor: .white
-        )
+        self.tabBarController?.navigationItem.leftBarButtonItem = MCCRootTabNavChrome.leftTitleBarButtonItem(title: "Projects")
         
         self.tabBarController?.navigationItem.rightBarButtonItem = MCCRootTabNavChrome.settingsBarButtonItem(
             target: self,

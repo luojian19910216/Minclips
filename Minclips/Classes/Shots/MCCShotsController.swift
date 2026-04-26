@@ -19,10 +19,7 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
     public override func mcvc_configureNav() {
         super.mcvc_configureNav()
         
-        self.tabBarController?.navigationItem.leftBarButtonItem = MCCRootTabNavChrome.leftTitleBarButtonItem(
-            title: "Shorts",
-            textColor: .white
-        )
+        self.tabBarController?.navigationItem.leftBarButtonItem = MCCRootTabNavChrome.leftTitleBarButtonItem(title: "Shorts")
         
         self.tabBarController?.navigationItem.rightBarButtonItem = MCCRootTabNavChrome.proBarButtonItem(
             target: self,

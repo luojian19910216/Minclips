@@ -184,18 +184,11 @@ open class MCCViewController<View: MCCBaseView, ViewModel: MCCBaseViewModel>: MC
 
 public enum MCCRootTabNavChrome {
 
-    public static let rootTabLeftTitleSize: CGFloat = 28
-
-    public static let proBarButtonImageSide: CGFloat = 22
-
-    public static func leftTitleBarButtonItem(
-        title: String,
-        textColor: UIColor = .white
-    ) -> UIBarButtonItem {
+    public static func leftTitleBarButtonItem(title: String, ) -> UIBarButtonItem {
         let label = UILabel()
         label.text = title
-        label.textColor = textColor
-        label.font = .systemFont(ofSize: rootTabLeftTitleSize, weight: .semibold)
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 32, weight: .semibold)
         label.sizeToFit()
         let item = UIBarButtonItem(customView: label)
         if #available(iOS 26.0, *) {
@@ -211,9 +204,7 @@ public enum MCCRootTabNavChrome {
     ) -> UIBarButtonItem {
         let b: UIButton = .init()
         b.frame = .init(x: 0, y: 0, width: 76, height: 44)
-        if let icon = mcv_scaledProImageOriginal() {
-            b.setImage(icon, for: .normal)
-        }
+        b.setImage(UIImage(named: "ic_nav_pro"), for: .normal)
         b.setTitle("PRO", for: .normal)
         b.setTitleColor(titleColor, for: .normal)
         b.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
@@ -223,30 +214,8 @@ public enum MCCRootTabNavChrome {
         return UIBarButtonItem(customView: b)
     }
 
-    private static func mcv_scaledProImageOriginal() -> UIImage? {
-        guard let im = UIImage(named: "ic_nav_pro") else { return nil }
-        let s = proBarButtonImageSide
-
-        let r = UIGraphicsImageRenderer(size: CGSize(width: s, height: s))
-
-        let drawn = r.image { _ in
-            im.draw(in: CGRect(x: 0, y: 0, width: s, height: s))
-        }
-        return drawn.withRenderingMode(.alwaysOriginal)
-    }
-
     public static func settingsBarButtonItem(target: Any, action: Selector) -> UIBarButtonItem {
-        if let img = UIImage(named: "ic_nav_setting")?.withRenderingMode(.alwaysTemplate) {
-            return UIBarButtonItem(image: img, style: .plain, target: target, action: action)
-        }
-
-        let sym = UIImage(systemName: "gearshape")
-        return UIBarButtonItem(
-            image: sym,
-            style: .plain,
-            target: target,
-            action: action
-        )
+        return UIBarButtonItem(image: UIImage(named: "ic_nav_setting")?.withRenderingMode(.alwaysTemplate), style: .plain, target: target, action: action)
     }
 
 }

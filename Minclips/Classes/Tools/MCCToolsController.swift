@@ -17,10 +17,7 @@ public final class MCCToolsController: MCCViewController<MCCToolsView, MCCEmptyV
     public override func mcvc_configureNav() {
         super.mcvc_configureNav()
 
-        self.tabBarController?.navigationItem.leftBarButtonItem = MCCRootTabNavChrome.leftTitleBarButtonItem(
-            title: "Studio",
-            textColor: .white
-        )
+        self.tabBarController?.navigationItem.leftBarButtonItem = MCCRootTabNavChrome.leftTitleBarButtonItem(title: "Studio")
 
         self.tabBarController?.navigationItem.rightBarButtonItem = MCCRootTabNavChrome.proBarButtonItem(
             target: self,
