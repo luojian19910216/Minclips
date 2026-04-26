@@ -13,16 +13,7 @@ public enum MCCShotsListItemMetrics {
 
     public static let titleMaxLines = 2
 
-    public static let imageHeightPerWidth: CGFloat = 4.0 / 3.0
-
-    public static func imageHeightPerWidth(videoAsset: MCSFeedVideoAssetShell) -> CGFloat {
-        let w = videoAsset.imageWidth
-        let h = videoAsset.imageHeight
-        if w > 0, h > 0 {
-            return CGFloat(h) / CGFloat(w)
-        }
-        return imageHeightPerWidth
-    }
+    public static let imageHeightPerWidth: CGFloat = 16.0 / 9.0
 
     public static func titleTextAttributes(textColor: UIColor) -> [NSAttributedString.Key: Any] {
         let p = NSMutableParagraphStyle()

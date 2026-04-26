@@ -249,22 +249,21 @@ extension MCCShotsListPageController {
         return " \(inner) "
     }
 
-    private func mcvc_feedThumbnailPixelSize(forCollectionWidth width: CGFloat, video: MCSFeedVideoAssetShell) -> CGSize {
+    private func mcvc_feedThumbnailPixelSize(forCollectionWidth width: CGFloat) -> CGSize {
         let layout = contentView.mcvw_waterfallLayout
         let w = width > 0 ? width : UIScreen.main.bounds.width
         let inner = w - layout.sectionInset.left - layout.sectionInset.right
         let cols = max(1, layout.columnCount)
         let colW = (inner - CGFloat(cols - 1) * layout.minimumInteritemSpacing) / CGFloat(cols)
-        let ratio = MCCShotsListItemMetrics.imageHeightPerWidth(videoAsset: video)
-        return MCCShotsListItemMetrics.feedImageThumbnailPixelSize(columnWidthPoints: max(1, colW), heightPerWidth: ratio)
+        return MCCShotsListItemMetrics.feedImageThumbnailPixelSize(columnWidthPoints: max(1, colW))
     }
 
     private func mcvc_styleListCell(_ cell: MCCShotsListItemCell, item: MCSFeedItem, collectionView: UICollectionView) {
         let hex = Self.mcvc_placeholderHex(from: item.itemId)
         cell.mcvw_imageContainer.backgroundColor = UIColor(hex: hex) ?? .darkGray
         let a = item.videoAsset
-        cell.mcvw_setImageHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth(videoAsset: a))
-        let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width, video: a)
+        cell.mcvw_setImageHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth)
+        let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width)
         cell.mcvw_applyPosterOnly(posterUrl: a.posterImageUrl, thumbnailPixelSize: thumbPx)
         let durationSec = item.videoAsset.duration
         if durationSec > 0 {
@@ -294,8 +293,7 @@ extension MCCShotsListPageController {
     private func mcvc_heightForItem(_ item: MCSFeedItem, itemWidth: CGFloat) -> CGFloat {
         let m = MCCShotsListItemMetrics.self
         let title = item.itemTitle
-        let ratio = m.imageHeightPerWidth(videoAsset: item.videoAsset)
-        let imageH = itemWidth * ratio
+        let imageH = itemWidth * m.imageHeightPerWidth
         let attrs = MCCShotsListItemMetrics.titleTextAttributes(textColor: UIColor.hex_d3d0cd)
         let maxTextH = ceil(m.titleLineHeight * CGFloat(m.titleMaxLines))
         let textH = min(
@@ -344,7 +342,7 @@ extension MCCShotsListPageController: UICollectionViewDataSource, UICollectionVi
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let cell = cell as? MCCShotsListItemCell,
               let item = mcvc_listState.items[safe: indexPath.item] else { return }
-        let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width, video: item.videoAsset)
+        let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width)
         cell.mcvw_applyWebpAnimated(webpUrl: item.videoAsset.webpImageUrl, thumbnailPixelSize: thumbPx)
     }
 
@@ -368,7 +366,7 @@ extension MCCShotsListPageController: UICollectionViewDataSourcePrefetching {
             guard let item = items[safe: indexPath.item] else { continue }
             let s = item.videoAsset.posterImageUrl
             guard !s.isEmpty, let u = URL(string: s) else { continue }
-            let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: cvWidth, video: item.videoAsset)
+            let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: cvWidth)
             let ctx = MCCShotsListItemMetrics.sdPosterThumbnailContext(thumbnailPixelSize: thumbPx)
             SDWebImagePrefetcher.shared.prefetchURLs(
                 [u],

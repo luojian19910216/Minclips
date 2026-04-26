@@ -19,15 +19,42 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         hidesBottomBarWhenPushed = true
     }
 
+    public override func mcvc_needLeftBarButtonItem() -> Bool {
+        false
+    }
+
     public override func mcvc_configureNav() {
-        guard let nav = navigationController else { return }
-        nav.navigationBar.mc_shadowHidden = true
-        nav.navigationBar.mc_barStyle = .transparentLight
-        let item = navigationItem
-        item.largeTitleDisplayMode = .never
-        nav.navigationBar.prefersLargeTitles = false
-        let t = (mcvc_feedItem?.itemId ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        item.title = t.isEmpty ? "Detail" : t
+        super.mcvc_configureNav()
+        guard navigationController != nil else { return }
+        navigationItem.largeTitleDisplayMode = .never
+        navigationController?.navigationBar.prefersLargeTitles = false
+
+        let back = UIBarButtonItem(
+            image: UIImage(named: "ic_nav_back")?.withRenderingMode(.alwaysTemplate),
+            style: .plain,
+            target: self,
+            action: #selector(mcvc_detailBackTapped)
+        )
+        back.tintColor = .white
+        let gap = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+        gap.width = 8
+        let shorts = MCCRootTabNavChrome.leftTitleBarButtonItem(title: "Shorts")
+        navigationItem.leftBarButtonItems = [back, gap, shorts]
+        navigationItem.rightBarButtonItem = MCCRootTabNavChrome.proBarButtonItem(
+            target: self,
+            action: #selector(mcvc_onProTapped),
+            titleColor: .white
+        )
+        navigationItem.title = nil
+    }
+
+    @objc private func mcvc_detailBackTapped() {
+        navigationController?.popViewController(animated: true)
+    }
+
+    @objc private func mcvc_onProTapped() {
+        let vc = MCCProController()
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     public override func mcvc_setupLocalization() {
@@ -43,8 +70,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         let w = max(1, view.bounds.width)
         let inset: CGFloat = 16
         let colW = max(1, w - inset * 2)
-        let ratio = MCCShotsListItemMetrics.imageHeightPerWidth(videoAsset: item.videoAsset)
-        let thumbPx = MCCShotsListItemMetrics.feedImageThumbnailPixelSize(columnWidthPoints: colW, heightPerWidth: ratio)
+        let thumbPx = MCCShotsListItemMetrics.feedImageThumbnailPixelSize(columnWidthPoints: colW)
         contentView.mcvw_configure(feedItem: item, webpHandoff: mcvc_webpHandoff, thumbnailPixelSize: thumbPx)
     }
 

@@ -41,7 +41,7 @@ public final class MCCFeedDetailView: MCCBaseView {
     }
 
     public func mcvw_configure(feedItem: MCSFeedItem, webpHandoff: MCCWebpPlaybackHandoff?, thumbnailPixelSize: CGSize) {
-        mcvw_applyMediaHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth(videoAsset: feedItem.videoAsset))
+        mcvw_applyMediaHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth)
         let ctx: [SDWebImageContextOption: Any] = [
             .imageThumbnailPixelSize: NSValue(cgSize: thumbnailPixelSize),
             .imagePreserveAspectRatio: true

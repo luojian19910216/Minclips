@@ -9,8 +9,22 @@ private enum MCCHomeSkeletonAppearance {
     )
 }
 
+private enum MCCShotsSkeletonMetrics {
+    static let tagPinHeaderHeight: CGFloat = 48
+    static let tagSkeletonPillHeight: CGFloat = 32
+    static let tagHorizontalInset: CGFloat = 12
+    static let gridHorizontalInset: CGFloat = 4
+    static let listSectionTopInset: CGFloat = 4
+    static let columnSpacing: CGFloat = 4
+    static let rowSpacing: CGFloat = 16
+    static let thumbCornerRadius: CGFloat = 12
+    static let imageHeightPerWidth: CGFloat = 16.0 / 9.0
+    static let imageToTitleSpacing: CGFloat = 8
+    static let titleBlockHeight: CGFloat = 32
+}
+
 public final class MCCGradientHomeSkeletonOverlay: UIView {
-    
+
     public enum MCCStyle {
         case tagsAndDoubleColumn
         case singleColumnList
@@ -23,25 +37,30 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
         s.axis = .vertical
         s.alignment = .fill
         s.spacing = 12
-        s.isSkeletonable = true
         return s
     }()
 
     public init(style: MCCStyle) {
         super.init(frame: .zero)
-        isSkeletonable = true
+        isSkeletonable = false
         backgroundColor = .clear
         addSubview(mcvw_stack)
         let topInset: CGFloat
+        let horizontalInset: CGFloat
         switch style {
-        case .tagsAndDoubleColumn, .singleColumnList:
-            topInset = 8
-        case .doubleColumnGrid, .tripleColumnGrid:
+        case .tagsAndDoubleColumn, .doubleColumnGrid:
             topInset = 0
+            horizontalInset = 0
+        case .singleColumnList:
+            topInset = 8
+            horizontalInset = 16
+        case .tripleColumnGrid:
+            topInset = 0
+            horizontalInset = 16
         }
         mcvw_stack.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(topInset)
-            make.leading.trailing.equalToSuperview().inset(16)
+            make.leading.trailing.equalToSuperview().inset(horizontalInset)
         }
         mcvw_build(style: style)
     }
@@ -50,53 +69,98 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
 
     public func mcvw_showHomeSkeleton() {
         guard isHidden else { return }
-        hideSkeleton()
+        mcvw_recursiveHideSkeleton(in: self)
         isHidden = false
         layoutIfNeeded()
-        showAnimatedGradientSkeleton(usingGradient: MCCHomeSkeletonAppearance.gradient)
+        mcvw_recursiveShowSkeleton(in: self, gradient: MCCHomeSkeletonAppearance.gradient)
     }
 
     public func mcvw_hideHomeSkeleton() {
         guard !isHidden else { return }
-        hideSkeleton()
+        mcvw_recursiveHideSkeleton(in: self)
         isHidden = true
+    }
+
+    private func mcvw_recursiveShowSkeleton(in view: UIView, gradient: SkeletonGradient) {
+        if view.isSkeletonable {
+            view.showAnimatedGradientSkeleton(usingGradient: gradient)
+        }
+        for sub in view.subviews {
+            mcvw_recursiveShowSkeleton(in: sub, gradient: gradient)
+        }
+    }
+
+    private func mcvw_recursiveHideSkeleton(in view: UIView) {
+        view.hideSkeleton()
+        for sub in view.subviews {
+            mcvw_recursiveHideSkeleton(in: sub)
+        }
     }
 
     private func mcvw_build(style: MCCStyle) {
         switch style {
         case .tagsAndDoubleColumn:
-            let tag = UIView()
-            mcvw_skeletonize(tag, radius: 8, height: 32)
-            mcvw_stack.addArrangedSubview(tag)
-            for _ in 0..<Self.mcvw_rowCountTagsAndDoubleGrid {
-                mcvw_stack.addArrangedSubview(mcvw_makeDoubleColumnRow(thumbHeight: Self.mcvw_doubleColumnThumbHeight))
+            mcvw_stack.spacing = MCCShotsSkeletonMetrics.rowSpacing
+            let tagHost = UIView()
+            tagHost.snp.makeConstraints { $0.height.equalTo(MCCShotsSkeletonMetrics.tagPinHeaderHeight) }
+            let tagBar = UIView()
+            tagHost.addSubview(tagBar)
+            tagBar.isSkeletonable = true
+            tagBar.skeletonCornerRadius = 8
+            tagBar.clipsToBounds = true
+            tagBar.snp.makeConstraints { make in
+                make.leading.equalToSuperview().offset(MCCShotsSkeletonMetrics.tagHorizontalInset)
+                make.trailing.equalToSuperview().offset(-MCCShotsSkeletonMetrics.tagHorizontalInset)
+                make.centerY.equalToSuperview()
+                make.height.equalTo(MCCShotsSkeletonMetrics.tagSkeletonPillHeight)
+            }
+            mcvw_stack.addArrangedSubview(tagHost)
+            mcvw_stack.setCustomSpacing(MCCShotsSkeletonMetrics.listSectionTopInset, after: tagHost)
+            for _ in 0..<Self.mcvw_rowCountShotsWaterfall {
+                mcvw_stack.addArrangedSubview(mcvw_makeShotsWaterfallRow())
+            }
+        case .doubleColumnGrid:
+            mcvw_stack.spacing = MCCShotsSkeletonMetrics.rowSpacing
+            let topPad = UIView()
+            topPad.snp.makeConstraints { $0.height.equalTo(MCCShotsSkeletonMetrics.listSectionTopInset) }
+            mcvw_stack.addArrangedSubview(topPad)
+            mcvw_stack.setCustomSpacing(0, after: topPad)
+            for _ in 0..<Self.mcvw_rowCountShotsWaterfall {
+                mcvw_stack.addArrangedSubview(mcvw_makeShotsWaterfallRow())
             }
         case .singleColumnList:
+            mcvw_stack.spacing = 12
             for _ in 0..<Self.mcvw_rowCountSingleColumn {
                 let row = UIView()
                 mcvw_skeletonize(row, radius: 6, height: Self.mcvw_singleColumnRowHeight)
                 mcvw_stack.addArrangedSubview(row)
             }
-        case .doubleColumnGrid:
-            for _ in 0..<Self.mcvw_rowCountDoubleGrid {
-                mcvw_stack.addArrangedSubview(mcvw_makeDoubleColumnRow(thumbHeight: Self.mcvw_doubleColumnThumbHeight))
-            }
         case .tripleColumnGrid:
+            mcvw_stack.spacing = 12
             for _ in 0..<Self.mcvw_rowCountTripleGrid {
                 mcvw_stack.addArrangedSubview(mcvw_makeTripleColumnRow(blockHeight: Self.mcvw_tripleColumnBlockHeight))
             }
         }
     }
 
-    private static let mcvw_rowCountTagsAndDoubleGrid = 8
+    private static let mcvw_rowCountShotsWaterfall = 5
+
+    private static var mcvw_skeletonThumbHeight: CGFloat {
+        let w = UIScreen.main.bounds.width
+        let inner = w - MCCShotsSkeletonMetrics.gridHorizontalInset * 2
+        let colW = max(1, (inner - MCCShotsSkeletonMetrics.columnSpacing) / 2)
+        return colW * MCCShotsSkeletonMetrics.imageHeightPerWidth
+    }
+
+    private static var mcvw_skeletonWaterfallRowHeight: CGFloat {
+        mcvw_skeletonThumbHeight
+            + MCCShotsSkeletonMetrics.imageToTitleSpacing
+            + MCCShotsSkeletonMetrics.titleBlockHeight
+    }
 
     private static let mcvw_rowCountSingleColumn = 16
 
-    private static let mcvw_rowCountDoubleGrid = 8
-
     private static let mcvw_rowCountTripleGrid = 10
-
-    private static let mcvw_doubleColumnThumbHeight: CGFloat = 128
 
     private static let mcvw_singleColumnRowHeight: CGFloat = 56
 
@@ -109,19 +173,48 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
         v.snp.makeConstraints { $0.height.equalTo(height) }
     }
 
-    private func mcvw_makeDoubleColumnRow(thumbHeight: CGFloat) -> UIStackView {
+    private func mcvw_makeShotsWaterfallColumn(thumbHeight: CGFloat) -> UIStackView {
+        let col = UIStackView()
+        col.axis = .vertical
+        col.alignment = .fill
+        col.spacing = MCCShotsSkeletonMetrics.imageToTitleSpacing
+        let thumb = UIView()
+        thumb.isSkeletonable = true
+        thumb.skeletonCornerRadius = Float(MCCShotsSkeletonMetrics.thumbCornerRadius)
+        thumb.clipsToBounds = true
+        thumb.snp.makeConstraints { make in
+            make.height.equalTo(thumbHeight)
+        }
+        let title = UIView()
+        mcvw_skeletonize(title, radius: 4, height: MCCShotsSkeletonMetrics.titleBlockHeight)
+        col.addArrangedSubview(thumb)
+        col.addArrangedSubview(title)
+        return col
+    }
+
+    private func mcvw_makeShotsWaterfallRow() -> UIView {
+        let wrap = UIView()
+        let thumbH = Self.mcvw_skeletonThumbHeight
+        let rowH = Self.mcvw_skeletonWaterfallRowHeight
+        wrap.snp.makeConstraints { $0.height.equalTo(rowH) }
         let row = UIStackView()
         row.axis = .horizontal
-        row.spacing = 8
+        row.spacing = MCCShotsSkeletonMetrics.columnSpacing
         row.distribution = .fillEqually
-        row.isSkeletonable = true
-        let left = UIView()
-        let right = UIView()
-        mcvw_skeletonize(left, radius: 12, height: thumbHeight)
-        mcvw_skeletonize(right, radius: 12, height: thumbHeight)
-        row.addArrangedSubview(left)
-        row.addArrangedSubview(right)
-        return row
+        wrap.addSubview(row)
+        row.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(
+                UIEdgeInsets(
+                    top: 0,
+                    left: MCCShotsSkeletonMetrics.gridHorizontalInset,
+                    bottom: 0,
+                    right: MCCShotsSkeletonMetrics.gridHorizontalInset
+                )
+            )
+        }
+        row.addArrangedSubview(mcvw_makeShotsWaterfallColumn(thumbHeight: thumbH))
+        row.addArrangedSubview(mcvw_makeShotsWaterfallColumn(thumbHeight: thumbH))
+        return wrap
     }
 
     private func mcvw_makeTripleColumnRow(blockHeight: CGFloat) -> UIStackView {
@@ -129,7 +222,6 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
         row.axis = .horizontal
         row.spacing = 8
         row.distribution = .fillEqually
-        row.isSkeletonable = true
         for _ in 0..<3 {
             let v = UIView()
             mcvw_skeletonize(v, radius: 8, height: blockHeight)

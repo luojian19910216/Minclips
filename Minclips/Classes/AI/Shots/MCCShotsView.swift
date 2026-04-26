@@ -18,7 +18,9 @@ public final class MCCShotsView: MCCBaseView {
         let cv = UICollectionView(frame: .zero, collectionViewLayout: mcvw_tagFlowLayout)
         cv.showsHorizontalScrollIndicator = false
         cv.alwaysBounceHorizontal = true
-        cv.contentInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        cv.delaysContentTouches = false
+        cv.canCancelContentTouches = true
+        cv.contentInset = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
         cv.register(MCCShotsTagCell.self, forCellWithReuseIdentifier: MCCShotsTagCell.mcvw_reuseId)
         return cv
     }()
@@ -41,6 +43,7 @@ public final class MCCShotsView: MCCBaseView {
         mcvw_tagCollection.snp.makeConstraints { $0.edges.equalToSuperview() }
 
         addSubview(mcvw_skeletonOverlay)
+        mcvw_skeletonOverlay.isUserInteractionEnabled = false
         mcvw_skeletonOverlay.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top)
             make.leading.trailing.bottom.equalToSuperview()
@@ -64,6 +67,7 @@ public final class MCCShotsView: MCCBaseView {
     }
 
     public func mcvw_setTabHomeSkeletonVisible(_ visible: Bool) {
+        mcvw_skeletonOverlay.isUserInteractionEnabled = visible
         if visible {
             mcvw_skeletonOverlay.mcvw_showHomeSkeleton()
         } else {
