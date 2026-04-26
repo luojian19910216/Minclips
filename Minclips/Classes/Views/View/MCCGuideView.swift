@@ -7,7 +7,6 @@ import Common
 import Combine
 import SnapKit
 
-// MARK: - Input / Output
 
 public struct MCCGuideViewInput {
     ///
@@ -27,7 +26,6 @@ public enum MCCGuideViewOutput: Equatable {
 
 public final class MCCGuideView: MCCBaseView {
     
-    // MARK: - Properties
     
     private var models: [MCSGuide] = []
     
@@ -39,7 +37,6 @@ public final class MCCGuideView: MCCBaseView {
         outputSubject.eraseToAnyPublisher()
     }
     
-    // MARK: - Lazy
     
     public lazy var collectionView: UICollectionView = {
         let item: UICollectionView = .init(frame: .zero, collectionViewLayout: {
@@ -78,7 +75,6 @@ public final class MCCGuideView: MCCBaseView {
         return dataSource
     }()
     
-    // MARK: - Init
     
     public override func mcvw_setupUI() {
         self.addSubview(self.collectionView)
@@ -147,15 +143,12 @@ extension MCCGuideView {
     
 }
 
-// MARK: - MCCGuideCell
 
 public final class MCCGuideCell: MCCBaseCollectionViewCell {
     
-    // MARK: - Properties
     
     public var onPrimary: (() -> Void)?
     
-    // MARK: - Lazy
     
     public lazy var titleLab: UILabel = {
         let item: UILabel = .init()
@@ -183,7 +176,6 @@ public final class MCCGuideCell: MCCBaseCollectionViewCell {
         return item
     }()
     
-    // MARK: - Init
     
     public override func mcvw_setupUI() {
         self.contentView.addSubview(self.titleLab)
@@ -207,14 +199,12 @@ public final class MCCGuideCell: MCCBaseCollectionViewCell {
         self.handleBtn.addTarget(self, action: #selector(mccg_handleBtnTouchUp), for: .touchUpInside)
     }
     
-    // MARK: - Life Cycle
 
     public override func prepareForReuse() {
         super.prepareForReuse()
         onPrimary = nil
     }
     
-    // MARK: - Private
 
     @objc
     private func mccg_handleBtnTouchUp() {

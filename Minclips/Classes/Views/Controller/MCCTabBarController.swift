@@ -9,13 +9,11 @@ import FDFullscreenPopGesture
 
 public class MCCTabBarController: UITabBarController {
         
-    // MARK: - Autorotate
     
     open override var shouldAutorotate: Bool {
         return self.selectedViewController?.shouldAutorotate ?? false
     }
     
-    // MARK: - Orientation
     
     open override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return self.selectedViewController?.supportedInterfaceOrientations ?? .portrait
@@ -25,7 +23,6 @@ public class MCCTabBarController: UITabBarController {
         return self.selectedViewController?.preferredInterfaceOrientationForPresentation ?? .portrait
     }
     
-    // MARK: - StatusBar
     
     open override var childForStatusBarHidden: UIViewController? {
         return self.selectedViewController
@@ -35,7 +32,6 @@ public class MCCTabBarController: UITabBarController {
         return self.selectedViewController
     }
     
-    // MARK: - NavigationBar
     
     public override var fd_prefersNavigationBarHidden: Bool {
         get {
@@ -51,7 +47,6 @@ public class MCCTabBarController: UITabBarController {
         set {}
     }
     
-    // MARK: - Properties
     
     public var cancellables = Set<AnyCancellable>()
         
@@ -76,7 +71,6 @@ public class MCCTabBarController: UITabBarController {
         return vc
     }()
     
-    // MARK: - Life Cycle
     
     public override func viewDidLoad() {
         super.viewDidLoad()

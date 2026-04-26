@@ -3,13 +3,9 @@ import Common
 import SnapKit
 
 public enum MCCCreationResultKind {
-    /// 生成失败
     case failed
-    /// 审核 / 内容拒绝（如版权风险）
     case restricted
-    /// 生成成功 — 图片全屏预览 + 底部 Retry / Edit / Save
     case successImage
-    /// 生成成功 — 视频预览 + 控制条 + 多帧时间轴 + 同上底部操作条（帧图为占位，可接 AVAssetImageGenerator）
     case successVideo(totalDuration: TimeInterval)
 }
 
@@ -150,7 +146,6 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     private var mccr_didConfigureFilm: Bool = false
 
-    // MARK: - Success chrome
 
     private let mccr_successPill: UIVisualEffectView = {
         let v = UIVisualEffectView(effect: UIBlurEffect(style: .systemChromeMaterialDark))
@@ -221,45 +216,6 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
     private var mccr_isVideoMode: Bool = false
     private var mccr_isPlaying: Bool = false
 
-    // MARK: - Delete panel
-
-    private let mccr_deleteDim: UIControl = {
-        let c = UIControl()
-        c.backgroundColor = UIColor(white: 0, alpha: 0.35)
-        c.isHidden = true
-        return c
-    }()
-
-    private let mccr_deleteCard: UIVisualEffectView = {
-        let v = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterialDark))
-        v.layer.cornerRadius = 16
-        v.clipsToBounds = true
-        return v
-    }()
-
-    private let mccr_deleteMessageLabel: UILabel = {
-        let l = UILabel()
-        l.text = "Deleting it will make it unrecoverable. Are you sure to delete it?"
-        l.textColor = UIColor(white: 1, alpha: 0.92)
-        l.font = .systemFont(ofSize: 14, weight: .regular)
-        l.numberOfLines = 0
-        return l
-    }()
-
-    public let mccr_deleteConfirmButton: UIButton = {
-        let b = UIButton(type: .system)
-        b.setTitle("Delete", for: .normal)
-        b.setTitleColor(.white, for: .normal)
-        b.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
-        b.backgroundColor = UIColor.systemRed
-        b.layer.cornerRadius = 12
-        b.clipsToBounds = true
-        return b
-    }()
-
-    public private(set) var mccr_isDeletePanelVisible: Bool = false
-    public var mccr_onDeletePanelChange: ((Bool) -> Void)?
-
     public var mccr_onSuccessToolbar: ((MCCCreationSuccessToolbarAction) -> Void)?
 
     public override func mcvw_setupUI() {
@@ -298,11 +254,6 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_successPill.contentView.addSubview(mccr_successStack)
         mccr_successPill.isHidden = true
         mccr_buildSuccessToolbar()
-
-        addSubview(mccr_deleteDim)
-        mccr_deleteDim.addSubview(mccr_deleteCard)
-        mccr_deleteCard.contentView.addSubview(mccr_deleteMessageLabel)
-        mccr_deleteCard.contentView.addSubview(mccr_deleteConfirmButton)
 
         mccr_mediaContainer.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(12)
@@ -379,23 +330,6 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
             make.centerX.equalTo(mccr_frameCollection)
         }
 
-        mccr_deleteDim.snp.makeConstraints { $0.edges.equalToSuperview() }
-        mccr_deleteCard.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(8)
-            make.trailing.equalToSuperview().offset(-16)
-            make.width.lessThanOrEqualTo(280)
-            make.width.greaterThanOrEqualTo(240)
-        }
-        mccr_deleteMessageLabel.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview().inset(16)
-        }
-        mccr_deleteConfirmButton.snp.makeConstraints { make in
-            make.top.equalTo(mccr_deleteMessageLabel.snp.bottom).offset(14)
-            make.leading.trailing.bottom.equalToSuperview().inset(16)
-            make.height.equalTo(44)
-        }
-
-        mccr_deleteDim.addTarget(self, action: #selector(mccr_dismissDeletePanel), for: .touchUpInside)
         mccr_playButton.addTarget(self, action: #selector(mccr_togglePlay), for: .touchUpInside)
     }
 
@@ -480,44 +414,11 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_playButton.setImage(UIImage(systemName: name, withConfiguration: c), for: .normal)
     }
 
-    @objc
-    private func mccr_dismissDeletePanel() {
-        mccr_setDeletePanelVisible(false)
-    }
-
-    public func mccr_setDeletePanelVisible(_ visible: Bool) {
-        guard mccr_isDeletePanelVisible != visible else { return }
-        mccr_isDeletePanelVisible = visible
-        mccr_deleteDim.isHidden = !visible
-        mccr_onDeletePanelChange?(visible)
-        if visible {
-            mccr_deleteCard.alpha = 0
-            mccr_deleteCard.transform = CGAffineTransform(scaleX: 0.96, y: 0.96)
-            UIView.animate(withDuration: 0.22, delay: 0, options: .curveEaseOut) {
-                self.mccr_deleteCard.alpha = 1
-                self.mccr_deleteCard.transform = .identity
-            }
-        }
-    }
-
-    /// 切换 kind / 语言刷新时收起删除浮层，避免错误态仍挡屏或与导航不同步。
-    private func mccr_resetDeletePanelForNewKind() {
-        let wasVisible = mccr_isDeletePanelVisible
-        mccr_isDeletePanelVisible = false
-        mccr_deleteDim.isHidden = true
-        mccr_deleteCard.alpha = 1
-        mccr_deleteCard.transform = .identity
-        if wasVisible {
-            mccr_onDeletePanelChange?(false)
-        }
-    }
-
     private func setPlaceholderImage() {
         if mccr_imageView.image != nil { return }
         mccr_imageView.image = Self.mccr_placeholderGradient()
     }
 
-    /// 接入真实封面 / 成片时调用；会同步 Edit 圆环内缩略图。
     public func mccr_setPreviewImage(_ image: UIImage?) {
         mccr_imageView.image = image ?? Self.mccr_placeholderGradient()
         mccr_editThumbHost?.image = mccr_imageView.image
@@ -565,7 +466,6 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
     }
 
     public func mccr_apply(kind: MCCCreationResultKind) {
-        mccr_resetDeletePanelForNewKind()
         switch kind {
         case .failed:
             mccr_applyErrorChrome()
@@ -647,7 +547,6 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         setPlaceholderImage()
         mccr_editThumbHost?.image = mccr_imageView.image
         bringSubviewToFront(mccr_successPill)
-        bringSubviewToFront(mccr_deleteDim)
     }
 
     private func mccr_formatClock(_ t: TimeInterval) -> String {
@@ -739,7 +638,6 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_actionTitleLabel.text = "Edit"
     }
 
-    // MARK: - Collection (frame strip)
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         mccr_frameImages.count + 1

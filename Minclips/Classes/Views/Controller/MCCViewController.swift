@@ -35,13 +35,11 @@ open class MCCViewControllerCore: UIViewController, MCPViewControllerInitProtoco
     
     private var notificationCancellables = Set<AnyCancellable>()
     
-    // MARK: - Autorotate
     
     open override var shouldAutorotate: Bool {
         return false
     }
     
-    // MARK: - Orientation
     
     open override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .portrait
@@ -51,7 +49,6 @@ open class MCCViewControllerCore: UIViewController, MCPViewControllerInitProtoco
         return .portrait
     }
     
-    // MARK: - StatusBar
     
     open override var prefersStatusBarHidden: Bool {
         return false
@@ -65,7 +62,6 @@ open class MCCViewControllerCore: UIViewController, MCPViewControllerInitProtoco
         return .fade
     }
     
-    // MARK: - NavigationBar
     
     open var transactionStyle: MCETransactionStyle {
         return .normal
@@ -76,7 +72,6 @@ open class MCCViewControllerCore: UIViewController, MCPViewControllerInitProtoco
         set {}
     }
     
-    // MARK: - Life Cycle
     
     required
     public init?(coder: NSCoder) { fatalError() }
@@ -139,7 +134,6 @@ open class MCCViewControllerCore: UIViewController, MCPViewControllerInitProtoco
         print("Controller deinit（\(self.classForCoder), title: \(self.title ?? "")）")
     }
     
-    // MARK: - Init
     
     open func mcvc_init() {}
 
@@ -167,7 +161,6 @@ open class MCCViewControllerCore: UIViewController, MCPViewControllerInitProtoco
     
     open func mcvc_loadData() {}
     
-    // MARK: - Other Method
     
     private func registerNotifications() {
         NotificationCenter.default.publisher(for: .languageUpdated)
@@ -184,7 +177,6 @@ open class MCCViewControllerCore: UIViewController, MCPViewControllerInitProtoco
 
 open class MCCViewController<View: MCCBaseView, ViewModel: MCCBaseViewModel>: MCCViewControllerCore {
         
-    // MARK: - Properties
         
     public var cancellables = Set<AnyCancellable>()
     
@@ -197,7 +189,6 @@ open class MCCViewController<View: MCCBaseView, ViewModel: MCCBaseViewModel>: MC
         return self.view as! View
     }
     
-    // MARK: - Life Cycle
     
     public override func loadView() {
         self.view = View()
@@ -205,7 +196,6 @@ open class MCCViewController<View: MCCBaseView, ViewModel: MCCBaseViewModel>: MC
     
 }
 
-// MARK: - 根 Tab 导航栏与 PRO 入口
 
 public enum MCCRootTabNavChrome {
 

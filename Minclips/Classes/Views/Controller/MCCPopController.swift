@@ -14,13 +14,11 @@ public enum MCEPopAnimationStyle {
 
 open class MCCPopController<View: MCCBasePopView, ViewModel: MCCBaseViewModel>: MCCViewController<View, ViewModel>, MCPPopupPresentable, UIViewControllerTransitioningDelegate {
     
-    // MARK: - Properties
     
     open var animationStyle: MCEPopAnimationStyle = .easeInEaseOut
     
     open var dimmingInsets: UIEdgeInsets = .zero
     
-    // MARK: - Life Cycle
     
     open override func mcvc_init() {
         modalPresentationStyle = .custom
@@ -54,21 +52,18 @@ open class MCCPopController<View: MCCBasePopView, ViewModel: MCCBaseViewModel>: 
         contentView.cardView.layer.mask = mask
     }
     
-    // MARK: - Init
     
     open override func mcvc_bind() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(hide))
         contentView.dimmingView.addGestureRecognizer(tap)
     }
     
-    // MARK: - Action
     
     @objc
     open func hide() {
         dismiss(animated: true)
     }
     
-    // MARK: - UIViewControllerTransitioningDelegate
     
     public func presentationController(
         forPresented presented: UIViewController,

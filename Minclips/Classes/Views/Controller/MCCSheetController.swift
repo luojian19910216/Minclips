@@ -7,14 +7,12 @@ import PanModal
 
 open class MCCSheetController<View: MCCBaseView, ViewModel: MCCBaseViewModel>: MCCViewController<View, ViewModel>, MCPPopupPresentable, PanModalPresentable {
     
-    // MARK: - Life Cycle
     
     open override func mcvc_init() {
         modalPresentationStyle = .custom
         transitioningDelegate = PanModalPresentationDelegate.default
     }
         
-    // MARK: - PanModalPresentable
     
     open var panScrollable: UIScrollView? { nil }
     

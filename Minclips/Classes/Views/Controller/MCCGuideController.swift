@@ -7,7 +7,6 @@ import Combine
 
 public class MCCGuideController: MCCViewController<MCCGuideView, MCCGuideViewModel> {
     
-    // MARK: - Init
 
     public override func mcvc_bind() {
         self.contentView.bindInput(

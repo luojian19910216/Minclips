@@ -19,17 +19,14 @@ open class MCCBaseView: UIView, MCPViewInit {
         case main
     }
     
-    // MARK: - Properties
     
     public var cancellables = Set<AnyCancellable>()
     
-    // MARK: - Init
     
     open func mcvw_setupUI() {}
 
     open func mcvw_bind() {}
     
-    // MARK: - Life Cycle
     
     required
     public init?(coder: NSCoder) {
@@ -56,17 +53,14 @@ open class MCCBaseView: UIView, MCPViewInit {
 
 open class MCCBaseCollectionReusableView: UICollectionReusableView, MCPViewInit {
     
-    // MARK: - Properties
     
     public var cancellables = Set<AnyCancellable>()
     
-    // MARK: - Init
     
     open func mcvw_setupUI() {}
 
     open func mcvw_bind() {}
     
-    // MARK: - Life Cycle
     
     required
     public init?(coder: NSCoder) {
@@ -98,17 +92,14 @@ open class MCCBaseCollectionReusableView: UICollectionReusableView, MCPViewInit 
 
 open class MCCBaseCollectionViewCell: UICollectionViewCell, MCPViewInit {
     
-    // MARK: - Properties
     
     public var cancellables = Set<AnyCancellable>()
     
-    // MARK: - Init
     
     open func mcvw_setupUI() {}
 
     open func mcvw_bind() {}
     
-    // MARK: - Life Cycle
     
     required
     public init?(coder: NSCoder) {

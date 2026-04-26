@@ -62,7 +62,6 @@ public final class MCCProjectsListPageController: MCCViewController<MCCProjectsL
 
     public override func mcvc_loadData() {
         super.mcvc_loadData()
-        // JXPaging 在 initList 里先赋值 segment，再触发加载；未赋值则不请求避免 crash。
         guard mcpj_segment != nil else { return }
         mcpj_loadRunList(kind: .initial)
     }
@@ -92,8 +91,6 @@ extension MCCProjectsListPageController {
     }
 
 }
-
-// MARK: - 列表请求（本页自管）
 
 extension MCCProjectsListPageController {
 
@@ -215,7 +212,6 @@ extension MCCProjectsListPageController {
 
 }
 
-// MARK: - Collection
 
 extension MCCProjectsListPageController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
@@ -240,7 +236,7 @@ extension MCCProjectsListPageController: UICollectionViewDataSource, UICollectio
         let kind: MCCCreationResultKind = indexPath.item % 2 == 0
             ? .successImage
             : .successVideo(totalDuration: 15)
-        let vc = MCCCreationResultController(navigationTitle: title, kind: kind)
+        let vc = MCCCreationResultController(navigationTitle: title, kind: kind, workRef: item.runId)
         navigationController?.pushViewController(vc, animated: true)
     }
 

@@ -6,13 +6,11 @@ import UIKit
 
 open class MCCNavigationController: UINavigationController {
     
-    // MARK: - Autorotate
     
     open override var shouldAutorotate: Bool {
         return self.topViewController?.shouldAutorotate ?? false
     }
     
-    // MARK: - Orientation
     
     open override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return self.topViewController?.supportedInterfaceOrientations ?? .portrait
@@ -22,7 +20,6 @@ open class MCCNavigationController: UINavigationController {
         return self.topViewController?.preferredInterfaceOrientationForPresentation ?? .portrait
     }
     
-    // MARK: - StatusBar
     
     open override var childForStatusBarHidden: UIViewController? {
         return self.topViewController
@@ -32,7 +29,6 @@ open class MCCNavigationController: UINavigationController {
         return self.topViewController
     }
     
-    // MARK: - Life Cycle
     
     open override func viewDidLoad() {
         super.viewDidLoad()

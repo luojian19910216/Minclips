@@ -92,8 +92,6 @@ extension MCCShotsListPageController {
 
 }
 
-// MARK: - 列表请求（本页自管）
-
 extension MCCShotsListPageController {
 
     private var mcsv_refId: String { mcsv_labelItem.templateRef }
@@ -233,7 +231,6 @@ extension MCCShotsListPageController {
 
 }
 
-// MARK: - Collection
 
 extension MCCShotsListPageController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 

@@ -163,6 +163,10 @@
 		F6E2C2A52FC0030002C4F70 /* MCCCreationResultController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C22F2FC0030002C4F70 /* MCCCreationResultController.swift */; };
 		F6E2C2A62FC0030002C4F70 /* MCCCreationResultController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C22F2FC0030002C4F70 /* MCCCreationResultController.swift */; };
 		F6E2C2A72FC0030002C4F70 /* MCCCreationResultController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C22F2FC0030002C4F70 /* MCCCreationResultController.swift */; };
+		F6E2C2B42FC0030002C4F70 /* MCCDeleteConfirmPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2302FC0030002C4F70 /* MCCDeleteConfirmPopController.swift */; };
+		F6E2C2B52FC0030002C4F70 /* MCCDeleteConfirmPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2302FC0030002C4F70 /* MCCDeleteConfirmPopController.swift */; };
+		F6E2C2B62FC0030002C4F70 /* MCCDeleteConfirmPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2302FC0030002C4F70 /* MCCDeleteConfirmPopController.swift */; };
+		F6E2C2B72FC0030002C4F70 /* MCCDeleteConfirmPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2302FC0030002C4F70 /* MCCDeleteConfirmPopController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -221,6 +225,7 @@
 		F6E2C2012FC0020002C4F70 /* MCCToolsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCToolsController.swift; sourceTree = "<group>"; };
 		F6E2C22E2FC0030002C4F70 /* MCCCreationResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCCreationResultView.swift; sourceTree = "<group>"; };
 		F6E2C22F2FC0030002C4F70 /* MCCCreationResultController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCCreationResultController.swift; sourceTree = "<group>"; };
+		F6E2C2302FC0030002C4F70 /* MCCDeleteConfirmPopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCDeleteConfirmPopController.swift; sourceTree = "<group>"; };
 		F72C010043D4413B9E5D4761 /* Pods-Minclips_D.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_D.release.xcconfig"; path = "Target Support Files/Pods-Minclips_D/Pods-Minclips_D.release.xcconfig"; sourceTree = "<group>"; };
 		FD04B3C983B934D49261DA0A /* Pods-Minclips_P.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_P.debug.xcconfig"; path = "Target Support Files/Pods-Minclips_P/Pods-Minclips_P.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -472,6 +477,7 @@
 			children = (
 				F6E2C22E2FC0030002C4F70 /* MCCCreationResultView.swift */,
 				F6E2C22F2FC0030002C4F70 /* MCCCreationResultController.swift */,
+				F6E2C2302FC0030002C4F70 /* MCCDeleteConfirmPopController.swift */,
 			);
 			path = Result;
 			sourceTree = "<group>";
@@ -856,6 +862,7 @@
 				F6E2C2142FC0020002C4F70 /* MCCToolsController.swift in Sources */,
 				F6E2C2A02FC0030002C4F70 /* MCCCreationResultView.swift in Sources */,
 				F6E2C2A42FC0030002C4F70 /* MCCCreationResultController.swift in Sources */,
+				F6E2C2B42FC0030002C4F70 /* MCCDeleteConfirmPopController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -894,6 +901,7 @@
 				F6E2C2152FC0020002C4F70 /* MCCToolsController.swift in Sources */,
 				F6E2C2A12FC0030002C4F70 /* MCCCreationResultView.swift in Sources */,
 				F6E2C2A52FC0030002C4F70 /* MCCCreationResultController.swift in Sources */,
+				F6E2C2B52FC0030002C4F70 /* MCCDeleteConfirmPopController.swift in Sources */,
 				F6588BBB2EFA402B00A094B5 /* MCCTabBarController.swift in Sources */,
 				F6588BBE2EFA41AF00A094B5 /* MCCCfViewModel.swift in Sources */,
 				F6588BB72EFA402000A094B5 /* MCCGuideController.swift in Sources */,
@@ -938,6 +946,7 @@
 				F6E2C2162FC0020002C4F70 /* MCCToolsController.swift in Sources */,
 				F6E2C2A22FC0030002C4F70 /* MCCCreationResultView.swift in Sources */,
 				F6E2C2A62FC0030002C4F70 /* MCCCreationResultController.swift in Sources */,
+				F6E2C2B62FC0030002C4F70 /* MCCDeleteConfirmPopController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -979,6 +988,7 @@
 				F6E2C2172FC0020002C4F70 /* MCCToolsController.swift in Sources */,
 				F6E2C2A32FC0030002C4F70 /* MCCCreationResultView.swift in Sources */,
 				F6E2C2A72FC0030002C4F70 /* MCCCreationResultController.swift in Sources */,
+				F6E2C2B72FC0030002C4F70 /* MCCDeleteConfirmPopController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,12 +1,14 @@
 import UIKit
 import Common
+import Combine
+import Data
 import FDFullscreenPopGesture
 import SnapKit
 
-/// 生成结果：失败 / 限制 / 成功（图片或视频）。成功态 UI 对齐设计稿；业务与接口可后续接入。
 public final class MCCCreationResultController: MCCViewController<MCCCreationResultView, MCCEmptyViewModel> {
 
     public let mccr_pageTitle: String
+    public let mccr_workRef: String
     public let mccr_kind: MCCCreationResultKind
 
     private lazy var mccr_navTitleLabel: UILabel = {
@@ -20,8 +22,9 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
         return t
     }()
 
-    public init(navigationTitle: String, kind: MCCCreationResultKind) {
+    public init(navigationTitle: String, kind: MCCCreationResultKind, workRef: String? = nil) {
         self.mccr_pageTitle = navigationTitle
+        self.mccr_workRef = workRef ?? navigationTitle
         self.mccr_kind = kind
         super.init()
         hidesBottomBarWhenPushed = true
@@ -45,10 +48,6 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
     public override func mcvc_bind() {
         super.mcvc_bind()
         contentView.mccr_actionButton.addTarget(self, action: #selector(mccr_onPrimaryAction), for: .touchUpInside)
-        contentView.mccr_deleteConfirmButton.addTarget(self, action: #selector(mccr_onDeleteConfirmed), for: .touchUpInside)
-        contentView.mccr_onDeletePanelChange = { [weak self] visible in
-            self?.mccr_syncNavWithDeletePanel(visible)
-        }
         contentView.mccr_onSuccessToolbar = { [weak self] action in
             self?.mccr_handleSuccessToolbar(action)
         }
@@ -66,18 +65,7 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
         mccr_navTitleLabel.sizeToFit()
         item.titleView = mccr_navTitleLabel
         item.leftBarButtonItem = mccr_barCircleItem(systemName: "chevron.left", action: #selector(mccr_onBack))
-        switch mccr_kind {
-        case .successImage, .successVideo:
-            item.rightBarButtonItem = mccr_barCircleItem(systemName: "trash", action: #selector(mccr_onDelete))
-        case .failed, .restricted:
-            item.rightBarButtonItem = nil
-        }
-        mccr_syncNavWithDeletePanel(contentView.mccr_isDeletePanelVisible)
-    }
-
-    private func mccr_syncNavWithDeletePanel(_ visible: Bool) {
-        navigationItem.titleView?.isHidden = visible
-        navigationItem.rightBarButtonItem?.customView?.isHidden = visible
+        item.rightBarButtonItem = mccr_barCircleItem(systemName: "trash", action: #selector(mccr_onDelete))
     }
 
     private func mccr_barCircleItem(systemName: String, action: Selector) -> UIBarButtonItem {
@@ -95,27 +83,45 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
 
     @objc
     private func mccr_onBack() {
-        if contentView.mccr_isDeletePanelVisible {
-            contentView.mccr_setDeletePanelVisible(false)
-            return
-        }
         navigationController?.popViewController(animated: true)
     }
 
     @objc
     private func mccr_onDelete() {
-        switch mccr_kind {
-        case .successImage, .successVideo:
-            contentView.mccr_setDeletePanelVisible(true)
-        case .failed, .restricted:
-            break
-        }
+        mccr_presentDeleteConfirm()
     }
 
-    @objc
-    private func mccr_onDeleteConfirmed() {
-        contentView.mccr_setDeletePanelVisible(false)
-        navigationController?.popViewController(animated: true)
+    private func mccr_presentDeleteConfirm() {
+        let pop = MCCDeleteConfirmPopController()
+        pop.onConfirmDelete = { [weak self, weak pop] in
+            self?.mccr_retireCurrentRun(pop: pop)
+        }
+        present(pop, animated: true)
+    }
+
+    private func mccr_retireCurrentRun(pop: MCCDeleteConfirmPopController?) {
+        let ref = mccr_workRef.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !ref.isEmpty else {
+            pop?.mccd_setDeleteEnabled(true)
+            return
+        }
+        var request = MCSRunDeleteRequest()
+        request.workRef = ref
+        MCCRunAPIManager.shared.retire(with: request)
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { [weak pop] completion in
+                    if case .failure = completion {
+                        pop?.mccd_setDeleteEnabled(true)
+                    }
+                },
+                receiveValue: { [weak self, weak pop] _ in
+                    pop?.dismiss(animated: true) {
+                        self?.navigationController?.popViewController(animated: true)
+                    }
+                }
+            )
+            .store(in: &cancellables)
     }
 
     @objc
