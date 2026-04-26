@@ -2,6 +2,8 @@ import UIKit
 import Data
 import Common
 import Alamofire
+import SDWebImage
+import SDWebImageWebPCoder
 import CoreTelephony
 import Combine
 import CombineExt
@@ -34,6 +36,10 @@ public class MCCAppDelegate: UIResponder, UIApplicationDelegate {
         MCCDatabaseManager.shared.initialization()
         MCCUserTableManager.shared.initialization()
 
+        SDImageCodersManager.shared.addCoder(SDImageWebPCoder.shared)
+        SDWebImageDownloader.shared.config.maxConcurrentDownloads = 6
+        SDWebImagePrefetcher.shared.maxConcurrentPrefetchCount = 3
+        
         Publishers
             .CombineLatest(
                 MCCAppConfig.shared.$networkStatus,

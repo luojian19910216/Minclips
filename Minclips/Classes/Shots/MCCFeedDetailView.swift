@@ -62,7 +62,9 @@ public final class MCCFeedDetailView: MCCBaseView {
         } else if let u = URL(string: asset.webpImageUrl), !asset.webpImageUrl.isEmpty {
             mcvw_webpImageView.autoPlayAnimatedImage = true
             mcvw_webpImageView.isHidden = false
-            mcvw_webpImageView.sd_setImage(with: u, placeholderImage: nil, options: [], context: ctx)
+            mcvw_webpImageView.sd_setImage(with: u, placeholderImage: nil, options: [], completed: { [weak self] _, _, _, _ in
+                self?.mcvw_webpImageView.startAnimating()
+            })
         } else {
             mcvw_webpImageView.sd_cancelCurrentImageLoad()
             mcvw_webpImageView.image = nil
@@ -75,7 +77,7 @@ public final class MCCFeedDetailView: MCCBaseView {
         mcvw_webpImageView.autoPlayAnimatedImage = false
         mcvw_webpImageView.isHidden = false
         mcvw_webpImageView.image = h.image
-        mcvw_webpImageView.player?.seekToFrame(atIndex: h.frameIndex, loopCount: h.loopCount)
+        mcvw_webpImageView.player?.seekToFrame(at: h.frameIndex, loopCount: h.loopCount)
         mcvw_webpImageView.autoPlayAnimatedImage = true
         mcvw_webpImageView.startAnimating()
     }

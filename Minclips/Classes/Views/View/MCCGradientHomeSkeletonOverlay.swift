@@ -51,6 +51,8 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
     required init?(coder: NSCoder) { fatalError() }
 
     public func mcvw_showHomeSkeleton() {
+        // 加载态会多次回调；重复 show 会反复停/开渐变动画，容易卡顿、闪一下。
+        guard isHidden else { return }
         hideSkeleton()
         isHidden = false
         layoutIfNeeded()
@@ -58,6 +60,7 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
     }
 
     public func mcvw_hideHomeSkeleton() {
+        guard !isHidden else { return }
         hideSkeleton()
         isHidden = true
     }

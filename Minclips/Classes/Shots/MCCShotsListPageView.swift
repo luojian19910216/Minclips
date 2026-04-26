@@ -32,16 +32,30 @@ public enum MCCShotsListItemMetrics {
         return CGSize(width: ptW * scale, height: ptH * scale)
     }
 
+    /// 列表静态封面：下载队列优先（先于 WebP 等资源）。
+    public static let sdPosterLoadOptions: SDWebImageOptions = [.highPriority]
+
+    /// 列表 WebP 动图：低优先，避免抢带宽、影响封面与首屏。
+    public static let sdWebpAnimatedLoadOptions: SDWebImageOptions = [.lowPriority]
+
+    /// 列表静态封面 `sd_setImage` / `SDWebImagePrefetcher` 共用，保证预取与展示命中同一套缓存键与缩略解码。
+    public static func sdPosterThumbnailContext(thumbnailPixelSize: CGSize) -> [SDWebImageContextOption: Any] {
+        [
+            .imageThumbnailPixelSize: NSValue(cgSize: thumbnailPixelSize),
+            .imagePreserveAspectRatio: true
+        ]
+    }
+
 }
 
 public final class MCCShotsListPageView: MCCBaseView {
 
-    public let mcvw_waterfallLayout: MCCShotsWaterfallLayout = {
+    public lazy var mcvw_waterfallLayout: MCCShotsWaterfallLayout = {
         let l = MCCShotsWaterfallLayout()
         l.columnCount = 2
-        l.sectionInset = UIEdgeInsets(top: 4, left: 4, bottom: 12, right: 4)
+        l.sectionInset = UIEdgeInsets(top: 4, left: 4, bottom: 4, right: 4)
         l.minimumInteritemSpacing = 4
-        l.minimumLineSpacing = 16
+        l.minimumLineSpacing = 4
         return l
     }()
 
@@ -147,34 +161,44 @@ public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
         mcvw_clearWebpAnimated()
     }
 
-    private static func mcvw_thumbnailContext(_ thumbnailPixelSize: CGSize) -> [SDWebImageContextOption: Any] {
-        [
-            .imageThumbnailPixelSize: NSValue(cgSize: thumbnailPixelSize),
-            .imagePreserveAspectRatio: true
-        ]
-    }
-
     /// `cellForItem`：仅静态封面，并清掉动图层，避免复用残留。
     public func mcvw_applyPosterOnly(posterUrl: String, thumbnailPixelSize: CGSize) {
         mcvw_clearWebpAnimated()
-        let ctx = Self.mcvw_thumbnailContext(thumbnailPixelSize)
+        mcvw_posterImageView.isHidden = false
+        let ctx = MCCShotsListItemMetrics.sdPosterThumbnailContext(thumbnailPixelSize: thumbnailPixelSize)
         if let u = URL(string: posterUrl), !posterUrl.isEmpty {
-            mcvw_posterImageView.sd_setImage(with: u, placeholderImage: nil, options: [], context: ctx)
+            mcvw_posterImageView.sd_setImage(
+                with: u,
+                placeholderImage: nil,
+                options: MCCShotsListItemMetrics.sdPosterLoadOptions,
+                context: ctx
+            )
         } else {
             mcvw_posterImageView.sd_cancelCurrentImageLoad()
             mcvw_posterImageView.image = nil
         }
     }
 
-    /// `willDisplay`：叠加载 WebP 动图。
-    public func mcvw_applyWebpAnimated(webpUrl: String, thumbnailPixelSize: CGSize) {
-        let ctx = Self.mcvw_thumbnailContext(thumbnailPixelSize)
+    /// `willDisplay`：叠加载 WebP 动图（不用缩略图解码上下文，避免动图被解成单帧）。`thumbnailPixelSize` 保留与调用方一致，暂不参与 WebP 解码。
+    public func mcvw_applyWebpAnimated(webpUrl: String, thumbnailPixelSize _: CGSize) {
         guard let u = URL(string: webpUrl), !webpUrl.isEmpty else {
             mcvw_clearWebpAnimated()
             return
         }
+        mcvw_webpImageView.autoPlayAnimatedImage = true
         mcvw_webpImageView.isHidden = false
-        mcvw_webpImageView.sd_setImage(with: u, placeholderImage: nil, options: [], context: ctx)
+        mcvw_webpImageView.sd_setImage(
+            with: u,
+            placeholderImage: nil,
+            options: MCCShotsListItemMetrics.sdWebpAnimatedLoadOptions,
+            completed: { [weak self] image, error, _, _ in
+                guard let self = self else { return }
+                guard error == nil, image != nil else { return }
+                self.mcvw_webpImageView.startAnimating()
+                // 动图叠在封面上会「两重」；解码成功后只显示 WebP。
+                self.mcvw_posterImageView.isHidden = true
+            }
+        )
     }
 
     /// `didEndDisplaying`：取消动图请求并移除展示，省内存与解码。
@@ -182,6 +206,7 @@ public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
         mcvw_webpImageView.sd_cancelCurrentImageLoad()
         mcvw_webpImageView.image = nil
         mcvw_webpImageView.isHidden = true
+        mcvw_posterImageView.isHidden = false
     }
 
     /// 进入详情前抓取当前 WebP 帧，供详情 `seek` 续播；未加载或非动图时返回 `nil`。

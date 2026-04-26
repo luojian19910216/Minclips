@@ -1,5 +1,5 @@
 import UIKit
-import SnapKit
+import SDWebImage
 import MJRefresh
 import JXPagingView
 import Combine
@@ -36,6 +36,9 @@ public final class MCCShotsListPageController: MCCViewController<MCCShotsListPag
 
     private var mcvc_listState = MCCShotsListState()
 
+    /// 已应用到 `collectionView` 的 `itemId` 顺序；用于避免重复 `reloadData`、加载更多时用 `insertItems`。
+    private var mcvc_appliedItemIds: [String] = []
+
     public override func mcvc_setupLocalization() {
         super.mcvc_setupLocalization()
         view.backgroundColor = .clear
@@ -44,11 +47,11 @@ public final class MCCShotsListPageController: MCCViewController<MCCShotsListPag
 
     public override func mcvc_bind() {
         super.mcvc_bind()
-        
         let cv = contentView.mcvw_collectionView
         contentView.mcvw_waterfallLayout.delegate = self
         cv.dataSource = self
         cv.delegate = self
+        cv.prefetchDataSource = self
 
         let header = MJRefreshNormalHeader { [weak self] in
             self?.mcvc_loadList(kind: .pullToRefresh)
@@ -56,10 +59,9 @@ public final class MCCShotsListPageController: MCCViewController<MCCShotsListPag
         header.lastUpdatedTimeLabel?.isHidden = true
         cv.mj_header = header
 
-        let footer = MJRefreshAutoNormalFooter { [weak self] in
+        cv.mj_footer = MJRefreshAutoNormalFooter { [weak self] in
             self?.mcvc_loadList(kind: .loadMore)
         }
-        cv.mj_footer = footer
     }
 
     public override func mcvc_loadData() {
@@ -118,7 +120,7 @@ extension MCCShotsListPageController {
         if kind == .loadMore {
             st.isLoadingMore = true
             mcvc_listState = st
-            mcvc_applyListUI()
+            mcvc_syncListChromeOnly()
             var request = MCSFeedListRequest()
             request.itemsPerPage = 20
             request.customRefId = refId
@@ -163,6 +165,11 @@ extension MCCShotsListPageController {
     }
 
     private func mcvc_applyListUI() {
+        mcvc_syncListChromeOnly()
+        mcvc_reloadCollectionItemsIfNeeded()
+    }
+
+    private func mcvc_syncListChromeOnly() {
         let st = mcvc_listState
         let items = st.items
         let listState = st.listState
@@ -192,9 +199,35 @@ extension MCCShotsListPageController {
             }
         }
         cv.isHidden = false
+    }
+
+    private func mcvc_reloadCollectionItemsIfNeeded() {
+        let cv = contentView.mcvw_collectionView
+        let items = mcvc_listState.items
+        let newIds = items.map(\.itemId)
+        if newIds == mcvc_appliedItemIds {
+            return
+        }
+        let oldIds = mcvc_appliedItemIds
+        if !oldIds.isEmpty,
+           newIds.count > oldIds.count,
+           Array(newIds.prefix(oldIds.count)) == oldIds {
+            mcvc_appliedItemIds = newIds
+            let start = oldIds.count
+            let indexPaths = (start..<newIds.count).map { IndexPath(item: $0, section: 0) }
+            cv.performBatchUpdates({
+                cv.insertItems(at: indexPaths)
+            }, completion: { [weak self] ok in
+                guard let self = self, !ok else { return }
+                self.mcvc_appliedItemIds = self.mcvc_listState.items.map(\.itemId)
+                cv.reloadData()
+            })
+            return
+        }
+        mcvc_appliedItemIds = newIds
         cv.reloadData()
     }
-    
+
     private static func mcvc_placeholderHex(from id: String) -> String {
         var h: UInt = 0
         for c in id.unicodeScalars {
@@ -258,9 +291,9 @@ extension MCCShotsListPageController {
         )
     }
 
-    private func mcvc_heightForShotsItem(at index: Int, itemWidth: CGFloat) -> CGFloat {
+    private func mcvc_heightForItem(_ item: MCSFeedItem, itemWidth: CGFloat) -> CGFloat {
         let m = MCCShotsListItemMetrics.self
-        let title = mcvc_listState.items[safe: index]?.itemTitle ?? ""
+        let title = item.itemTitle
         let imageH = itemWidth * m.imageHeightPerWidth
         let attrs = MCCShotsListItemMetrics.titleTextAttributes(textColor: UIColor.hex_d3d0cd)
         let maxTextH = ceil(m.titleLineHeight * CGFloat(m.titleMaxLines))
@@ -324,6 +357,33 @@ extension MCCShotsListPageController: UICollectionViewDataSource, UICollectionVi
 
 }
 
+extension MCCShotsListPageController: UICollectionViewDataSourcePrefetching {
+
+    public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        let items = mcvc_listState.items
+        let cvW = collectionView.bounds.width
+        let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: cvW > 0 ? cvW : view.bounds.width)
+        let ctx = MCCShotsListItemMetrics.sdPosterThumbnailContext(thumbnailPixelSize: thumbPx)
+        var urls: [URL] = []
+        urls.reserveCapacity(indexPaths.count)
+        for indexPath in indexPaths {
+            guard let item = items[safe: indexPath.item] else { continue }
+            let s = item.videoAsset.posterImageUrl
+            guard !s.isEmpty, let u = URL(string: s) else { continue }
+            urls.append(u)
+        }
+        guard !urls.isEmpty else { return }
+        SDWebImagePrefetcher.shared.prefetchURLs(
+            urls,
+            options: MCCShotsListItemMetrics.sdPosterLoadOptions,
+            context: ctx,
+            progress: nil,
+            completed: nil
+        )
+    }
+
+}
+
 extension MCCShotsListPageController: MCCShotsWaterfallLayoutDelegate {
 
     public func waterfallLayout(
@@ -331,7 +391,8 @@ extension MCCShotsListPageController: MCCShotsWaterfallLayoutDelegate {
         heightForItemAt indexPath: IndexPath,
         itemWidth: CGFloat
     ) -> CGFloat {
-        mcvc_heightForShotsItem(at: indexPath.item, itemWidth: itemWidth)
+        guard let item = mcvc_listState.items[safe: indexPath.item] else { return 1 }
+        return mcvc_heightForItem(item, itemWidth: itemWidth)
     }
 
 }

@@ -22,7 +22,7 @@ public final class MCCShotsWaterfallLayout: UICollectionViewLayout {
     public var minimumInteritemSpacing: CGFloat = 4
 
     /// 同一列内相邻 cell 的垂直间距
-    public var minimumLineSpacing: CGFloat = 16
+    public var minimumLineSpacing: CGFloat = 4
 
     private var cache: [UICollectionViewLayoutAttributes] = []
 
@@ -76,15 +76,19 @@ public final class MCCShotsWaterfallLayout: UICollectionViewLayout {
     }
 
     public override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        cache.filter { $0.frame.intersects(rect) }
+        cache
+            .filter { $0.frame.intersects(rect) }
+            .map { $0.copy() as! UICollectionViewLayoutAttributes }
     }
 
     public override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-        cache.first { $0.indexPath == indexPath }
+        cache.first { $0.indexPath == indexPath }?.copy() as? UICollectionViewLayoutAttributes
     }
 
     public override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
-        true
+        guard let cv = collectionView else { return false }
+        // 滑动时只有 bounds.origin 变，width 不变；若此处总返回 true，会每帧 invalidate → 全量 prepare → 极度卡顿、cell 闪烁。
+        return newBounds.size.width != cv.bounds.size.width
     }
 
 }

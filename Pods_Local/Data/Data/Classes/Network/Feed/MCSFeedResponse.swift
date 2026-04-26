@@ -36,6 +36,8 @@ public struct MCSFeedItem: Codable {
     @MCSSafeString public var itemTitle: String
     /// media`
     @MCSSafe public var videoAsset: MCSFeedVideoAssetShell
+    ///
+    @MCSSafeBool public var proFeature: Bool
 }
 
 ///
