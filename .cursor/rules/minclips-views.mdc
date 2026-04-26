@@ -1,0 +1,36 @@
+---
+description: Minclips 视图层 — BaseView、Pop、与 Controller 配对、命名与布局
+globs: Minclips/**/*.swift
+alwaysApply: false
+---
+
+# Minclips — 视图
+
+## 基类与生命周期
+
+- 页面/面板视图继承 **`MCCBaseView`**，实现 **`MCPViewInit`**：在 **`mcvw_setupUI`** 里建子视图与 **SnapKit** 约束，在 **`mcvw_bind`** 里做 **Combine** 绑定（可使用类型自带的 `cancellables`）。
+- **`init(frame:)` / `awakeFromNib`** 由基类统一调用 `mcvw_setupUI` + `mcvw_bind`，子类一般**不要**再包一层重复调用。
+- 列表 **Cell / Header** 用 **`MCCBaseCollectionViewCell`**、**`MCCBaseCollectionReusableView`**；`prepareForReuse` 时注意清 `cancellables`。
+
+## 与控制器配对
+
+- **`MCCViewController<View: MCCBaseView, ViewModel: MCCBaseViewModel>`**：`loadView` 会 `self.view = View()`，通过 **`contentView`** 访问强类型根视图。
+
+### 弹窗选基类
+
+- **底部 Sheet（PanModal）**：**`MCCSheetController<View: MCCBaseView, ...>`**（`import PanModal`）。内容视图继承 **`MCCBaseView`**，在子类中覆盖 `panScrollable`、`shortFormHeight` / `longFormHeight` 等。不要用 `MCCBasePopView` 配 Sheet。
+- **其他弹窗**：**`MCCPopController<View: MCCBasePopView, ...>`**。**`MCCBasePopView`** 含 **`dimmingView`**、**`cardView`**，子类往 **`cardView`** 加内容并约束；**卡片位置由各 Pop 的 View 自己约束**（基类不固定布局）。
+
+架构层对 Sheet vs Pop 的取舍见 **`minclips-architecture.mdc`「弹窗」**。
+
+## 网络图片（SDWebImage）
+
+- 通过 **`sd_setImage`** 加载 **URL 内容** 的视图（封面、图标、动图/WebP 等）使用 **`SDAnimatedImageView`**（`UIImageView` 子类），以便 **GIF / 动图 WebP** 正常播放；仅本地 `UIImage` / SF Symbol 的仍用 **`UIImageView`** 即可。
+
+## 命名
+
+- View / Cell / Pop 视图子类上的属性、子视图、lazy 成员：**`mcvw_`**。详见 **`minclips-always.mdc`**「命名前缀」；不要用 `mcsv_`、`mcpj_` 等业务向缩写。
+
+## 注释
+
+- 与全局规则一致：新代码避免中文注释与 `// MARK:`。

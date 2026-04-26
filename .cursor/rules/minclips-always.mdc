@@ -1,0 +1,17 @@
+---
+description: Minclips 全局约定 — 沟通方式、注释、通用约束
+alwaysApply: true
+---
+
+# Minclips — 全局
+
+- **工程**: iOS，Swift，UIKit；模块含 `Minclips` app、`Pods_Local`（Common / Data 等）。
+- **新代码注释**: 不要中文注释；不要 `// MARK:` 分区注释（含英文）。保留必要英文文档时尽量极简。
+- **执行**: 用户要的是可运行结果时，优先直接改代码/跑命令，不要只给操作步骤。
+- **范围**: 只改与当前任务相关的文件，避免顺手大重构；风格与周边文件一致（命名、`import`、缩进）。
+- **命名前缀**（Minclips / `MCC*`）：
+  - **`mc`**：工程缩写，体现在类型名 `MCC…` 上。
+  - **`vc`**：属于 **`UIViewController` / `MCC*Controller` 子类**的自有实例属性、自有私有方法 → 统一 **`mcvc_`**（与 `MCPViewControllerInitProtocol` 里 `mcvc_init`、`mcvc_bind` 等同一条约定）。
+  - **`vw`**：属于 **`UIView` / `MCC*View` / Cell / `MCCBasePopView` 子类**的自有实例属性、自有私有方法 → 统一 **`mcvw_`**（与 `MCPViewInit` 里 `mcvw_setupUI`、`mcvw_bind` 一致）。
+  - **不要**再为业务另造与 `mc` 无关的缩写前缀（如 `mcsv_`、`mcpj_`、`mccr_`）；模块归属放在**类型名**里即可，类内只用 `mcvc_` 或 `mcvw_`。存量文件若仍是旧前缀，新改动与后续重构逐步对齐。
+- **细节**: 更具体的架构与模块约定见同目录下 `minclips-architecture.mdc`（编辑 `Minclips/**` 下 Swift 时会附带）。

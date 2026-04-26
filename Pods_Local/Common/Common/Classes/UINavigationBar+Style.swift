@@ -14,7 +14,6 @@ public enum MCENavigationBarStyle: Int {
 
 extension UINavigationBar {
 
-    // MARK: - Shadow
 
     public var mc_shadowHidden: Bool {
         get {
@@ -31,7 +30,6 @@ extension UINavigationBar {
         }
     }
 
-    // MARK: - Style
 
     public var mc_barStyle: MCENavigationBarStyle {
         get {

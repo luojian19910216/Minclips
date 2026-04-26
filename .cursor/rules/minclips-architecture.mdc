@@ -1,0 +1,28 @@
+---
+description: Minclips 主导航、控制器初始化、视图摘要与弹窗约定
+globs: Minclips/**/*.swift
+alwaysApply: false
+---
+
+# Minclips — 架构与模块
+
+## 主导航
+
+- 主入口：`MCCNavigationController(rootViewController: MCCTabBarController())`（外层一个导航栈）。
+- Tab 子页是普通 `UIViewController`（如 `MCCShotsController` / `MCCToolsController` / `MCCProjectsController`），**不要**「每个 tab 再包一层 `MCCNavigationController`」。
+- `MCCTabBarController` 通过 `didSelect` 等控制外层导航栏显示/隐藏。
+
+## 控制器初始化
+
+- 遵循 `MCPViewControllerInitProtocol`：在 `mcvc_init` / `mcvc_configureNav` / `mcvc_setupLocalization` / `mcvc_bind` / `mcvc_loadData` 里接线；避免在 `viewDidLoad` 里堆一套重复逻辑。
+- Controller 子类自有成员前缀 **`mcvc_`**；View / Cell 等自有成员 **`mcvw_`**（`mc` = Minclips，`vc`/`vw` = 控制器 / 视图）。见 **`minclips-always.mdc`**。
+
+## 视图（摘要）
+
+- 细则见同目录 **`minclips-views.mdc`**（编辑 `Minclips/**/*.swift` 时会与本文一起注入）：`MCCBaseView` / `mcvw_*`、`MCCBasePopView`、`contentView` 配对与子视图前缀等。
+
+## 弹窗
+
+- **从底部进入**（抽屉、可拖拽高度、PanModal 交互）：基类用 **`MCCSheetController`**（已实现 **`PanModalPresentable`** + `MCPPopupPresentable`），根视图用 **`MCCBaseView`**（**不是** `MCCBasePopView`）。简单场景可继承或直接使用项目里的 **`MCCBottomSheetController`**。
+- **其余弹窗**（居中/顶部卡片、遮罩上自定义位置、非底部 PanModal）：基类用 **`MCCPopController`**，根视图用 **`MCCBasePopView`**（`dimmingView` + `cardView`，卡片约束在子类里定）。
+- 新增弹窗前先归类「是否底部 PanModal」，避免混用两套基类。

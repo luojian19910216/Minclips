@@ -77,8 +77,8 @@ public final class MCCShotsTagCell: MCCBaseCollectionViewCell {
 
     public static let mcsv_reuseId = "MCCShotsTagCell"
 
-    public let mcsv_iconView: UIImageView = {
-        let v = UIImageView()
+    public let mcsv_iconView: SDAnimatedImageView = {
+        let v = SDAnimatedImageView()
         v.contentMode = .scaleAspectFit
         v.isHidden = true
         v.layer.cornerRadius = 2

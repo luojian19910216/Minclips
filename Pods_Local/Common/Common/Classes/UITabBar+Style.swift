@@ -13,7 +13,6 @@ public enum MCETabBarStyle: Int {
 
 extension UITabBar {
 
-    // MARK: - Shadow
 
     public var mc_shadowHidden: Bool {
         get {
@@ -30,7 +29,6 @@ extension UITabBar {
         }
     }
 
-    // MARK: - Style
 
     public var mc_barStyle: MCETabBarStyle {
         get {

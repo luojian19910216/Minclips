@@ -4,7 +4,7 @@ import SnapKit
 
 public final class MCCToolsView: MCCBaseView {
 
-    public let mctb_flow: UICollectionViewFlowLayout = {
+    public let mcpj_flow: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
         l.minimumInteritemSpacing = 0
         l.minimumLineSpacing = 8
@@ -13,17 +13,17 @@ public final class MCCToolsView: MCCBaseView {
         return l
     }()
 
-    public lazy var mctb_collectionView: UICollectionView = {
-        let cv = UICollectionView(frame: .zero, collectionViewLayout: mctb_flow)
+    public lazy var mcpj_collectionView: UICollectionView = {
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: mcpj_flow)
         cv.alwaysBounceVertical = true
         cv.backgroundColor = .clear
-        cv.register(MCCToolTextCell.self, forCellWithReuseIdentifier: MCCToolTextCell.mctb_id)
+        cv.register(MCCToolTextCell.self, forCellWithReuseIdentifier: MCCToolTextCell.mcpj_id)
         return cv
     }()
 
     public override func mcvw_setupUI() {
-        addSubview(mctb_collectionView)
-        mctb_collectionView.snp.makeConstraints { make in
+        addSubview(mcpj_collectionView)
+        mcpj_collectionView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top)
             make.leading.trailing.bottom.equalToSuperview()
         }
@@ -33,9 +33,9 @@ public final class MCCToolsView: MCCBaseView {
 
 public final class MCCToolTextCell: MCCBaseCollectionViewCell {
 
-    public static let mctb_id = "MCCToolTextCell"
+    public static let mcpj_id = "MCCToolTextCell"
 
-    public let mctb_textLabel: UILabel = {
+    public let mcpj_textLabel: UILabel = {
         let l = UILabel()
         l.textColor = .white
         l.font = .systemFont(ofSize: 12, weight: .regular)
@@ -50,13 +50,13 @@ public final class MCCToolTextCell: MCCBaseCollectionViewCell {
         contentView.backgroundColor = UIColor(white: 0.12, alpha: 1)
         contentView.layer.cornerRadius = 6
         contentView.clipsToBounds = true
-        contentView.addSubview(mctb_textLabel)
-        mctb_textLabel.snp.makeConstraints { $0.edges.equalToSuperview().inset(4) }
+        contentView.addSubview(mcpj_textLabel)
+        mcpj_textLabel.snp.makeConstraints { $0.edges.equalToSuperview().inset(4) }
     }
 
     public override func prepareForReuse() {
         super.prepareForReuse()
-        mctb_textLabel.text = nil
+        mcpj_textLabel.text = nil
     }
 
 }

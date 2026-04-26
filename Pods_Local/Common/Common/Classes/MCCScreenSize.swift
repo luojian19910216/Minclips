@@ -6,7 +6,6 @@ import UIKit
 
 public final class MCCScreenSize {
 
-    // MARK: - Window
     
     public static var keyWindow: UIWindow? {
         UIApplication.shared.connectedScenes
@@ -15,13 +14,11 @@ public final class MCCScreenSize {
             .first { $0.isKeyWindow }
     }
     
-    // MARK: - Appearance
     
     public static var isDark: Bool {
         keyWindow?.traitCollection.userInterfaceStyle == .dark
     }
     
-    // MARK: - Screen
 
     public static var scale: CGFloat {
         UIScreen.main.scale
@@ -43,7 +40,6 @@ public final class MCCScreenSize {
         UIScreen.main.bounds.size.height
     }
 
-    // MARK: - UI Metrics
     
     public static var topSafeHeight: CGFloat {
         keyWindow?.safeAreaInsets.top ?? Self.statusBarHeight

@@ -42,21 +42,21 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
 
     public override func viewDidLoad() {
         super.viewDidLoad()
-        contentView.mcpj_setupPagingView(delegate: self)
+        contentView.mcvw_setupPagingView(delegate: self)
     }
 
     public override func mcvc_setupLocalization() {
         super.mcvc_setupLocalization()
         view.backgroundColor = UIColor(hex: "000000")!
         contentView.backgroundColor = view.backgroundColor
-        contentView.mcpj_tagCollection.backgroundColor = .clear
-        contentView.mcpj_pinHeaderView.backgroundColor = .clear
+        contentView.mcvw_tagCollection.backgroundColor = .clear
+        contentView.mcvw_pinHeaderView.backgroundColor = .clear
     }
 
     public override func mcvc_bind() {
         super.mcvc_bind()
-        contentView.mcpj_tagCollection.dataSource = self
-        contentView.mcpj_tagCollection.delegate = self
+        contentView.mcvw_tagCollection.dataSource = self
+        contentView.mcvw_tagCollection.delegate = self
     }
 
     public override func mcvc_loadData() {
@@ -98,11 +98,11 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
     }
 
     private func mcpj_syncTagChrome() {
-        contentView.mcpj_setPagingHidden(mcpj_segmentItems.isEmpty)
-        contentView.mcpj_tagCollection.reloadData()
+        contentView.mcvw_setPagingHidden(mcpj_segmentItems.isEmpty)
+        contentView.mcvw_tagCollection.reloadData()
         let idx = min(mcpj_selectedTagIndex, max(0, mcpj_segmentItems.count - 1))
         if mcpj_segmentItems.indices.contains(idx) {
-            contentView.mcpj_scrollTagToIndex(idx, animated: false)
+            contentView.mcvw_scrollTagToIndex(idx, animated: false)
         }
     }
 
@@ -115,16 +115,16 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
             idx = min(max(0, mcpj_selectedTagIndex), segs.count - 1)
         }
         mcpj_selectedTagIndex = idx
-        contentView.mcpj_applyPagingTagReload(selectedIndex: idx, hasTags: !segs.isEmpty)
+        contentView.mcvw_applyPagingTagReload(selectedIndex: idx, hasTags: !segs.isEmpty)
         if !segs.isEmpty {
             mcpj_pagingScrollToIndexIfVisible(idx, animated: false)
         }
     }
 
     private func mcpj_pagingScrollToIndexIfVisible(_ index: Int, animated: Bool) {
-        guard let c0 = contentView.mcpj_pagingListContainer, index >= 0 else { return }
+        guard let c0 = contentView.mcvw_pagingListContainer, index >= 0 else { return }
         let apply: () -> Void = { [weak self] in
-            guard let c = self?.contentView.mcpj_pagingListContainer, c.bounds.width > 0 else { return }
+            guard let c = self?.contentView.mcvw_pagingListContainer, c.bounds.width > 0 else { return }
             c.scrollView.setContentOffset(
                 CGPoint(x: CGFloat(index) * c.bounds.width, y: 0),
                 animated: animated
@@ -141,24 +141,24 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
         if mcpj_selectedTagIndex != index {
             mcpj_selectedTagIndex = index
         }
-        contentView.mcpj_tagCollection.reloadData()
-        contentView.mcpj_scrollTagToIndex(index, animated: true)
+        contentView.mcvw_tagCollection.reloadData()
+        contentView.mcvw_scrollTagToIndex(index, animated: true)
     }
 
     private func mcpj_gotoPage(at index: Int, animated: Bool) {
         guard index >= 0, index < mcpj_segmentItems.count else { return }
         let old = mcpj_selectedTagIndex
         if index == old, animated {
-            contentView.mcpj_scrollTagToIndex(index, animated: true)
+            contentView.mcvw_scrollTagToIndex(index, animated: true)
             return
         }
         if index == old { return }
         mcpj_selectedTagIndex = index
-        contentView.mcpj_tagCollection.reloadData()
-        if let c = contentView.mcpj_pagingListContainer, index < mcpj_segmentItems.count {
+        contentView.mcvw_tagCollection.reloadData()
+        if let c = contentView.mcvw_pagingListContainer, index < mcpj_segmentItems.count {
             c.didClickSelectedItem(at: index)
         }
-        if let c = contentView.mcpj_pagingListContainer, c.bounds.width > 0 {
+        if let c = contentView.mcvw_pagingListContainer, c.bounds.width > 0 {
             c.scrollView.setContentOffset(
                 CGPoint(x: CGFloat(index) * c.bounds.width, y: 0),
                 animated: animated
@@ -168,19 +168,19 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
 
     private func mcpj_dequeueTagCell(_ collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MCCShotsTagCell.mcsv_reuseId, for: indexPath
-        ) as! MCCShotsTagCell
+            withReuseIdentifier: MCCProjectsTagCell.mcvw_reuseId, for: indexPath
+        ) as! MCCProjectsTagCell
         if let it = mcpj_segmentItems[safe: indexPath.item] {
             let selected = indexPath.item == mcpj_selectedTagIndex
-            cell.mcsv_titleLabel.text = it.title
-            cell.mcsv_titleLabel.font = .systemFont(
+            cell.mcvw_titleLabel.text = it.title
+            cell.mcvw_titleLabel.font = .systemFont(
                 ofSize: 16,
                 weight: selected ? .semibold : .regular
             )
-            cell.mcsv_titleLabel.textColor = selected ? UIColor(hex: "FFFFFF")! : UIColor(hex: "8E8E93")!
-            cell.mcsv_iconView.isHidden = true
-            cell.mcsv_iconView.sd_cancelCurrentImageLoad()
-            cell.mcsv_iconView.image = nil
+            cell.mcvw_titleLabel.textColor = selected ? UIColor(hex: "FFFFFF")! : UIColor(hex: "8E8E93")!
+            cell.mcvw_iconView.isHidden = true
+            cell.mcvw_iconView.sd_cancelCurrentImageLoad()
+            cell.mcvw_iconView.image = nil
         }
         return cell
     }
@@ -198,7 +198,7 @@ extension MCCProjectsController: JXPagingViewDelegate {
     }
 
     public func viewForPinSectionHeader(in pagingView: JXPagingView) -> UIView {
-        contentView.mcpj_pinHeaderView
+        contentView.mcvw_pinHeaderView
     }
 
     public func numberOfLists(in pagingView: JXPagingView) -> Int {

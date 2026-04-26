@@ -28,7 +28,7 @@ public final class MCCToolsController: MCCViewController<MCCToolsView, MCCEmptyV
 
     public override func mcvc_bind() {
         super.mcvc_bind()
-        let cv = contentView.mctb_collectionView
+        let cv = contentView.mcpj_collectionView
         cv.dataSource = self
         cv.delegate = self
     }
@@ -66,13 +66,13 @@ extension MCCToolsController: UICollectionViewDataSource, UICollectionViewDelega
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MCCToolTextCell.mctb_id,
+            withReuseIdentifier: MCCToolTextCell.mcpj_id,
             for: indexPath
         ) as! MCCToolTextCell
         let item = mctb_items[indexPath.item]
-        cell.mctb_textLabel.text = item.code
-        cell.mctb_textLabel.textColor = .white
-        cell.mctb_textLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        cell.mcpj_textLabel.text = item.code
+        cell.mcpj_textLabel.textColor = UIColor.white
+        cell.mcpj_textLabel.font = UIFont.systemFont(ofSize: 12, weight: .regular)
         cell.contentView.backgroundColor = UIColor(white: 0.12, alpha: 1)
         return cell
     }
@@ -102,7 +102,7 @@ private extension MCCToolsController {
                     self.mctb_groups = []
                     self.mctb_items = []
                 }
-                self.contentView.mctb_collectionView.reloadData()
+                self.contentView.mcpj_collectionView.reloadData()
             }
             .store(in: &cancellables)
     }

@@ -39,12 +39,12 @@ public final class MCCProjectsListPageController: MCCViewController<MCCProjectsL
     public override func mcvc_setupLocalization() {
         super.mcvc_setupLocalization()
         view.backgroundColor = .clear
-        contentView.mcpj_collectionView.backgroundColor = .clear
+        contentView.mcvw_collectionView.backgroundColor = .clear
     }
 
     public override func mcvc_bind() {
         super.mcvc_bind()
-        let cv = contentView.mcpj_collectionView
+        let cv = contentView.mcvw_collectionView
         cv.dataSource = self
         cv.delegate = self
 
@@ -72,7 +72,7 @@ extension MCCProjectsListPageController: JXPagingViewListViewDelegate {
 
     public func listView() -> UIView { view }
 
-    public func listScrollView() -> UIScrollView { contentView.mcpj_collectionView }
+    public func listScrollView() -> UIScrollView { contentView.mcvw_collectionView }
 
     public func listViewDidScrollCallback(callback: @escaping (UIScrollView) -> Void) {
         mcpj_pagingScrollCallback = callback
@@ -162,7 +162,7 @@ extension MCCProjectsListPageController {
         let listState = st.listState
         let isLoadingMore = st.isLoadingMore
         let hasMore = st.hasMore
-        let cv = contentView.mcpj_collectionView
+        let cv = contentView.mcvw_collectionView
         if !listState.isLoading {
             cv.mj_header?.endRefreshing()
         }
@@ -204,10 +204,10 @@ extension MCCProjectsListPageController {
 
     private func mcpj_styleRunCell(_ cell: MCCProjectsRunCell, item: MCSRunItem) {
         let hex = Self.mcpj_placeholderHex(from: item.runId)
-        cell.mcpj_imageContainer.backgroundColor = UIColor(hex: hex) ?? .darkGray
-        cell.mcpj_captionLabel.text = item.runId
-        cell.mcpj_captionLabel.textColor = UIColor(white: 1, alpha: 0.55)
-        cell.mcpj_thumbView.image = nil
+        cell.mcvw_imageContainer.backgroundColor = UIColor(hex: hex) ?? .darkGray
+        cell.mcvw_captionLabel.text = item.runId
+        cell.mcvw_captionLabel.textColor = UIColor(white: 1, alpha: 0.55)
+        cell.mcvw_thumbView.image = nil
     }
 
 }
@@ -221,7 +221,7 @@ extension MCCProjectsListPageController: UICollectionViewDataSource, UICollectio
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MCCProjectsRunCell.mcpj_reuseId, for: indexPath
+            withReuseIdentifier: MCCProjectsRunCell.mcvw_reuseId, for: indexPath
         ) as! MCCProjectsRunCell
         if let item = mcpj_listState.items[safe: indexPath.item] {
             mcpj_styleRunCell(cell, item: item)
