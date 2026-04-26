@@ -14,9 +14,7 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
     public enum MCCStyle {
         case tagsAndDoubleColumn
         case singleColumnList
-        /// Shorts 子列表：仅双列宫格（无顶部分类条）
         case doubleColumnGrid
-        /// Projects 子列表：三列宫格
         case tripleColumnGrid
     }
 

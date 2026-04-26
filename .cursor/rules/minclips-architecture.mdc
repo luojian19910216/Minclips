@@ -15,14 +15,7 @@ alwaysApply: false
 ## 控制器初始化
 
 - 遵循 `MCPViewControllerInitProtocol`：在 `mcvc_init` / `mcvc_configureNav` / `mcvc_setupLocalization` / `mcvc_bind` / `mcvc_loadData` 里接线；避免在 `viewDidLoad` 里堆一套重复逻辑。
-- **文件内顺序**：数据属性 → 视图相关属性 → 状态栏 → `init` → **`mcvc_*` 按 `MCPViewControllerInitProtocol` 顺序**（必要时在 `mcvc_configureNav` 与 `mcvc_setupLocalization` 之间插入 `viewDidLoad` 等）；其下 **`extension`** 依次为 **协议** → **其他方法** → **网络**。见 **`minclips-always.mdc`「单文件代码分布」**。
-
-## 命名规范（mcvc / mcvw）
-
-- **`mcvc_`**：仅用于 **`MCC*Controller`** 类内部——状态、私有方法、以及**子页面控制器**上供父级赋值的 **`public var mcvc_…`**（如列表页的 `mcvc_labelItem`）。
-- **`mcvw_`**：仅用于 **`MCC*View` / Cell / Pop 根视图**——子视图、布局相关方法（如 `mcvw_setupPagingView`）、`reuseId` 等。
-- 在带 `contentView` 的控制器里：**`contentView.mcvw_…`**，禁止 `contentView.mcvc_…`。
-- 全文规则与反例见 **`minclips-always.mdc`**。
+- Controller 子类自有成员前缀 **`mcvc_`**；View / Cell 等自有成员 **`mcvw_`**（`mc` = Minclips，`vc`/`vw` = 控制器 / 视图）。见 **`minclips-always.mdc`**。
 
 ## 视图（摘要）
 
