@@ -244,9 +244,13 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
                     guard let self = self else { return }
                     var s = self.mcpj_listStateByRef[refId] ?? MCCProjectListState()
                     s.listState = state
-                    if let m = state.model, !state.isLoading {
-                        s.items = m.items
-                        s.hasMore = m.items.count >= 20
+                    if let m = state.model, !state.isLoading, state.error == nil {
+                        var list = m.items
+                        if list.isEmpty {
+                            list = Self.mcpj_mockRunItems()
+                        }
+                        s.items = list
+                        s.hasMore = list.count >= 20
                     }
                     self.mcpj_listStateByRef[refId] = s
                     self.mcpj_applyListUI(refId: refId)
@@ -283,6 +287,15 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
         }
         cv.isHidden = false
         cv.reloadData()
+    }
+
+    private static func mcpj_mockRunItems() -> [MCSRunItem] {
+        (0..<10).map { i in
+            var it = MCSRunItem()
+            it.runId = "mock_run_\(i)"
+            it.createTime = Date(timeIntervalSince1970: TimeInterval(1_700_000_000 + i))
+            return it
+        }
     }
 
     private static func mcpj_placeholderHex(from id: String) -> String {
@@ -386,8 +399,16 @@ extension MCCProjectsController: UICollectionViewDataSource, UICollectionViewDel
     }
 
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard collectionView === contentView.mcpj_tagCollection else { return }
-        mcpj_gotoPage(at: indexPath.item, animated: true)
+        if collectionView === contentView.mcpj_tagCollection {
+            mcpj_gotoPage(at: indexPath.item, animated: true)
+            return
+        }
+        guard let ref = mcpj_listRefByCollectionObjectId[ObjectIdentifier(collectionView)],
+              let item = mcpj_listStateByRef[ref]?.items[safe: indexPath.item] else { return }
+        collectionView.deselectItem(at: indexPath, animated: true)
+        let title = item.runId.isEmpty ? "Project" : item.runId
+        let vc = MCCCreationResultController(navigationTitle: title, kind: .failed)
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     public func collectionView(

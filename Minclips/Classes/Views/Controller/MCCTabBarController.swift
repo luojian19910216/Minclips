@@ -39,19 +39,13 @@ public class MCCTabBarController: UITabBarController {
     
     public override var fd_prefersNavigationBarHidden: Bool {
         get {
-            if let nav = self.selectedViewController as? UINavigationController {
-                return nav.topViewController?.fd_prefersNavigationBarHidden ?? false
-            }
             return self.selectedViewController?.fd_prefersNavigationBarHidden ?? false
         }
         set {}
     }
-    
+
     public override var fd_interactivePopDisabled: Bool {
         get {
-            if let nav = self.selectedViewController as? UINavigationController {
-                return nav.topViewController?.fd_interactivePopDisabled ?? false
-            }
             return self.selectedViewController?.fd_interactivePopDisabled ?? false
         }
         set {}
@@ -88,13 +82,7 @@ public class MCCTabBarController: UITabBarController {
         super.viewDidLoad()
         
         self.delegate = self
-        let firstNav = MCCNavigationController(rootViewController: firstVC)
-        firstNav.tabBarItem = firstVC.tabBarItem
-        let secondNav = MCCNavigationController(rootViewController: secondVC)
-        secondNav.tabBarItem = secondVC.tabBarItem
-        let thirdNav = MCCNavigationController(rootViewController: thirdVC)
-        thirdNav.tabBarItem = thirdVC.tabBarItem
-        self.viewControllers = [firstNav, secondNav, thirdNav]
+        self.viewControllers = [firstVC, secondVC, thirdVC]
         
         self.tabBar.mc_barStyle = .glassDark
         
@@ -119,8 +107,8 @@ extension MCCTabBarController: UITabBarControllerDelegate {
     }
     
     public func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        (viewController as? UINavigationController)?.setNavigationBarHidden(
-            self.fd_prefersNavigationBarHidden,
+        tabBarController.navigationController?.setNavigationBarHidden(
+            tabBarController.fd_prefersNavigationBarHidden,
             animated: false
         )
     }

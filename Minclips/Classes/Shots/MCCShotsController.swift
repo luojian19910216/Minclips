@@ -223,9 +223,13 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
                     guard let self = self else { return }
                     var s = self.mcsv_listStateByRef[refId] ?? MCCShotsListState()
                     s.listState = state
-                    if let m = state.model, !state.isLoading {
-                        s.items = m.items
-                        s.hasMore = m.items.count >= 20
+                    if let m = state.model, !state.isLoading, state.error == nil {
+                        var list = m.items
+                        if list.isEmpty {
+                            list = Self.mcsv_mockFeedItems()
+                        }
+                        s.items = list
+                        s.hasMore = list.count >= 20
                     }
                     self.mcsv_listStateByRef[refId] = s
                     self.mcsv_applyListUI(refId: refId)
@@ -262,6 +266,14 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
         }
         cv.isHidden = false
         cv.reloadData()
+    }
+
+    private static func mcsv_mockFeedItems() -> [MCSFeedItem] {
+        (0..<10).map { i in
+            var it = MCSFeedItem()
+            it.itemId = "mock_shot_\(i)"
+            return it
+        }
     }
 
     private static func mcsv_placeholderHex(from id: String) -> String {

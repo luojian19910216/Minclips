@@ -30,7 +30,7 @@ public final class MCCShotsView: MCCBaseView {
         return v
     }()
 
-    private var mcsv_pagingViewRef: JXPagingView?
+    private var mcsv_pagingViewRef: JXPagingListRefreshView?
 
     public var mcsv_pagingListContainer: JXPagingListContainerView? { mcsv_pagingViewRef?.listContainerView }
 
@@ -40,7 +40,7 @@ public final class MCCShotsView: MCCBaseView {
     }
 
     public func mcsv_setupPagingView(delegate: JXPagingViewDelegate) {
-        let pv = JXPagingView(delegate: delegate, listContainerType: .scrollView)
+        let pv = JXPagingListRefreshView(delegate: delegate, listContainerType: .scrollView)
         pv.mainTableView.backgroundColor = .clear
         pv.allowsCacheList = true
         mcsv_pagingViewRef = pv

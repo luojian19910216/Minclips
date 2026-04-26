@@ -29,7 +29,7 @@ public final class MCCProjectsView: MCCBaseView {
         return v
     }()
 
-    private var mcpj_pagingViewRef: JXPagingView?
+    private var mcpj_pagingViewRef: JXPagingListRefreshView?
 
     public var mcpj_pagingListContainer: JXPagingListContainerView? { mcpj_pagingViewRef?.listContainerView }
 
@@ -39,7 +39,7 @@ public final class MCCProjectsView: MCCBaseView {
     }
 
     public func mcpj_setupPagingView(delegate: JXPagingViewDelegate) {
-        let pv = JXPagingView(delegate: delegate, listContainerType: .scrollView)
+        let pv = JXPagingListRefreshView(delegate: delegate, listContainerType: .scrollView)
         pv.mainTableView.backgroundColor = .clear
         pv.allowsCacheList = true
         mcpj_pagingViewRef = pv
