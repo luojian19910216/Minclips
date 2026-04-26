@@ -7,16 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		030D06AF2F3AE2C2003A0AB8 /* MCCShopDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030D06AE2F3AE2C2003A0AB8 /* MCCShopDetailController.swift */; };
-		030D06B02F3AE2C2003A0AB8 /* MCCShopDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030D06AE2F3AE2C2003A0AB8 /* MCCShopDetailController.swift */; };
-		03D2F3862F39DC15001F28A1 /* MCCShopHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3852F39DC15001F28A1 /* MCCShopHomeController.swift */; };
-		03D2F3872F39DC15001F28A1 /* MCCShopHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3852F39DC15001F28A1 /* MCCShopHomeController.swift */; };
-		03D2F3892F39DC5B001F28A1 /* MCCShopCategoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3882F39DC5B001F28A1 /* MCCShopCategoryController.swift */; };
-		03D2F38A2F39DC5B001F28A1 /* MCCShopCategoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3882F39DC5B001F28A1 /* MCCShopCategoryController.swift */; };
-		03D2F38C2F39DC6E001F28A1 /* MCCShopCartController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F38B2F39DC6E001F28A1 /* MCCShopCartController.swift */; };
-		03D2F38D2F39DC6E001F28A1 /* MCCShopCartController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F38B2F39DC6E001F28A1 /* MCCShopCartController.swift */; };
-		03D2F38F2F39DCAC001F28A1 /* MCCUserHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F38E2F39DCAC001F28A1 /* MCCUserHomeController.swift */; };
-		03D2F3902F39DCAC001F28A1 /* MCCUserHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F38E2F39DCAC001F28A1 /* MCCUserHomeController.swift */; };
 		03D9D0A63817DA37B87229E6 /* Pods_Minclips_D.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 413CC65523E70A841D7E6C8A /* Pods_Minclips_D.framework */; };
 		03F0195F2F8CB97F0096831D /* MCCAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0195E2F8CB97F0096831D /* MCCAppState.swift */; };
 		03F019602F8CB97F0096831D /* MCCAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0195E2F8CB97F0096831D /* MCCAppState.swift */; };
@@ -57,44 +47,34 @@
 		F6588BBD2EFA41AF00A094B5 /* MCCCfViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BBC2EFA41AF00A094B5 /* MCCCfViewModel.swift */; };
 		F6588BBE2EFA41AF00A094B5 /* MCCCfViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BBC2EFA41AF00A094B5 /* MCCCfViewModel.swift */; };
 		F6D545FC2F90B9B8002C4F70 /* MCCGuideController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB62EFA402000A094B5 /* MCCGuideController.swift */; };
-		F6D545FE2F90B9B8002C4F70 /* MCCUserHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F38E2F39DCAC001F28A1 /* MCCUserHomeController.swift */; };
 		F6D546002F90B9B8002C4F70 /* MCCLaunchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB32EFA401200A094B5 /* MCCLaunchController.swift */; };
 		F6D546042F90B9B8002C4F70 /* MCCAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0195E2F8CB97F0096831D /* MCCAppState.swift */; };
 		F6D546062F90B9B8002C4F70 /* MCCAppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65889502EF8E26600A094B5 /* MCCAppRouter.swift */; };
-		F6D5460A2F90B9B8002C4F70 /* MCCShopCartController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F38B2F39DC6E001F28A1 /* MCCShopCartController.swift */; };
 		F6D5460D2F90B9B8002C4F70 /* MCCGuideViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0196A2F8CF91A0096831D /* MCCGuideViewModel.swift */; };
 		F6D5460F2F90B9B8002C4F70 /* MCCAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */; };
 		F6D546162F90B9B8002C4F70 /* MCSGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019672F8CF6E90096831D /* MCSGuide.swift */; };
 		F6D546172F90B9B8002C4F70 /* MCCTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB92EFA402B00A094B5 /* MCCTabBarController.swift */; };
 		F6D546192F90B9B8002C4F70 /* MCCGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019642F8CF6A50096831D /* MCCGuideView.swift */; };
-		F6D5461C2F90B9B8002C4F70 /* MCCShopDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030D06AE2F3AE2C2003A0AB8 /* MCCShopDetailController.swift */; };
-		F6D5461D2F90B9B8002C4F70 /* MCCShopCategoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3882F39DC5B001F28A1 /* MCCShopCategoryController.swift */; };
 		F6D546222F90B9B8002C4F70 /* MCCCfViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BBC2EFA41AF00A094B5 /* MCCCfViewModel.swift */; };
 		F6D546262F90B9B8002C4F70 /* MCCAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C62EF5548800A094B5 /* MCCAppConfig.swift */; };
 		F6D546452F90B9B8002C4F70 /* MCCLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019612F8CF67C0096831D /* MCCLaunchView.swift */; };
-		F6D5464A2F90B9B8002C4F70 /* MCCShopHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3852F39DC15001F28A1 /* MCCShopHomeController.swift */; };
 		F6D5464F2F90B9B8002C4F70 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889792EF8E95900A094B5 /* Localizable.strings */; };
 		F6D546512F90B9B8002C4F70 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889752EF8E93F00A094B5 /* InfoPlist.strings */; };
 		F6D546522F90B9B8002C4F70 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F65886652EF5475A00A094B5 /* Images.xcassets */; };
 		F6D546532F90B9B8002C4F70 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F65886672EF5475A00A094B5 /* LaunchScreen.storyboard */; };
 		F6D5465E2F90B9C9002C4F70 /* MCCGuideController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB62EFA402000A094B5 /* MCCGuideController.swift */; };
-		F6D546602F90B9C9002C4F70 /* MCCUserHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F38E2F39DCAC001F28A1 /* MCCUserHomeController.swift */; };
 		F6D546622F90B9C9002C4F70 /* MCCLaunchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB32EFA401200A094B5 /* MCCLaunchController.swift */; };
 		F6D546662F90B9C9002C4F70 /* MCCAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0195E2F8CB97F0096831D /* MCCAppState.swift */; };
 		F6D546682F90B9C9002C4F70 /* MCCAppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65889502EF8E26600A094B5 /* MCCAppRouter.swift */; };
-		F6D5466C2F90B9C9002C4F70 /* MCCShopCartController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F38B2F39DC6E001F28A1 /* MCCShopCartController.swift */; };
 		F6D5466F2F90B9C9002C4F70 /* MCCGuideViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0196A2F8CF91A0096831D /* MCCGuideViewModel.swift */; };
 		F6D546712F90B9C9002C4F70 /* MCCAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */; };
 		F6D546782F90B9C9002C4F70 /* MCSGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019672F8CF6E90096831D /* MCSGuide.swift */; };
 		F6D546792F90B9C9002C4F70 /* MCCTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB92EFA402B00A094B5 /* MCCTabBarController.swift */; };
 		F6D5467A2F90B9B8002C4F70 /* MCCAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */; };
 		F6D5467B2F90B9C9002C4F70 /* MCCGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019642F8CF6A50096831D /* MCCGuideView.swift */; };
-		F6D5467E2F90B9C9002C4F70 /* MCCShopDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 030D06AE2F3AE2C2003A0AB8 /* MCCShopDetailController.swift */; };
-		F6D5467F2F90B9C9002C4F70 /* MCCShopCategoryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3882F39DC5B001F28A1 /* MCCShopCategoryController.swift */; };
 		F6D546842F90B9C9002C4F70 /* MCCCfViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BBC2EFA41AF00A094B5 /* MCCCfViewModel.swift */; };
 		F6D546882F90B9C9002C4F70 /* MCCAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C62EF5548800A094B5 /* MCCAppConfig.swift */; };
 		F6D546A72F90B9C9002C4F70 /* MCCLaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019612F8CF67C0096831D /* MCCLaunchView.swift */; };
-		F6D546AC2F90B9C9002C4F70 /* MCCShopHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03D2F3852F39DC15001F28A1 /* MCCShopHomeController.swift */; };
 		F6D546B12F90B9C9002C4F70 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889792EF8E95900A094B5 /* Localizable.strings */; };
 		F6D546B32F90B9C9002C4F70 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F65889752EF8E93F00A094B5 /* InfoPlist.strings */; };
 		F6D546B42F90B9C9002C4F70 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F65886652EF5475A00A094B5 /* Images.xcassets */; };
@@ -135,10 +115,6 @@
 		F6D547722F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
 		F6D547732F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
 		F6D547742F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
-		F6E2B0212FA20301002C4F70 /* MCCShotsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0112FA20301002C4F70 /* MCCShotsViewModel.swift */; };
-		F6E2B0222FA20301002C4F70 /* MCCShotsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0112FA20301002C4F70 /* MCCShotsViewModel.swift */; };
-		F6E2B0232FA20301002C4F70 /* MCCShotsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0112FA20301002C4F70 /* MCCShotsViewModel.swift */; };
-		F6E2B0242FA20301002C4F70 /* MCCShotsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0112FA20301002C4F70 /* MCCShotsViewModel.swift */; };
 		F6E2B0252FA20301002C4F70 /* MCCShotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */; };
 		F6E2B0262FA20301002C4F70 /* MCCShotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */; };
 		F6E2B0272FA20301002C4F70 /* MCCShotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */; };
@@ -151,19 +127,30 @@
 		F6E2B03B2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0392FA20301002C4F70 /* MCCShotsListPageController.swift */; };
 		F6E2B03C2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0392FA20301002C4F70 /* MCCShotsListPageController.swift */; };
 		F6E2B03D2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0392FA20301002C4F70 /* MCCShotsListPageController.swift */; };
-		F6E2B03E2FA20401002C4F70 /* MCCShotsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B03F2FA20401002C4F70 /* MCCShotsListViewModel.swift */; };
-		F6E2B0402FA20401002C4F70 /* MCCShotsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B03F2FA20401002C4F70 /* MCCShotsListViewModel.swift */; };
-		F6E2B0412FA20401002C4F70 /* MCCShotsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B03F2FA20401002C4F70 /* MCCShotsListViewModel.swift */; };
-		F6E2B0422FA20401002C4F70 /* MCCShotsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B03F2FA20401002C4F70 /* MCCShotsListViewModel.swift */; };
+		F6E2B0582FA20501002C4F70 /* MCCShotsListPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B04A2FA20501002C4F70 /* MCCShotsListPageView.swift */; };
+		F6E2B0592FA20501002C4F70 /* MCCShotsListPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B04A2FA20501002C4F70 /* MCCShotsListPageView.swift */; };
+		F6E2B05A2FA20501002C4F70 /* MCCShotsListPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B04A2FA20501002C4F70 /* MCCShotsListPageView.swift */; };
+		F6E2B05B2FA20501002C4F70 /* MCCShotsListPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B04A2FA20501002C4F70 /* MCCShotsListPageView.swift */; };
+		F6E2C1202FC0010002C4F70 /* MCCProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1002FC0010002C4F70 /* MCCProjectsView.swift */; };
+		F6E2C1212FC0010002C4F70 /* MCCProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1002FC0010002C4F70 /* MCCProjectsView.swift */; };
+		F6E2C1222FC0010002C4F70 /* MCCProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1002FC0010002C4F70 /* MCCProjectsView.swift */; };
+		F6E2C1232FC0010002C4F70 /* MCCProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1002FC0010002C4F70 /* MCCProjectsView.swift */; };
+		F6E2C1242FC0010002C4F70 /* MCCProjectsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1012FC0010002C4F70 /* MCCProjectsController.swift */; };
+		F6E2C1252FC0010002C4F70 /* MCCProjectsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1012FC0010002C4F70 /* MCCProjectsController.swift */; };
+		F6E2C1262FC0010002C4F70 /* MCCProjectsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1012FC0010002C4F70 /* MCCProjectsController.swift */; };
+		F6E2C1272FC0010002C4F70 /* MCCProjectsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1012FC0010002C4F70 /* MCCProjectsController.swift */; };
+		F6E2C1282FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1022FC0010002C4F70 /* MCCProjectsListPageView.swift */; };
+		F6E2C1292FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1022FC0010002C4F70 /* MCCProjectsListPageView.swift */; };
+		F6E2C12A2FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1022FC0010002C4F70 /* MCCProjectsListPageView.swift */; };
+		F6E2C12B2FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1022FC0010002C4F70 /* MCCProjectsListPageView.swift */; };
+		F6E2C12C2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */; };
+		F6E2C12D2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */; };
+		F6E2C12E2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */; };
+		F6E2C12F2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		030D06AE2F3AE2C2003A0AB8 /* MCCShopDetailController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShopDetailController.swift; sourceTree = "<group>"; };
 		0335A246D2DC973F502DDD40 /* Pods_Minclips_P.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Minclips_P.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		03D2F3852F39DC15001F28A1 /* MCCShopHomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShopHomeController.swift; sourceTree = "<group>"; };
-		03D2F3882F39DC5B001F28A1 /* MCCShopCategoryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShopCategoryController.swift; sourceTree = "<group>"; };
-		03D2F38B2F39DC6E001F28A1 /* MCCShopCartController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShopCartController.swift; sourceTree = "<group>"; };
-		03D2F38E2F39DCAC001F28A1 /* MCCUserHomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCUserHomeController.swift; sourceTree = "<group>"; };
 		03F0195E2F8CB97F0096831D /* MCCAppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCAppState.swift; sourceTree = "<group>"; };
 		03F019612F8CF67C0096831D /* MCCLaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCLaunchView.swift; sourceTree = "<group>"; };
 		03F019642F8CF6A50096831D /* MCCGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCGuideView.swift; sourceTree = "<group>"; };
@@ -206,11 +193,14 @@
 		F6D547622F9B478A002C4F70 /* MCCSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCSheetController.swift; sourceTree = "<group>"; };
 		F6D547632F9B478A002C4F70 /* MCCViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCViewController.swift; sourceTree = "<group>"; };
 		F6D547702F9B4796002C4F70 /* MCCBaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCBaseView.swift; sourceTree = "<group>"; };
-		F6E2B0112FA20301002C4F70 /* MCCShotsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsViewModel.swift; sourceTree = "<group>"; };
 		F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsView.swift; sourceTree = "<group>"; };
 		F6E2B0132FA20301002C4F70 /* MCCShotsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsController.swift; sourceTree = "<group>"; };
 		F6E2B0392FA20301002C4F70 /* MCCShotsListPageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsListPageController.swift; sourceTree = "<group>"; };
-		F6E2B03F2FA20401002C4F70 /* MCCShotsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsListViewModel.swift; sourceTree = "<group>"; };
+		F6E2B04A2FA20501002C4F70 /* MCCShotsListPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsListPageView.swift; sourceTree = "<group>"; };
+		F6E2C1002FC0010002C4F70 /* MCCProjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProjectsView.swift; sourceTree = "<group>"; };
+		F6E2C1012FC0010002C4F70 /* MCCProjectsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProjectsController.swift; sourceTree = "<group>"; };
+		F6E2C1022FC0010002C4F70 /* MCCProjectsListPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProjectsListPageView.swift; sourceTree = "<group>"; };
+		F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProjectsListPageController.swift; sourceTree = "<group>"; };
 		F72C010043D4413B9E5D4761 /* Pods-Minclips_D.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_D.release.xcconfig"; path = "Target Support Files/Pods-Minclips_D/Pods-Minclips_D.release.xcconfig"; sourceTree = "<group>"; };
 		FD04B3C983B934D49261DA0A /* Pods-Minclips_P.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_P.debug.xcconfig"; path = "Target Support Files/Pods-Minclips_P/Pods-Minclips_P.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -269,11 +259,10 @@
 		A0B46A5B2F9C8FE800DAC813 /* AI */ = {
 			isa = PBXGroup;
 			children = (
-				F6E2B0112FA20301002C4F70 /* MCCShotsViewModel.swift */,
 				F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */,
 				F6E2B0132FA20301002C4F70 /* MCCShotsController.swift */,
+				F6E2B04A2FA20501002C4F70 /* MCCShotsListPageView.swift */,
 				F6E2B0392FA20301002C4F70 /* MCCShotsListPageController.swift */,
-				F6E2B03F2FA20401002C4F70 /* MCCShotsListViewModel.swift */,
 			);
 			path = AI;
 			sourceTree = "<group>";
@@ -347,6 +336,7 @@
 			isa = PBXGroup;
 			children = (
 				A0B46A5B2F9C8FE800DAC813 /* AI */,
+				F6E2C0F02FC0010002C4F70 /* Project */,
 				F658896A2EF8E48600A094B5 /* Models */,
 				F65889692EF8E48300A094B5 /* Views */,
 				F65889682EF8E48000A094B5 /* ViewModels */,
@@ -391,11 +381,6 @@
 				F6D547612F9B478A002C4F70 /* MCCPopController.swift */,
 				F6588BB32EFA401200A094B5 /* MCCLaunchController.swift */,
 				F6588BB62EFA402000A094B5 /* MCCGuideController.swift */,
-				03D2F3852F39DC15001F28A1 /* MCCShopHomeController.swift */,
-				03D2F3882F39DC5B001F28A1 /* MCCShopCategoryController.swift */,
-				03D2F38B2F39DC6E001F28A1 /* MCCShopCartController.swift */,
-				03D2F38E2F39DCAC001F28A1 /* MCCUserHomeController.swift */,
-				030D06AE2F3AE2C2003A0AB8 /* MCCShopDetailController.swift */,
 				F6D546E12F922579002C4F70 /* MCCPresentController.swift */,
 				F6D546D12F90E390002C4F70 /* MCCBottomSheetController.swift */,
 				F6D546FF2F95D17E002C4F70 /* MCCTopPopController.swift */,
@@ -438,6 +423,17 @@
 				03F019642F8CF6A50096831D /* MCCGuideView.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		F6E2C0F02FC0010002C4F70 /* Project */ = {
+			isa = PBXGroup;
+			children = (
+				F6E2C1002FC0010002C4F70 /* MCCProjectsView.swift */,
+				F6E2C1012FC0010002C4F70 /* MCCProjectsController.swift */,
+				F6E2C1022FC0010002C4F70 /* MCCProjectsListPageView.swift */,
+				F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */,
+			);
+			path = Project;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -615,9 +611,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_P/Pods-Minclips_P-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_P/Pods-Minclips_P-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -698,9 +698,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_R/Pods-Minclips_R-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_R/Pods-Minclips_R-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -715,9 +719,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_T/Pods-Minclips_T-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_T/Pods-Minclips_T-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -732,9 +740,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_D/Pods-Minclips_D-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_D/Pods-Minclips_D-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -771,11 +783,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				F6588BB82EFA402000A094B5 /* MCCGuideController.swift in Sources */,
-				03D2F3902F39DCAC001F28A1 /* MCCUserHomeController.swift in Sources */,
 				F6588BB42EFA401200A094B5 /* MCCLaunchController.swift in Sources */,
 				03F019602F8CB97F0096831D /* MCCAppState.swift in Sources */,
 				F65889512EF8E26600A094B5 /* MCCAppRouter.swift in Sources */,
-				03D2F38D2F39DC6E001F28A1 /* MCCShopCartController.swift in Sources */,
 				03F0196C2F8CF91A0096831D /* MCCGuideViewModel.swift in Sources */,
 				F6D5476A2F9B478A002C4F70 /* MCCPopController.swift in Sources */,
 				F6D5476B2F9B478A002C4F70 /* MCCSheetController.swift in Sources */,
@@ -787,8 +797,6 @@
 				F6588BBA2EFA402B00A094B5 /* MCCTabBarController.swift in Sources */,
 				F6D547602F9B462C002C4F70 /* MCCNavigationController.swift in Sources */,
 				03F019662F8CF6A50096831D /* MCCGuideView.swift in Sources */,
-				030D06B02F3AE2C2003A0AB8 /* MCCShopDetailController.swift in Sources */,
-				03D2F38A2F39DC5B001F28A1 /* MCCShopCategoryController.swift in Sources */,
 				F6588BBD2EFA41AF00A094B5 /* MCCCfViewModel.swift in Sources */,
 				F6D5471B2F9636F1002C4F70 /* MCCEaseInPopController.swift in Sources */,
 				F6D547712F9B4796002C4F70 /* MCCBaseView.swift in Sources */,
@@ -796,12 +804,14 @@
 				F65888C92EF5548800A094B5 /* MCCAppConfig.swift in Sources */,
 				F6D546E42F922579002C4F70 /* MCCPresentController.swift in Sources */,
 				03F019632F8CF67C0096831D /* MCCLaunchView.swift in Sources */,
-				03D2F3862F39DC15001F28A1 /* MCCShopHomeController.swift in Sources */,
-				F6E2B0212FA20301002C4F70 /* MCCShotsViewModel.swift in Sources */,
 				F6E2B0252FA20301002C4F70 /* MCCShotsView.swift in Sources */,
 				F6E2B0292FA20301002C4F70 /* MCCShotsController.swift in Sources */,
 				F6E2B03A2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */,
-				F6E2B03E2FA20401002C4F70 /* MCCShotsListViewModel.swift in Sources */,
+				F6E2B0582FA20501002C4F70 /* MCCShotsListPageView.swift in Sources */,
+				F6E2C1202FC0010002C4F70 /* MCCProjectsView.swift in Sources */,
+				F6E2C1242FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
+				F6E2C1282FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
+				F6E2C12C2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -812,32 +822,30 @@
 				F6D5467A2F90B9B8002C4F70 /* MCCAppDelegate.swift in Sources */,
 				F614F8522F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */,
 				F6D547722F9B4796002C4F70 /* MCCBaseView.swift in Sources */,
-				03D2F38C2F39DC6E001F28A1 /* MCCShopCartController.swift in Sources */,
 				F6588BB52EFA401200A094B5 /* MCCLaunchController.swift in Sources */,
 				F6D547022F95D17E002C4F70 /* MCCTopPopController.swift in Sources */,
 				03F019622F8CF67C0096831D /* MCCLaunchView.swift in Sources */,
 				F6D5471C2F9636F1002C4F70 /* MCCEaseInPopController.swift in Sources */,
 				03F0196B2F8CF91A0096831D /* MCCGuideViewModel.swift in Sources */,
 				F6D546E22F922579002C4F70 /* MCCPresentController.swift in Sources */,
-				03D2F3892F39DC5B001F28A1 /* MCCShopCategoryController.swift in Sources */,
-				03D2F38F2F39DCAC001F28A1 /* MCCUserHomeController.swift in Sources */,
 				F6D546D22F90E390002C4F70 /* MCCBottomSheetController.swift in Sources */,
 				F65888CA2EF5548800A094B5 /* MCCAppConfig.swift in Sources */,
 				03F0195F2F8CB97F0096831D /* MCCAppState.swift in Sources */,
 				F65889522EF8E26600A094B5 /* MCCAppRouter.swift in Sources */,
 				03F019682F8CF6E90096831D /* MCSGuide.swift in Sources */,
 				F6D5475F2F9B462C002C4F70 /* MCCNavigationController.swift in Sources */,
-				030D06AF2F3AE2C2003A0AB8 /* MCCShopDetailController.swift in Sources */,
 				03F019652F8CF6A50096831D /* MCCGuideView.swift in Sources */,
 				F6D547642F9B478A002C4F70 /* MCCPopController.swift in Sources */,
 				F6D547652F9B478A002C4F70 /* MCCSheetController.swift in Sources */,
 				F6D547662F9B478A002C4F70 /* MCCViewController.swift in Sources */,
-				03D2F3872F39DC15001F28A1 /* MCCShopHomeController.swift in Sources */,
-				F6E2B0222FA20301002C4F70 /* MCCShotsViewModel.swift in Sources */,
 				F6E2B0262FA20301002C4F70 /* MCCShotsView.swift in Sources */,
 				F6E2B02A2FA20301002C4F70 /* MCCShotsController.swift in Sources */,
 				F6E2B03B2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */,
-				F6E2B0402FA20401002C4F70 /* MCCShotsListViewModel.swift in Sources */,
+				F6E2B0592FA20501002C4F70 /* MCCShotsListPageView.swift in Sources */,
+				F6E2C1212FC0010002C4F70 /* MCCProjectsView.swift in Sources */,
+				F6E2C1252FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
+				F6E2C1292FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
+				F6E2C12D2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
 				F6588BBB2EFA402B00A094B5 /* MCCTabBarController.swift in Sources */,
 				F6588BBE2EFA41AF00A094B5 /* MCCCfViewModel.swift in Sources */,
 				F6588BB72EFA402000A094B5 /* MCCGuideController.swift in Sources */,
@@ -849,11 +857,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				F6D545FC2F90B9B8002C4F70 /* MCCGuideController.swift in Sources */,
-				F6D545FE2F90B9B8002C4F70 /* MCCUserHomeController.swift in Sources */,
 				F6D546002F90B9B8002C4F70 /* MCCLaunchController.swift in Sources */,
 				F6D546042F90B9B8002C4F70 /* MCCAppState.swift in Sources */,
 				F6D546062F90B9B8002C4F70 /* MCCAppRouter.swift in Sources */,
-				F6D5460A2F90B9B8002C4F70 /* MCCShopCartController.swift in Sources */,
 				F6D5460D2F90B9B8002C4F70 /* MCCGuideViewModel.swift in Sources */,
 				F6D547672F9B478A002C4F70 /* MCCPopController.swift in Sources */,
 				F6D547682F9B478A002C4F70 /* MCCSheetController.swift in Sources */,
@@ -865,8 +871,6 @@
 				F6D546172F90B9B8002C4F70 /* MCCTabBarController.swift in Sources */,
 				F6D5475E2F9B462C002C4F70 /* MCCNavigationController.swift in Sources */,
 				F6D546192F90B9B8002C4F70 /* MCCGuideView.swift in Sources */,
-				F6D5461C2F90B9B8002C4F70 /* MCCShopDetailController.swift in Sources */,
-				F6D5461D2F90B9B8002C4F70 /* MCCShopCategoryController.swift in Sources */,
 				F6D546222F90B9B8002C4F70 /* MCCCfViewModel.swift in Sources */,
 				F6D5471D2F9636F1002C4F70 /* MCCEaseInPopController.swift in Sources */,
 				F6D547732F9B4796002C4F70 /* MCCBaseView.swift in Sources */,
@@ -874,12 +878,14 @@
 				F6D546262F90B9B8002C4F70 /* MCCAppConfig.swift in Sources */,
 				F6D546E52F922579002C4F70 /* MCCPresentController.swift in Sources */,
 				F6D546452F90B9B8002C4F70 /* MCCLaunchView.swift in Sources */,
-				F6D5464A2F90B9B8002C4F70 /* MCCShopHomeController.swift in Sources */,
-				F6E2B0232FA20301002C4F70 /* MCCShotsViewModel.swift in Sources */,
 				F6E2B0272FA20301002C4F70 /* MCCShotsView.swift in Sources */,
 				F6E2B02B2FA20301002C4F70 /* MCCShotsController.swift in Sources */,
 				F6E2B03C2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */,
-				F6E2B0412FA20401002C4F70 /* MCCShotsListViewModel.swift in Sources */,
+				F6E2B05A2FA20501002C4F70 /* MCCShotsListPageView.swift in Sources */,
+				F6E2C1222FC0010002C4F70 /* MCCProjectsView.swift in Sources */,
+				F6E2C1262FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
+				F6E2C12A2FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
+				F6E2C12E2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -888,11 +894,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				F6D5465E2F90B9C9002C4F70 /* MCCGuideController.swift in Sources */,
-				F6D546602F90B9C9002C4F70 /* MCCUserHomeController.swift in Sources */,
 				F6D546622F90B9C9002C4F70 /* MCCLaunchController.swift in Sources */,
 				F6D546662F90B9C9002C4F70 /* MCCAppState.swift in Sources */,
 				F6D546682F90B9C9002C4F70 /* MCCAppRouter.swift in Sources */,
-				F6D5466C2F90B9C9002C4F70 /* MCCShopCartController.swift in Sources */,
 				F6D5466F2F90B9C9002C4F70 /* MCCGuideViewModel.swift in Sources */,
 				F6D5476D2F9B478A002C4F70 /* MCCPopController.swift in Sources */,
 				F6D5476E2F9B478A002C4F70 /* MCCSheetController.swift in Sources */,
@@ -904,8 +908,6 @@
 				F6D546792F90B9C9002C4F70 /* MCCTabBarController.swift in Sources */,
 				F6D5475D2F9B462C002C4F70 /* MCCNavigationController.swift in Sources */,
 				F6D5467B2F90B9C9002C4F70 /* MCCGuideView.swift in Sources */,
-				F6D5467E2F90B9C9002C4F70 /* MCCShopDetailController.swift in Sources */,
-				F6D5467F2F90B9C9002C4F70 /* MCCShopCategoryController.swift in Sources */,
 				F6D546842F90B9C9002C4F70 /* MCCCfViewModel.swift in Sources */,
 				F6D5471A2F9636F1002C4F70 /* MCCEaseInPopController.swift in Sources */,
 				F6D547742F9B4796002C4F70 /* MCCBaseView.swift in Sources */,
@@ -913,12 +915,14 @@
 				F6D546882F90B9C9002C4F70 /* MCCAppConfig.swift in Sources */,
 				F6D546E32F922579002C4F70 /* MCCPresentController.swift in Sources */,
 				F6D546A72F90B9C9002C4F70 /* MCCLaunchView.swift in Sources */,
-				F6D546AC2F90B9C9002C4F70 /* MCCShopHomeController.swift in Sources */,
-				F6E2B0242FA20301002C4F70 /* MCCShotsViewModel.swift in Sources */,
 				F6E2B0282FA20301002C4F70 /* MCCShotsView.swift in Sources */,
 				F6E2B02C2FA20301002C4F70 /* MCCShotsController.swift in Sources */,
 				F6E2B03D2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */,
-				F6E2B0422FA20401002C4F70 /* MCCShotsListViewModel.swift in Sources */,
+				F6E2B05B2FA20501002C4F70 /* MCCShotsListPageView.swift in Sources */,
+				F6E2C1232FC0010002C4F70 /* MCCProjectsView.swift in Sources */,
+				F6E2C1272FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
+				F6E2C12B2FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
+				F6E2C12F2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

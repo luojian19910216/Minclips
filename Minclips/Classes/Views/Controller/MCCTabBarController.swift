@@ -58,15 +58,15 @@ public class MCCTabBarController: UITabBarController {
         return vc
     }()
     
-    public lazy var secondVC: MCCShopCategoryController = {
-        let vc = MCCShopCategoryController()
+    public lazy var secondVC: MCCViewController = {
+        let vc = MCCViewController()
         vc.tabBarItem.image = UIImage(named: "ic_tab_home")?.withRenderingMode(.alwaysTemplate)
         vc.tabBarItem.title = "Tools"
         return vc
     }()
     
-    public lazy var thirdVC: MCCShopCartController = {
-        let vc = MCCShopCartController()
+    public lazy var thirdVC: MCCProjectsController = {
+        let vc = MCCProjectsController()
         vc.tabBarItem.image = UIImage(named: "ic_tab_home")?.withRenderingMode(.alwaysTemplate)
         vc.tabBarItem.title = "Projects"
         return vc

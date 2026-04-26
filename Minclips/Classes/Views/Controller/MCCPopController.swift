@@ -56,7 +56,7 @@ open class MCCPopController<View: MCCBasePopView, ViewModel: MCCBaseViewModel>: 
     
     // MARK: - Init
     
-    open override func mcvc_bindService() {
+    open override func mcvc_bind() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(hide))
         contentView.dimmingView.addGestureRecognizer(tap)
     }

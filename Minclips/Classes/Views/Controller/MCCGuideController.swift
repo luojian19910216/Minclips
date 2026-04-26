@@ -9,7 +9,7 @@ public class MCCGuideController: MCCViewController<MCCGuideView, MCCGuideViewMod
     
     // MARK: - Init
 
-    public override func mcvc_bindService() {
+    public override func mcvc_bind() {
         self.contentView.bindInput(
             MCCGuideViewInput(
                 models: self.viewModel.$models

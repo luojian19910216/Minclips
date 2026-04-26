@@ -25,7 +25,7 @@ public protocol MCPViewControllerInitProtocol {
     ///
     func mcvc_setupLocalization()
     ///
-    func mcvc_bindService()
+    func mcvc_bind()
     ///
     func mcvc_loadData()
 }
@@ -92,7 +92,7 @@ open class MCCViewControllerCore: UIViewController, MCPViewControllerInitProtoco
         self.view.backgroundColor = UIColor(hex: "0F0F12")
         
         self.mcvc_setupLocalization()
-        self.mcvc_bindService()
+        self.mcvc_bind()
         self.mcvc_loadData()
         
         self.registerNotifications()
@@ -159,7 +159,7 @@ open class MCCViewControllerCore: UIViewController, MCPViewControllerInitProtoco
     
     open func mcvc_setupLocalization() {}
         
-    open func mcvc_bindService() {}
+    open func mcvc_bind() {}
     
     open func mcvc_loadData() {}
     
