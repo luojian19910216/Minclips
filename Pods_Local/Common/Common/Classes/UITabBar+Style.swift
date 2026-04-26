@@ -14,9 +14,7 @@ public enum MCETabBarStyle: Int {
 extension UITabBar {
 
     public var mc_shadowHidden: Bool {
-        get {
-            return objc_getAssociatedObject(self, &mc_shadowHiddenKey) as? Bool ?? false
-        }
+        get { objc_getAssociatedObject(self, &mc_shadowHiddenKey) as? Bool ?? false }
         set {
             objc_setAssociatedObject(self, &mc_shadowHiddenKey, newValue, .OBJC_ASSOCIATION_COPY_NONATOMIC)
 
@@ -28,52 +26,83 @@ extension UITabBar {
     }
 
     public var mc_barStyle: MCETabBarStyle {
-        get {
-            return MCETabBarStyle(rawValue: (objc_getAssociatedObject(self, &mc_barStyleKey) as? Int) ?? 0) ?? .glassDark
-        }
+        get { MCETabBarStyle(rawValue: (objc_getAssociatedObject(self, &mc_barStyleKey) as? Int) ?? 0) ?? .glassDark }
         set {
             objc_setAssociatedObject(self, &mc_barStyleKey, newValue.rawValue, .OBJC_ASSOCIATION_COPY_NONATOMIC)
 
-            var barTintColor: UIColor!
-            var normalTintColor: UIColor!
-            var selectedTintColor: UIColor!
-            let itemFont = UIFont.systemFont(ofSize: 11)
-
-            switch mc_barStyle {
-            case .glassDark:
-                barTintColor = UIColor.black.withAlphaComponent(0.6)
-                // 与选中态同色，避免仅当前 Tab 高亮、其余呈「未选」色
-                let accent = UIColor.white
-                normalTintColor = accent
-                selectedTintColor = accent
+            if #available(iOS 26.0, *) {
+                self.mc_applyTabBarStyleLiquidGlass(newValue)
+            } else {
+                self.mc_applyTabBarStyleLegacy(newValue)
             }
+        }
+    }
 
+    private func mc_applyTabBarStyleLegacy(_ style: MCETabBarStyle) {
+        var barTintColor: UIColor!
+        var normalTintColor: UIColor!
+        var selectedTintColor: UIColor!
+        let itemFont = UIFont.systemFont(ofSize: 11)
+
+        switch style {
+        case .glassDark:
+            barTintColor = UIColor.black.withAlphaComponent(0.6)
+            let accent = UIColor.white
+            normalTintColor = accent
+            selectedTintColor = accent
+        }
+
+        let appearance = UITabBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.shadowColor = .clear
+        appearance.backgroundColor = barTintColor
+        appearance.backgroundEffect = UIBlurEffect(style: .regular)
+        appearance.stackedLayoutAppearance.normal.iconColor = normalTintColor
+        appearance.stackedLayoutAppearance.selected.iconColor = selectedTintColor
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            .font: itemFont,
+            .foregroundColor: normalTintColor
+        ]
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+            .font: itemFont,
+            .foregroundColor: selectedTintColor
+        ]
+
+        self.standardAppearance = appearance
+        self.scrollEdgeAppearance = appearance
+
+        self.tintColor = selectedTintColor
+        self.unselectedItemTintColor = normalTintColor
+
+        self.isTranslucent = true
+    }
+
+    @available(iOS 26.0, *)
+    private func mc_applyTabBarStyleLiquidGlass(_ style: MCETabBarStyle) {
+        let itemFont = UIFont.systemFont(ofSize: 11)
+
+        switch style {
+        case .glassDark:
+            let accent = UIColor.white
             let appearance = UITabBarAppearance()
-            appearance.configureWithTransparentBackground()
-            // 去掉阴影线
+            appearance.configureWithDefaultBackground()
             appearance.shadowColor = .clear
-            // 背景颜色 & 模糊效果
-            appearance.backgroundColor = barTintColor
-            appearance.backgroundEffect = UIBlurEffect(style: .regular)
-            // icon颜色
-            appearance.stackedLayoutAppearance.normal.iconColor = normalTintColor
-            appearance.stackedLayoutAppearance.selected.iconColor = selectedTintColor
-            // title字体+颜色
+            appearance.stackedLayoutAppearance.normal.iconColor = accent
+            appearance.stackedLayoutAppearance.selected.iconColor = accent
             appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
                 .font: itemFont,
-                .foregroundColor: normalTintColor
+                .foregroundColor: accent
             ]
             appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
                 .font: itemFont,
-                .foregroundColor: selectedTintColor
+                .foregroundColor: accent
             ]
 
             self.standardAppearance = appearance
             self.scrollEdgeAppearance = appearance
 
-            self.tintColor = selectedTintColor
-            self.unselectedItemTintColor = normalTintColor
-
+            self.tintColor = accent
+            self.unselectedItemTintColor = accent
             self.isTranslucent = true
         }
     }
