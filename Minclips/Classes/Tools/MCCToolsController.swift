@@ -4,6 +4,7 @@ import Combine
 import FDFullscreenPopGesture
 import JXPagingView
 import Data
+import SDWebImage
 
 public final class MCCToolsController: MCCViewController<MCCToolsView, MCCEmptyViewModel> {
 
@@ -147,10 +148,19 @@ public final class MCCToolsController: MCCViewController<MCCToolsView, MCCEmptyV
         return "Studio"
     }
 
+    private func mcvc_groupTagIconURL(at index: Int) -> URL? {
+        guard let g = mcvc_groups[safe: index], let first = g.item.first else { return nil }
+        let candidates = [first.iconInactive, first.iconActive, first.iconContent]
+        guard
+            let s = candidates.first(where: { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty })
+        else { return nil }
+        return URL(string: s)
+    }
+
     private func mcvc_dequeueTagCell(_ collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MCCToolsTagCell.mcvw_reuseId, for: indexPath
-        ) as! MCCToolsTagCell
+            withReuseIdentifier: MCCShotsTagCell.mcvw_reuseId, for: indexPath
+        ) as! MCCShotsTagCell
         if mcvc_groups.indices.contains(indexPath.item) {
             let selected = indexPath.item == mcvc_selectedGroupIndex
             let title = mcvc_groupTitle(at: indexPath.item)
@@ -160,6 +170,14 @@ public final class MCCToolsController: MCCViewController<MCCToolsView, MCCEmptyV
                 weight: selected ? .semibold : .regular
             )
             cell.mcvw_titleLabel.textColor = selected ? UIColor(hex: "FFFFFF")! : UIColor(hex: "8E8E93")!
+            if let u = mcvc_groupTagIconURL(at: indexPath.item) {
+                cell.mcvw_iconView.isHidden = false
+                cell.mcvw_iconView.sd_setImage(with: u, placeholderImage: nil)
+            } else {
+                cell.mcvw_iconView.isHidden = true
+                cell.mcvw_iconView.sd_cancelCurrentImageLoad()
+                cell.mcvw_iconView.image = nil
+            }
         }
         return cell
     }
@@ -231,7 +249,10 @@ extension MCCToolsController: UICollectionViewDataSource, UICollectionViewDelega
         let textW = (t as NSString).size(
             withAttributes: [.font: UIFont.systemFont(ofSize: fs, weight: .medium)]
         ).width
-        return CGSize(width: textW + 4, height: 32)
+        let hasIcon = mcvc_groupTagIconURL(at: indexPath.item) != nil
+
+        let extra: CGFloat = hasIcon ? 18 + 4 : 0
+        return CGSize(width: textW + 4 + extra, height: 32)
     }
 
 }

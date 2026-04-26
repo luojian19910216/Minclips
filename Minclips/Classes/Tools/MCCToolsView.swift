@@ -18,7 +18,7 @@ public final class MCCToolsView: MCCBaseView {
         cv.showsHorizontalScrollIndicator = false
         cv.alwaysBounceHorizontal = true
         cv.contentInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        cv.register(MCCToolsTagCell.self, forCellWithReuseIdentifier: MCCToolsTagCell.mcvw_reuseId)
+        cv.register(MCCShotsTagCell.self, forCellWithReuseIdentifier: MCCShotsTagCell.mcvw_reuseId)
         return cv
     }()
 
@@ -69,19 +69,6 @@ public final class MCCToolsView: MCCBaseView {
         let p = IndexPath(item: index, section: 0)
         mcvw_tagCollection.layoutIfNeeded()
         mcvw_tagCollection.scrollToItem(at: p, at: .centeredHorizontally, animated: animated)
-    }
-
-}
-
-public final class MCCToolsTagCell: MCCBaseCollectionViewCell {
-
-    public static let mcvw_reuseId = "MCCToolsTagCell"
-
-    public let mcvw_titleLabel = UILabel()
-
-    public override func mcvw_setupUI() {
-        contentView.addSubview(mcvw_titleLabel)
-        mcvw_titleLabel.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
 
 }

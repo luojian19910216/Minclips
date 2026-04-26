@@ -197,7 +197,11 @@ public enum MCCRootTabNavChrome {
         label.textColor = textColor
         label.font = .systemFont(ofSize: rootTabLeftTitleSize, weight: .semibold)
         label.sizeToFit()
-        return UIBarButtonItem(customView: label)
+        let item = UIBarButtonItem(customView: label)
+        if #available(iOS 26.0, *) {
+            item.hidesSharedBackground = true
+        }
+        return item
     }
 
     public static func proBarButtonItem(
@@ -205,34 +209,17 @@ public enum MCCRootTabNavChrome {
         action: Selector,
         titleColor: UIColor = .white
     ) -> UIBarButtonItem {
-        let b = UIButton(type: .custom)
-        b.accessibilityLabel = "PRO"
-        b.addTarget(target, action: action, for: .touchUpInside)
-        let icon = mcv_scaledProImageOriginal()
-        if let icon = icon {
+        let b: UIButton = .init()
+        b.frame = .init(x: 0, y: 0, width: 76, height: 44)
+        if let icon = mcv_scaledProImageOriginal() {
             b.setImage(icon, for: .normal)
         }
         b.setTitle("PRO", for: .normal)
         b.setTitleColor(titleColor, for: .normal)
-        let proFont = UIFont.systemFont(ofSize: 14, weight: .semibold)
-        b.titleLabel?.font = proFont
-        b.titleLabel?.lineBreakMode = .byClipping
-        b.imageView?.contentMode = .scaleAspectFit
-        b.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 4)
-        b.titleEdgeInsets = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 0)
-        b.setContentCompressionResistancePriority(.required, for: .horizontal)
-        b.setContentHuggingPriority(.required, for: .horizontal)
-        b.sizeToFit()
-        b.translatesAutoresizingMaskIntoConstraints = false
-        let textW = ("PRO" as NSString).size(withAttributes: [.font: proFont]).width
-
-        let minW: CGFloat
-        if icon != nil {
-            minW = proBarButtonImageSide + 4 + ceil(textW) + 2
-        } else {
-            minW = ceil(textW) + 8
-        }
-        b.widthAnchor.constraint(greaterThanOrEqualToConstant: minW).isActive = true
+        b.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        b.contentEdgeInsets = .init(top: 0, left: 12, bottom: 0, right: 17)
+        b.titleEdgeInsets = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: -5)
+        b.addTarget(target, action: action, for: .touchUpInside)
         return UIBarButtonItem(customView: b)
     }
 

@@ -19,7 +19,7 @@ extension UINavigationBar {
         get { objc_getAssociatedObject(self, &mc_shadowHiddenKey) as? Bool ?? false }
         set {
             objc_setAssociatedObject(self, &mc_shadowHiddenKey, newValue, .OBJC_ASSOCIATION_COPY_NONATOMIC)
-
+            
             self.layer.shadowColor = UIColor.black.cgColor
             self.layer.shadowOpacity = newValue ? 0.0 : 0.1
             self.layer.shadowRadius = 2
