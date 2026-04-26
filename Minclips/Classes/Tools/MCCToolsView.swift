@@ -1,74 +1,33 @@
 import UIKit
 import Common
 import SnapKit
-import JXPagingView
 
 public final class MCCToolsView: MCCBaseView {
 
-    public let mcvw_tagFlowLayout: UICollectionViewFlowLayout = {
+    public let mcvw_flowLayout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
-        l.scrollDirection = .horizontal
-        l.minimumInteritemSpacing = 12
-        l.minimumLineSpacing = 0
+        l.scrollDirection = .vertical
+        l.minimumInteritemSpacing = 8
+        l.minimumLineSpacing = 8
+        l.sectionInset = UIEdgeInsets(top: 8, left: 16, bottom: 20, right: 16)
         return l
     }()
 
-    public lazy var mcvw_tagCollection: UICollectionView = {
-        let cv = UICollectionView(frame: .zero, collectionViewLayout: mcvw_tagFlowLayout)
-        cv.showsHorizontalScrollIndicator = false
-        cv.alwaysBounceHorizontal = true
-        cv.contentInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        cv.register(MCCShotsTagCell.self, forCellWithReuseIdentifier: MCCShotsTagCell.mcvw_reuseId)
+    public lazy var mcvw_collectionView: UICollectionView = {
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: mcvw_flowLayout)
+        cv.alwaysBounceVertical = true
+        cv.backgroundColor = .clear
+        cv.contentInsetAdjustmentBehavior = .always
+        cv.register(MCCToolTextCell.self, forCellWithReuseIdentifier: MCCToolTextCell.mcvw_id)
         return cv
     }()
 
-    public let mcvw_pinHeaderView: UIView = {
-        let v = UIView()
-
-        let h = max(20, MCCScreenSize.statusBarHeight)
-        v.frame = CGRect(x: 0, y: 0, width: 0, height: h)
-        return v
-    }()
-
-    private var mcvw_pagingViewRef: JXPagingListRefreshView?
-
-    public var mcvw_pagingListContainer: JXPagingListContainerView? { mcvw_pagingViewRef?.listContainerView }
-
     public override func mcvw_setupUI() {
-        mcvw_pinHeaderView.addSubview(mcvw_tagCollection)
-        mcvw_tagCollection.snp.makeConstraints { $0.edges.equalToSuperview() }
-    }
-
-    public func mcvw_setupPagingView(delegate: JXPagingViewDelegate) {
-        let pv = JXPagingListRefreshView(delegate: delegate, listContainerType: .scrollView)
-        pv.mainTableView.backgroundColor = .clear
-        pv.allowsCacheList = true
-        mcvw_pagingViewRef = pv
-        if pv.superview == nil {
-            addSubview(pv)
-        }
-        pv.snp.remakeConstraints { make in
+        addSubview(mcvw_collectionView)
+        mcvw_collectionView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top)
             make.leading.trailing.bottom.equalToSuperview()
         }
-    }
-
-    public func mcvw_setPagingHidden(_ hidden: Bool) {
-        mcvw_pagingViewRef?.isHidden = hidden
-    }
-
-    public func mcvw_applyPagingTagReload(selectedIndex: Int, hasGroups: Bool) {
-        guard let pv = mcvw_pagingViewRef else { return }
-        if hasGroups {
-            pv.defaultSelectedIndex = selectedIndex
-        }
-        pv.reloadData()
-    }
-
-    public func mcvw_scrollTagToIndex(_ index: Int, animated: Bool) {
-        let p = IndexPath(item: index, section: 0)
-        mcvw_tagCollection.layoutIfNeeded()
-        mcvw_tagCollection.scrollToItem(at: p, at: .centeredHorizontally, animated: animated)
     }
 
 }
