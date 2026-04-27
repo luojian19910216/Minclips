@@ -2,9 +2,10 @@ import UIKit
 import Common
 import Combine
 import SnapKit
+import SDWebImage
 
 public struct MCCGuideViewInput {
-    
+
     public var models: AnyPublisher<[MCSGuide], Never>
 
     public init(models: AnyPublisher<[MCSGuide], Never>) {
@@ -14,11 +15,13 @@ public struct MCCGuideViewInput {
 }
 
 public enum MCCGuideViewOutput: Equatable {
-    
+
     case primaryTapped(index: Int, model: MCSGuide, isLastPage: Bool)
-    
+
     case pageIndexChanged(index: Int)
-    
+
+    case pickPhotoTapped
+
 }
 
 public final class MCCGuideView: MCCBaseView {
@@ -26,6 +29,8 @@ public final class MCCGuideView: MCCBaseView {
     private var models: [MCSGuide] = []
 
     private var lastPrimaryAt: Date?
+
+    private var castLeadPreviewImage: UIImage?
 
     private let outputSubject = PassthroughSubject<MCCGuideViewOutput, Never>()
 
@@ -42,7 +47,7 @@ public final class MCCGuideView: MCCBaseView {
             layout.itemSize = MCCScreenSize.size
             return layout
         }())
-        item.backgroundColor = .clear
+        item.backgroundColor = .black
         item.contentInset = .zero
         item.bounces = false
         item.isPagingEnabled = true
@@ -51,31 +56,51 @@ public final class MCCGuideView: MCCBaseView {
         return item
     }()
 
-    public lazy var dataSource: UICollectionViewDiffableDataSource<MCESection, MCSGuide> = {
-        let guideCellRegistration = UICollectionView.CellRegistration<MCCGuideCell, MCSGuide> { cell, _, model in
-            cell.titleLab.text = model.title
-            cell.detailLab.text = model.detail
-            cell.handleBtn.setTitle(model.handleBtnTitle, for: .normal)
+    private lazy var storyRegistration: UICollectionView.CellRegistration<MCCGuideStoryCell, MCSGuide> = {
+        UICollectionView.CellRegistration<MCCGuideStoryCell, MCSGuide> { [weak self] cell, _, model in
+            cell.mcvw_apply(model: model)
             cell.onPrimary = { [weak self] in
                 self?.handlePrimary(model: model)
             }
         }
+    }()
 
-        let dataSource: UICollectionViewDiffableDataSource<MCESection, MCSGuide> = .init(collectionView: collectionView) { collectionView, indexPath, model in
-            return collectionView.dequeueConfiguredReusableCell(
-                using: guideCellRegistration,
-                for: indexPath,
-                item: model
-            )
+    private lazy var castRegistration: UICollectionView.CellRegistration<MCCGuideCastCell, MCSGuide> = {
+        UICollectionView.CellRegistration<MCCGuideCastCell, MCSGuide> { [weak self] cell, _, model in
+            guard let self else { return }
+            cell.mcvw_apply(model: model, previewImage: self.castLeadPreviewImage)
+            cell.onPrimary = { [weak self] in
+                self?.handlePrimary(model: model)
+            }
+            cell.onPickPhoto = { [weak self] in
+                self?.outputSubject.send(.pickPhotoTapped)
+            }
         }
-        return dataSource
+    }()
+
+    public lazy var dataSource: UICollectionViewDiffableDataSource<MCESection, MCSGuide> = {
+        UICollectionViewDiffableDataSource<MCESection, MCSGuide>(collectionView: collectionView) { [weak self] collectionView, indexPath, model in
+            guard let self else {
+                preconditionFailure("MCCGuideView deallocated while dequeuing a cell")
+            }
+            switch model.pageStyle {
+            case .story:
+                return collectionView.dequeueConfiguredReusableCell(using: self.storyRegistration, for: indexPath, item: model)
+            case .castLead:
+                return collectionView.dequeueConfiguredReusableCell(using: self.castRegistration, for: indexPath, item: model)
+            }
+        }
     }()
 
     public override func mcvw_setupUI() {
-        self.addSubview(self.collectionView)
-        self.collectionView.snp.makeConstraints { make in
+        backgroundColor = .black
+        addSubview(collectionView)
+        collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        _ = storyRegistration
+        _ = castRegistration
+        _ = dataSource
     }
 
     public func bindInput(_ input: MCCGuideViewInput) {
@@ -87,10 +112,19 @@ public final class MCCGuideView: MCCBaseView {
             .store(in: &cancellables)
     }
 
+    public func mcvw_setCastLeadPreview(image: UIImage?) {
+        castLeadPreviewImage = image
+        guard let item = models.first(where: { $0.pageStyle == .castLead }) else { return }
+        var snapshot = dataSource.snapshot()
+        guard snapshot.indexOfItem(item) != nil else { return }
+        snapshot.reconfigureItems([item])
+        dataSource.apply(snapshot, animatingDifferences: false)
+    }
+
 }
 
 extension MCCGuideView: UICollectionViewDelegate {
-    
+
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         emitPageIfChanged()
     }
@@ -105,6 +139,7 @@ extension MCCGuideView {
 
     private func applyModels(_ models: [MCSGuide]) {
         self.models = models
+        castLeadPreviewImage = nil
         var snapshot = NSDiffableDataSourceSnapshot<MCESection, MCSGuide>()
         snapshot.appendSections([.main])
         snapshot.appendItems(models, toSection: .main)
@@ -139,66 +174,290 @@ extension MCCGuideView {
 
 }
 
-public final class MCCGuideCell: MCCBaseCollectionViewCell {
+private enum MCCGuideStyle {
+    static let accent = UIColor(hex: "00AAFF")!
+    static let subtitle = UIColor(white: 1, alpha: 0.55)
+    static let buttonCorner: CGFloat = 12
+    static let buttonHeight: CGFloat = 52
+}
+
+public final class MCCGuideStoryCell: MCCBaseCollectionViewCell {
 
     public var onPrimary: (() -> Void)?
 
-    public lazy var titleLab: UILabel = {
-        let item: UILabel = .init()
-        item.numberOfLines = 0
-        item.font = UIFont.systemFont(ofSize: 16, weight: .bold)
-        item.textColor = .white
-        item.textAlignment = .left
-        return item
+    private let heroContainer = UIView()
+
+    private let heroImageView: UIImageView = {
+        let v = UIImageView()
+        v.contentMode = .scaleAspectFill
+        v.clipsToBounds = true
+        v.backgroundColor = UIColor(white: 0.12, alpha: 1)
+        return v
     }()
 
-    public lazy var detailLab: UILabel = {
-        let item: UILabel = .init()
-        item.numberOfLines = 0
-        item.font = UIFont.systemFont(ofSize: 14, weight: .medium)
-        item.textColor = .white
-        item.textAlignment = .left
-        return item
+    private let heroGradient: CAGradientLayer = {
+        let g = CAGradientLayer()
+        g.colors = [
+            UIColor.black.withAlphaComponent(0).cgColor,
+            UIColor.black.cgColor,
+        ]
+        g.locations = [0.45, 1]
+        g.startPoint = CGPoint(x: 0.5, y: 0)
+        g.endPoint = CGPoint(x: 0.5, y: 1)
+        return g
     }()
 
-    public lazy var handleBtn: UIButton = {
-        let item: UIButton = .init()
-        item.backgroundColor = .red
-        item.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .black)
-        item.setTitleColor(.white, for: .normal)
-        return item
+    private let titleLab: UILabel = {
+        let l = UILabel()
+        l.numberOfLines = 0
+        l.font = .systemFont(ofSize: 28, weight: .bold)
+        l.textColor = .white
+        l.textAlignment = .left
+        return l
+    }()
+
+    private let detailLab: UILabel = {
+        let l = UILabel()
+        l.numberOfLines = 0
+        l.font = .systemFont(ofSize: 16, weight: .medium)
+        l.textColor = MCCGuideStyle.subtitle
+        l.textAlignment = .left
+        return l
+    }()
+
+    private lazy var handleBtn: UIButton = {
+        let b = UIButton(type: .system)
+        b.backgroundColor = MCCGuideStyle.accent
+        b.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
+        b.setTitleColor(.white, for: .normal)
+        b.layer.cornerRadius = MCCGuideStyle.buttonCorner
+        b.clipsToBounds = true
+        b.addTarget(self, action: #selector(mccg_primaryTapped), for: .touchUpInside)
+        return b
     }()
 
     public override func mcvw_setupUI() {
-        self.contentView.addSubview(self.titleLab)
-        self.titleLab.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(16)
+        contentView.backgroundColor = .black
+        contentView.addSubview(heroContainer)
+        heroContainer.layer.addSublayer(heroGradient)
+        heroContainer.addSubview(heroImageView)
+        heroImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
+
+        let heroH = MCCScreenSize.height * 0.42
+        heroContainer.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+            make.height.equalTo(heroH)
         }
 
-        self.contentView.addSubview(self.detailLab)
-        self.detailLab.snp.makeConstraints { make in
-            make.top.equalTo(self.titleLab.snp.bottom).offset(8)
-            make.leading.trailing.equalToSuperview().inset(16)
+        contentView.addSubview(titleLab)
+        titleLab.snp.makeConstraints { make in
+            make.top.equalTo(heroContainer.snp.bottom).offset(24)
+            make.leading.trailing.equalToSuperview().inset(20)
         }
 
-        self.contentView.addSubview(self.handleBtn)
-        self.handleBtn.snp.makeConstraints { make in
-            make.top.equalTo(self.detailLab.snp.bottom).offset(24)
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.bottom.equalToSuperview().inset(MCCScreenSize.bottomSafeHeight + 16)
-            make.height.equalTo(48)
+        contentView.addSubview(detailLab)
+        detailLab.snp.makeConstraints { make in
+            make.top.equalTo(titleLab.snp.bottom).offset(12)
+            make.leading.trailing.equalToSuperview().inset(20)
         }
-        self.handleBtn.addTarget(self, action: #selector(mccg_handleBtnTouchUp), for: .touchUpInside)
+
+        contentView.addSubview(handleBtn)
+        handleBtn.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.bottom.equalToSuperview().inset(MCCScreenSize.bottomSafeHeight + 20)
+            make.height.equalTo(MCCGuideStyle.buttonHeight)
+        }
+    }
+
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        heroGradient.frame = heroContainer.bounds
+    }
+
+    public func mcvw_apply(model: MCSGuide) {
+        titleLab.text = model.title
+        detailLab.text = model.detail
+        handleBtn.setTitle(model.handleBtnTitle, for: .normal)
+        let trimmed = model.media.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let u = URL(string: trimmed), !trimmed.isEmpty {
+            heroImageView.sd_setImage(with: u, placeholderImage: nil)
+        } else {
+            heroImageView.sd_cancelCurrentImageLoad()
+            heroImageView.image = nil
+            heroImageView.backgroundColor = UIColor(white: 0.12, alpha: 1)
+        }
     }
 
     public override func prepareForReuse() {
         super.prepareForReuse()
         onPrimary = nil
+        heroImageView.sd_cancelCurrentImageLoad()
+        heroImageView.image = nil
     }
 
-    @objc
-    private func mccg_handleBtnTouchUp() {
+    @objc private func mccg_primaryTapped() {
         onPrimary?()
+    }
+
+}
+
+public final class MCCGuideCastCell: MCCBaseCollectionViewCell {
+
+    public var onPrimary: (() -> Void)?
+
+    public var onPickPhoto: (() -> Void)?
+
+    private let titleLab: UILabel = {
+        let l = UILabel()
+        l.numberOfLines = 0
+        l.font = .systemFont(ofSize: 28, weight: .bold)
+        l.textColor = .white
+        l.textAlignment = .left
+        return l
+    }()
+
+    private let detailLab: UILabel = {
+        let l = UILabel()
+        l.numberOfLines = 0
+        l.font = .systemFont(ofSize: 16, weight: .medium)
+        l.textColor = MCCGuideStyle.subtitle
+        l.textAlignment = .left
+        return l
+    }()
+
+    private let ringContainer = UIView()
+
+    private let ringBorder = UIView()
+
+    private let previewImageView: UIImageView = {
+        let v = UIImageView()
+        v.contentMode = .scaleAspectFill
+        v.clipsToBounds = true
+        v.isHidden = true
+        return v
+    }()
+
+    private let plusImageView: UIImageView = {
+        let c = UIImage.SymbolConfiguration(pointSize: 36, weight: .medium)
+        let v = UIImageView(image: UIImage(systemName: "plus", withConfiguration: c))
+        v.tintColor = .white
+        v.contentMode = .scaleAspectFit
+        return v
+    }()
+
+    private let uploadHintLabel: UILabel = {
+        let l = UILabel()
+        l.text = "Upload a photo"
+        l.font = .systemFont(ofSize: 16, weight: .medium)
+        l.textColor = .white
+        l.textAlignment = .center
+        return l
+    }()
+
+    private lazy var pickStack: UIStackView = {
+        let s = UIStackView(arrangedSubviews: [ringContainer, uploadHintLabel])
+        s.axis = .vertical
+        s.alignment = .center
+        s.spacing = 16
+        s.isUserInteractionEnabled = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(mccg_pickTapped))
+        s.addGestureRecognizer(tap)
+        return s
+    }()
+
+    private lazy var handleBtn: UIButton = {
+        let b = UIButton(type: .system)
+        b.backgroundColor = MCCGuideStyle.accent
+        b.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
+        b.setTitleColor(.white, for: .normal)
+        b.layer.cornerRadius = MCCGuideStyle.buttonCorner
+        b.clipsToBounds = true
+        b.addTarget(self, action: #selector(mccg_primaryTapped), for: .touchUpInside)
+        return b
+    }()
+
+    private var ringDiameter: CGFloat = 160
+
+    public override func mcvw_setupUI() {
+        contentView.backgroundColor = .black
+        contentView.addSubview(titleLab)
+        titleLab.snp.makeConstraints { make in
+            make.top.equalTo(contentView.safeAreaLayoutGuide.snp.top).offset(16)
+            make.leading.trailing.equalToSuperview().inset(20)
+        }
+
+        contentView.addSubview(detailLab)
+        detailLab.snp.makeConstraints { make in
+            make.top.equalTo(titleLab.snp.bottom).offset(12)
+            make.leading.trailing.equalToSuperview().inset(20)
+        }
+
+        contentView.addSubview(pickStack)
+        pickStack.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview().offset(-24)
+        }
+
+        ringDiameter = min(MCCScreenSize.width * 0.42, 200)
+        ringContainer.snp.makeConstraints { make in
+            make.width.height.equalTo(ringDiameter)
+        }
+
+        ringBorder.layer.borderWidth = 2
+        ringBorder.layer.borderColor = MCCGuideStyle.accent.cgColor
+        ringBorder.layer.cornerRadius = ringDiameter / 2
+        ringBorder.clipsToBounds = true
+        ringContainer.addSubview(ringBorder)
+        ringBorder.snp.makeConstraints { $0.edges.equalToSuperview() }
+
+        ringBorder.addSubview(previewImageView)
+        previewImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        previewImageView.layer.cornerRadius = ringDiameter / 2
+
+        ringBorder.addSubview(plusImageView)
+        plusImageView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.height.equalTo(44)
+        }
+
+        contentView.addSubview(handleBtn)
+        handleBtn.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.bottom.equalToSuperview().inset(MCCScreenSize.bottomSafeHeight + 20)
+            make.height.equalTo(MCCGuideStyle.buttonHeight)
+        }
+    }
+
+    public func mcvw_apply(model: MCSGuide, previewImage: UIImage?) {
+        titleLab.text = model.title
+        detailLab.text = model.detail
+        handleBtn.setTitle(model.handleBtnTitle, for: .normal)
+        if let img = previewImage {
+            previewImageView.image = img
+            previewImageView.isHidden = false
+            plusImageView.isHidden = true
+            uploadHintLabel.isHidden = true
+        } else {
+            previewImageView.image = nil
+            previewImageView.isHidden = true
+            plusImageView.isHidden = false
+            uploadHintLabel.isHidden = false
+        }
+    }
+
+    public override func prepareForReuse() {
+        super.prepareForReuse()
+        onPrimary = nil
+        onPickPhoto = nil
+        previewImageView.image = nil
+    }
+
+    @objc private func mccg_primaryTapped() {
+        onPrimary?()
+    }
+
+    @objc private func mccg_pickTapped() {
+        onPickPhoto?()
     }
 
 }
