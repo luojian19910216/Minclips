@@ -13,6 +13,8 @@ public final class MCCSettingsView: MCCBaseView {
         static let iconSize: CGFloat = 24
         static let titleValueGap: CGFloat = 12
         static let valueCopyGap: CGFloat = 8
+        static let versionBottomInset: CGFloat = 12
+        static let versionScrollGap: CGFloat = 12
     }
 
     private static let mcvw_textPrimary: UIColor = .white
@@ -61,8 +63,7 @@ public final class MCCSettingsView: MCCBaseView {
 
     private lazy var mcvw_copyUserIdButton: UIButton = {
         let b = UIButton(type: .system)
-        let img = UIImage(systemName: "doc.on.doc", withConfiguration: MCCSettingsView.mcvw_symbolConfigSmall())
-        b.setImage(img?.withRenderingMode(.alwaysTemplate), for: .normal)
+        b.setImage(UIImage(named: "ic_cm_copy")?.withRenderingMode(.alwaysTemplate), for: .normal)
         b.tintColor = MCCSettingsView.mcvw_textSecondary
         b.accessibilityLabel = "Copy"
         b.addTarget(self, action: #selector(mcvw_copyUserIdTapped), for: .touchUpInside)
@@ -82,10 +83,18 @@ public final class MCCSettingsView: MCCBaseView {
         backgroundColor = UIColor(hex: "000000")
 
         addSubview(mcvw_scrollView)
+        addSubview(mcvw_versionLabel)
+
+        mcvw_versionLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-MCEMetric.versionBottomInset)
+            make.height.greaterThanOrEqualTo(20)
+        }
+
         mcvw_scrollView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top)
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
+            make.bottom.equalTo(mcvw_versionLabel.snp.top).offset(-MCEMetric.versionScrollGap)
         }
 
         mcvw_scrollView.addSubview(mcvw_contentStack)
@@ -95,19 +104,19 @@ public final class MCCSettingsView: MCCBaseView {
                 .offset(MCEMetric.contentHorizontal)
             make.trailing.equalTo(mcvw_scrollView.frameLayoutGuide.snp.trailing)
                 .offset(-MCEMetric.contentHorizontal)
-            make.bottom.equalTo(mcvw_scrollView.contentLayoutGuide.snp.bottom).offset(-32)
+            make.bottom.equalTo(mcvw_scrollView.contentLayoutGuide.snp.bottom).offset(-16)
         }
 
         mcvw_contentStack.addArrangedSubview(mcvw_makeUserCard())
         mcvw_contentStack.addArrangedSubview(
             mcvw_makeVCard(
                 first: mcvw_makeChevronRow(
-                    systemName: "text.bubble",
+                    assetName: "ic_st_feedback",
                     title: "Feedback",
                     action: { [weak self] in self?.mcvw_onFeedback?() }
                 ),
                 second: mcvw_makeChevronRow(
-                    systemName: "envelope",
+                    assetName: "ic_st_contact",
                     title: "Contact Us",
                     action: { [weak self] in self?.mcvw_onContact?() }
                 )
@@ -115,20 +124,17 @@ public final class MCCSettingsView: MCCBaseView {
         )
         let legal = mcvw_makeVCard(
             first: mcvw_makeChevronRow(
-                systemName: "book",
+                assetName: "ic_st_service",
                 title: "Terms of Service",
                 action: { [weak self] in self?.mcvw_onTerms?() }
             ),
             second: mcvw_makeChevronRow(
-                systemName: "checkmark.shield",
+                assetName: "ic_st_policy",
                 title: "Privacy Policy",
                 action: { [weak self] in self?.mcvw_onPrivacy?() }
             )
         )
         mcvw_contentStack.addArrangedSubview(legal)
-        mcvw_contentStack.setCustomSpacing(24, after: legal)
-        mcvw_contentStack.addArrangedSubview(mcvw_versionLabel)
-        mcvw_versionLabel.snp.makeConstraints { $0.height.greaterThanOrEqualTo(20) }
     }
 
     public func mcvw_setUserIdDisplay(_ text: String) {
@@ -143,18 +149,9 @@ public final class MCCSettingsView: MCCBaseView {
         mcvw_onCopyUserId?()
     }
 
-    private static func mcvw_symbolConfigSmall() -> UIImage.SymbolConfiguration {
-        UIImage.SymbolConfiguration(pointSize: 16, weight: .regular, scale: .default)
-    }
-
-    private static func mcvw_symbolConfigRow() -> UIImage.SymbolConfiguration {
-        UIImage.SymbolConfiguration(pointSize: 20, weight: .regular, scale: .default)
-    }
-
-    private func mcvw_templateIcon(named: String) -> UIImageView {
+    private func mcvw_rowAssetIcon(named: String) -> UIImageView {
         let v = UIImageView()
-        let base = UIImage(systemName: named, withConfiguration: MCCSettingsView.mcvw_symbolConfigRow())
-        v.image = base?.withRenderingMode(.alwaysTemplate)
+        v.image = UIImage(named: named)?.withRenderingMode(.alwaysTemplate)
         v.tintColor = MCCSettingsView.mcvw_textSecondary
         v.contentMode = .scaleAspectFit
         return v
@@ -173,7 +170,7 @@ public final class MCCSettingsView: MCCBaseView {
         let row = UIView()
         row.snp.makeConstraints { $0.height.equalTo(MCEMetric.rowHeight) }
 
-        let icon = mcvw_templateIcon(named: "person.crop.circle")
+        let icon = mcvw_rowAssetIcon(named: "ic_st_user")
         let title = UILabel()
         title.text = "User ID"
         title.textColor = MCCSettingsView.mcvw_textPrimary
@@ -225,21 +222,19 @@ public final class MCCSettingsView: MCCBaseView {
         return card
     }
 
-    private func mcvw_makeChevronRow(systemName: String, title: String, action: @escaping () -> Void) -> UIView {
+    private func mcvw_makeChevronRow(assetName: String, title: String, action: @escaping () -> Void) -> UIView {
         let row = UIControl()
         row.accessibilityLabel = title
         row.snp.makeConstraints { $0.height.equalTo(MCEMetric.rowHeight) }
-        let icon = mcvw_templateIcon(named: systemName)
+        let icon = mcvw_rowAssetIcon(named: assetName)
         let t = UILabel()
         t.text = title
         t.textColor = MCCSettingsView.mcvw_textPrimary
         t.font = .systemFont(ofSize: 17, weight: .regular)
-        let chev = UIImageView(
-            image: UIImage(systemName: "chevron.right", withConfiguration: MCCSettingsView.mcvw_symbolConfigSmall())?
-                .withRenderingMode(.alwaysTemplate)
-        )
+        let chev = UIImageView()
+        chev.image = UIImage(named: "ic_cm_arrow")?.withRenderingMode(.alwaysTemplate)
         chev.tintColor = MCCSettingsView.mcvw_textSecondary
-        chev.contentMode = .center
+        chev.contentMode = .scaleAspectFit
         row.addSubview(icon)
         row.addSubview(t)
         row.addSubview(chev)
