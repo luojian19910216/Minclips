@@ -9,6 +9,15 @@ private enum MCCHomeSkeletonAppearance {
     )
 }
 
+private enum MCCToolsListSkeletonMetrics {
+    static let sectionTopInset: CGFloat = 24
+    static let sectionHorizontalInset: CGFloat = 12
+    static let lineSpacing: CGFloat = 12
+    static let cardHeight: CGFloat = 128
+    static let cardCornerRadius: CGFloat = 12
+    static let rowCount: Int = 8
+}
+
 private enum MCCShotsSkeletonMetrics {
     static let tagPinHeaderHeight: CGFloat = 48
     static let tagSkeletonPillHeight: CGFloat = 32
@@ -52,8 +61,8 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
             topInset = 0
             horizontalInset = 0
         case .singleColumnList:
-            topInset = 8
-            horizontalInset = 16
+            topInset = MCCToolsListSkeletonMetrics.sectionTopInset
+            horizontalInset = MCCToolsListSkeletonMetrics.sectionHorizontalInset
         case .tripleColumnGrid:
             topInset = 0
             horizontalInset = 16
@@ -129,10 +138,14 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
                 mcvw_stack.addArrangedSubview(mcvw_makeShotsWaterfallRow())
             }
         case .singleColumnList:
-            mcvw_stack.spacing = 12
-            for _ in 0..<Self.mcvw_rowCountSingleColumn {
+            mcvw_stack.spacing = MCCToolsListSkeletonMetrics.lineSpacing
+            for _ in 0..<MCCToolsListSkeletonMetrics.rowCount {
                 let row = UIView()
-                mcvw_skeletonize(row, radius: 6, height: Self.mcvw_singleColumnRowHeight)
+                mcvw_skeletonize(
+                    row,
+                    radius: MCCToolsListSkeletonMetrics.cardCornerRadius,
+                    height: MCCToolsListSkeletonMetrics.cardHeight
+                )
                 mcvw_stack.addArrangedSubview(row)
             }
         case .tripleColumnGrid:
@@ -158,11 +171,7 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
             + MCCShotsSkeletonMetrics.titleBlockHeight
     }
 
-    private static let mcvw_rowCountSingleColumn = 16
-
     private static let mcvw_rowCountTripleGrid = 10
-
-    private static let mcvw_singleColumnRowHeight: CGFloat = 56
 
     private static let mcvw_tripleColumnBlockHeight: CGFloat = 122
 
