@@ -109,14 +109,8 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
         mcvc_reloadProList()
     }
 
-    private func mcvc_listFrameHeight(offerCount: Int) -> CGFloat {
-        guard offerCount > 0 else { return 0 }
-        return MCCProView.mcvw_listFixedFrameHeight
-    }
-
     private func mcvc_reloadProList() {
         let n = mcvc_proListOffers.count
-        contentView.mcvw_setListFrameHeight(mcvc_listFrameHeight(offerCount: n))
         contentView.mcvw_collectionView.isScrollEnabled = n > 3
         contentView.mcvw_collectionView.reloadData()
     }
@@ -142,12 +136,11 @@ extension MCCProController: UICollectionViewDataSource, UICollectionViewDelegate
         let isFirst = indexPath.item == 0
         c.mcvw_setSelection(indexPath.item == mcvc_selectedOfferIndex)
         c.mcvw_titleLabel.text = "—"
-        c.mcvw_priceLabel.text = "—"
-        c.mcvw_periodLabel.text = "—"
+        c.mcvw_setRightLine(leading: "—", trailing: "")
         if isFirst {
             c.mcvw_popularPill.text = " Popular "
             c.mcvw_popularPill.isHidden = false
-            c.mcvw_saveBadge.text = " Save 85% "
+            c.mcvw_saveBadge.setTitle(" Save 85% ", for: .normal)
             c.mcvw_saveBadge.isHidden = false
         } else {
             c.mcvw_popularPill.isHidden = true
