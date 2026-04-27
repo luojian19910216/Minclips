@@ -107,9 +107,8 @@ extension MCCToolsController: UICollectionViewDataSource, UICollectionViewDelega
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let item = mcvc_items[safe: indexPath.item] else { return }
         collectionView.deselectItem(at: indexPath, animated: true)
-        let vc = MCCOneClickController()
-        vc.mcvc_toolboxItem = item
-        navigationController?.pushViewController(vc, animated: true)
+        
+        
     }
 
 }
