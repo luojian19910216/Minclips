@@ -6,20 +6,22 @@ public final class MCCSettingsView: MCCBaseView {
 
     private enum MCEMetric {
         static let cardCorner: CGFloat = 12
-        static let contentHorizontal: CGFloat = 20
-        static let cardInnerHorizontal: CGFloat = 16
-        static let rowHeight: CGFloat = 56
-        static let cardSpacing: CGFloat = 16
-        static let iconSize: CGFloat = 24
+        static let contentTopInset: CGFloat = 16
+        static let contentHorizontal: CGFloat = 12
+        static let cardInnerHorizontal: CGFloat = 12
+        static let rowHeight: CGFloat = 52
+        static let cardSpacing: CGFloat = 12
+        static let contentBottomInset: CGFloat = 12
+        static let iconSize: CGFloat = 20
         static let titleValueGap: CGFloat = 12
-        static let valueCopyGap: CGFloat = 8
+        static let valueCopyGap: CGFloat = 4
         static let versionBottomInset: CGFloat = 12
         static let versionScrollGap: CGFloat = 12
     }
 
     private static let mcvw_textPrimary: UIColor = .white
-    private static let mcvw_textSecondary: UIColor = UIColor(red: 0.557, green: 0.557, blue: 0.576, alpha: 1)
-    private static let mcvw_cardBackground: UIColor = UIColor(hex: "1C1C1E")!
+    private static let mcvw_textSecondary: UIColor = .white.withAlphaComponent(0.48)
+    private static let mcvw_cardBackground: UIColor = UIColor.white.withAlphaComponent(0.06)
 
     public var mcvw_onCopyUserId: (() -> Void)?
 
@@ -72,16 +74,14 @@ public final class MCCSettingsView: MCCBaseView {
 
     private let mcvw_versionLabel: UILabel = {
         let l = UILabel()
-        l.textColor = MCCSettingsView.mcvw_textSecondary
-        l.font = .systemFont(ofSize: 13, weight: .regular)
+        l.textColor = .white.withAlphaComponent(0.24)
+        l.font = .systemFont(ofSize: 14, weight: .regular)
         l.textAlignment = .center
         l.numberOfLines = 1
         return l
     }()
 
     public override func mcvw_setupUI() {
-        backgroundColor = UIColor(hex: "000000")
-
         addSubview(mcvw_scrollView)
         addSubview(mcvw_versionLabel)
 
@@ -99,12 +99,13 @@ public final class MCCSettingsView: MCCBaseView {
 
         mcvw_scrollView.addSubview(mcvw_contentStack)
         mcvw_contentStack.snp.makeConstraints { make in
-            make.top.equalTo(mcvw_scrollView.contentLayoutGuide.snp.top).offset(8)
+            make.top.equalTo(mcvw_scrollView.contentLayoutGuide.snp.top).offset(MCEMetric.contentTopInset)
             make.leading.equalTo(mcvw_scrollView.frameLayoutGuide.snp.leading)
                 .offset(MCEMetric.contentHorizontal)
             make.trailing.equalTo(mcvw_scrollView.frameLayoutGuide.snp.trailing)
                 .offset(-MCEMetric.contentHorizontal)
-            make.bottom.equalTo(mcvw_scrollView.contentLayoutGuide.snp.bottom).offset(-16)
+            make.bottom.equalTo(mcvw_scrollView.contentLayoutGuide.snp.bottom)
+                .offset(-MCEMetric.contentBottomInset)
         }
 
         mcvw_contentStack.addArrangedSubview(mcvw_makeUserCard())
@@ -174,7 +175,7 @@ public final class MCCSettingsView: MCCBaseView {
         let title = UILabel()
         title.text = "User ID"
         title.textColor = MCCSettingsView.mcvw_textPrimary
-        title.font = .systemFont(ofSize: 17, weight: .regular)
+        title.font = .systemFont(ofSize: 16, weight: .regular)
         title.setContentHuggingPriority(.required, for: .horizontal)
         title.setContentCompressionResistancePriority(.required, for: .horizontal)
 
@@ -211,7 +212,7 @@ public final class MCCSettingsView: MCCBaseView {
     private func mcvw_makeVCard(first: UIView, second: UIView) -> UIView {
         let card = mcvw_makeCardContainer()
         let sep = UIView()
-        sep.backgroundColor = UIColor(white: 0.18, alpha: 1)
+        sep.backgroundColor = .white.withAlphaComponent(0.06)
         let hairline: CGFloat = 1.0 / max(UIScreen.main.scale, 1)
         sep.snp.makeConstraints { $0.height.equalTo(hairline) }
         let stack = UIStackView(arrangedSubviews: [first, sep, second])

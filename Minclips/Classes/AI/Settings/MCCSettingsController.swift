@@ -7,38 +7,22 @@ import SafariServices
 
 public final class MCCSettingsController: MCCViewController<MCCSettingsView, MCCEmptyViewModel> {
 
-    public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
-
-    public override func mcvc_init() {
-        fd_prefersNavigationBarHidden = false
-        hidesBottomBarWhenPushed = true
-    }
-
     public override func mcvc_configureNav() {
-        guard let nav = navigationController else { return }
-        nav.navigationBar.mc_shadowHidden = true
-        nav.navigationBar.mc_barStyle = .transparentLight
-        let item = navigationItem
-        item.largeTitleDisplayMode = .never
-        nav.navigationBar.prefersLargeTitles = false
-        item.title = "Settings"
+        super.mcvc_configureNav()
+        
+        self.navigationItem.title = "Settings"
     }
-
-    public override func mcvc_setupLocalization() {
-        super.mcvc_setupLocalization()
-        let bg = UIColor(hex: "000000")!
-        view.backgroundColor = bg
-        contentView.backgroundColor = bg
-    }
-
+    
     public override func mcvc_loadData() {
         super.mcvc_loadData()
+        
         let short = (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "1.0.0"
         contentView.mcvw_setVersionText("V\(short)")
     }
 
     public override func mcvc_bind() {
         super.mcvc_bind()
+        
         MCCAccountService.shared.currentUser
             .map { u -> String in
                 let id = u?.userId.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
@@ -55,15 +39,19 @@ public final class MCCSettingsController: MCCViewController<MCCSettingsView, MCC
         contentView.mcvw_onCopyUserId = { [weak self] in
             self?.mcvc_copyUserIdToPasteboard()
         }
+        
         contentView.mcvw_onFeedback = { [weak self] in
             self?.mcvc_openSafariIfPresent(MCVCSettingsURL.feedback)
         }
+        
         contentView.mcvw_onContact = { [weak self] in
             self?.mcvc_openContactMail()
         }
+        
         contentView.mcvw_onTerms = { [weak self] in
             self?.mcvc_openSafariIfPresent(MCVCSettingsURL.termsOfService)
         }
+        
         contentView.mcvw_onPrivacy = { [weak self] in
             self?.mcvc_openSafariIfPresent(MCVCSettingsURL.privacyPolicy)
         }
