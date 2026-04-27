@@ -234,16 +234,28 @@ public final class MCCProPlanCell: MCCBaseCollectionViewCell {
         l.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         return l
     }()
-    public let mcvw_popularPill: UILabel = {
-        let l = UILabel()
-        l.textColor = .white
-        l.font = .systemFont(ofSize: 11, weight: .semibold)
-        l.backgroundColor = MCCProStyle.accent
-        l.textAlignment = .center
-        l.layer.cornerRadius = 4
-        l.clipsToBounds = true
-        l.isHidden = true
-        return l
+    public let mcvw_popularPill: UIButton = {
+        let b = UIButton(type: .custom)
+        b.isUserInteractionEnabled = false
+        if let raw = UIImage(named: "ic_gc_popular")?.withRenderingMode(.alwaysOriginal) {
+            let aw = raw.size.width
+            let ah = raw.size.height
+            let capL: CGFloat = aw > 24 ? 12 : max(1, aw / 3)
+            let capR: CGFloat = aw > 24 ? 12 : max(1, aw / 3)
+            let capT: CGFloat = ah > 16 ? 8 : max(1, ah / 3)
+            let capB: CGFloat = ah > 16 ? 8 : max(1, ah / 3)
+            let capped = raw.resizableImage(
+                withCapInsets: UIEdgeInsets(top: capT, left: capL, bottom: capB, right: capR),
+                resizingMode: .stretch
+            )
+            b.setBackgroundImage(capped, for: .normal)
+        }
+        b.setTitleColor(MCCProStyle.accent, for: .normal)
+        b.titleLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
+        b.titleLabel?.textAlignment = .center
+        b.contentEdgeInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 7)
+        b.isHidden = true
+        return b
     }()
     public let mcvw_rightLineLabel: UILabel = {
         let l = UILabel()
@@ -298,6 +310,7 @@ public final class MCCProPlanCell: MCCBaseCollectionViewCell {
             make.trailing.equalToSuperview().inset(12)
             make.centerY.equalToSuperview()
         }
+        mcvw_popularPill.snp.makeConstraints { $0.height.equalTo(20) }
         contentView.addSubview(mcvw_saveBadge)
         mcvw_saveBadge.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(14)

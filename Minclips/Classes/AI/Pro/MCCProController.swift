@@ -138,7 +138,7 @@ extension MCCProController: UICollectionViewDataSource, UICollectionViewDelegate
         c.mcvw_titleLabel.text = "—"
         c.mcvw_setRightLine(leading: "—", trailing: "")
         if isFirst {
-            c.mcvw_popularPill.text = " Popular "
+            c.mcvw_popularPill.setTitle(" Popular ", for: .normal)
             c.mcvw_popularPill.isHidden = false
             c.mcvw_saveBadge.setTitle(" Save 85% ", for: .normal)
             c.mcvw_saveBadge.isHidden = false
