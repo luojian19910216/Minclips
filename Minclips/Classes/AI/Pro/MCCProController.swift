@@ -1,4 +1,5 @@
 import UIKit
+import QuartzCore
 import Common
 import Combine
 import FDFullscreenPopGesture
@@ -13,6 +14,10 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
     private var mcvc_proListOffers: [MCSSubscriptionRow] = []
 
     private var mcvc_selectedOfferIndex: Int = 1
+
+    /// 目录接口可能从缓存**同一 run loop**内就回调，会抢在首帧布局前关掉骨架，看起来像「再也不出来」。用下次 run + 最短展示时间兜底。
+    private static let mcvc_proSkeletonMinDisplay: TimeInterval = 0.15
+    private var mcvc_proSkeletonShownAt: CFTimeInterval?
 
     public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
@@ -82,6 +87,8 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
 
     public override func mcvc_loadData() {
         super.mcvc_loadData()
+        mcvc_proSkeletonShownAt = CACurrentMediaTime()
+        contentView.mcvw_setProSkeletonVisible(true)
         mcvc_loadSubscriptionCatalog()
         mcvc_reloadProList()
     }
@@ -109,7 +116,19 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
             mcvc_selectedOfferIndex = min(1, list.count - 1)
         }
         mcvc_applyBackFeatureTitles()
+        mcvc_applyCTATitle()
         mcvc_reloadProList()
+        let shownAt = mcvc_proSkeletonShownAt
+        mcvc_proSkeletonShownAt = nil
+        let minDelay: TimeInterval
+        if let shownAt {
+            minDelay = max(0, Self.mcvc_proSkeletonMinDisplay - (CACurrentMediaTime() - shownAt))
+        } else {
+            minDelay = 0
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + minDelay) { [weak self] in
+            self?.contentView.mcvw_setProSkeletonVisible(false)
+        }
     }
 
     private func mcvc_applyBackFeatureTitles() {
@@ -122,6 +141,30 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
         let lines = mcvc_proListOffers[mcvc_selectedOfferIndex].backFeatureLines
         v.mcvw_headlineLabel.text = lines.indices.contains(0) ? lines[0].line : ""
         v.mcvw_subheadlineLabel.text = lines.indices.contains(1) ? lines[1].line : ""
+    }
+
+    private func mcvc_applyCTATitle() {
+        let v = contentView
+        let b = v.mcvw_ctaButton
+        let fallback = "Subscription"
+        let title: String
+        if mcvc_proListOffers.indices.contains(mcvc_selectedOfferIndex) {
+            let row = mcvc_proListOffers[mcvc_selectedOfferIndex]
+            let pitch = row.savingsPitch.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !pitch.isEmpty {
+                title = pitch + " now"
+            } else {
+                let cta = row.callToAction.trimmingCharacters(in: .whitespacesAndNewlines)
+                title = cta.isEmpty ? fallback : cta
+            }
+        } else {
+            title = fallback
+        }
+        UIView.performWithoutAnimation {
+            b.setTitle(title, for: .normal)
+            b.titleLabel?.layoutIfNeeded()
+            b.layoutIfNeeded()
+        }
     }
 
     private func mcvc_reloadProList() {
@@ -151,7 +194,14 @@ extension MCCProController: UICollectionViewDataSource, UICollectionViewDelegate
         c.mcvw_setSelection(indexPath.item == mcvc_selectedOfferIndex)
         let row = mcvc_proListOffers[indexPath.item]
         c.mcvw_titleLabel.text = row.displayName
-        c.mcvw_setRightLine(leading: "$0.00", trailing: "/" + row.planPeriod.rawValue)
+        let priceRaw = row.currentPrice.trimmingCharacters(in: .whitespacesAndNewlines)
+        let priceShow = priceRaw.isEmpty
+            ? row.priceHeadline.trimmingCharacters(in: .whitespacesAndNewlines)
+            : priceRaw
+        let leading = priceShow.isEmpty ? "$0.00" : priceShow
+        let periodRaw = row.planPeriod.rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trailing = periodRaw.isEmpty ? "" : "/" + periodRaw
+        c.mcvw_setRightLine(leading: leading, trailing: trailing)
         let corner = row.cornerBadge.trimmingCharacters(in: .whitespacesAndNewlines)
         if corner.isEmpty {
             c.mcvw_popularPill.isHidden = true
@@ -183,9 +233,18 @@ extension MCCProController: UICollectionViewDataSource, UICollectionViewDelegate
     }
 
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.item == mcvc_selectedOfferIndex { return }
+        let previous = mcvc_selectedOfferIndex
         mcvc_selectedOfferIndex = indexPath.item
-        mcvc_applyBackFeatureTitles()
-        collectionView.reloadData()
+        var paths = [indexPath]
+        if (0..<mcvc_proListOffers.count).contains(previous) {
+            paths.append(IndexPath(item: previous, section: 0))
+        }
+        UIView.performWithoutAnimation {
+            mcvc_applyBackFeatureTitles()
+            mcvc_applyCTATitle()
+            collectionView.reloadItems(at: paths)
+        }
     }
 
 }

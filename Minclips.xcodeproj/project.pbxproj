@@ -191,6 +191,10 @@
 		F6E2E0A52FC0200002C4F70 /* MCCProController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2E0922FC0200002C4F70 /* MCCProController.swift */; };
 		F6E2E0A62FC0200002C4F70 /* MCCProController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2E0922FC0200002C4F70 /* MCCProController.swift */; };
 		F6E2E0A72FC0200002C4F70 /* MCCProController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2E0922FC0200002C4F70 /* MCCProController.swift */; };
+		F6E2E0A82FC0200002C4F70 /* MCCProSkeletonOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2E0942FC0200002C4F70 /* MCCProSkeletonOverlay.swift */; };
+		F6E2E0A92FC0200002C4F70 /* MCCProSkeletonOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2E0942FC0200002C4F70 /* MCCProSkeletonOverlay.swift */; };
+		F6E2E0AA2FC0200002C4F70 /* MCCProSkeletonOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2E0942FC0200002C4F70 /* MCCProSkeletonOverlay.swift */; };
+		F6E2E0AB2FC0200002C4F70 /* MCCProSkeletonOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2E0942FC0200002C4F70 /* MCCProSkeletonOverlay.swift */; };
 		F6E3B1022FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3B1012FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift */; };
 		F6E3B1032FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3B1012FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift */; };
 		F6E3B1042FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3B1012FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift */; };
@@ -264,6 +268,7 @@
 		F6E2D10B2FC0100002C4F70 /* MCCSettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCSettingsController.swift; sourceTree = "<group>"; };
 		F6E2E0912FC0200002C4F70 /* MCCProView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProView.swift; sourceTree = "<group>"; };
 		F6E2E0922FC0200002C4F70 /* MCCProController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProController.swift; sourceTree = "<group>"; };
+		F6E2E0942FC0200002C4F70 /* MCCProSkeletonOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProSkeletonOverlay.swift; sourceTree = "<group>"; };
 		F6E3B1012FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCGradientHomeSkeletonOverlay.swift; sourceTree = "<group>"; };
 		F6E3C1102FC2000002C4F70 /* MCCShotsWaterfallLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsWaterfallLayout.swift; sourceTree = "<group>"; };
 		F72C010043D4413B9E5D4761 /* Pods-Minclips_D.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_D.release.xcconfig"; path = "Target Support Files/Pods-Minclips_D/Pods-Minclips_D.release.xcconfig"; sourceTree = "<group>"; };
@@ -550,6 +555,7 @@
 			children = (
 				F6E2E0912FC0200002C4F70 /* MCCProView.swift */,
 				F6E2E0922FC0200002C4F70 /* MCCProController.swift */,
+				F6E2E0942FC0200002C4F70 /* MCCProSkeletonOverlay.swift */,
 			);
 			path = Pro;
 			sourceTree = "<group>";
@@ -943,6 +949,7 @@
 				F6E2D12C2FC0100002C4F70 /* MCCSettingsController.swift in Sources */,
 				F6E2E0A02FC0200002C4F70 /* MCCProView.swift in Sources */,
 				F6E2E0A42FC0200002C4F70 /* MCCProController.swift in Sources */,
+				F6E2E0A82FC0200002C4F70 /* MCCProSkeletonOverlay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -990,6 +997,7 @@
 				F6E2D12D2FC0100002C4F70 /* MCCSettingsController.swift in Sources */,
 				F6E2E0A12FC0200002C4F70 /* MCCProView.swift in Sources */,
 				F6E2E0A52FC0200002C4F70 /* MCCProController.swift in Sources */,
+				F6E2E0A92FC0200002C4F70 /* MCCProSkeletonOverlay.swift in Sources */,
 				F6588BBB2EFA402B00A094B5 /* MCCTabBarController.swift in Sources */,
 				F6588BBE2EFA41AF00A094B5 /* MCCCfViewModel.swift in Sources */,
 				F6588BB72EFA402000A094B5 /* MCCGuideController.swift in Sources */,
@@ -1043,6 +1051,7 @@
 				F6E2D12E2FC0100002C4F70 /* MCCSettingsController.swift in Sources */,
 				F6E2E0A22FC0200002C4F70 /* MCCProView.swift in Sources */,
 				F6E2E0A62FC0200002C4F70 /* MCCProController.swift in Sources */,
+				F6E2E0AA2FC0200002C4F70 /* MCCProSkeletonOverlay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1093,6 +1102,7 @@
 				F6E2D12F2FC0100002C4F70 /* MCCSettingsController.swift in Sources */,
 				F6E2E0A32FC0200002C4F70 /* MCCProView.swift in Sources */,
 				F6E2E0A72FC0200002C4F70 /* MCCProController.swift in Sources */,
+				F6E2E0AB2FC0200002C4F70 /* MCCProSkeletonOverlay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

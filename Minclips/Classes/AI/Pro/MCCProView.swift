@@ -132,6 +132,10 @@ public final class MCCProView: MCCBaseView {
         return s
     }()
 
+    private let mcvw_skeletonOverlay = MCCProSkeletonOverlay()
+    /// 加载中隐藏真按钮、只显示同框占位 + CA 微光，比 SkeletonView 叠在蓝按钮上稳得多。
+    private let mcvw_ctaLoadingPill = MCCProCTALoadingPill()
+
     public override func mcvw_setupUI() {
         backgroundColor = .black
 
@@ -178,10 +182,17 @@ public final class MCCProView: MCCBaseView {
         mcvw_contentStack.setCustomSpacing(32, after: textBlock)
         mcvw_contentStack.setCustomSpacing(32, after: mcvw_listContainer)
 
-        let ctaPad = UIStackView(arrangedSubviews: [mcvw_ctaButton])
+        let ctaRow = UIView()
+        ctaRow.addSubview(mcvw_ctaButton)
+        ctaRow.addSubview(mcvw_ctaLoadingPill)
+        mcvw_ctaButton.snp.makeConstraints { make in
+            make.height.equalTo(48)
+            make.top.leading.trailing.bottom.equalToSuperview()
+        }
+        mcvw_ctaLoadingPill.snp.makeConstraints { $0.edges.equalTo(mcvw_ctaButton) }
+        let ctaPad = UIStackView(arrangedSubviews: [ctaRow])
         ctaPad.isLayoutMarginsRelativeArrangement = true
         ctaPad.layoutMargins = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
-        mcvw_ctaButton.snp.makeConstraints { $0.height.equalTo(48) }
         mcvw_contentStack.addArrangedSubview(ctaPad)
 
         mcvw_legalRow.addArrangedSubview(mcvw_restoreButton)
@@ -202,12 +213,40 @@ public final class MCCProView: MCCBaseView {
         footStack.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
         mcvw_contentStack.addArrangedSubview(footStack)
         mcvw_contentStack.setCustomSpacing(16, after: ctaPad)
+
+        addSubview(mcvw_skeletonOverlay)
+        mcvw_skeletonOverlay.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(mcvw_ctaButton.snp.bottom)
+        }
+        mcvw_skeletonOverlay.isHidden = true
+    }
+
+    public func mcvw_setProSkeletonVisible(_ visible: Bool) {
+        if visible {
+            mcvw_skeletonOverlay.mcvw_showProSkeleton()
+            mcvw_ctaButton.isHidden = true
+            mcvw_ctaLoadingPill.isHidden = false
+            mcvw_ctaLoadingPill.superview?.bringSubviewToFront(mcvw_ctaLoadingPill)
+            bringSubviewToFront(mcvw_skeletonOverlay)
+            layoutIfNeeded()
+            mcvw_ctaLoadingPill.mcvw_startShimmer()
+        } else {
+            mcvw_ctaLoadingPill.mcvw_stopShimmer()
+            mcvw_ctaLoadingPill.isHidden = true
+            mcvw_ctaButton.isHidden = false
+            mcvw_skeletonOverlay.mcvw_hideProSkeleton()
+        }
     }
 
     public override func layoutSubviews() {
         super.layoutSubviews()
         let ctaH = mcvw_ctaButton.bounds.height
         if ctaH > 0 { mcvw_ctaButton.layer.cornerRadius = ctaH * 0.5 }
+        if !mcvw_skeletonOverlay.isHidden {
+            bringSubviewToFront(mcvw_skeletonOverlay)
+            mcvw_ctaLoadingPill.superview?.bringSubviewToFront(mcvw_ctaLoadingPill)
+        }
     }
 
     private func mccpr_dot() -> UILabel {
@@ -220,6 +259,52 @@ public final class MCCProView: MCCBaseView {
         return l
     }
 
+}
+
+/// 主 CTA 占位：不依赖 SkeletonView，避免与主按钮/蒙层叠图异常。
+fileprivate final class MCCProCTALoadingPill: UIView {
+
+    private let band = CALayer()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        isHidden = true
+        isUserInteractionEnabled = true
+        backgroundColor = UIColor(white: 0.22, alpha: 1)
+        clipsToBounds = true
+        layer.addSublayer(band)
+    }
+
+    required init?(coder: NSCoder) { fatalError() }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        let h = bounds.height
+        let w = bounds.width
+        layer.cornerRadius = h > 0 ? h * 0.5 : 0
+        let bw = max(w * 0.38, 28)
+        band.cornerRadius = h * 0.5
+        band.backgroundColor = UIColor.white.withAlphaComponent(0.16).cgColor
+        band.frame = CGRect(x: -bw, y: 0, width: bw, height: max(h, 1))
+    }
+
+    func mcvw_startShimmer() {
+        mcvw_stopShimmer()
+        let w = bounds.width
+        let h = bounds.height
+        guard w > 0.5, h > 0.5, !isHidden else { return }
+        let a = CABasicAnimation(keyPath: "transform.translation.x")
+        a.fromValue = 0
+        a.toValue = w + w * 0.55
+        a.duration = 1.2
+        a.repeatCount = .infinity
+        a.isRemovedOnCompletion = false
+        band.add(a, forKey: "mcvw_shim")
+    }
+
+    func mcvw_stopShimmer() {
+        band.removeAllAnimations()
+    }
 }
 
 public final class MCCProPlanCell: MCCBaseCollectionViewCell {
@@ -257,12 +342,35 @@ public final class MCCProPlanCell: MCCBaseCollectionViewCell {
         b.isHidden = true
         return b
     }()
-    public let mcvw_rightLineLabel: UILabel = {
+    /// 右侧价（粗体，与周期拆成两个 label，避免整行一条富文本）。
+    public let mcvw_rightPriceLabel: UILabel = {
         let l = UILabel()
+        l.font = .systemFont(ofSize: 20, weight: .bold)
+        l.textColor = .white
         l.textAlignment = .right
         l.numberOfLines = 1
         l.lineBreakMode = .byTruncatingTail
+        l.setContentHuggingPriority(.required, for: .horizontal)
+        l.setContentCompressionResistancePriority(.required, for: .horizontal)
         return l
+    }()
+    public let mcvw_rightPeriodLabel: UILabel = {
+        let l = UILabel()
+        l.font = .systemFont(ofSize: 16, weight: .regular)
+        l.textColor = .white
+        l.textAlignment = .right
+        l.numberOfLines = 1
+        l.lineBreakMode = .byTruncatingTail
+        l.setContentHuggingPriority(.required, for: .horizontal)
+        l.setContentCompressionResistancePriority(.required, for: .horizontal)
+        return l
+    }()
+    private let mcvw_rightTextStack: UIStackView = {
+        let s = UIStackView()
+        s.axis = .horizontal
+        s.alignment = .center
+        s.spacing = 0
+        return s
     }()
     public let mcvw_saveBadge: UIButton = {
         let b = UIButton(type: .custom)
@@ -299,14 +407,16 @@ public final class MCCProPlanCell: MCCBaseCollectionViewCell {
         contentView.addSubview(mcvw_border)
         mcvw_border.snp.makeConstraints { $0.edges.equalToSuperview() }
         mcvw_border.layer.cornerRadius = 12
+        mcvw_rightTextStack.addArrangedSubview(mcvw_rightPriceLabel)
+        mcvw_rightTextStack.addArrangedSubview(mcvw_rightPeriodLabel)
         mcvw_border.addSubview(mcvw_titleRow)
-        mcvw_border.addSubview(mcvw_rightLineLabel)
+        mcvw_border.addSubview(mcvw_rightTextStack)
         mcvw_titleRow.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(12)
             make.centerY.equalToSuperview()
-            make.trailing.lessThanOrEqualTo(mcvw_rightLineLabel.snp.leading).offset(-8)
+            make.trailing.lessThanOrEqualTo(mcvw_rightTextStack.snp.leading).offset(-8)
         }
-        mcvw_rightLineLabel.snp.makeConstraints { make in
+        mcvw_rightTextStack.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(12)
             make.centerY.equalToSuperview()
         }
@@ -327,21 +437,16 @@ public final class MCCProPlanCell: MCCBaseCollectionViewCell {
             : MCCProStyle.cardBg.cgColor
     }
 
+    /// 右侧两段文案：`leading` 价、`trailing` 周期（如 `"/week"`），可空。
     public func mcvw_setRightLine(leading: String, trailing: String) {
-        let a = NSMutableAttributedString()
-        if !leading.isEmpty {
-            a.append(NSAttributedString(string: leading, attributes: [
-                .font: UIFont.systemFont(ofSize: 20, weight: .bold),
-                .foregroundColor: UIColor.white
-            ]))
-        }
-        if !trailing.isEmpty {
-            a.append(NSAttributedString(string: trailing, attributes: [
-                .font: UIFont.systemFont(ofSize: 16, weight: .regular),
-                .foregroundColor: UIColor.white
-            ]))
-        }
-        mcvw_rightLineLabel.attributedText = a.length > 0 ? a : nil
+        mcvw_rightPriceLabel.text = leading.isEmpty ? nil : leading
+        mcvw_rightPeriodLabel.text = trailing.isEmpty ? nil : trailing
+    }
+
+    public override func prepareForReuse() {
+        super.prepareForReuse()
+        mcvw_rightPriceLabel.text = nil
+        mcvw_rightPeriodLabel.text = nil
     }
 
 }
