@@ -321,6 +321,15 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		A02195C42F9F779C005E9325 /* Guide */ = {
+			isa = PBXGroup;
+			children = (
+				03F019642F8CF6A50096831D /* MCCGuideView.swift */,
+				F6588BB62EFA402000A094B5 /* MCCGuideController.swift */,
+			);
+			path = Guide;
+			sourceTree = "<group>";
+		};
 		A0B46A5B2F9C8FE800DAC813 /* Shots */ = {
 			isa = PBXGroup;
 			children = (
@@ -339,6 +348,7 @@
 		A0B46A5C2F9E3BFA00DAC813 /* AI */ = {
 			isa = PBXGroup;
 			children = (
+				A02195C42F9F779C005E9325 /* Guide */,
 				A0B46A5B2F9C8FE800DAC813 /* Shots */,
 				F6E2C0F12FC0020002C4F70 /* Tools */,
 				F6E2C0F02FC0010002C4F70 /* Project */,
@@ -460,7 +470,6 @@
 				F6D547622F9B478A002C4F70 /* MCCSheetController.swift */,
 				F6D547612F9B478A002C4F70 /* MCCPopController.swift */,
 				F6588BB32EFA401200A094B5 /* MCCLaunchController.swift */,
-				F6588BB62EFA402000A094B5 /* MCCGuideController.swift */,
 				F6D546E12F922579002C4F70 /* MCCPresentController.swift */,
 				F6D546D12F90E390002C4F70 /* MCCBottomSheetController.swift */,
 				F6D546FF2F95D17E002C4F70 /* MCCTopPopController.swift */,
@@ -500,7 +509,6 @@
 			children = (
 				F6D547702F9B4796002C4F70 /* MCCBaseView.swift */,
 				03F019612F8CF67C0096831D /* MCCLaunchView.swift */,
-				03F019642F8CF6A50096831D /* MCCGuideView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";

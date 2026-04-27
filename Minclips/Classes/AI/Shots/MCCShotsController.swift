@@ -237,14 +237,15 @@ extension MCCShotsController: UICollectionViewDataSource, UICollectionViewDelega
         let t = it.title
 
         let fs: CGFloat = 16
-
-        let textW = (t as NSString).size(
-            withAttributes: [.font: UIFont.systemFont(ofSize: fs, weight: .medium)]
-        ).width
+        // 选中为 semibold，比 regular 更宽；宽度按最宽的 semibold 量，避免选中后显示不全
+        let textW = ceil(
+            (t as NSString).size(withAttributes: [
+                .font: UIFont.systemFont(ofSize: fs, weight: .semibold),
+            ]).width
+        )
         let hasIcon = !it.iconImageUrl.isEmpty
-
-        let extra: CGFloat = hasIcon ? 18 + 4 : 0
-        return CGSize(width: textW + 4 + extra, height: 48)
+        let extra: CGFloat = hasIcon ? 18 + 6 : 0
+        return CGSize(width: textW + 8 + extra, height: 48)
     }
 
 }
