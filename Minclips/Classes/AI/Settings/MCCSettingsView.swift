@@ -1,5 +1,4 @@
 import UIKit
-import Common
 import SnapKit
 
 public final class MCCSettingsView: MCCBaseView {
@@ -23,17 +22,9 @@ public final class MCCSettingsView: MCCBaseView {
     private static let mcvw_textSecondary: UIColor = .white.withAlphaComponent(0.48)
     private static let mcvw_cardBackground: UIColor = UIColor.white.withAlphaComponent(0.06)
 
-    public var mcvw_onCopyUserId: (() -> Void)?
+    public private(set) var mcvw_userIdLeadIconView: UIImageView!
 
-    public var mcvw_onFeedback: (() -> Void)?
-
-    public var mcvw_onContact: (() -> Void)?
-
-    public var mcvw_onTerms: (() -> Void)?
-
-    public var mcvw_onPrivacy: (() -> Void)?
-
-    private let mcvw_scrollView: UIScrollView = {
+    public lazy var mcvw_scrollView: UIScrollView = {
         let s = UIScrollView()
         s.alwaysBounceVertical = true
         s.showsVerticalScrollIndicator = true
@@ -42,7 +33,7 @@ public final class MCCSettingsView: MCCBaseView {
         return s
     }()
 
-    private let mcvw_contentStack: UIStackView = {
+    public lazy var mcvw_contentStack: UIStackView = {
         let s = UIStackView()
         s.axis = .vertical
         s.alignment = .fill
@@ -50,7 +41,24 @@ public final class MCCSettingsView: MCCBaseView {
         return s
     }()
 
-    private let mcvw_userIdValueLabel: UILabel = {
+    public lazy var mcvw_userIdRowTitleLabel: UILabel = {
+        let t = UILabel()
+        t.textColor = MCCSettingsView.mcvw_textPrimary
+        t.font = .systemFont(ofSize: 16, weight: .regular)
+        t.setContentHuggingPriority(.required, for: .horizontal)
+        t.setContentCompressionResistancePriority(.required, for: .horizontal)
+        return t
+    }()
+
+    public lazy var mcvw_feedbackRowTitleLabel: UILabel = { MCCSettingsView.mcvw_chevronRowTitleLabel() }()
+
+    public lazy var mcvw_contactRowTitleLabel: UILabel = { MCCSettingsView.mcvw_chevronRowTitleLabel() }()
+
+    public lazy var mcvw_termsRowTitleLabel: UILabel = { MCCSettingsView.mcvw_chevronRowTitleLabel() }()
+
+    public lazy var mcvw_privacyRowTitleLabel: UILabel = { MCCSettingsView.mcvw_chevronRowTitleLabel() }()
+
+    public lazy var mcvw_userIdValueLabel: UILabel = {
         let l = UILabel()
         l.textColor = MCCSettingsView.mcvw_textSecondary
         l.font = .systemFont(ofSize: 16, weight: .regular)
@@ -59,26 +67,68 @@ public final class MCCSettingsView: MCCBaseView {
         l.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         l.numberOfLines = 1
         l.lineBreakMode = .byTruncatingTail
-        l.text = "—"
+        l.text = ""
         return l
     }()
 
-    private lazy var mcvw_copyUserIdButton: UIButton = {
+    public lazy var mcvw_copyUserIdButton: UIButton = {
         let b = UIButton(type: .system)
         b.setImage(UIImage(named: "ic_cm_copy")?.withRenderingMode(.alwaysTemplate), for: .normal)
         b.tintColor = MCCSettingsView.mcvw_textSecondary
-        b.accessibilityLabel = "Copy"
-        b.addTarget(self, action: #selector(mcvw_copyUserIdTapped), for: .touchUpInside)
         return b
     }()
 
-    private let mcvw_versionLabel: UILabel = {
+    public lazy var mcvw_versionLabel: UILabel = {
         let l = UILabel()
         l.textColor = .white.withAlphaComponent(0.24)
         l.font = .systemFont(ofSize: 14, weight: .regular)
         l.textAlignment = .center
         l.numberOfLines = 1
         return l
+    }()
+
+    public lazy var mcvw_userIdCard: UIView = {
+        self.mcvw_makeUserCard()
+    }()
+
+    private lazy var mcvw_feedbackParts: MCEChevronRowParts = {
+        self.mcvw_makeChevronRow(assetName: "ic_st_feedback", titleLabel: self.mcvw_feedbackRowTitleLabel)
+    }()
+
+    public var mcvw_feedbackRow: UIControl { mcvw_feedbackParts.row }
+    public var mcvw_feedbackLeadIconView: UIImageView { mcvw_feedbackParts.lead }
+    public var mcvw_feedbackTrailIconView: UIImageView { mcvw_feedbackParts.trail }
+
+    private lazy var mcvw_contactParts: MCEChevronRowParts = {
+        self.mcvw_makeChevronRow(assetName: "ic_st_contact", titleLabel: self.mcvw_contactRowTitleLabel)
+    }()
+
+    public var mcvw_contactRow: UIControl { mcvw_contactParts.row }
+    public var mcvw_contactLeadIconView: UIImageView { mcvw_contactParts.lead }
+    public var mcvw_contactTrailIconView: UIImageView { mcvw_contactParts.trail }
+
+    private lazy var mcvw_termsParts: MCEChevronRowParts = {
+        self.mcvw_makeChevronRow(assetName: "ic_st_service", titleLabel: self.mcvw_termsRowTitleLabel)
+    }()
+
+    public var mcvw_termsRow: UIControl { mcvw_termsParts.row }
+    public var mcvw_termsLeadIconView: UIImageView { mcvw_termsParts.lead }
+    public var mcvw_termsTrailIconView: UIImageView { mcvw_termsParts.trail }
+
+    private lazy var mcvw_privacyParts: MCEChevronRowParts = {
+        self.mcvw_makeChevronRow(assetName: "ic_st_policy", titleLabel: self.mcvw_privacyRowTitleLabel)
+    }()
+
+    public var mcvw_privacyRow: UIControl { mcvw_privacyParts.row }
+    public var mcvw_privacyLeadIconView: UIImageView { mcvw_privacyParts.lead }
+    public var mcvw_privacyTrailIconView: UIImageView { mcvw_privacyParts.trail }
+
+    public lazy var mcvw_feedbackContactCard: UIView = {
+        self.mcvw_makeVCard(first: self.mcvw_feedbackRow, second: self.mcvw_contactRow)
+    }()
+
+    public lazy var mcvw_legalCard: UIView = {
+        self.mcvw_makeVCard(first: self.mcvw_termsRow, second: self.mcvw_privacyRow)
     }()
 
     public override func mcvw_setupUI() {
@@ -108,46 +158,22 @@ public final class MCCSettingsView: MCCBaseView {
                 .offset(-MCEMetric.contentBottomInset)
         }
 
-        mcvw_contentStack.addArrangedSubview(mcvw_makeUserCard())
-        mcvw_contentStack.addArrangedSubview(
-            mcvw_makeVCard(
-                first: mcvw_makeChevronRow(
-                    assetName: "ic_st_feedback",
-                    title: "Feedback",
-                    action: { [weak self] in self?.mcvw_onFeedback?() }
-                ),
-                second: mcvw_makeChevronRow(
-                    assetName: "ic_st_contact",
-                    title: "Contact Us",
-                    action: { [weak self] in self?.mcvw_onContact?() }
-                )
-            )
-        )
-        let legal = mcvw_makeVCard(
-            first: mcvw_makeChevronRow(
-                assetName: "ic_st_service",
-                title: "Terms of Service",
-                action: { [weak self] in self?.mcvw_onTerms?() }
-            ),
-            second: mcvw_makeChevronRow(
-                assetName: "ic_st_policy",
-                title: "Privacy Policy",
-                action: { [weak self] in self?.mcvw_onPrivacy?() }
-            )
-        )
-        mcvw_contentStack.addArrangedSubview(legal)
+        mcvw_contentStack.addArrangedSubview(mcvw_userIdCard)
+        mcvw_contentStack.addArrangedSubview(mcvw_feedbackContactCard)
+        mcvw_contentStack.addArrangedSubview(mcvw_legalCard)
     }
 
-    public func mcvw_setUserIdDisplay(_ text: String) {
-        mcvw_userIdValueLabel.text = text
+    private static func mcvw_chevronRowTitleLabel() -> UILabel {
+        let t = UILabel()
+        t.textColor = MCCSettingsView.mcvw_textPrimary
+        t.font = .systemFont(ofSize: 17, weight: .regular)
+        return t
     }
 
-    public func mcvw_setVersionText(_ text: String) {
-        mcvw_versionLabel.text = text
-    }
-
-    @objc private func mcvw_copyUserIdTapped() {
-        mcvw_onCopyUserId?()
+    private struct MCEChevronRowParts {
+        let row: UIControl
+        let lead: UIImageView
+        let trail: UIImageView
     }
 
     private func mcvw_rowAssetIcon(named: String) -> UIImageView {
@@ -172,15 +198,10 @@ public final class MCCSettingsView: MCCBaseView {
         row.snp.makeConstraints { $0.height.equalTo(MCEMetric.rowHeight) }
 
         let icon = mcvw_rowAssetIcon(named: "ic_st_user")
-        let title = UILabel()
-        title.text = "User ID"
-        title.textColor = MCCSettingsView.mcvw_textPrimary
-        title.font = .systemFont(ofSize: 16, weight: .regular)
-        title.setContentHuggingPriority(.required, for: .horizontal)
-        title.setContentCompressionResistancePriority(.required, for: .horizontal)
+        mcvw_userIdLeadIconView = icon
 
         row.addSubview(icon)
-        row.addSubview(title)
+        row.addSubview(mcvw_userIdRowTitleLabel)
         row.addSubview(mcvw_userIdValueLabel)
         row.addSubview(mcvw_copyUserIdButton)
 
@@ -189,7 +210,7 @@ public final class MCCSettingsView: MCCBaseView {
             make.centerY.equalToSuperview()
             make.width.height.equalTo(MCEMetric.iconSize)
         }
-        title.snp.makeConstraints { make in
+        mcvw_userIdRowTitleLabel.snp.makeConstraints { make in
             make.leading.equalTo(icon.snp.trailing).offset(MCEMetric.titleValueGap)
             make.centerY.equalToSuperview()
         }
@@ -201,7 +222,7 @@ public final class MCCSettingsView: MCCBaseView {
         mcvw_userIdValueLabel.snp.makeConstraints { make in
             make.trailing.equalTo(mcvw_copyUserIdButton.snp.leading).offset(-MCEMetric.valueCopyGap)
             make.centerY.equalToSuperview()
-            make.leading.greaterThanOrEqualTo(title.snp.trailing).offset(8)
+            make.leading.greaterThanOrEqualTo(mcvw_userIdRowTitleLabel.snp.trailing).offset(8)
         }
 
         card.addSubview(row)
@@ -223,28 +244,23 @@ public final class MCCSettingsView: MCCBaseView {
         return card
     }
 
-    private func mcvw_makeChevronRow(assetName: String, title: String, action: @escaping () -> Void) -> UIView {
+    private func mcvw_makeChevronRow(assetName: String, titleLabel: UILabel) -> MCEChevronRowParts {
         let row = UIControl()
-        row.accessibilityLabel = title
         row.snp.makeConstraints { $0.height.equalTo(MCEMetric.rowHeight) }
         let icon = mcvw_rowAssetIcon(named: assetName)
-        let t = UILabel()
-        t.text = title
-        t.textColor = MCCSettingsView.mcvw_textPrimary
-        t.font = .systemFont(ofSize: 17, weight: .regular)
         let chev = UIImageView()
         chev.image = UIImage(named: "ic_cm_arrow")?.withRenderingMode(.alwaysTemplate)
         chev.tintColor = MCCSettingsView.mcvw_textSecondary
         chev.contentMode = .scaleAspectFit
         row.addSubview(icon)
-        row.addSubview(t)
+        row.addSubview(titleLabel)
         row.addSubview(chev)
         icon.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(MCEMetric.cardInnerHorizontal)
             make.centerY.equalToSuperview()
             make.width.height.equalTo(MCEMetric.iconSize)
         }
-        t.snp.makeConstraints { make in
+        titleLabel.snp.makeConstraints { make in
             make.leading.equalTo(icon.snp.trailing).offset(MCEMetric.titleValueGap)
             make.centerY.equalToSuperview()
             make.trailing.lessThanOrEqualTo(chev.snp.leading).offset(-8)
@@ -254,8 +270,7 @@ public final class MCCSettingsView: MCCBaseView {
             make.centerY.equalToSuperview()
             make.width.height.equalTo(20)
         }
-        row.addAction(UIAction { _ in action() }, for: .touchUpInside)
-        return row
+        return MCEChevronRowParts(row: row, lead: icon, trail: chev)
     }
 
 }
