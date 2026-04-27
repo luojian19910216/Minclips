@@ -2,11 +2,14 @@ import UIKit
 import Common
 import Combine
 import FDFullscreenPopGesture
+import MJRefresh
 import Data
 
 public final class MCCToolsController: MCCViewController<MCCToolsView, MCCEmptyViewModel> {
 
     private var mcvc_groups: [MCSCfToolboxGroup] = []
+
+    private var mcvc_toolboxCancellable: AnyCancellable?
 
     private var mcvc_items: [MCSCfToolboxItem] {
         mcvc_groups.flatMap { $0.item }
@@ -42,6 +45,12 @@ public final class MCCToolsController: MCCViewController<MCCToolsView, MCCEmptyV
         let cv = contentView.mcvw_collectionView
         cv.dataSource = self
         cv.delegate = self
+
+        let header = MJRefreshNormalHeader { [weak self] in
+            self?.mcvc_loadStudioToolbox()
+        }
+        header.lastUpdatedTimeLabel?.isHidden = true
+        cv.mj_header = header
     }
 
     public override func mcvc_loadData() {
@@ -50,7 +59,8 @@ public final class MCCToolsController: MCCViewController<MCCToolsView, MCCEmptyV
     }
 
     private func mcvc_loadStudioToolbox() {
-        MCCCfAPIManager.shared.studioToolbox()
+        mcvc_toolboxCancellable?.cancel()
+        mcvc_toolboxCancellable = MCCCfAPIManager.shared.studioToolbox()
             .asLoadState()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] s in
@@ -62,8 +72,10 @@ public final class MCCToolsController: MCCViewController<MCCToolsView, MCCEmptyV
                     self.mcvc_groups = []
                 }
                 self.contentView.mcvw_collectionView.reloadData()
+                if !s.isLoading {
+                    self.contentView.mcvw_collectionView.mj_header?.endRefreshing()
+                }
             }
-            .store(in: &cancellables)
     }
 
 }
@@ -90,6 +102,14 @@ extension MCCToolsController: UICollectionViewDataSource, UICollectionViewDelega
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
         mcvc_itemSize(in: collectionView)
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let item = mcvc_items[safe: indexPath.item] else { return }
+        collectionView.deselectItem(at: indexPath, animated: true)
+        let vc = MCCOneClickController()
+        vc.mcvc_toolboxItem = item
+        navigationController?.pushViewController(vc, animated: true)
     }
 
 }

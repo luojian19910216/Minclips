@@ -155,6 +155,14 @@
 		F6E2C2152FC0020002C4F70 /* MCCToolsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2012FC0020002C4F70 /* MCCToolsController.swift */; };
 		F6E2C2162FC0020002C4F70 /* MCCToolsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2012FC0020002C4F70 /* MCCToolsController.swift */; };
 		F6E2C2172FC0020002C4F70 /* MCCToolsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2012FC0020002C4F70 /* MCCToolsController.swift */; };
+		F6E2C2222FC0020002C4F70 /* MCCOneClickView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2182FC0020002C4F70 /* MCCOneClickView.swift */; };
+		F6E2C2232FC0020002C4F70 /* MCCOneClickView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2182FC0020002C4F70 /* MCCOneClickView.swift */; };
+		F6E2C2242FC0020002C4F70 /* MCCOneClickView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2182FC0020002C4F70 /* MCCOneClickView.swift */; };
+		F6E2C2252FC0020002C4F70 /* MCCOneClickView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2182FC0020002C4F70 /* MCCOneClickView.swift */; };
+		F6E2C2262FC0020002C4F70 /* MCCOneClickController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2192FC0020002C4F70 /* MCCOneClickController.swift */; };
+		F6E2C2272FC0020002C4F70 /* MCCOneClickController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2192FC0020002C4F70 /* MCCOneClickController.swift */; };
+		F6E2C2282FC0020002C4F70 /* MCCOneClickController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2192FC0020002C4F70 /* MCCOneClickController.swift */; };
+		F6E2C2292FC0020002C4F70 /* MCCOneClickController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2192FC0020002C4F70 /* MCCOneClickController.swift */; };
 		F6E2C2A02FC0030002C4F70 /* MCCCreationResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C22E2FC0030002C4F70 /* MCCCreationResultView.swift */; };
 		F6E2C2A12FC0030002C4F70 /* MCCCreationResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C22E2FC0030002C4F70 /* MCCCreationResultView.swift */; };
 		F6E2C2A22FC0030002C4F70 /* MCCCreationResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C22E2FC0030002C4F70 /* MCCCreationResultView.swift */; };
@@ -255,6 +263,8 @@
 		F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProjectsListPageController.swift; sourceTree = "<group>"; };
 		F6E2C2002FC0020002C4F70 /* MCCToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCToolsView.swift; sourceTree = "<group>"; };
 		F6E2C2012FC0020002C4F70 /* MCCToolsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCToolsController.swift; sourceTree = "<group>"; };
+		F6E2C2182FC0020002C4F70 /* MCCOneClickView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCOneClickView.swift; sourceTree = "<group>"; };
+		F6E2C2192FC0020002C4F70 /* MCCOneClickController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCOneClickController.swift; sourceTree = "<group>"; };
 		F6E2C22E2FC0030002C4F70 /* MCCCreationResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCCreationResultView.swift; sourceTree = "<group>"; };
 		F6E2C22F2FC0030002C4F70 /* MCCCreationResultController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCCreationResultController.swift; sourceTree = "<group>"; };
 		F6E2C2302FC0030002C4F70 /* MCCDeleteConfirmPopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCDeleteConfirmPopController.swift; sourceTree = "<group>"; };
@@ -522,6 +532,8 @@
 			children = (
 				F6E2C2002FC0020002C4F70 /* MCCToolsView.swift */,
 				F6E2C2012FC0020002C4F70 /* MCCToolsController.swift */,
+				F6E2C2182FC0020002C4F70 /* MCCOneClickView.swift */,
+				F6E2C2192FC0020002C4F70 /* MCCOneClickController.swift */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -934,6 +946,8 @@
 				F6E2C12C2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
 				F6E2C2102FC0020002C4F70 /* MCCToolsView.swift in Sources */,
 				F6E2C2142FC0020002C4F70 /* MCCToolsController.swift in Sources */,
+				F6E2C2222FC0020002C4F70 /* MCCOneClickView.swift in Sources */,
+				F6E2C2262FC0020002C4F70 /* MCCOneClickController.swift in Sources */,
 				F6E2C2A02FC0030002C4F70 /* MCCCreationResultView.swift in Sources */,
 				F6E2C2A42FC0030002C4F70 /* MCCCreationResultController.swift in Sources */,
 				F6E2C2B42FC0030002C4F70 /* MCCDeleteConfirmPopController.swift in Sources */,
@@ -981,6 +995,8 @@
 				F6E2C12D2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
 				F6E2C2112FC0020002C4F70 /* MCCToolsView.swift in Sources */,
 				F6E2C2152FC0020002C4F70 /* MCCToolsController.swift in Sources */,
+				F6E2C2232FC0020002C4F70 /* MCCOneClickView.swift in Sources */,
+				F6E2C2272FC0020002C4F70 /* MCCOneClickController.swift in Sources */,
 				F6E2C2A12FC0030002C4F70 /* MCCCreationResultView.swift in Sources */,
 				F6E2C2A52FC0030002C4F70 /* MCCCreationResultController.swift in Sources */,
 				F6E2C2B52FC0030002C4F70 /* MCCDeleteConfirmPopController.swift in Sources */,
@@ -1034,6 +1050,8 @@
 				F6E2C12E2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
 				F6E2C2122FC0020002C4F70 /* MCCToolsView.swift in Sources */,
 				F6E2C2162FC0020002C4F70 /* MCCToolsController.swift in Sources */,
+				F6E2C2242FC0020002C4F70 /* MCCOneClickView.swift in Sources */,
+				F6E2C2282FC0020002C4F70 /* MCCOneClickController.swift in Sources */,
 				F6E2C2A22FC0030002C4F70 /* MCCCreationResultView.swift in Sources */,
 				F6E2C2A62FC0030002C4F70 /* MCCCreationResultController.swift in Sources */,
 				F6E2C2B62FC0030002C4F70 /* MCCDeleteConfirmPopController.swift in Sources */,
@@ -1084,6 +1102,8 @@
 				F6E2C12F2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
 				F6E2C2132FC0020002C4F70 /* MCCToolsView.swift in Sources */,
 				F6E2C2172FC0020002C4F70 /* MCCToolsController.swift in Sources */,
+				F6E2C2252FC0020002C4F70 /* MCCOneClickView.swift in Sources */,
+				F6E2C2292FC0020002C4F70 /* MCCOneClickController.swift in Sources */,
 				F6E2C2A32FC0030002C4F70 /* MCCCreationResultView.swift in Sources */,
 				F6E2C2A72FC0030002C4F70 /* MCCCreationResultController.swift in Sources */,
 				F6E2C2B72FC0030002C4F70 /* MCCDeleteConfirmPopController.swift in Sources */,
