@@ -4,9 +4,8 @@ import SnapKit
 
 fileprivate enum MCCProStyle {
     static let cardBg = UIColor(hex: "1C1C1E")!
-    static let accent = UIColor(hex: "00AAFF")!
+    static let accent = UIColor(hex: "0077FF")!
     static let muted = UIColor(red: 0.557, green: 0.557, blue: 0.576, alpha: 1)
-    static let buttonCorner: CGFloat = 12
 }
 
 fileprivate enum MPEMetric {
@@ -24,16 +23,11 @@ public final class MCCProView: MCCBaseView {
     public static var mcvw_listCellHeight: CGFloat { MPEMetric.listCellHeight }
     public static var mcvw_listLineSpacing: CGFloat { MPEMetric.listLineSpacing }
     public static var mcvw_listHorizontal: CGFloat { MPEMetric.listHorizontal }
-
-    public let mcvw_scrollView: UIScrollView = {
-        let s = UIScrollView()
-        s.alwaysBounceVertical = false
-        s.bounces = false
-        s.showsVerticalScrollIndicator = true
-        s.backgroundColor = .black
-        s.contentInsetAdjustmentBehavior = .never
-        return s
-    }()
+    public static let mcvw_listRowCount: Int = 3
+    public static var mcvw_listFixedFrameHeight: CGFloat {
+        CGFloat(mcvw_listRowCount) * MPEMetric.listCellHeight
+            + CGFloat(max(0, mcvw_listRowCount - 1)) * MPEMetric.listLineSpacing
+    }
 
     public let mcvw_heroImageView: UIImageView = {
         let v = UIImageView()
@@ -47,7 +41,7 @@ public final class MCCProView: MCCBaseView {
     public let mcvw_headlineLabel: UILabel = {
         let l = UILabel()
         l.textColor = .white
-        l.font = .systemFont(ofSize: 22, weight: .heavy)
+        l.font = .systemFont(ofSize: 24, weight: .semibold)
         l.textAlignment = .center
         l.numberOfLines = 0
         return l
@@ -55,8 +49,8 @@ public final class MCCProView: MCCBaseView {
 
     public let mcvw_subheadlineLabel: UILabel = {
         let l = UILabel()
-        l.textColor = MCCProStyle.muted
-        l.font = .systemFont(ofSize: 14, weight: .regular)
+        l.textColor = .white.withAlphaComponent(0.4)
+        l.font = .systemFont(ofSize: 16, weight: .regular)
         l.textAlignment = .center
         l.numberOfLines = 0
         return l
@@ -86,16 +80,15 @@ public final class MCCProView: MCCBaseView {
         let b = UIButton(type: .system)
         b.backgroundColor = MCCProStyle.accent
         b.setTitleColor(.white, for: .normal)
-        b.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
-        b.layer.cornerRadius = MCCProStyle.buttonCorner
+        b.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
         b.clipsToBounds = true
         return b
     }()
 
     public let mcvw_renewalHintLabel: UILabel = {
         let l = UILabel()
-        l.textColor = MCCProStyle.muted
-        l.font = .systemFont(ofSize: 12, weight: .regular)
+        l.textColor = .white
+        l.font = .systemFont(ofSize: 13, weight: .regular)
         l.textAlignment = .center
         l.numberOfLines = 0
         return l
@@ -113,11 +106,20 @@ public final class MCCProView: MCCBaseView {
     }()
 
     private let mcvw_listContainer = UIView()
+    /// 顶部可伸缩空白，多出的垂直空间出现在标题上方（列表与 CTA 之间固定 32，不由本视图撑开）。
+    private let mcvw_topSpacer: UIView = {
+        let v = UIView()
+        v.backgroundColor = .clear
+        v.setContentHuggingPriority(.defaultLow, for: .vertical)
+        v.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        return v
+    }()
     private let mcvw_contentStack: UIStackView = {
         let s = UIStackView()
         s.axis = .vertical
         s.alignment = .fill
         s.spacing = 0
+        s.distribution = .fill
         return s
     }()
     private let mcvw_legalRow: UIStackView = {
@@ -125,16 +127,19 @@ public final class MCCProView: MCCBaseView {
         s.axis = .horizontal
         s.alignment = .center
         s.distribution = .fill
-        s.spacing = 6
+        s.spacing = 12
         return s
     }()
 
     public override func mcvw_setupUI() {
         backgroundColor = .black
 
+        let legalMuted = UIColor.white.withAlphaComponent(0.72)
+        let legalEdge = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
         [mcvw_restoreButton, mcvw_termsButton, mcvw_policyButton].forEach { b in
-            b.setTitleColor(MCCProStyle.muted, for: .normal)
-            b.titleLabel?.font = .systemFont(ofSize: 11, weight: .regular)
+            b.setTitleColor(legalMuted, for: .normal)
+            b.titleLabel?.font = .systemFont(ofSize: 12, weight: .regular)
+            b.contentEdgeInsets = legalEdge
         }
 
         addSubview(mcvw_heroContainer)
@@ -145,22 +150,19 @@ public final class MCCProView: MCCBaseView {
             make.height.equalTo(mcvw_heroContainer.snp.width).multipliedBy(MPEMetric.mcvw_heroImageAspect)
         }
 
-        addSubview(mcvw_scrollView)
-        mcvw_scrollView.snp.makeConstraints { make in
-            make.top.equalTo(mcvw_heroContainer.snp.bottom)
-            make.leading.trailing.bottom.equalToSuperview()
-        }
-        mcvw_scrollView.addSubview(mcvw_contentStack)
+        addSubview(mcvw_contentStack)
         mcvw_contentStack.snp.makeConstraints { make in
-            make.top.bottom.equalTo(mcvw_scrollView.contentLayoutGuide)
-            make.leading.trailing.equalTo(mcvw_scrollView.frameLayoutGuide)
+            make.top.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
         }
+
+        mcvw_contentStack.addArrangedSubview(mcvw_topSpacer)
 
         let textBlock = UIStackView(arrangedSubviews: [mcvw_headlineLabel, mcvw_subheadlineLabel])
         textBlock.axis = .vertical
         textBlock.spacing = 8
         textBlock.isLayoutMarginsRelativeArrangement = true
-        textBlock.layoutMargins = UIEdgeInsets(top: 20, left: 20, bottom: 16, right: 20)
+        textBlock.layoutMargins = UIEdgeInsets(top: 20, left: 32, bottom: 0, right: 32)
         mcvw_contentStack.addArrangedSubview(textBlock)
 
         mcvw_contentStack.addArrangedSubview(mcvw_listContainer)
@@ -171,12 +173,13 @@ public final class MCCProView: MCCBaseView {
             make.height.equalTo(0)
         }
 
-        mcvw_contentStack.setCustomSpacing(20, after: mcvw_listContainer)
+        mcvw_contentStack.setCustomSpacing(32, after: textBlock)
+        mcvw_contentStack.setCustomSpacing(32, after: mcvw_listContainer)
 
         let ctaPad = UIStackView(arrangedSubviews: [mcvw_ctaButton])
         ctaPad.isLayoutMarginsRelativeArrangement = true
-        ctaPad.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
-        mcvw_ctaButton.snp.makeConstraints { $0.height.equalTo(52) }
+        ctaPad.layoutMargins = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
+        mcvw_ctaButton.snp.makeConstraints { $0.height.equalTo(48) }
         mcvw_contentStack.addArrangedSubview(ctaPad)
 
         mcvw_legalRow.addArrangedSubview(mcvw_restoreButton)
@@ -192,17 +195,17 @@ public final class MCCProView: MCCBaseView {
         }
         let footStack = UIStackView(arrangedSubviews: [mcvw_renewalHintLabel, legalHost])
         footStack.axis = .vertical
-        footStack.spacing = 12
+        footStack.spacing = 0
         footStack.isLayoutMarginsRelativeArrangement = true
-        footStack.layoutMargins = UIEdgeInsets(top: 12, left: 20, bottom: 20, right: 20)
+        footStack.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
         mcvw_contentStack.addArrangedSubview(footStack)
+        mcvw_contentStack.setCustomSpacing(16, after: ctaPad)
     }
 
     public override func layoutSubviews() {
         super.layoutSubviews()
-        let b = safeAreaInsets.bottom
-        mcvw_scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: b, right: 0)
-        mcvw_scrollView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: b, right: 0)
+        let ctaH = mcvw_ctaButton.bounds.height
+        if ctaH > 0 { mcvw_ctaButton.layer.cornerRadius = ctaH * 0.5 }
     }
 
     public func mcvw_setListFrameHeight(_ height: CGFloat) {
@@ -216,8 +219,8 @@ public final class MCCProView: MCCBaseView {
     private func mccpr_dot() -> UILabel {
         let l = UILabel()
         l.text = "·"
-        l.textColor = MCCProStyle.muted
-        l.font = .systemFont(ofSize: 11, weight: .regular)
+        l.textColor = .white.withAlphaComponent(0.72)
+        l.font = .systemFont(ofSize: 12, weight: .regular)
         l.textAlignment = .center
         l.setContentHuggingPriority(.required, for: .horizontal)
         return l

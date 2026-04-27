@@ -111,9 +111,7 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
 
     private func mcvc_listFrameHeight(offerCount: Int) -> CGFloat {
         guard offerCount > 0 else { return 0 }
-        let visible = min(offerCount, 3)
-        return CGFloat(visible) * MCCProView.mcvw_listCellHeight
-            + CGFloat(max(0, visible - 1)) * MCCProView.mcvw_listLineSpacing
+        return MCCProView.mcvw_listFixedFrameHeight
     }
 
     private func mcvc_reloadProList() {
