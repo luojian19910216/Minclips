@@ -38,8 +38,8 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         back.tintColor = .white
         let gap = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
         gap.width = 8
-        let shorts = MCCRootTabNavChrome.leftTitleBarButtonItem(title: "Shorts")
-        navigationItem.leftBarButtonItems = [back, gap, shorts]
+        let shots = MCCRootTabNavChrome.leftTitleBarButtonItem(title: "Shots")
+        navigationItem.leftBarButtonItems = [back, gap, shots]
         navigationItem.rightBarButtonItem = MCCRootTabNavChrome.proBarButtonItem(
             target: self,
             action: #selector(mcvc_onProTapped),

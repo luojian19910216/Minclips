@@ -44,7 +44,7 @@ public class MCCTabBarController: UITabBarController {
     public lazy var firstVC: MCCShotsController = {
         let vc = MCCShotsController()
         vc.tabBarItem.image = UIImage(named: "ic_tab_home")?.withRenderingMode(.alwaysTemplate)
-        vc.tabBarItem.title = "Shorts"
+        vc.tabBarItem.title = "Shots"
         return vc
     }()
 
@@ -75,7 +75,7 @@ public class MCCTabBarController: UITabBarController {
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 guard let self = self else { return }
-                self.firstVC.tabBarItem.title = "Shorts"
+                self.firstVC.tabBarItem.title = "Shots"
                 self.secondVC.tabBarItem.title = "Studio"
                 self.thirdVC.tabBarItem.title = "Projects"
             }

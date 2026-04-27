@@ -113,6 +113,7 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
             let tagHost = UIView()
             tagHost.snp.makeConstraints { $0.height.equalTo(MCCShotsSkeletonMetrics.tagPinHeaderHeight) }
             let tagBar = UIView()
+            tagBar.backgroundColor = MCCShotsListItemMetrics.listItemImageContainerBackground
             tagHost.addSubview(tagBar)
             tagBar.isSkeletonable = true
             tagBar.skeletonCornerRadius = 8
@@ -188,6 +189,7 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
         col.alignment = .fill
         col.spacing = MCCShotsSkeletonMetrics.imageToTitleSpacing
         let thumb = UIView()
+        thumb.backgroundColor = MCCShotsListItemMetrics.listItemImageContainerBackground
         thumb.isSkeletonable = true
         thumb.skeletonCornerRadius = Float(MCCShotsSkeletonMetrics.thumbCornerRadius)
         thumb.clipsToBounds = true
@@ -195,6 +197,7 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
             make.height.equalTo(thumbHeight)
         }
         let title = UIView()
+        title.backgroundColor = MCCShotsListItemMetrics.listItemImageContainerBackground
         mcvw_skeletonize(title, radius: 4, height: MCCShotsSkeletonMetrics.titleBlockHeight)
         col.addArrangedSubview(thumb)
         col.addArrangedSubview(title)

@@ -227,14 +227,6 @@ extension MCCShotsListPageController {
         cv.reloadData()
     }
 
-    private static func mcvc_placeholderHex(from id: String) -> String {
-        var h: UInt = 0
-        for c in id.unicodeScalars {
-            h = h &* 31 &+ UInt(c.value)
-        }
-        return String(format: "%06X", h % 0xFFFFFF)
-    }
-
     private static func mcvc_formatVideoDurationLabel(seconds: Int) -> String {
         let sec = max(0, seconds)
         let h = sec / 3600
@@ -259,8 +251,7 @@ extension MCCShotsListPageController {
     }
 
     private func mcvc_styleListCell(_ cell: MCCShotsListItemCell, item: MCSFeedItem, collectionView: UICollectionView) {
-        let hex = Self.mcvc_placeholderHex(from: item.itemId)
-        cell.mcvw_imageContainer.backgroundColor = UIColor(hex: hex) ?? .darkGray
+        cell.mcvw_imageContainer.backgroundColor = MCCShotsListItemMetrics.listItemImageContainerBackground
         let a = item.videoAsset
         cell.mcvw_setImageHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth)
         let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width)

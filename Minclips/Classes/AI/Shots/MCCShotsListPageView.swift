@@ -5,6 +5,8 @@ import Data
 
 public enum MCCShotsListItemMetrics {
 
+    public static let listItemImageContainerBackground: UIColor = UIColor.white.withAlphaComponent(0.06)
+
     public static let imageToTitleSpacing: CGFloat = 8
 
     public static let titleFont = UIFont.systemFont(ofSize: 14, weight: .regular)
@@ -120,6 +122,7 @@ public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
         mcvw_imageContainer.addSubview(mcvw_durationLabel)
         mcvw_imageContainer.addSubview(mcvw_proBadge)
         mcvw_proBadge.addSubview(mcvw_proIcon)
+        mcvw_imageContainer.backgroundColor = MCCShotsListItemMetrics.listItemImageContainerBackground
         mcvw_imageContainer.layer.cornerRadius = 12
         mcvw_imageContainer.clipsToBounds = true
         mcvw_posterImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
