@@ -321,8 +321,10 @@ public final class MCCProPlanCell: MCCBaseCollectionViewCell {
     }
 
     public func mcvw_setSelection(_ isSelected: Bool) {
-        mcvw_border.layer.borderWidth = isSelected ? 2 : 0
-        mcvw_border.layer.borderColor = isSelected ? MCCProStyle.accent.cgColor : nil
+        mcvw_border.layer.borderWidth = 2
+        mcvw_border.layer.borderColor = isSelected
+            ? MCCProStyle.accent.cgColor
+            : MCCProStyle.cardBg.cgColor
     }
 
     public func mcvw_setRightLine(leading: String, trailing: String) {

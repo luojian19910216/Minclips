@@ -12,7 +12,7 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
 
     private var mcvc_proListOffers: [MCSSubscriptionRow] = []
 
-    private var mcvc_selectedOfferIndex: Int = 0
+    private var mcvc_selectedOfferIndex: Int = 1
 
     public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
@@ -60,8 +60,8 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
         view.backgroundColor = bg
         contentView.backgroundColor = bg
         let v = contentView
-        v.mcvw_headlineLabel.text = "UNLOCK ALL AI VIDEOS & IMAGES"
-        v.mcvw_subheadlineLabel.text = "500 credits per week, total 26000 & High-Speed Generation Queue."
+        v.mcvw_headlineLabel.text = ""
+        v.mcvw_subheadlineLabel.text = ""
         v.mcvw_renewalHintLabel.text = "Auto renews, cancel anytime"
         v.mcvw_ctaButton.setTitle("Subscription", for: .normal)
         v.mcvw_restoreButton.setTitle("Restore", for: .normal)
@@ -102,11 +102,26 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
     private func mcvc_applyCatalogForUI(_ r: MCSSubscriptionCatalogResponse?) {
         mcvc_lastCatalog = r
         let list = r?.offers.filter { $0.offerCategory == Self.mcvc_proOfferCategory } ?? []
-        mcvc_proListOffers = list
-        if mcvc_selectedOfferIndex >= list.count {
-            mcvc_selectedOfferIndex = max(0, list.count - 1)
+        mcvc_proListOffers = Array(list.reversed())
+        if list.isEmpty {
+            mcvc_selectedOfferIndex = 0
+        } else {
+            mcvc_selectedOfferIndex = min(1, list.count - 1)
         }
+        mcvc_applyBackFeatureTitles()
         mcvc_reloadProList()
+    }
+
+    private func mcvc_applyBackFeatureTitles() {
+        let v = contentView
+        guard mcvc_proListOffers.indices.contains(mcvc_selectedOfferIndex) else {
+            v.mcvw_headlineLabel.text = ""
+            v.mcvw_subheadlineLabel.text = ""
+            return
+        }
+        let lines = mcvc_proListOffers[mcvc_selectedOfferIndex].backFeatureLines
+        v.mcvw_headlineLabel.text = lines.indices.contains(0) ? lines[0].line : ""
+        v.mcvw_subheadlineLabel.text = lines.indices.contains(1) ? lines[1].line : ""
     }
 
     private func mcvc_reloadProList() {
@@ -133,18 +148,23 @@ extension MCCProController: UICollectionViewDataSource, UICollectionViewDelegate
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let c = collectionView.dequeueReusableCell(withReuseIdentifier: MCCProPlanCell.mcvw_id, for: indexPath) as! MCCProPlanCell
-        let isFirst = indexPath.item == 0
         c.mcvw_setSelection(indexPath.item == mcvc_selectedOfferIndex)
-        c.mcvw_titleLabel.text = "—"
-        c.mcvw_setRightLine(leading: "—", trailing: "")
-        if isFirst {
-            c.mcvw_popularPill.setTitle(" Popular ", for: .normal)
-            c.mcvw_popularPill.isHidden = false
-            c.mcvw_saveBadge.setTitle(" Save 85% ", for: .normal)
-            c.mcvw_saveBadge.isHidden = false
-        } else {
+        let row = mcvc_proListOffers[indexPath.item]
+        c.mcvw_titleLabel.text = row.displayName
+        c.mcvw_setRightLine(leading: "$0.00", trailing: "/" + row.planPeriod.rawValue)
+        let corner = row.cornerBadge.trimmingCharacters(in: .whitespacesAndNewlines)
+        if corner.isEmpty {
             c.mcvw_popularPill.isHidden = true
+        } else {
+            c.mcvw_popularPill.setTitle(corner, for: .normal)
+            c.mcvw_popularPill.isHidden = false
+        }
+        let pitch = row.savingsPitch.trimmingCharacters(in: .whitespacesAndNewlines)
+        if pitch.isEmpty {
             c.mcvw_saveBadge.isHidden = true
+        } else {
+            c.mcvw_saveBadge.setTitle(pitch, for: .normal)
+            c.mcvw_saveBadge.isHidden = false
         }
         return c
     }
@@ -164,6 +184,7 @@ extension MCCProController: UICollectionViewDataSource, UICollectionViewDelegate
 
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         mcvc_selectedOfferIndex = indexPath.item
+        mcvc_applyBackFeatureTitles()
         collectionView.reloadData()
     }
 
