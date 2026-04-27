@@ -194,14 +194,7 @@ extension MCCProController: UICollectionViewDataSource, UICollectionViewDelegate
         c.mcvw_setSelection(indexPath.item == mcvc_selectedOfferIndex)
         let row = mcvc_proListOffers[indexPath.item]
         c.mcvw_titleLabel.text = row.displayName
-        let priceRaw = row.currentPrice.trimmingCharacters(in: .whitespacesAndNewlines)
-        let priceShow = priceRaw.isEmpty
-            ? row.priceHeadline.trimmingCharacters(in: .whitespacesAndNewlines)
-            : priceRaw
-        let leading = priceShow.isEmpty ? "$0.00" : priceShow
-        let periodRaw = row.planPeriod.rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
-        let trailing = periodRaw.isEmpty ? "" : "/" + periodRaw
-        c.mcvw_setRightLine(leading: leading, trailing: trailing)
+        c.mcvw_setRightLine(leading: "$0.00", trailing: "/" + row.planPeriod.rawValue)
         let corner = row.cornerBadge.trimmingCharacters(in: .whitespacesAndNewlines)
         if corner.isEmpty {
             c.mcvw_popularPill.isHidden = true
