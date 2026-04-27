@@ -3,13 +3,10 @@ import Common
 import Combine
 import FDFullscreenPopGesture
 import Data
-import SDWebImage
 
 public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewModel> {
 
     private static let mcvc_proOfferCategory = "vip_scene_two"
-
-    private static let mcvc_heroImageURL = "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=960&q=80"
 
     private var mcvc_lastCatalog: MCSSubscriptionCatalogResponse?
 
@@ -85,9 +82,6 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
 
     public override func mcvc_loadData() {
         super.mcvc_loadData()
-        if let u = URL(string: Self.mcvc_heroImageURL) {
-            contentView.mcvw_heroImageView.sd_setImage(with: u, placeholderImage: nil)
-        }
         mcvc_loadSubscriptionCatalog()
         mcvc_reloadProList()
     }

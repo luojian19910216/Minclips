@@ -13,7 +13,10 @@ fileprivate enum MPEMetric {
     static let listCellHeight: CGFloat = 76
     static let listLineSpacing: CGFloat = 10
     static let listHorizontal: CGFloat = 20
-    static let headerHeroRatio: CGFloat = 0.38
+    static var mcvw_heroImageAspect: CGFloat {
+        guard let i = UIImage(named: "ic_bg_pro"), i.size.width > 0 else { return 0.5 }
+        return i.size.height / i.size.width
+    }
 }
 
 public final class MCCProView: MCCBaseView {
@@ -28,15 +31,16 @@ public final class MCCProView: MCCBaseView {
         s.bounces = false
         s.showsVerticalScrollIndicator = true
         s.backgroundColor = .black
-        s.contentInsetAdjustmentBehavior = .always
+        s.contentInsetAdjustmentBehavior = .never
         return s
     }()
 
     public let mcvw_heroImageView: UIImageView = {
         let v = UIImageView()
+        v.image = UIImage(named: "ic_bg_pro")
         v.contentMode = .scaleAspectFill
         v.clipsToBounds = true
-        v.backgroundColor = UIColor(white: 0.12, alpha: 1)
+        v.backgroundColor = .clear
         return v
     }()
 
@@ -101,17 +105,11 @@ public final class MCCProView: MCCBaseView {
     public let mcvw_termsButton = UIButton(type: .system)
     public let mcvw_policyButton = UIButton(type: .system)
 
-    private let mcvw_heroContainer = UIView()
-    private let mcvw_heroGradient: CAGradientLayer = {
-        let g = CAGradientLayer()
-        g.colors = [
-            UIColor.black.withAlphaComponent(0).cgColor,
-            UIColor.black.cgColor,
-        ]
-        g.locations = [0.5, 1]
-        g.startPoint = CGPoint(x: 0.5, y: 0)
-        g.endPoint = CGPoint(x: 0.5, y: 1)
-        return g
+    private let mcvw_heroContainer: UIView = {
+        let v = UIView()
+        v.backgroundColor = .clear
+        v.clipsToBounds = true
+        return v
     }()
 
     private let mcvw_listContainer = UIView()
@@ -139,22 +137,23 @@ public final class MCCProView: MCCBaseView {
             b.titleLabel?.font = .systemFont(ofSize: 11, weight: .regular)
         }
 
+        addSubview(mcvw_heroContainer)
+        mcvw_heroContainer.addSubview(mcvw_heroImageView)
+        mcvw_heroImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        mcvw_heroContainer.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
+            make.height.equalTo(mcvw_heroContainer.snp.width).multipliedBy(MPEMetric.mcvw_heroImageAspect)
+        }
+
         addSubview(mcvw_scrollView)
         mcvw_scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.equalTo(mcvw_heroContainer.snp.bottom)
+            make.leading.trailing.bottom.equalToSuperview()
         }
         mcvw_scrollView.addSubview(mcvw_contentStack)
         mcvw_contentStack.snp.makeConstraints { make in
             make.top.bottom.equalTo(mcvw_scrollView.contentLayoutGuide)
             make.leading.trailing.equalTo(mcvw_scrollView.frameLayoutGuide)
-        }
-
-        mcvw_heroContainer.addSubview(mcvw_heroImageView)
-        mcvw_heroImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
-        mcvw_heroContainer.layer.addSublayer(mcvw_heroGradient)
-        mcvw_contentStack.addArrangedSubview(mcvw_heroContainer)
-        mcvw_heroContainer.snp.makeConstraints { make in
-            make.height.equalTo(mcvw_heroContainer.snp.width).multipliedBy(MPEMetric.headerHeroRatio)
         }
 
         let textBlock = UIStackView(arrangedSubviews: [mcvw_headlineLabel, mcvw_subheadlineLabel])
@@ -201,7 +200,9 @@ public final class MCCProView: MCCBaseView {
 
     public override func layoutSubviews() {
         super.layoutSubviews()
-        mcvw_heroGradient.frame = mcvw_heroContainer.bounds
+        let b = safeAreaInsets.bottom
+        mcvw_scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: b, right: 0)
+        mcvw_scrollView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: b, right: 0)
     }
 
     public func mcvw_setListFrameHeight(_ height: CGFloat) {
