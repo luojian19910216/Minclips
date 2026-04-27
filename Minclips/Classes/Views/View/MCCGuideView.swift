@@ -28,6 +28,8 @@ public final class MCCGuideView: MCCBaseView {
 
     private var lastPrimaryAt: Date?
 
+    private var lastPrimaryIndex: Int?
+
     private var castLeadPreviewImage: UIImage?
 
     private let outputSubject = PassthroughSubject<MCCGuideViewOutput, Never>()
@@ -54,20 +56,20 @@ public final class MCCGuideView: MCCBaseView {
     }()
 
     private lazy var storyRegistration: UICollectionView.CellRegistration<MCCGuideStoryCell, MCSGuide> = {
-        UICollectionView.CellRegistration<MCCGuideStoryCell, MCSGuide> { [weak self] cell, _, model in
+        UICollectionView.CellRegistration<MCCGuideStoryCell, MCSGuide> { [weak self] cell, indexPath, model in
             cell.mcvw_apply(model: model)
             cell.onPrimary = { [weak self] in
-                self?.handlePrimary(model: model)
+                self?.handlePrimary(at: indexPath.item)
             }
         }
     }()
 
     private lazy var castRegistration: UICollectionView.CellRegistration<MCCGuideCastCell, MCSGuide> = {
-        UICollectionView.CellRegistration<MCCGuideCastCell, MCSGuide> { [weak self] cell, _, model in
+        UICollectionView.CellRegistration<MCCGuideCastCell, MCSGuide> { [weak self] cell, indexPath, model in
             guard let self else { return }
             cell.mcvw_apply(model: model, previewImage: self.castLeadPreviewImage)
             cell.onPrimary = { [weak self] in
-                self?.handlePrimary(model: model)
+                self?.handlePrimary(at: indexPath.item)
             }
             cell.onPickPhoto = { [weak self] in
                 self?.outputSubject.send(.pickPhotoTapped)
@@ -80,10 +82,10 @@ public final class MCCGuideView: MCCBaseView {
             guard let self else {
                 preconditionFailure("MCCGuideView deallocated while dequeuing a cell")
             }
-            switch model.pageStyle {
+            switch model {
             case .story:
                 return collectionView.dequeueConfiguredReusableCell(using: self.storyRegistration, for: indexPath, item: model)
-            case .castLead:
+            case .cast:
                 return collectionView.dequeueConfiguredReusableCell(using: self.castRegistration, for: indexPath, item: model)
             }
         }
@@ -111,10 +113,14 @@ public final class MCCGuideView: MCCBaseView {
 
     public func mcvw_setCastLeadPreview(image: UIImage?) {
         castLeadPreviewImage = image
-        guard let item = models.first(where: { $0.pageStyle == .castLead }) else { return }
+        guard let index = models.firstIndex(where: { if case .cast = $0 { true } else { false } }) else { return }
+        let item = models[index]
         var snapshot = dataSource.snapshot()
-        guard snapshot.indexOfItem(item) != nil else { return }
-        snapshot.reconfigureItems([item])
+        guard snapshot.indexOfItem(item) != nil else {
+            collectionView.reloadItems(at: [IndexPath(item: index, section: 0)])
+            return
+        }
+        snapshot.reloadItems([item])
         dataSource.apply(snapshot, animatingDifferences: false)
     }
 
@@ -124,20 +130,21 @@ extension MCCGuideView {
 
     private func applyModels(_ models: [MCSGuide]) {
         self.models = models
-        castLeadPreviewImage = nil
         var snapshot = NSDiffableDataSourceSnapshot<MCESection, MCSGuide>()
         snapshot.appendSections([.main])
         snapshot.appendItems(models, toSection: .main)
         dataSource.apply(snapshot, animatingDifferences: true)
     }
 
-    private func handlePrimary(model: MCSGuide) {
+    private func handlePrimary(at index: Int) {
         let now = Date()
-        if let last = lastPrimaryAt, now.timeIntervalSince(last) < 1 {
+        if let li = lastPrimaryIndex, li == index, let last = lastPrimaryAt, now.timeIntervalSince(last) < 0.5 {
             return
         }
+        lastPrimaryIndex = index
         lastPrimaryAt = now
-        guard let index = models.firstIndex(where: { $0.id == model.id }) else { return }
+        guard index >= 0, index < models.count else { return }
+        let model = models[index]
         let isLast = index == models.count - 1
         outputSubject.send(.primaryTapped(index: index, model: model, isLastPage: isLast))
         if !isLast {
@@ -266,15 +273,16 @@ public final class MCCGuideStoryCell: MCCBaseCollectionViewCell {
     }
 
     public func mcvw_apply(model: MCSGuide) {
-        titleLab.text = model.title
+        guard case let .story(media, title, detail, button) = model else { return }
+        titleLab.text = title
         detailLab.attributedText = mccg_detailBodyAttributed(
-            model.detail,
+            detail,
             font: .systemFont(ofSize: 16, weight: .regular),
             color: MCCGuideStyle.subtitle
         )
-        handleBtn.setTitle(model.handleBtnTitle, for: .normal)
+        handleBtn.setTitle(button, for: .normal)
         handleBtn.layer.cornerRadius = MCCGuideStyle.buttonHeight * 0.5
-        let trimmed = model.media.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = media.trimmingCharacters(in: .whitespacesAndNewlines)
         if !trimmed.isEmpty, let asset = UIImage(named: trimmed) {
             heroImageView.sd_cancelCurrentImageLoad()
             heroImageView.image = asset
@@ -333,22 +341,13 @@ public final class MCCGuideCastCell: MCCBaseCollectionViewCell {
         let v = UIImageView()
         v.contentMode = .scaleAspectFill
         v.clipsToBounds = true
-        v.isHidden = true
-        return v
-    }()
-
-    private let plusImageView: UIImageView = {
-        let c = UIImage.SymbolConfiguration(pointSize: 36, weight: .medium)
-        let v = UIImageView(image: UIImage(systemName: "plus", withConfiguration: c))
-        v.tintColor = .white
-        v.contentMode = .scaleAspectFit
         return v
     }()
 
     private let uploadHintLabel: UILabel = {
         let l = UILabel()
         l.text = "Upload a photo"
-        l.font = .systemFont(ofSize: 16, weight: .medium)
+        l.font = .systemFont(ofSize: 16, weight: .regular)
         l.textColor = .white
         l.textAlignment = .center
         return l
@@ -358,7 +357,7 @@ public final class MCCGuideCastCell: MCCBaseCollectionViewCell {
         let s = UIStackView(arrangedSubviews: [ringContainer, uploadHintLabel])
         s.axis = .vertical
         s.alignment = .center
-        s.spacing = 16
+        s.spacing = 24
         s.isUserInteractionEnabled = true
         let tap = UITapGestureRecognizer(target: self, action: #selector(mccg_pickTapped))
         s.addGestureRecognizer(tap)
@@ -382,7 +381,7 @@ public final class MCCGuideCastCell: MCCBaseCollectionViewCell {
         contentView.backgroundColor = .black
         contentView.addSubview(titleLab)
         titleLab.snp.makeConstraints { make in
-            make.top.equalTo(contentView.safeAreaLayoutGuide.snp.top).offset(16)
+            make.top.equalTo(contentView.safeAreaLayoutGuide.snp.top).offset(74)
             make.leading.trailing.equalToSuperview().inset(32)
         }
 
@@ -395,7 +394,7 @@ public final class MCCGuideCastCell: MCCBaseCollectionViewCell {
         contentView.addSubview(pickStack)
         pickStack.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.centerY.equalToSuperview().offset(-24)
+            make.centerY.equalToSuperview().offset(-40)
         }
 
         ringDiameter = min(MCCScreenSize.width * 0.42, 200)
@@ -403,7 +402,8 @@ public final class MCCGuideCastCell: MCCBaseCollectionViewCell {
             make.width.height.equalTo(ringDiameter)
         }
 
-        ringBorder.layer.borderWidth = 2
+        let hairline: CGFloat = 1.0 / max(UIScreen.main.scale, 1)
+        ringBorder.layer.borderWidth = hairline
         ringBorder.layer.borderColor = MCCGuideStyle.accent.cgColor
         ringBorder.layer.cornerRadius = ringDiameter / 2
         ringBorder.clipsToBounds = true
@@ -411,13 +411,8 @@ public final class MCCGuideCastCell: MCCBaseCollectionViewCell {
         ringBorder.snp.makeConstraints { $0.edges.equalToSuperview() }
 
         ringBorder.addSubview(previewImageView)
-        previewImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
-        previewImageView.layer.cornerRadius = ringDiameter / 2
-
-        ringBorder.addSubview(plusImageView)
-        plusImageView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-            make.width.height.equalTo(44)
+        previewImageView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(8 + hairline)
         }
 
         contentView.addSubview(handleBtn)
@@ -432,27 +427,24 @@ public final class MCCGuideCastCell: MCCBaseCollectionViewCell {
         super.layoutSubviews()
         let h = handleBtn.bounds.height
         if h > 0 { handleBtn.layer.cornerRadius = h * 0.5 }
+        let w = previewImageView.bounds.width
+        if w > 0 { previewImageView.layer.cornerRadius = w * 0.5 }
     }
 
     public func mcvw_apply(model: MCSGuide, previewImage: UIImage?) {
-        titleLab.text = model.title
+        guard case let .cast(title, detail, button) = model else { return }
+        titleLab.text = title
         detailLab.attributedText = mccg_detailBodyAttributed(
-            model.detail,
+            detail,
             font: .systemFont(ofSize: 16, weight: .regular),
             color: MCCGuideStyle.subtitle
         )
-        handleBtn.setTitle(model.handleBtnTitle, for: .normal)
+        handleBtn.setTitle(button, for: .normal)
         handleBtn.layer.cornerRadius = MCCGuideStyle.buttonHeight * 0.5
         if let img = previewImage {
             previewImageView.image = img
-            previewImageView.isHidden = false
-            plusImageView.isHidden = true
-            uploadHintLabel.isHidden = true
         } else {
-            previewImageView.image = nil
-            previewImageView.isHidden = true
-            plusImageView.isHidden = false
-            uploadHintLabel.isHidden = false
+            previewImageView.image = UIImage(named: "ic_cm_role")
         }
     }
 
@@ -460,7 +452,6 @@ public final class MCCGuideCastCell: MCCBaseCollectionViewCell {
         super.prepareForReuse()
         onPrimary = nil
         onPickPhoto = nil
-        previewImageView.image = nil
     }
 
     @objc private func mccg_primaryTapped() {

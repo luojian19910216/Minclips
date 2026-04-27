@@ -1,23 +1,10 @@
 import Foundation
 
-public enum MCSGuidePageStyle: Hashable {
-    case story
-    case castLead
-}
+public enum MCSGuide: Hashable {
 
-public struct MCSGuide: Hashable {
+    case story(media: String, title: String, detail: String, button: String)
 
-    public var id: String = UUID().uuidString
-
-    public var media: String = ""
-
-    public var title: String = ""
-
-    public var detail: String = ""
-
-    public var handleBtnTitle: String = ""
-
-    public var pageStyle: MCSGuidePageStyle = .story
+    case cast(title: String, detail: String, button: String)
 
 }
 

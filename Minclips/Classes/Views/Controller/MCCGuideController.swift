@@ -46,29 +46,22 @@ public class MCCGuideController: MCCViewController<MCCGuideView, MCCEmptyViewMod
 
     private static func mcvc_makeGuideModels() -> [MCSGuide] {
         [
-            MCSGuide(
-                id: "guide-1",
+            .story(
                 media: "ic_bg_guide_1",
                 title: "Direct Your Story",
                 detail: "Turn idea into cinematic episodes. No camera needed.",
-                handleBtnTitle: "Continue",
-                pageStyle: .story
+                button: "Continue"
             ),
-            MCSGuide(
-                id: "guide-2",
+            .story(
                 media: "ic_bg_guide_2",
                 title: "Infinite Storylines",
                 detail: "Chain clips together, extend the narrative, and keep your characters perfectly consistent.",
-                handleBtnTitle: "Continue",
-                pageStyle: .story
+                button: "Continue"
             ),
-            MCSGuide(
-                id: "guide-3",
-                media: "",
+            .cast(
                 title: "Cast Your Lead",
                 detail: "Upload a photo to create your story's lead.",
-                handleBtnTitle: "Start Creating",
-                pageStyle: .castLead
+                button: "Start Creating"
             ),
         ]
     }
