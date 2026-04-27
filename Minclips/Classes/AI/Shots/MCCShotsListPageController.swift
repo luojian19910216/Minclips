@@ -256,25 +256,10 @@ extension MCCShotsListPageController {
         cell.mcvw_setImageHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth)
         let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width)
         cell.mcvw_applyPosterOnly(posterUrl: a.posterImageUrl, thumbnailPixelSize: thumbPx)
-        let durationSec = item.videoAsset.duration
-        if durationSec > 0 {
-            cell.mcvw_durationLabel.text = Self.mcvc_formatVideoDurationLabel(seconds: durationSec)
-            cell.mcvw_durationLabel.isHidden = false
-        } else {
-            cell.mcvw_durationLabel.isHidden = true
-        }
-        cell.mcvw_durationLabel.font = .systemFont(ofSize: 11, weight: .semibold)
-        cell.mcvw_durationLabel.textColor = .white
-        cell.mcvw_durationLabel.backgroundColor = UIColor(white: 0, alpha: 0.45)
-        cell.mcvw_durationLabel.layer.cornerRadius = 4
-        cell.mcvw_durationLabel.clipsToBounds = true
-        cell.mcvw_durationLabel.textAlignment = .center
-        cell.mcvw_proBadge.isHidden = true
-        cell.mcvw_proBadge.backgroundColor = UIColor(white: 0, alpha: 0.4)
-        cell.mcvw_proBadge.layer.cornerRadius = 12
-        cell.mcvw_proBadge.clipsToBounds = true
-        cell.mcvw_proIcon.tintColor = .systemYellow
-        cell.mcvw_proIcon.preferredSymbolConfiguration = UIImage.SymbolConfiguration(pointSize: 10, weight: .bold)
+        // 接口暂未下发 duration，先隐藏；有数据后恢复展示与 `mcvc_formatVideoDurationLabel`
+        cell.mcvw_durationLabel.isHidden = true
+        let showPro = item.proFeature
+        cell.mcvw_proBadge.isHidden = !showPro
         cell.mcvw_titleLabel.attributedText = NSAttributedString(
             string: item.itemTitle,
             attributes: MCCShotsListItemMetrics.titleTextAttributes(textColor: .white)

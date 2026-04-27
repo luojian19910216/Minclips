@@ -110,7 +110,13 @@ public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
 
     public let mcvw_proBadge = UIView()
 
-    public let mcvw_proIcon = UIImageView(image: UIImage(systemName: "diamond.fill"))
+    public let mcvw_proIcon: UIImageView = {
+        let v = UIImageView()
+        v.contentMode = .scaleAspectFit
+        v.image = UIImage(named: "ic_nav_pro")
+        v.tintColor = nil
+        return v
+    }()
 
     public let mcvw_titleLabel = UILabel()
 
@@ -122,6 +128,9 @@ public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
         mcvw_imageContainer.addSubview(mcvw_durationLabel)
         mcvw_imageContainer.addSubview(mcvw_proBadge)
         mcvw_proBadge.addSubview(mcvw_proIcon)
+        mcvw_proBadge.backgroundColor = UIColor(white: 0, alpha: 0.24)
+        mcvw_proBadge.layer.cornerRadius = 14
+        mcvw_proBadge.clipsToBounds = true
         mcvw_imageContainer.backgroundColor = MCCShotsListItemMetrics.listItemImageContainerBackground
         mcvw_imageContainer.layer.cornerRadius = 12
         mcvw_imageContainer.clipsToBounds = true
@@ -136,13 +145,14 @@ public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
             make.leading.trailing.bottom.equalToSuperview()
         }
         mcvw_durationLabel.snp.makeConstraints { make in
-            make.trailing.bottom.equalToSuperview().inset(6)
+            make.top.equalToSuperview().inset(10)
+            make.leading.equalToSuperview().inset(8)
         }
         mcvw_proBadge.snp.makeConstraints { make in
-            make.trailing.bottom.equalToSuperview().inset(6)
-            make.size.equalTo(24)
+            make.trailing.bottom.equalToSuperview().inset(8)
+            make.size.equalTo(28)
         }
-        mcvw_proIcon.snp.makeConstraints { $0.center.equalToSuperview() }
+        mcvw_proIcon.snp.makeConstraints { $0.edges.equalToSuperview().inset(4) }
     }
 
     public override func prepareForReuse() {

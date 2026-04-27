@@ -56,6 +56,4 @@ public struct MCSFeedVideoAssetShell: Codable, MCPDefaultInitializable {
     @MCSSafeString public var posterImageUrl: String
     /// webpUrl
     @MCSSafeString public var webpImageUrl: String
-    /// 时长（秒），接口字段 `duration`
-    @MCSSafeInt public var duration: Int
 }
