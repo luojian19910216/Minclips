@@ -38,6 +38,8 @@ public struct MCSFeedItem: Codable {
     @MCSSafe public var videoAsset: MCSFeedVideoAssetShell
     ///
     @MCSSafeBool public var proFeature: Bool
+    /// 为 `true` 时列表展示 10s，否则 5s
+    @MCSSafeBool public var tenSecondMode: Bool
 }
 
 ///

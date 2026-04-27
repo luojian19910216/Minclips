@@ -236,7 +236,7 @@ extension MCCShotsListPageController {
         if h > 0 {
             inner = String(format: "%d:%02d:%02d", h, m, s)
         } else {
-            inner = String(format: "%d:%02d", m, s)
+            inner = String(format: "%02d:%02d", m, s)
         }
         return " \(inner) "
     }
@@ -256,8 +256,13 @@ extension MCCShotsListPageController {
         cell.mcvw_setImageHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth)
         let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width)
         cell.mcvw_applyPosterOnly(posterUrl: a.posterImageUrl, thumbnailPixelSize: thumbPx)
-        // 接口暂未下发 duration，先隐藏；有数据后恢复展示与 `mcvc_formatVideoDurationLabel`
-        cell.mcvw_durationLabel.isHidden = true
+        let displaySeconds = item.tenSecondMode ? 10 : 5
+        cell.mcvw_durationLabel.text = Self.mcvc_formatVideoDurationLabel(seconds: displaySeconds)
+        cell.mcvw_durationLabel.isHidden = false
+        cell.mcvw_durationLabel.font = .systemFont(ofSize: 11, weight: .regular)
+        cell.mcvw_durationLabel.textColor = UIColor.white.withAlphaComponent(0.48)
+        cell.mcvw_durationLabel.backgroundColor = .clear
+        cell.mcvw_durationLabel.textAlignment = .natural
         let showPro = item.proFeature
         cell.mcvw_proBadge.isHidden = !showPro
         cell.mcvw_titleLabel.attributedText = NSAttributedString(
