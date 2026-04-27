@@ -2,7 +2,9 @@ import UIKit
 import Combine
 import PhotosUI
 
-public class MCCGuideController: MCCViewController<MCCGuideView, MCCGuideViewModel> {
+public class MCCGuideController: MCCViewController<MCCGuideView, MCCEmptyViewModel> {
+
+    private let guideModelsSubject = CurrentValueSubject<[MCSGuide], Never>([])
 
     public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
@@ -16,7 +18,7 @@ public class MCCGuideController: MCCViewController<MCCGuideView, MCCGuideViewMod
     public override func mcvc_bind() {
         contentView.bindInput(
             MCCGuideViewInput(
-                models: viewModel.$models
+                models: guideModelsSubject
                     .receive(on: DispatchQueue.main)
                     .eraseToAnyPublisher()
             )
@@ -31,8 +33,6 @@ public class MCCGuideController: MCCViewController<MCCGuideView, MCCGuideViewMod
                     if isLastPage {
                         MCCAppConfig.shared.guideFlag = true
                     }
-                case .pageIndexChanged:
-                    break
                 case .pickPhotoTapped:
                     mcvc_presentPhotoPicker()
                 }
@@ -41,7 +41,36 @@ public class MCCGuideController: MCCViewController<MCCGuideView, MCCGuideViewMod
     }
 
     public override func mcvc_loadData() {
-        viewModel.loadData()
+        guideModelsSubject.send(Self.mcvc_makeGuideModels())
+    }
+
+    private static func mcvc_makeGuideModels() -> [MCSGuide] {
+        [
+            MCSGuide(
+                id: "guide-1",
+                media: "ic_bg_guide_1",
+                title: "Direct Your Story",
+                detail: "Turn idea into cinematic episodes. No camera needed.",
+                handleBtnTitle: "Continue",
+                pageStyle: .story
+            ),
+            MCSGuide(
+                id: "guide-2",
+                media: "ic_bg_guide_2",
+                title: "Infinite Storylines",
+                detail: "Chain clips together, extend the narrative, and keep your characters perfectly consistent.",
+                handleBtnTitle: "Continue",
+                pageStyle: .story
+            ),
+            MCSGuide(
+                id: "guide-3",
+                media: "",
+                title: "Cast Your Lead",
+                detail: "Upload a photo to create your story's lead.",
+                handleBtnTitle: "Start Creating",
+                pageStyle: .castLead
+            ),
+        ]
     }
 
     private func mcvc_presentPhotoPicker() {

@@ -16,8 +16,6 @@
 		03F019662F8CF6A50096831D /* MCCGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019642F8CF6A50096831D /* MCCGuideView.swift */; };
 		03F019682F8CF6E90096831D /* MCSGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019672F8CF6E90096831D /* MCSGuide.swift */; };
 		03F019692F8CF6E90096831D /* MCSGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019672F8CF6E90096831D /* MCSGuide.swift */; };
-		03F0196B2F8CF91A0096831D /* MCCGuideViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0196A2F8CF91A0096831D /* MCCGuideViewModel.swift */; };
-		03F0196C2F8CF91A0096831D /* MCCGuideViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0196A2F8CF91A0096831D /* MCCGuideViewModel.swift */; };
 		686EBC214DA29B9D78E427C8 /* Pods_Minclips_R.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88268EC85C6220BF5E9A10ED /* Pods_Minclips_R.framework */; };
 		959A695D1D1E2D4AA7550A53 /* Pods_Minclips_P.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0335A246D2DC973F502DDD40 /* Pods_Minclips_P.framework */; };
 		A1AB0FE7DD6E52D6A44ED061 /* Pods_Minclips_T.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF81274419AE998A3C9FC1F /* Pods_Minclips_T.framework */; };
@@ -50,7 +48,6 @@
 		F6D546002F90B9B8002C4F70 /* MCCLaunchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB32EFA401200A094B5 /* MCCLaunchController.swift */; };
 		F6D546042F90B9B8002C4F70 /* MCCAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0195E2F8CB97F0096831D /* MCCAppState.swift */; };
 		F6D546062F90B9B8002C4F70 /* MCCAppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65889502EF8E26600A094B5 /* MCCAppRouter.swift */; };
-		F6D5460D2F90B9B8002C4F70 /* MCCGuideViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0196A2F8CF91A0096831D /* MCCGuideViewModel.swift */; };
 		F6D5460F2F90B9B8002C4F70 /* MCCAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */; };
 		F6D546162F90B9B8002C4F70 /* MCSGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019672F8CF6E90096831D /* MCSGuide.swift */; };
 		F6D546172F90B9B8002C4F70 /* MCCTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB92EFA402B00A094B5 /* MCCTabBarController.swift */; };
@@ -66,7 +63,6 @@
 		F6D546622F90B9C9002C4F70 /* MCCLaunchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB32EFA401200A094B5 /* MCCLaunchController.swift */; };
 		F6D546662F90B9C9002C4F70 /* MCCAppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0195E2F8CB97F0096831D /* MCCAppState.swift */; };
 		F6D546682F90B9C9002C4F70 /* MCCAppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65889502EF8E26600A094B5 /* MCCAppRouter.swift */; };
-		F6D5466F2F90B9C9002C4F70 /* MCCGuideViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F0196A2F8CF91A0096831D /* MCCGuideViewModel.swift */; };
 		F6D546712F90B9C9002C4F70 /* MCCAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */; };
 		F6D546782F90B9C9002C4F70 /* MCSGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019672F8CF6E90096831D /* MCSGuide.swift */; };
 		F6D546792F90B9C9002C4F70 /* MCCTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6588BB92EFA402B00A094B5 /* MCCTabBarController.swift */; };
@@ -211,7 +207,6 @@
 		03F019612F8CF67C0096831D /* MCCLaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCLaunchView.swift; sourceTree = "<group>"; };
 		03F019642F8CF6A50096831D /* MCCGuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCGuideView.swift; sourceTree = "<group>"; };
 		03F019672F8CF6E90096831D /* MCSGuide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCSGuide.swift; sourceTree = "<group>"; };
-		03F0196A2F8CF91A0096831D /* MCCGuideViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCGuideViewModel.swift; sourceTree = "<group>"; };
 		0A875C4A01B9364B05E494FE /* Pods-Minclips_R.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_R.release.xcconfig"; path = "Target Support Files/Pods-Minclips_R/Pods-Minclips_R.release.xcconfig"; sourceTree = "<group>"; };
 		1C2C92D9866F31A0CB34F836 /* Pods-Minclips_T.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_T.release.xcconfig"; path = "Target Support Files/Pods-Minclips_T/Pods-Minclips_T.release.xcconfig"; sourceTree = "<group>"; };
 		413CC65523E70A841D7E6C8A /* Pods_Minclips_D.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Minclips_D.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -434,7 +429,6 @@
 			isa = PBXGroup;
 			children = (
 				F614F84E2F9B495600A31DB4 /* MCCBaseViewModel.swift */,
-				03F0196A2F8CF91A0096831D /* MCCGuideViewModel.swift */,
 				F6588BBC2EFA41AF00A094B5 /* MCCCfViewModel.swift */,
 			);
 			path = ViewModels;
@@ -910,7 +904,6 @@
 				F6588BB42EFA401200A094B5 /* MCCLaunchController.swift in Sources */,
 				03F019602F8CB97F0096831D /* MCCAppState.swift in Sources */,
 				F65889512EF8E26600A094B5 /* MCCAppRouter.swift in Sources */,
-				03F0196C2F8CF91A0096831D /* MCCGuideViewModel.swift in Sources */,
 				F6D5476A2F9B478A002C4F70 /* MCCPopController.swift in Sources */,
 				F6D5476B2F9B478A002C4F70 /* MCCSheetController.swift in Sources */,
 				F6D5476C2F9B478A002C4F70 /* MCCViewController.swift in Sources */,
@@ -965,7 +958,6 @@
 				F6D547022F95D17E002C4F70 /* MCCTopPopController.swift in Sources */,
 				03F019622F8CF67C0096831D /* MCCLaunchView.swift in Sources */,
 				F6D5471C2F9636F1002C4F70 /* MCCEaseInPopController.swift in Sources */,
-				03F0196B2F8CF91A0096831D /* MCCGuideViewModel.swift in Sources */,
 				F6D546E22F922579002C4F70 /* MCCPresentController.swift in Sources */,
 				F6D546D22F90E390002C4F70 /* MCCBottomSheetController.swift in Sources */,
 				F65888CA2EF5548800A094B5 /* MCCAppConfig.swift in Sources */,
@@ -1012,7 +1004,6 @@
 				F6D546002F90B9B8002C4F70 /* MCCLaunchController.swift in Sources */,
 				F6D546042F90B9B8002C4F70 /* MCCAppState.swift in Sources */,
 				F6D546062F90B9B8002C4F70 /* MCCAppRouter.swift in Sources */,
-				F6D5460D2F90B9B8002C4F70 /* MCCGuideViewModel.swift in Sources */,
 				F6D547672F9B478A002C4F70 /* MCCPopController.swift in Sources */,
 				F6D547682F9B478A002C4F70 /* MCCSheetController.swift in Sources */,
 				F6D547692F9B478A002C4F70 /* MCCViewController.swift in Sources */,
@@ -1063,7 +1054,6 @@
 				F6D546622F90B9C9002C4F70 /* MCCLaunchController.swift in Sources */,
 				F6D546662F90B9C9002C4F70 /* MCCAppState.swift in Sources */,
 				F6D546682F90B9C9002C4F70 /* MCCAppRouter.swift in Sources */,
-				F6D5466F2F90B9C9002C4F70 /* MCCGuideViewModel.swift in Sources */,
 				F6D5476D2F9B478A002C4F70 /* MCCPopController.swift in Sources */,
 				F6D5476E2F9B478A002C4F70 /* MCCSheetController.swift in Sources */,
 				F6D5476F2F9B478A002C4F70 /* MCCViewController.swift in Sources */,

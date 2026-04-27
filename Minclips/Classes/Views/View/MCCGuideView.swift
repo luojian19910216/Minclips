@@ -18,8 +18,6 @@ public enum MCCGuideViewOutput: Equatable {
 
     case primaryTapped(index: Int, model: MCSGuide, isLastPage: Bool)
 
-    case pageIndexChanged(index: Int)
-
     case pickPhotoTapped
 
 }
@@ -52,7 +50,6 @@ public final class MCCGuideView: MCCBaseView {
         item.bounces = false
         item.isPagingEnabled = true
         item.showsHorizontalScrollIndicator = false
-        item.delegate = self
         return item
     }()
 
@@ -123,18 +120,6 @@ public final class MCCGuideView: MCCBaseView {
 
 }
 
-extension MCCGuideView: UICollectionViewDelegate {
-
-    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        emitPageIfChanged()
-    }
-
-    public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        emitPageIfChanged()
-    }
-
-}
-
 extension MCCGuideView {
 
     private func applyModels(_ models: [MCSGuide]) {
@@ -161,24 +146,28 @@ extension MCCGuideView {
         }
     }
 
-    private func currentPageIndex() -> Int {
-        let w = MCCScreenSize.width
-        guard w > 0 else { return 0 }
-        return Int(round(collectionView.contentOffset.x / w))
-    }
-
-    private func emitPageIfChanged() {
-        let page = min(max(0, currentPageIndex()), max(0, models.count - 1))
-        outputSubject.send(.pageIndexChanged(index: page))
-    }
-
 }
 
 private enum MCCGuideStyle {
-    static let accent = UIColor(hex: "00AAFF")!
-    static let subtitle = UIColor(white: 1, alpha: 0.55)
-    static let buttonCorner: CGFloat = 12
-    static let buttonHeight: CGFloat = 52
+    static let accent = UIColor(hex: "0077FF")!
+    static let subtitle = UIColor.white.withAlphaComponent(0.4)
+    static let buttonHeight: CGFloat = 48
+    /// 副标题多行时的额外行距（在系统行高之上）
+    static let detailLineSpacing: CGFloat = 4
+    /// 与素材一致：宽:高 = 375:520
+    static let storyHeroWidth: CGFloat = 375
+    static let storyHeroHeight: CGFloat = 520
+}
+
+private func mccg_detailBodyAttributed(_ text: String, font: UIFont, color: UIColor) -> NSAttributedString {
+    let p = NSMutableParagraphStyle()
+    p.lineSpacing = MCCGuideStyle.detailLineSpacing
+    p.alignment = .center
+    return NSAttributedString(string: text, attributes: [
+        .paragraphStyle: p,
+        .font: font,
+        .foregroundColor: color
+    ])
 }
 
 public final class MCCGuideStoryCell: MCCBaseCollectionViewCell {
@@ -189,7 +178,7 @@ public final class MCCGuideStoryCell: MCCBaseCollectionViewCell {
 
     private let heroImageView: UIImageView = {
         let v = UIImageView()
-        v.contentMode = .scaleAspectFill
+        v.contentMode = .scaleAspectFit
         v.clipsToBounds = true
         v.backgroundColor = UIColor(white: 0.12, alpha: 1)
         return v
@@ -210,28 +199,28 @@ public final class MCCGuideStoryCell: MCCBaseCollectionViewCell {
     private let titleLab: UILabel = {
         let l = UILabel()
         l.numberOfLines = 0
-        l.font = .systemFont(ofSize: 28, weight: .bold)
+        l.font = .systemFont(ofSize: 28, weight: .semibold)
         l.textColor = .white
-        l.textAlignment = .left
+        l.textAlignment = .center
         return l
     }()
 
     private let detailLab: UILabel = {
         let l = UILabel()
         l.numberOfLines = 0
-        l.font = .systemFont(ofSize: 16, weight: .medium)
+        l.font = .systemFont(ofSize: 16, weight: .regular)
         l.textColor = MCCGuideStyle.subtitle
-        l.textAlignment = .left
+        l.textAlignment = .center
         return l
     }()
 
     private lazy var handleBtn: UIButton = {
-        let b = UIButton(type: .system)
+        let b = UIButton(type: .custom)
         b.backgroundColor = MCCGuideStyle.accent
-        b.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
+        b.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
         b.setTitleColor(.white, for: .normal)
-        b.layer.cornerRadius = MCCGuideStyle.buttonCorner
         b.clipsToBounds = true
+        b.layer.cornerRadius = MCCGuideStyle.buttonHeight * 0.5
         b.addTarget(self, action: #selector(mccg_primaryTapped), for: .touchUpInside)
         return b
     }()
@@ -243,28 +232,28 @@ public final class MCCGuideStoryCell: MCCBaseCollectionViewCell {
         heroContainer.addSubview(heroImageView)
         heroImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
 
-        let heroH = MCCScreenSize.height * 0.42
+        let heroHMult = MCCGuideStyle.storyHeroHeight / MCCGuideStyle.storyHeroWidth
         heroContainer.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
-            make.height.equalTo(heroH)
+            make.height.equalTo(heroContainer.snp.width).multipliedBy(heroHMult)
         }
 
         contentView.addSubview(titleLab)
         titleLab.snp.makeConstraints { make in
-            make.top.equalTo(heroContainer.snp.bottom).offset(24)
-            make.leading.trailing.equalToSuperview().inset(20)
+            make.top.equalTo(heroContainer.snp.bottom).offset(12)
+            make.leading.trailing.equalToSuperview().inset(32)
         }
 
         contentView.addSubview(detailLab)
         detailLab.snp.makeConstraints { make in
-            make.top.equalTo(titleLab.snp.bottom).offset(12)
-            make.leading.trailing.equalToSuperview().inset(20)
+            make.top.equalTo(titleLab.snp.bottom).offset(8)
+            make.leading.trailing.equalToSuperview().inset(32)
         }
 
         contentView.addSubview(handleBtn)
         handleBtn.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.bottom.equalToSuperview().inset(MCCScreenSize.bottomSafeHeight + 20)
+            make.leading.trailing.equalToSuperview().inset(12)
+            make.bottom.equalTo(contentView.safeAreaLayoutGuide.snp.bottom).offset(-12)
             make.height.equalTo(MCCGuideStyle.buttonHeight)
         }
     }
@@ -272,14 +261,25 @@ public final class MCCGuideStoryCell: MCCBaseCollectionViewCell {
     public override func layoutSubviews() {
         super.layoutSubviews()
         heroGradient.frame = heroContainer.bounds
+        let h = handleBtn.bounds.height
+        if h > 0 { handleBtn.layer.cornerRadius = h * 0.5 }
     }
 
     public func mcvw_apply(model: MCSGuide) {
         titleLab.text = model.title
-        detailLab.text = model.detail
+        detailLab.attributedText = mccg_detailBodyAttributed(
+            model.detail,
+            font: .systemFont(ofSize: 16, weight: .regular),
+            color: MCCGuideStyle.subtitle
+        )
         handleBtn.setTitle(model.handleBtnTitle, for: .normal)
+        handleBtn.layer.cornerRadius = MCCGuideStyle.buttonHeight * 0.5
         let trimmed = model.media.trimmingCharacters(in: .whitespacesAndNewlines)
-        if let u = URL(string: trimmed), !trimmed.isEmpty {
+        if !trimmed.isEmpty, let asset = UIImage(named: trimmed) {
+            heroImageView.sd_cancelCurrentImageLoad()
+            heroImageView.image = asset
+            heroImageView.backgroundColor = .clear
+        } else if let u = URL(string: trimmed), u.scheme != nil, !trimmed.isEmpty {
             heroImageView.sd_setImage(with: u, placeholderImage: nil)
         } else {
             heroImageView.sd_cancelCurrentImageLoad()
@@ -310,18 +310,18 @@ public final class MCCGuideCastCell: MCCBaseCollectionViewCell {
     private let titleLab: UILabel = {
         let l = UILabel()
         l.numberOfLines = 0
-        l.font = .systemFont(ofSize: 28, weight: .bold)
+        l.font = .systemFont(ofSize: 28, weight: .semibold)
         l.textColor = .white
-        l.textAlignment = .left
+        l.textAlignment = .center
         return l
     }()
 
     private let detailLab: UILabel = {
         let l = UILabel()
         l.numberOfLines = 0
-        l.font = .systemFont(ofSize: 16, weight: .medium)
+        l.font = .systemFont(ofSize: 16, weight: .regular)
         l.textColor = MCCGuideStyle.subtitle
-        l.textAlignment = .left
+        l.textAlignment = .center
         return l
     }()
 
@@ -366,12 +366,12 @@ public final class MCCGuideCastCell: MCCBaseCollectionViewCell {
     }()
 
     private lazy var handleBtn: UIButton = {
-        let b = UIButton(type: .system)
+        let b = UIButton(type: .custom)
         b.backgroundColor = MCCGuideStyle.accent
-        b.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
+        b.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
         b.setTitleColor(.white, for: .normal)
-        b.layer.cornerRadius = MCCGuideStyle.buttonCorner
         b.clipsToBounds = true
+        b.layer.cornerRadius = MCCGuideStyle.buttonHeight * 0.5
         b.addTarget(self, action: #selector(mccg_primaryTapped), for: .touchUpInside)
         return b
     }()
@@ -383,13 +383,13 @@ public final class MCCGuideCastCell: MCCBaseCollectionViewCell {
         contentView.addSubview(titleLab)
         titleLab.snp.makeConstraints { make in
             make.top.equalTo(contentView.safeAreaLayoutGuide.snp.top).offset(16)
-            make.leading.trailing.equalToSuperview().inset(20)
+            make.leading.trailing.equalToSuperview().inset(32)
         }
 
         contentView.addSubview(detailLab)
         detailLab.snp.makeConstraints { make in
-            make.top.equalTo(titleLab.snp.bottom).offset(12)
-            make.leading.trailing.equalToSuperview().inset(20)
+            make.top.equalTo(titleLab.snp.bottom).offset(8)
+            make.leading.trailing.equalToSuperview().inset(32)
         }
 
         contentView.addSubview(pickStack)
@@ -422,16 +422,27 @@ public final class MCCGuideCastCell: MCCBaseCollectionViewCell {
 
         contentView.addSubview(handleBtn)
         handleBtn.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.bottom.equalToSuperview().inset(MCCScreenSize.bottomSafeHeight + 20)
+            make.leading.trailing.equalToSuperview().inset(12)
+            make.bottom.equalTo(contentView.safeAreaLayoutGuide.snp.bottom).offset(-12)
             make.height.equalTo(MCCGuideStyle.buttonHeight)
         }
     }
 
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        let h = handleBtn.bounds.height
+        if h > 0 { handleBtn.layer.cornerRadius = h * 0.5 }
+    }
+
     public func mcvw_apply(model: MCSGuide, previewImage: UIImage?) {
         titleLab.text = model.title
-        detailLab.text = model.detail
+        detailLab.attributedText = mccg_detailBodyAttributed(
+            model.detail,
+            font: .systemFont(ofSize: 16, weight: .regular),
+            color: MCCGuideStyle.subtitle
+        )
         handleBtn.setTitle(model.handleBtnTitle, for: .normal)
+        handleBtn.layer.cornerRadius = MCCGuideStyle.buttonHeight * 0.5
         if let img = previewImage {
             previewImageView.image = img
             previewImageView.isHidden = false
