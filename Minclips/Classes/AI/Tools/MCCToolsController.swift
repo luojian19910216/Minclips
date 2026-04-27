@@ -76,16 +76,11 @@ extension MCCToolsController: UICollectionViewDataSource, UICollectionViewDelega
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MCCToolTextCell.mcvw_id,
+            withReuseIdentifier: MCCToolCardCell.mcvw_id,
             for: indexPath
-        ) as! MCCToolTextCell
-        if let item = mcvc_items[safe: indexPath.item] {
-            cell.mcvw_textLabel.text = item.code
-            cell.mcvw_textLabel.textAlignment = .left
-            cell.mcvw_textLabel.textColor = UIColor.white
-            cell.mcvw_textLabel.font = UIFont.systemFont(ofSize: 12, weight: .regular)
-            cell.contentView.backgroundColor = UIColor(white: 0.12, alpha: 1)
-        }
+        ) as! MCCToolCardCell
+        guard let item = mcvc_items[safe: indexPath.item] else { return cell }
+        cell.mcvw_apply(code: item.code, title: item.title, iconContent: item.iconContent)
         return cell
     }
 
@@ -103,11 +98,11 @@ private extension MCCToolsController {
 
     func mcvc_itemSize(in collectionView: UICollectionView) -> CGSize {
         guard let flow = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else {
-            return CGSize(width: collectionView.bounds.width, height: 56)
+            return CGSize(width: collectionView.bounds.width, height: 128)
         }
 
         let w = collectionView.bounds.width - flow.sectionInset.left - flow.sectionInset.right
-        return CGSize(width: max(0, w), height: 56)
+        return CGSize(width: max(0, w), height: 128)
     }
 
 }
