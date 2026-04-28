@@ -1,4 +1,5 @@
 import UIKit
+import Common
 import PanModal
 
 open class MCCSheetController<View: MCCBaseView, ViewModel: MCCBaseViewModel>: MCCViewController<View, ViewModel>, MCPPopupPresentable, PanModalPresentable {
@@ -9,6 +10,8 @@ open class MCCSheetController<View: MCCBaseView, ViewModel: MCCBaseViewModel>: M
     }
 
     open var panScrollable: UIScrollView? { nil }
+
+    open var topOffset: CGFloat { MCCScreenSize.topSafeHeight}
 
     open var shortFormHeight: PanModalHeight { longFormHeight }
 

@@ -4,6 +4,13 @@ import SnapKit
 import PanModal
 import SDWebImage
 
+private enum MCCFeedGeneratingMetrics {
+    /// Sheet 铺满当前屏纵向；上方留白交由 `safeAreaLayoutGuide`（与状态栏/刘海对齐），勿再手写 statusBarHeight
+    static var sheetContentHeight: CGFloat {
+        MCCScreenSize.height
+    }
+}
+
 public final class MCCFeedGeneratingView: MCCBaseView {
 
     public let mcvw_closeButton: UIButton = {
@@ -69,26 +76,30 @@ public final class MCCFeedGeneratingView: MCCBaseView {
     }()
 
     public override func mcvw_setupUI() {
-        backgroundColor = UIColor(hex: "18181C")
-        
+        backgroundColor = UIColor(hex: "18181C")!
         addSubview(mcvw_closeButton)
         mcvw_closeButton.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(8)
             make.trailing.equalToSuperview().offset(-16)
-            make.size.equalTo(40)
+            make.size.equalTo(44)
         }
         addSubview(mcvw_previewBox)
         mcvw_previewBox.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(48)
+            make.top.equalTo(mcvw_closeButton.snp.bottom).offset(8)
             make.centerX.equalToSuperview()
             make.size.equalTo(CGSize(width: 160, height: 160))
         }
+        mcvw_previewBox.backgroundColor = UIColor.white.withAlphaComponent(0.08)
         mcvw_previewBox.layer.cornerRadius = 12
         mcvw_previewBox.clipsToBounds = true
         mcvw_previewBox.addSubview(mcvw_previewImageView)
         mcvw_previewImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
         mcvw_previewBox.addSubview(mcvw_percentLabel)
         mcvw_percentLabel.snp.makeConstraints { $0.center.equalToSuperview() }
+        mcvw_percentLabel.layer.shadowColor = UIColor.black.cgColor
+        mcvw_percentLabel.layer.shadowOpacity = 0.45
+        mcvw_percentLabel.layer.shadowRadius = 4
+        mcvw_percentLabel.layer.shadowOffset = .zero
         addSubview(mcvw_titleLabel)
         mcvw_titleLabel.snp.makeConstraints { make in
             make.top.equalTo(mcvw_previewBox.snp.bottom).offset(20)
@@ -115,7 +126,7 @@ public final class MCCFeedGeneratingSheetController: MCCSheetController<MCCFeedG
 
     public var mcvc_dismiss: (() -> Void)?
 
-    public override var longFormHeight: PanModalHeight { .contentHeight(MCCScreenSize.height - MCCScreenSize.statusBarHeight) }
+    public override var longFormHeight: PanModalHeight { .maxHeight }
     public override var showDragIndicator: Bool { false }
     public override var cornerRadius: CGFloat { 24 }
 
