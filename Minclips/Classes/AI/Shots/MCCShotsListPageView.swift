@@ -64,7 +64,9 @@ public final class MCCShotsListPageView: MCCBaseView {
     }()
 
     public lazy var mcvw_skeletonOverlay: MCCGradientHomeSkeletonOverlay = {
-        MCCGradientHomeSkeletonOverlay(style: .doubleColumnGrid)
+        let item = MCCGradientHomeSkeletonOverlay(style: .doubleColumnGrid)
+        item.isHidden = true
+        return item
     }()
 
     public override func mcvw_setupUI() {
@@ -73,7 +75,6 @@ public final class MCCShotsListPageView: MCCBaseView {
 
         addSubview(mcvw_skeletonOverlay)
         mcvw_skeletonOverlay.snp.makeConstraints { $0.edges.equalToSuperview() }
-        mcvw_skeletonOverlay.isHidden = true
     }
 
     public func mcvw_setListSkeletonVisible(_ visible: Bool) {

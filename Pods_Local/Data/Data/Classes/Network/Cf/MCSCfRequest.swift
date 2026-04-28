@@ -12,10 +12,10 @@ public struct MCSCfCreationLegacyRequest: Codable {
 
 ///
 public struct MCSCfOssTokenRequest: Codable {
+    ///
+    public init() {}
     /// fileType
     public var mimeKind: String = ""
     /// fileExtension
     public var fileSuffix: String = ""
-    /// customPath
-    public var pathOverride: String = ""
 }

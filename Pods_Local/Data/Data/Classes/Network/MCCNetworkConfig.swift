@@ -62,7 +62,7 @@ public enum MCEEnvironment {
         switch self {
         case .D: return "https://push-rd.minclips.video"
         case .T: return "https://push-rd.minclips.video"
-        case .P: return "https://push.minclips.video"
+        case .P: return "https://push-rd.minclips.video"
         case .R: return "https://push.minclips.video"
         }
     }

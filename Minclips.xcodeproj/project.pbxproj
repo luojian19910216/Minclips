@@ -19,6 +19,10 @@
 		686EBC214DA29B9D78E427C8 /* Pods_Minclips_R.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88268EC85C6220BF5E9A10ED /* Pods_Minclips_R.framework */; };
 		959A695D1D1E2D4AA7550A53 /* Pods_Minclips_P.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0335A246D2DC973F502DDD40 /* Pods_Minclips_P.framework */; };
 		A1AB0FE7DD6E52D6A44ED061 /* Pods_Minclips_T.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF81274419AE998A3C9FC1F /* Pods_Minclips_T.framework */; };
+		C0010001000100000000A001 /* MCCOSSImageUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0010000000100000000A000 /* MCCOSSImageUploader.swift */; };
+		C0010002000100000000A002 /* MCCOSSImageUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0010000000100000000A000 /* MCCOSSImageUploader.swift */; };
+		C0010003000100000000A003 /* MCCOSSImageUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0010000000100000000A000 /* MCCOSSImageUploader.swift */; };
+		C0010004000100000000A004 /* MCCOSSImageUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0010000000100000000A000 /* MCCOSSImageUploader.swift */; };
 		F614F84F2F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F614F84E2F9B495600A31DB4 /* MCCBaseViewModel.swift */; };
 		F614F8502F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F614F84E2F9B495600A31DB4 /* MCCBaseViewModel.swift */; };
 		F614F8512F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F614F84E2F9B495600A31DB4 /* MCCBaseViewModel.swift */; };
@@ -230,6 +234,7 @@
 		88268EC85C6220BF5E9A10ED /* Pods_Minclips_R.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Minclips_R.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B54C93040CA0719D543B830 /* Pods-Minclips_D.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_D.debug.xcconfig"; path = "Target Support Files/Pods-Minclips_D/Pods-Minclips_D.debug.xcconfig"; sourceTree = "<group>"; };
 		9777C1A4F928B398B2C962C7 /* Pods-Minclips_R.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_R.debug.xcconfig"; path = "Target Support Files/Pods-Minclips_R/Pods-Minclips_R.debug.xcconfig"; sourceTree = "<group>"; };
+		C0010000000100000000A000 /* MCCOSSImageUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCOSSImageUploader.swift; sourceTree = "<group>"; };
 		CAF81274419AE998A3C9FC1F /* Pods_Minclips_T.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Minclips_T.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBA4D02B7FA316776A765569 /* Pods-Minclips_T.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_T.debug.xcconfig"; path = "Target Support Files/Pods-Minclips_T/Pods-Minclips_T.debug.xcconfig"; sourceTree = "<group>"; };
 		F614F84E2F9B495600A31DB4 /* MCCBaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCBaseViewModel.swift; sourceTree = "<group>"; };
@@ -353,18 +358,19 @@
 		A0B46A5B2F9C8FE800DAC813 /* Shots */ = {
 			isa = PBXGroup;
 			children = (
-				F6E3B1012FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift */,
 				F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */,
 				F6E2B0132FA20301002C4F70 /* MCCShotsController.swift */,
 				F6E2B04A2FA20501002C4F70 /* MCCShotsListPageView.swift */,
 				F6E2B0392FA20301002C4F70 /* MCCShotsListPageController.swift */,
-				F6E3C1102FC2000002C4F70 /* MCCShotsWaterfallLayout.swift */,
 				F6E2D1082FC0100002C4F70 /* MCCFeedDetailView.swift */,
 				F6E2D1092FC0100002C4F70 /* MCCFeedDetailController.swift */,
 				F6E2D13012FC0100002C4F70 /* MCCFeedOptionPopController.swift */,
-				F6E2D131B2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift */,
 				F6E2D13382FC0100002C4F70 /* MCCFeedGeneratingView.swift */,
 				F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */,
+				C0010000000100000000A000 /* MCCOSSImageUploader.swift */,
+				F6E3B1012FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift */,
+				F6E2D131B2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift */,
+				F6E3C1102FC2000002C4F70 /* MCCShotsWaterfallLayout.swift */,
 			);
 			path = Shots;
 			sourceTree = "<group>";
@@ -973,6 +979,7 @@
 				F6E2D13002FC0100002C4F70 /* MCCFeedOptionPopController.swift in Sources */,
 				F6E2D13402FC0100002C4F70 /* MCCFeedGeneratingView.swift in Sources */,
 				F6E2D13052FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */,
+				C0010001000100000000A001 /* MCCOSSImageUploader.swift in Sources */,
 				F6E2D131A2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift in Sources */,
 				F6E2D1282FC0100002C4F70 /* MCCSettingsView.swift in Sources */,
 				F6E2D12C2FC0100002C4F70 /* MCCSettingsController.swift in Sources */,
@@ -1024,6 +1031,7 @@
 				F6E2D13022FC0100002C4F70 /* MCCFeedOptionPopController.swift in Sources */,
 				F6E2D13412FC0100002C4F70 /* MCCFeedGeneratingView.swift in Sources */,
 				F6E2D13072FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */,
+				C0010002000100000000A002 /* MCCOSSImageUploader.swift in Sources */,
 				F6E2D131C2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift in Sources */,
 				F6E2D1292FC0100002C4F70 /* MCCSettingsView.swift in Sources */,
 				F6E2D12D2FC0100002C4F70 /* MCCSettingsController.swift in Sources */,
@@ -1081,6 +1089,7 @@
 				F6E2D13032FC0100002C4F70 /* MCCFeedOptionPopController.swift in Sources */,
 				F6E2D13422FC0100002C4F70 /* MCCFeedGeneratingView.swift in Sources */,
 				F6E2D13082FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */,
+				C0010003000100000000A003 /* MCCOSSImageUploader.swift in Sources */,
 				F6E2D131D2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift in Sources */,
 				F6E2D12A2FC0100002C4F70 /* MCCSettingsView.swift in Sources */,
 				F6E2D12E2FC0100002C4F70 /* MCCSettingsController.swift in Sources */,
@@ -1135,6 +1144,7 @@
 				F6E2D13042FC0100002C4F70 /* MCCFeedOptionPopController.swift in Sources */,
 				F6E2D13432FC0100002C4F70 /* MCCFeedGeneratingView.swift in Sources */,
 				F6E2D13092FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */,
+				C0010004000100000000A004 /* MCCOSSImageUploader.swift in Sources */,
 				F6E2D131E2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift in Sources */,
 				F6E2D12B2FC0100002C4F70 /* MCCSettingsView.swift in Sources */,
 				F6E2D12F2FC0100002C4F70 /* MCCSettingsController.swift in Sources */,

@@ -489,6 +489,8 @@ public final class MCCFeedDetailView: MCCBaseView {
     public func mcvw_configureDurationAndMusicPillsVisible(_ visible: Bool) {
         mcvw_durationPill.isHidden = !visible
         mcvw_modePill.isHidden = !visible
+        // Three pills: equal thirds. Only resolution visible: stretch to full row width (fillEqually + one child can stay content-sized on some layouts).
+        mcvw_settingsRow.distribution = visible ? .fillEqually : .fill
     }
 
     private func mcvw_styleRoundPill(

@@ -7,19 +7,17 @@ import Data
 import SDWebImage
 
 public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyViewModel> {
-
-    private var mcvc_tagsState = MCSLoadState<MCSList<MCSFeedLabelItem>>()
-
-    private var mcvc_tagsFetchCancellable: AnyCancellable?
-
-    private var mcvc_tagsAutoRetriedOnce = false
-
-    private var mcvc_selectedTagIndex: Int = 0
-
-    private var mcvc_labelItems: [MCSFeedLabelItem] { mcvc_tagsState.model?.items ?? [] }
-
-    public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
     
+    private var mcvc_tagsState = MCSLoadState<MCSList<MCSFeedLabelItem>>()
+    
+    private var mcvc_tagsFetchCancellable: AnyCancellable?
+    
+    private var mcvc_tagsAutoRetriedOnce = false
+    
+    private var mcvc_selectedTagIndex: Int = 0
+    
+    private var mcvc_labelItems: [MCSFeedLabelItem] { mcvc_tagsState.model?.items ?? [] }
+        
     public override func mcvc_configureNav() {
         super.mcvc_configureNav()
         
@@ -31,48 +29,107 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
             titleColor: .white
         )
     }
-
-    @objc public func mcvc_onProTapped() {
-        let vc: MCCProController = .init()
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-
-    public override func viewDidLoad() {
-        super.viewDidLoad()
-        contentView.mcvw_setupPagingView(delegate: self)
-    }
-
+    
     public override func mcvc_setupLocalization() {
-        super.mcvc_setupLocalization()
-
         contentView.backgroundColor = view.backgroundColor
         contentView.mcvw_tagCollection.backgroundColor = .clear
         contentView.mcvw_pinHeaderView.backgroundColor = .clear
     }
-
+    
     public override func mcvc_bind() {
-        super.mcvc_bind()
         contentView.mcvw_tagCollection.dataSource = self
         contentView.mcvw_tagCollection.delegate = self
     }
-
+    
     public override func mcvc_loadData() {
-        super.mcvc_loadData()
         mcvc_loadTags()
     }
+    
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        contentView.mcvw_setupPagingView(delegate: self)
+    }
+    
+}
 
-    private func mcvc_loadTags() {
-        mcvc_tagsFetchCancellable?.cancel()
-        mcvc_selectedTagIndex = 0
-        mcvc_tagsFetchCancellable = MCCFeedAPIManager.shared.customLabels()
-            .asLoadState()
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] s in
-                guard let self = self else { return }
-                self.mcvc_tagsState = s
-                self.mcvc_applyTagsAndPagingAfterLoad()
-                self.mcvc_tagsConsiderAutoRetry(after: s)
-            }
+extension MCCShotsController: JXPagingViewDelegate {
+
+    public func tableHeaderViewHeight(in pagingView: JXPagingView) -> Int { 0 }
+
+    public func tableHeaderView(in pagingView: JXPagingView) -> UIView { UIView() }
+
+    public func heightForPinSectionHeader(in pagingView: JXPagingView) -> Int {
+        48
+    }
+
+    public func viewForPinSectionHeader(in pagingView: JXPagingView) -> UIView {
+        contentView.mcvw_pinHeaderView
+    }
+
+    public func numberOfLists(in pagingView: JXPagingView) -> Int {
+        mcvc_labelItems.count
+    }
+
+    public func pagingView(_ pagingView: JXPagingView, listIdentifierAtIndex index: Int) -> String? {
+        guard mcvc_labelItems.indices.contains(index) else { return nil }
+        return mcvc_labelItems[index].templateRef
+    }
+
+    public func pagingView(_ pagingView: JXPagingView, initListAtIndex index: Int) -> JXPagingViewListViewDelegate {
+        let labelItem = mcvc_labelItems[index]
+
+        let list = MCCShotsListPageController()
+        list.mcvc_labelItem = labelItem
+        list.mcvc_index = index
+        list.mcvc_onListDidAppear = { [weak self] in
+            self?.mcvc_pagingListDidShow(at: index)
+        }
+        return list
+    }
+
+}
+
+extension MCCShotsController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        mcvc_labelItems.count
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        mcvc_dequeueTagCell(collectionView, indexPath: indexPath)
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        mcvc_focusTagAndList(at: indexPath.item, animated: true)
+    }
+
+    public func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        guard let it = mcvc_labelItems[safe: indexPath.item] else { return .zero }
+        let t = it.title
+
+        let fs: CGFloat = 16
+        let textW = ceil(
+            (t as NSString).size(withAttributes: [
+                .font: UIFont.systemFont(ofSize: fs, weight: .semibold),
+            ]).width
+        )
+        let hasIcon = !it.iconImageUrl.isEmpty
+        let extra: CGFloat = hasIcon ? 18 + 6 : 0
+        return CGSize(width: textW + 8 + extra, height: 48)
+    }
+
+}
+
+extension MCCShotsController {
+    
+    @objc public func mcvc_onProTapped() {
+        let vc: MCCProController = .init()
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 
     private func mcvc_tagsConsiderAutoRetry(after s: MCSLoadState<MCSList<MCSFeedLabelItem>>) {
@@ -177,77 +234,22 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
 
 }
 
-extension MCCShotsController: JXPagingViewDelegate {
-
-    public func tableHeaderViewHeight(in pagingView: JXPagingView) -> Int { 0 }
-
-    public func tableHeaderView(in pagingView: JXPagingView) -> UIView { UIView() }
-
-    public func heightForPinSectionHeader(in pagingView: JXPagingView) -> Int {
-        48
+extension MCCShotsController {
+    
+    private func mcvc_loadTags() {
+        mcvc_tagsFetchCancellable?.cancel()
+        mcvc_selectedTagIndex = 0
+        mcvc_tagsFetchCancellable = MCCFeedAPIManager.shared.customLabels()
+            .asLoadState()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] s in
+                guard let self = self else { return }
+                self.mcvc_tagsState = s
+                self.mcvc_applyTagsAndPagingAfterLoad()
+                self.mcvc_tagsConsiderAutoRetry(after: s)
+            }
     }
-
-    public func viewForPinSectionHeader(in pagingView: JXPagingView) -> UIView {
-        contentView.mcvw_pinHeaderView
-    }
-
-    public func numberOfLists(in pagingView: JXPagingView) -> Int {
-        mcvc_labelItems.count
-    }
-
-    public func pagingView(_ pagingView: JXPagingView, listIdentifierAtIndex index: Int) -> String? {
-        guard mcvc_labelItems.indices.contains(index) else { return nil }
-        return mcvc_labelItems[index].templateRef
-    }
-
-    public func pagingView(_ pagingView: JXPagingView, initListAtIndex index: Int) -> JXPagingViewListViewDelegate {
-        let labelItem = mcvc_labelItems[index]
-
-        let list = MCCShotsListPageController()
-        list.mcvc_labelItem = labelItem
-        list.mcvc_index = index
-        list.mcvc_onListDidAppear = { [weak self] in
-            self?.mcvc_pagingListDidShow(at: index)
-        }
-        return list
-    }
-
-}
-
-extension MCCShotsController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
-
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        mcvc_labelItems.count
-    }
-
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        mcvc_dequeueTagCell(collectionView, indexPath: indexPath)
-    }
-
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        mcvc_focusTagAndList(at: indexPath.item, animated: true)
-    }
-
-    public func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAt indexPath: IndexPath
-    ) -> CGSize {
-        guard let it = mcvc_labelItems[safe: indexPath.item] else { return .zero }
-        let t = it.title
-
-        let fs: CGFloat = 16
-        // 选中为 semibold，比 regular 更宽；宽度按最宽的 semibold 量，避免选中后显示不全
-        let textW = ceil(
-            (t as NSString).size(withAttributes: [
-                .font: UIFont.systemFont(ofSize: fs, weight: .semibold),
-            ]).width
-        )
-        let hasIcon = !it.iconImageUrl.isEmpty
-        let extra: CGFloat = hasIcon ? 18 + 6 : 0
-        return CGSize(width: textW + 8 + extra, height: 48)
-    }
-
+    
 }
 
 private extension Array {

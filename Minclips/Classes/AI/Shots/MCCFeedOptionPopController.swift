@@ -22,7 +22,7 @@ public final class MCCFeedOptionPopView: MCCBasePopView {
         s.alignment = .fill
         return s
     }()
-
+    
     public override func mcvw_setupUI() {
         super.mcvw_setupUI()
         dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.5)

@@ -16,12 +16,15 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     private var mcvc_feedProfileCancellable: AnyCancellable?
     private var mcvc_integralCancellable: AnyCancellable?
     private var mcvc_favoriteCancellable: AnyCancellable?
+    private var mcvc_composeSeedCancellable: AnyCancellable?
     private var mcvc_mp4Player: AVPlayer?
     private var mcvc_mp4PeriodicObserver: Any?
     private var mcvc_mp4EndObserver: NSObjectProtocol?
     /// 避免 `setImage` 与播控状态瞬变导致循环衔接处图标闪动。
     private var mcvc_lastTransportPlayIconName: String?
     private var mcvc_lastTransportMuteIconName: String?
+    /// WebP _transport_icon：不依賴 `SDAnimatedImageView.isAnimating`（部分環境下讀取會崩）。
+    private var mcvc_webpTransportAnimating = false
     private var mcvc_resolutionIndex: Int = 0
     private var mcvc_durationIsTen: Bool = false
     private var mcvc_modeIndex: Int = 0
@@ -49,6 +52,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         mcvc_feedProfileCancellable?.cancel()
         mcvc_integralCancellable?.cancel()
         mcvc_favoriteCancellable?.cancel()
+        mcvc_composeSeedCancellable?.cancel()
         mcvc_removeMp4ObserversAndPlayer()
     }
 
@@ -340,6 +344,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     }
 
     private func mcvc_applyDetailMedia(item: MCSFeedItem, webpHandoff: MCCWebpPlaybackHandoff?, thumbnailPixelSize: CGSize) {
+        mcvc_webpTransportAnimating = false
         let v = contentView
         v.mcvw_applyMediaHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth)
         mcvc_removeMp4ObserversAndPlayer()
@@ -388,6 +393,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
             v.mcvw_webpImageView.player?.seekToFrame(at: h.frameIndex, loopCount: h.loopCount)
             v.mcvw_webpImageView.autoPlayAnimatedImage = true
             v.mcvw_webpImageView.startAnimating()
+            mcvc_webpTransportAnimating = true
             mcvc_refreshTransportControlIcons()
             return
         }
@@ -398,6 +404,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
             v.mcvw_webpImageView.sd_setImage(with: u, placeholderImage: nil, options: [], completed: { [weak self] _, _, _, _ in
                 DispatchQueue.main.async {
                     guard let self else { return }
+                    self.mcvc_webpTransportAnimating = true
                     self.contentView.mcvw_webpImageView.startAnimating()
                     self.mcvc_refreshTransportControlIcons()
                 }
@@ -411,35 +418,44 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     }
 
     /// 播放中 `ic_cm_play_on` / 未播放 `ic_cm_play_off`；静音 `ic_cm_volume_off` / 出声 `ic_cm_volume_on`。WebP 无音轨：仅更新播放图标，音量示意用 `volume_on`。
+    /// 不做 `[weak self]` 派发：在 deinit / 已离场后再形成 weak reference 会 ObjC runtime abort。改为「同步执行 + 严格守卫」。
     private func mcvc_refreshTransportControlIcons() {
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { [view = self.view] in
+                _ = view
+                /// 离开主线程的路径里不再回调自身，避免对 deallocating 的 controller 形成 weak ref；视图最近的状态由下一次 viewWillAppear / 触发点重刷。
+            }
+            return
+        }
+        guard isViewLoaded, view.window != nil else { return }
         let v = contentView
-        let setPlayIconIfNeeded: (String) -> Void = { [weak self] name in
-            guard let self else { return }
-            if name == self.mcvc_lastTransportPlayIconName { return }
-            self.mcvc_lastTransportPlayIconName = name
-            v.mcvw_playPauseButton.setImage(UIImage(named: name)?.withRenderingMode(.alwaysOriginal), for: .normal)
-        }
-        let setVolumeIconIfNeeded: (String) -> Void = { [weak self] name in
-            guard let self else { return }
-            if name == self.mcvc_lastTransportMuteIconName { return }
-            self.mcvc_lastTransportMuteIconName = name
-            v.mcvw_muteButton.setImage(UIImage(named: name)?.withRenderingMode(.alwaysOriginal), for: .normal)
-        }
 
         if let p = mcvc_mp4Player {
             let playing = mcvc_mp4TransportShowsPlaying(p)
-            setPlayIconIfNeeded(playing ? "ic_cm_play_on" : "ic_cm_play_off")
-            setVolumeIconIfNeeded(p.isMuted ? "ic_cm_volume_off" : "ic_cm_volume_on")
+            mcvc_setPlayIconIfNeeded(playing ? "ic_cm_play_on" : "ic_cm_play_off", on: v)
+            mcvc_setVolumeIconIfNeeded(p.isMuted ? "ic_cm_volume_off" : "ic_cm_volume_on", on: v)
             return
         }
 
         let w = v.mcvw_webpImageView
         if !w.isHidden, w.image != nil {
-            setPlayIconIfNeeded(w.isAnimating ? "ic_cm_play_on" : "ic_cm_play_off")
+            mcvc_setPlayIconIfNeeded(w.isAnimating ? "ic_cm_play_on" : "ic_cm_play_off", on: v)
         } else {
-            setPlayIconIfNeeded("ic_cm_play_off")
+            mcvc_setPlayIconIfNeeded("ic_cm_play_off", on: v)
         }
-        setVolumeIconIfNeeded("ic_cm_volume_on")
+        mcvc_setVolumeIconIfNeeded("ic_cm_volume_on", on: v)
+    }
+
+    private func mcvc_setPlayIconIfNeeded(_ name: String, on v: MCCFeedDetailView) {
+        if name == mcvc_lastTransportPlayIconName { return }
+        mcvc_lastTransportPlayIconName = name
+        v.mcvw_playPauseButton.setImage(UIImage(named: name)?.withRenderingMode(.alwaysOriginal), for: .normal)
+    }
+
+    private func mcvc_setVolumeIconIfNeeded(_ name: String, on v: MCCFeedDetailView) {
+        if name == mcvc_lastTransportMuteIconName { return }
+        mcvc_lastTransportMuteIconName = name
+        v.mcvw_muteButton.setImage(UIImage(named: name)?.withRenderingMode(.alwaysOriginal), for: .normal)
     }
 
     /// 与「仅看 `timeControlStatus == .playing`」相比，把 seek/重开缓冲等短暂态仍视为在播，避免图标来回切。
@@ -461,6 +477,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         return scheme == "http" || scheme == "https"
     }
 
+    /// `deinit` 期间访问 `contentView`/`self.view` 会触发 lazy load 与 KVO 重入，故在此函数内不假定视图存活；视图相关 reset 由调用方（仍在 view 生命周期内）通过 `isViewLoaded` 包裹。
     private func mcvc_removeMp4ObserversAndPlayer() {
         if let o = mcvc_mp4PeriodicObserver, let player = mcvc_mp4Player {
             player.removeTimeObserver(o)
@@ -474,8 +491,11 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         mcvc_mp4Player = nil
         mcvc_lastTransportPlayIconName = nil
         mcvc_lastTransportMuteIconName = nil
-        contentView.mcvw_bindMp4Playback(player: nil, surfaceVisible: false)
-        mcvc_refreshTransportControlIcons()
+        // 在 view.window != nil 时才刷新 UI；deinit / pop 后跳过，避免对 deallocating self 形成 [weak self]（会触发 ObjC runtime abort：Cannot form weak reference to instance ... in the process of deallocation）。
+        if isViewLoaded, view.window != nil {
+            contentView.mcvw_bindMp4Playback(player: nil, surfaceVisible: false)
+            mcvc_refreshTransportControlIcons()
+        }
     }
 
     private func mcvc_addMp4ProgressObserver(for player: AVPlayer) {
@@ -612,7 +632,57 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     @objc
     private func mcvc_continueTapped() {
         guard mcvc_characterSlotsFullyFilled() else { return }
-        mcvc_presentGenerating()
+        let images = mcvc_characterCircleImages.compactMap { $0 }
+        guard !images.isEmpty else { return }
+        guard let item = mcvc_feedItem else { return }
+        let templateRef = item.itemId.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !templateRef.isEmpty else { return }
+        MCCToastManager.showHUD(in: view)
+        mcvc_runComposeSeedPipeline(images: images, templateRef: templateRef)
+    }
+
+    private func mcvc_runComposeSeedPipeline(images: [UIImage], templateRef: String) {
+        let qualityRaw = mcvc_resolutionIndex
+        let durationRaw = mcvc_durationIsTen ? 10 : 5
+        mcvc_composeSeedCancellable?.cancel()
+        mcvc_composeSeedCancellable = MCCOSSImageUploader.shared
+            .mcvc_uploadCharacterImages(images)
+            .flatMap { keys -> AnyPublisher<MCSRunItem, MCCOSSImageUploadError> in
+                var rq = MCSComposeSeedRequest()
+                rq.templateRef = templateRef
+                rq.imageList = keys
+                rq.outputQuality = String(qualityRaw)
+                rq.clipDuration = String(durationRaw)
+                return MCCRunAPIManager.shared
+                    .composeSeed(with: rq)
+                    .mapError { MCCOSSImageUploadError.backend($0) }
+                    .eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] completion in
+                guard let self else { return }
+                MCCToastManager.hide()
+                if case let .failure(err) = completion {
+                    MCCToastManager.showToast(self.mcvc_messageForComposeSeedFailure(err), in: self.view)
+                }
+            }, receiveValue: { [weak self] _ in
+                guard let self else { return }
+                MCCToastManager.hide()
+                MCCToastManager.showToast("Submitted, please check Projects later.", in: self.view)
+            })
+    }
+
+    private func mcvc_messageForComposeSeedFailure(_ err: MCCOSSImageUploadError) -> String {
+        switch err {
+        case .missingImageData:
+            return "Image is empty."
+        case .missingObjectKey:
+            return "Upload session expired."
+        case .ossPutFailed(let underlying):
+            return underlying.localizedDescription
+        case .backend(let net):
+            return net.localizedDescription
+        }
     }
 
     private func mcvc_presentResolutionPop() {
@@ -653,11 +723,6 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
             self?.mcvc_syncBottomBar()
         }
         present(p, animated: true)
-    }
-
-    private func mcvc_presentGenerating() {
-        let g = MCCFeedGeneratingSheetController()
-        present(g, animated: true)
     }
 
     @objc

@@ -35,7 +35,9 @@ public final class MCCShotsView: MCCBaseView {
     public var mcvw_pagingListContainer: JXPagingListContainerView? { mcvw_pagingViewRef?.listContainerView }
 
     public lazy var mcvw_skeletonOverlay: MCCGradientHomeSkeletonOverlay = {
-        MCCGradientHomeSkeletonOverlay(style: .tagsAndDoubleColumn)
+        let item = MCCGradientHomeSkeletonOverlay(style: .tagsAndDoubleColumn)
+        item.isHidden = true
+        return item
     }()
 
     public override func mcvw_setupUI() {
@@ -48,7 +50,6 @@ public final class MCCShotsView: MCCBaseView {
             make.top.equalTo(safeAreaLayoutGuide.snp.top)
             make.leading.trailing.bottom.equalToSuperview()
         }
-        mcvw_skeletonOverlay.isHidden = true
     }
 
     public func mcvw_setupPagingView(delegate: JXPagingViewDelegate) {

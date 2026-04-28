@@ -9,7 +9,6 @@ public final class MCCFeedGeneratingSheetController: MCCSheetController<MCCFeedG
 
     public var mcvc_dismiss: (() -> Void)?
 
-    /// Call when the real generation task succeeds; shows 100% and stops the simulated progress (no more 99% cap).
     public func mcvc_markGenerationSucceeded() {
         mcvc_resultReceived = true
         mcvc_stopProgressTicker()
