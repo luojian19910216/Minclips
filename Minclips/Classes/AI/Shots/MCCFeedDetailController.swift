@@ -18,7 +18,6 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     private var mcvc_integralCancellable: AnyCancellable?
     private var mcvc_favoriteCancellable: AnyCancellable?
     private var mcvc_composeSeedCancellable: AnyCancellable?
-    private weak var mcvc_generatingSheet: MCCFeedGeneratingSheetController?
     private var mcvc_mp4Player: AVPlayer?
     private var mcvc_mp4PeriodicObserver: Any?
     private var mcvc_mp4EndObserver: NSObjectProtocol?
@@ -639,17 +638,8 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         guard let item = mcvc_feedItem else { return }
         let templateRef = item.itemId.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !templateRef.isEmpty else { return }
-        mcvc_presentGeneratingSheet()
+        MCCToastManager.showHUD(in: self.view)
         mcvc_runComposeSeedPipeline(images: images, templateRef: templateRef)
-    }
-
-    private func mcvc_presentGeneratingSheet() {
-        let sheet = MCCFeedGeneratingSheetController()
-        sheet.loadViewIfNeeded()
-        let posterURL = mcvc_feedItem?.videoAsset.posterImageUrl.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        sheet.mcvc_setPosterFromURLString(posterURL)
-        mcvc_generatingSheet = sheet
-        presentPanModal(sheet)
     }
 
     private func mcvc_runComposeSeedPipeline(images: [UIImage], templateRef: String) {
@@ -674,17 +664,11 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
                 guard let self else { return }
                 if case let .failure(err) = completion {
                     let message = self.mcvc_messageForComposeSeedFailure(err)
-                    if let sheet = self.mcvc_generatingSheet {
-                        sheet.dismiss(animated: true) { [weak self] in
-                            guard let self else { return }
-                            MCCToastManager.showToast(message, in: self.view)
-                        }
-                    } else {
-                        MCCToastManager.showToast(message, in: self.view)
-                    }
+                    MCCToastManager.showToast(message, in: self.view)
                 }
             }, receiveValue: { [weak self] _ in
-                self?.mcvc_generatingSheet?.mcvc_markGenerationSucceeded()
+                let sheet = MCCFeedGeneratingSheetController()
+                self?.present(sheet, animated: true)
             })
     }
 
