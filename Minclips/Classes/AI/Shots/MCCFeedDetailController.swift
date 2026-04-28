@@ -19,6 +19,9 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     private var mcvc_mp4Player: AVPlayer?
     private var mcvc_mp4PeriodicObserver: Any?
     private var mcvc_mp4EndObserver: NSObjectProtocol?
+    /// 避免 `setImage` 与播控状态瞬变导致循环衔接处图标闪动。
+    private var mcvc_lastTransportPlayIconName: String?
+    private var mcvc_lastTransportMuteIconName: String?
     private var mcvc_resolutionIndex: Int = 0
     private var mcvc_durationIsTen: Bool = false
     private var mcvc_modeIndex: Int = 0
@@ -30,6 +33,9 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     private var mcvc_characterSelectionTapGestures: [UITapGestureRecognizer] = []
 
     private var mcvc_navCreditsBarButton: UIButton?
+
+    /// 已展示在 Recent 磁贴上的 `localIdentifier`，避免重复向 Photos 拉取。
+    private var mcvc_recentTileSyncedAssetId: String?
 
     public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
@@ -148,6 +154,8 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         v.mcvw_muteButton.addTarget(self, action: #selector(mcvc_muteTapped), for: .touchUpInside)
         v.mcvw_favoriteButton.addTarget(self, action: #selector(mcvc_favoriteTapped), for: .touchUpInside)
         v.mcvw_characterAlbumButton.addTarget(self, action: #selector(mcvc_characterAlbumTapped), for: .touchUpInside)
+        let recentTap = UITapGestureRecognizer(target: self, action: #selector(mcvc_characterRecentTapped))
+        v.mcvw_characterRecentTile.addGestureRecognizer(recentTap)
         mcvc_bindCharacterCircleRemoveButtons()
         mcvc_refreshContinueButtonState()
         mcvc_bindCharacterSlotSelectionGestures()
@@ -188,7 +196,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         mcvc_refreshIntegralStatement()
-        mcvc_applyCharacterRecentVisibility()
+        mcvc_refreshRecentTileThumbnailFromStoreIfNeeded()
         let rawId = mcvc_feedItem?.itemId ?? ""
         let trimmed = rawId.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, isMovingToParent else { return }
@@ -215,12 +223,12 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        mcvc_hydrateRecentCharacterPhotoIfNeeded()
+        mcvc_refreshRecentTileThumbnailFromStoreIfNeeded()
         mcvc_syncCharacterCirclesAppearance()
     }
 
     private func mcvc_applyStaticCopy() {
-        mcvc_applyCharacterRecentVisibility()
+        mcvc_refreshRecentTileThumbnailFromStoreIfNeeded()
         let v = contentView
         mcvc_refreshNavCreditsDisplay()
         v.mcvw_characterTitleLabel.text = "Character"
@@ -325,7 +333,8 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         let player = AVPlayer(playerItem: item)
         player.automaticallyWaitsToMinimizeStalling = false
         player.isMuted = true
-        player.actionAtItemEnd = .pause
+        /// 默认 `.pause` 会在每圈结尾先进入暂停，图标会闪成「未播放」；手动 loop 用 `.none`。
+        player.actionAtItemEnd = .none
         return player
     }
 
@@ -403,27 +412,47 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     /// 播放中 `ic_cm_play_on` / 未播放 `ic_cm_play_off`；静音 `ic_cm_volume_off` / 出声 `ic_cm_volume_on`。WebP 无音轨：仅更新播放图标，音量示意用 `volume_on`。
     private func mcvc_refreshTransportControlIcons() {
         let v = contentView
-        let setPlayIcon: (String) -> Void = { name in
+        let setPlayIconIfNeeded: (String) -> Void = { [weak self] name in
+            guard let self else { return }
+            if name == self.mcvc_lastTransportPlayIconName { return }
+            self.mcvc_lastTransportPlayIconName = name
             v.mcvw_playPauseButton.setImage(UIImage(named: name)?.withRenderingMode(.alwaysOriginal), for: .normal)
         }
-        let setVolumeIcon: (String) -> Void = { name in
+        let setVolumeIconIfNeeded: (String) -> Void = { [weak self] name in
+            guard let self else { return }
+            if name == self.mcvc_lastTransportMuteIconName { return }
+            self.mcvc_lastTransportMuteIconName = name
             v.mcvw_muteButton.setImage(UIImage(named: name)?.withRenderingMode(.alwaysOriginal), for: .normal)
         }
 
         if let p = mcvc_mp4Player {
-            let playing = (p.timeControlStatus == .playing)
-            setPlayIcon(playing ? "ic_cm_play_on" : "ic_cm_play_off")
-            setVolumeIcon(p.isMuted ? "ic_cm_volume_off" : "ic_cm_volume_on")
+            let playing = mcvc_mp4TransportShowsPlaying(p)
+            setPlayIconIfNeeded(playing ? "ic_cm_play_on" : "ic_cm_play_off")
+            setVolumeIconIfNeeded(p.isMuted ? "ic_cm_volume_off" : "ic_cm_volume_on")
             return
         }
 
         let w = v.mcvw_webpImageView
         if !w.isHidden, w.image != nil {
-            setPlayIcon(w.isAnimating ? "ic_cm_play_on" : "ic_cm_play_off")
+            setPlayIconIfNeeded(w.isAnimating ? "ic_cm_play_on" : "ic_cm_play_off")
         } else {
-            setPlayIcon("ic_cm_play_off")
+            setPlayIconIfNeeded("ic_cm_play_off")
         }
-        setVolumeIcon("ic_cm_volume_on")
+        setVolumeIconIfNeeded("ic_cm_volume_on")
+    }
+
+    /// 与「仅看 `timeControlStatus == .playing`」相比，把 seek/重开缓冲等短暂态仍视为在播，避免图标来回切。
+    private func mcvc_mp4TransportShowsPlaying(_ p: AVPlayer) -> Bool {
+        switch p.timeControlStatus {
+        case .paused:
+            return false
+        case .playing:
+            return true
+        case .waitingToPlayAtSpecifiedRate:
+            return true
+        @unknown default:
+            return p.rate > 0.01
+        }
     }
 
     private func mcvc_stringHasHttpHttpsURL(_ raw: String) -> Bool {
@@ -442,6 +471,8 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         }
         mcvc_mp4Player?.pause()
         mcvc_mp4Player = nil
+        mcvc_lastTransportPlayIconName = nil
+        mcvc_lastTransportMuteIconName = nil
         contentView.mcvw_bindMp4Playback(player: nil, surfaceVisible: false)
         mcvc_refreshTransportControlIcons()
     }
@@ -450,7 +481,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         let interval = CMTime(seconds: 0.12, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         mcvc_mp4PeriodicObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
             guard let self else { return }
-            self.mcvc_refreshTransportControlIcons()
+            /// 勿在此反复 `setImage`：会打断 `UIButton` 触摸（暂停后点静音尤明显）；进度与播控图标无关。
             guard let item = player.currentItem else { return }
             let duration = item.duration
             guard duration.isNumeric, duration.seconds > 0 else { return }
@@ -718,34 +749,70 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     }
 
     private func mcvc_applyCharacterRecentVisibility() {
-        let hasStore = !MCCRecentPickedPhotoStore.localIdentifiers.isEmpty
-        let hasThumb = contentView.mcvw_characterRecentImageView.image != nil
-        contentView.mcvw_configureCharacterRecentTileVisible(hasStore || hasThumb)
+        let ids = MCCRecentPickedPhotoStore.localIdentifiers
+        let hasStore = !ids.isEmpty
+        contentView.mcvw_configureCharacterRecentTileVisible(hasStore)
+        if !hasStore {
+            mcvc_recentTileSyncedAssetId = nil
+            contentView.mcvw_characterRecentImageView.image = nil
+        }
     }
 
-    private func mcvc_hydrateRecentCharacterPhotoIfNeeded() {
+    /// 从全局 `UserDefaults` 快照拉一张磁贴预览；别处（含引导）选过的图会一直占最近一条。
+    private func mcvc_refreshRecentTileThumbnailFromStoreIfNeeded() {
+        mcvc_applyCharacterRecentVisibility()
         guard !contentView.mcvw_characterRecentTile.isHidden else { return }
-        let v = contentView.mcvw_characterRecentImageView
-        guard v.image == nil, let id = MCCRecentPickedPhotoStore.localIdentifiers.first else { return }
-        let assets = PHAsset.fetchAssets(withLocalIdentifiers: [id], options: nil)
-        guard let asset = assets.firstObject else { return }
+        guard let id = MCCRecentPickedPhotoStore.localIdentifiers.first else { return }
+        if id == mcvc_recentTileSyncedAssetId,
+           contentView.mcvw_characterRecentImageView.image != nil {
+            return
+        }
+        let side = UIScreen.main.scale * 168
+        mcvc_requestRecentUIImage(localIdentifier: id, targetPixelSide: side) { [weak self] img in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                guard MCCRecentPickedPhotoStore.localIdentifiers.first == id else { return }
+                self.mcvc_recentTileSyncedAssetId = id
+                self.contentView.mcvw_characterRecentImageView.image = img
+            }
+        }
+    }
+
+    /// 相册 `PHAsset`；若资源已删除则返回 nil。
+    private func mcvc_requestRecentUIImage(localIdentifier id: String, targetPixelSide: CGFloat, completion: @escaping (UIImage?) -> Void) {
+        let trimmed = id.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            DispatchQueue.main.async { completion(nil) }
+            return
+        }
+        let assets = PHAsset.fetchAssets(withLocalIdentifiers: [trimmed], options: nil)
+        guard let asset = assets.firstObject else {
+            DispatchQueue.main.async { completion(nil) }
+            return
+        }
         let opts = PHImageRequestOptions()
         opts.isNetworkAccessAllowed = true
-        opts.deliveryMode = .opportunistic
-        let scale = UIScreen.main.scale
-        let side: CGFloat = 128
-        let px = CGSize(width: side * scale, height: side * scale)
+        opts.deliveryMode = targetPixelSide > 540 ? .highQualityFormat : .opportunistic
+        let px = CGSize(width: targetPixelSide, height: targetPixelSide)
         PHImageManager.default().requestImage(
             for: asset,
             targetSize: px,
             contentMode: .aspectFill,
             options: opts
-        ) { [weak self] img, _ in
+        ) { img, _ in
             DispatchQueue.main.async {
-                guard let self, self.contentView.mcvw_characterRecentImageView.image == nil else { return }
-                self.contentView.mcvw_characterRecentImageView.image = img
-                self.mcvc_syncCharacterCirclesAppearance()
+                completion(img)
             }
+        }
+    }
+
+    @objc
+    private func mcvc_characterRecentTapped() {
+        guard let id = MCCRecentPickedPhotoStore.localIdentifiers.first else { return }
+        let longest = max(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
+        mcvc_requestRecentUIImage(localIdentifier: id, targetPixelSide: UIScreen.main.scale * longest) { [weak self] img in
+            guard let self, let img else { return }
+            self.mcvc_offerPickedCharacterImageToSlots(img)
         }
     }
 }
@@ -757,6 +824,7 @@ extension MCCFeedDetailController: PHPickerViewControllerDelegate {
         guard let r = results.first else { return }
         if let id = r.assetIdentifier {
             MCCRecentPickedPhotoStore.record(localIdentifier: id)
+            mcvc_recentTileSyncedAssetId = id
         }
         mcvc_applyCharacterRecentVisibility()
         let prov = r.itemProvider

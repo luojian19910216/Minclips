@@ -164,6 +164,10 @@ public final class MCCFeedDetailCharacterAvatarSlotView: UIView {
 
 public final class MCCFeedDetailView: MCCBaseView {
 
+    /// 播放 / 静音 / 收藏：扩大点击区（约 44pt），图标靠内边距居中，四边对齐 overlay 不落外边距。
+    private static let mcvw_transportControlHitSide: CGFloat = 44
+    private static let mcvw_transportControlImageInset: CGFloat = 12
+
     public let mcvw_mediaContainer = UIView()
     public let mcvw_videoOverlay = UIView()
     public let mcvw_videoTransportBar = UIView()
@@ -288,6 +292,7 @@ public final class MCCFeedDetailView: MCCBaseView {
         s.showsHorizontalScrollIndicator = false
         s.alwaysBounceHorizontal = true
         s.alwaysBounceVertical = false
+        s.delaysContentTouches = false
         return s
     }()
     public let mcvw_characterSlotsStack = UIStackView()
@@ -337,14 +342,19 @@ public final class MCCFeedDetailView: MCCBaseView {
         mcvw_videoOverlay.addSubview(mcvw_favoriteButton)
         mcvw_videoTransportBar.addSubview(mcvw_playPauseButton)
         mcvw_videoTransportBar.addSubview(mcvw_progressView)
+        let ctrlInset = Self.mcvw_transportControlImageInset
+        let pad = UIEdgeInsets(top: ctrlInset, left: ctrlInset, bottom: ctrlInset, right: ctrlInset)
+        mcvw_playPauseButton.contentEdgeInsets = pad
+        mcvw_muteButton.contentEdgeInsets = pad
+        mcvw_favoriteButton.contentEdgeInsets = pad
         mcvw_videoTransportBar.snp.makeConstraints { make in
             make.leading.trailing.bottom.equalToSuperview()
-            make.height.equalTo(36)
+            make.height.equalTo(Self.mcvw_transportControlHitSide)
         }
         mcvw_muteButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-12)
+            make.trailing.equalToSuperview()
             make.centerY.equalTo(mcvw_videoTransportBar)
-            make.size.equalTo(20)
+            make.size.equalTo(Self.mcvw_transportControlHitSide)
         }
         mcvw_favoriteCountLabel.snp.makeConstraints { make in
             make.centerX.equalTo(mcvw_muteButton)
@@ -353,16 +363,16 @@ public final class MCCFeedDetailView: MCCBaseView {
         mcvw_favoriteButton.snp.makeConstraints { make in
             make.centerX.equalTo(mcvw_muteButton)
             make.bottom.equalTo(mcvw_favoriteCountLabel.snp.top).offset(-4)
-            make.size.equalTo(20)
+            make.size.equalTo(Self.mcvw_transportControlHitSide)
         }
         mcvw_playPauseButton.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(12)
+            make.leading.equalToSuperview()
             make.centerY.equalToSuperview()
-            make.size.equalTo(20)
+            make.size.equalTo(Self.mcvw_transportControlHitSide)
         }
         mcvw_progressView.snp.makeConstraints { make in
-            make.leading.equalTo(mcvw_playPauseButton.snp.trailing).offset(8)
-            make.trailing.equalTo(mcvw_muteButton.snp.leading).offset(-8)
+            make.leading.equalTo(mcvw_playPauseButton.snp.trailing)
+            make.trailing.equalTo(mcvw_muteButton.snp.leading)
             make.centerY.equalToSuperview()
             make.height.equalTo(2)
         }
@@ -387,12 +397,15 @@ public final class MCCFeedDetailView: MCCBaseView {
         mcvw_characterRecentTile.layer.borderWidth = 1
         mcvw_characterRecentTile.layer.borderColor = UIColor.white.withAlphaComponent(0.06).cgColor
         mcvw_characterRecentTile.isHidden = true
+        mcvw_characterRecentTile.isUserInteractionEnabled = true
+        mcvw_characterRecentImageView.isUserInteractionEnabled = false
 
         let recentFade = MCCBottomBlackFadeGradientView(frame: .zero)
 
         mcvw_characterRecentTile.addSubview(mcvw_characterRecentImageView)
         mcvw_characterRecentTile.addSubview(recentFade)
         mcvw_characterRecentTile.addSubview(mcvw_characterRecentLabel)
+        mcvw_characterRecentLabel.isUserInteractionEnabled = false
 
         mcvw_characterRecentImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
 
@@ -607,9 +620,6 @@ public final class MCCFeedDetailView: MCCBaseView {
 
     public func mcvw_configureCharacterRecentTileVisible(_ visible: Bool) {
         mcvw_characterRecentTile.isHidden = !visible
-        if !visible {
-            mcvw_characterRecentImageView.image = nil
-        }
     }
 
     public func mcvw_bindMp4Playback(player: AVPlayer?, surfaceVisible: Bool) {
