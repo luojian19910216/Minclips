@@ -69,7 +69,8 @@ public final class MCCFeedGeneratingView: MCCBaseView {
     }()
 
     public override func mcvw_setupUI() {
-        backgroundColor = UIColor(white: 0.1, alpha: 1)
+        backgroundColor = UIColor(hex: "18181C")
+        
         addSubview(mcvw_closeButton)
         mcvw_closeButton.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(8)
@@ -104,7 +105,6 @@ public final class MCCFeedGeneratingView: MCCBaseView {
         mcvw_buttonRow.snp.makeConstraints { make in
             make.top.equalTo(mcvw_subtitleLabel.snp.bottom).offset(28)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-24)
         }
         mcvw_exploreButton.snp.makeConstraints { $0.height.equalTo(50) }
         mcvw_projectsButton.snp.makeConstraints { $0.height.equalTo(50) }
@@ -115,14 +115,9 @@ public final class MCCFeedGeneratingSheetController: MCCSheetController<MCCFeedG
 
     public var mcvc_dismiss: (() -> Void)?
 
-    public override var longFormHeight: PanModalHeight { .contentHeight(400) }
-    public override var showDragIndicator: Bool { true }
-    public override var cornerRadius: CGFloat { 16 }
-
-    public override func mcvc_setupLocalization() {
-        super.mcvc_setupLocalization()
-        view.backgroundColor = contentView.backgroundColor
-    }
+    public override var longFormHeight: PanModalHeight { .contentHeight(MCCScreenSize.height - MCCScreenSize.statusBarHeight) }
+    public override var showDragIndicator: Bool { false }
+    public override var cornerRadius: CGFloat { 24 }
 
     public override func mcvc_bind() {
         super.mcvc_bind()
