@@ -2,111 +2,81 @@ import UIKit
 import Common
 import SnapKit
 
-public struct MCCFeedOptionRow: Sendable {
-    public var title: String
-    public var isPro: Bool
-    public var isSelected: Bool
-    public init(title: String, isPro: Bool, isSelected: Bool) {
-        self.title = title
-        self.isPro = isPro
-        self.isSelected = isSelected
-    }
-}
-
 public final class MCCFeedOptionPopView: MCCBasePopView {
+
+    public let mcvw_titleLabel: UILabel = {
+        let l = UILabel()
+        l.textColor = UIColor(white: 1, alpha: 0.48)
+        l.font = .systemFont(ofSize: 14, weight: .regular)
+        l.textAlignment = .center
+        return l
+    }()
 
     public let mcvw_optionStack: UIStackView = {
         let s = UIStackView()
         s.axis = .vertical
-        s.spacing = 0
+        s.spacing = 12
         s.alignment = .fill
         return s
     }()
 
-    private var mcvw_rowPick: ((Int) -> Void)?
+    public static let mcvw_cardCornerRadius: CGFloat = 12
 
     public override func mcvw_setupUI() {
         super.mcvw_setupUI()
         dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        cardView.backgroundColor = UIColor(white: 0.12, alpha: 0.98)
+        cardView.backgroundColor = UIColor(white: 1, alpha: 0.06)
+        cardView.addSubview(mcvw_titleLabel)
         cardView.addSubview(mcvw_optionStack)
         cardView.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
         }
-        mcvw_optionStack.snp.makeConstraints { make in
+        mcvw_titleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(12)
-            make.leading.trailing.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(16)
+        }
+        mcvw_optionStack.snp.makeConstraints { make in
+            make.top.equalTo(mcvw_titleLabel.snp.bottom).offset(12)
+            make.leading.trailing.equalToSuperview().inset(16)
             make.bottom.equalToSuperview().offset(-12)
         }
     }
 
-    public func mcvw_setRows(_ rows: [MCCFeedOptionRow], onSelect: @escaping (Int) -> Void) {
-        mcvw_rowPick = onSelect
-        mcvw_optionStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        for (idx, row) in rows.enumerated() {
-            let line = mcvw_makeLineView(row: row, index: idx, isLast: idx == rows.count - 1)
-            mcvw_optionStack.addArrangedSubview(line)
-            line.snp.makeConstraints { $0.height.equalTo(52) }
-        }
+    public func mcvw_applyCardCornerRadius() {
+        let mask = CAShapeLayer()
+        mask.frame = cardView.bounds
+        mask.path = UIBezierPath(
+            roundedRect: cardView.bounds,
+            byRoundingCorners: .allCorners,
+            cornerRadii: CGSize(
+                width: Self.mcvw_cardCornerRadius,
+                height: Self.mcvw_cardCornerRadius
+            )
+        ).cgPath
+        cardView.layer.mask = mask
     }
+}
 
-    @objc
-    private func mcvw_lineTapped(_ s: UIControl) {
-        mcvw_rowPick?(s.tag)
-    }
+public final class MCCFeedOptionPillControl: UIControl {
 
-    private func mcvw_makeLineView(row: MCCFeedOptionRow, index: Int, isLast: Bool) -> UIControl {
-        let c = UIControl()
-        c.accessibilityLabel = row.title
-        c.tag = index
-        c.addTarget(self, action: #selector(mcvw_lineTapped(_:)), for: .touchUpInside)
-        let h = UIStackView()
-        h.axis = .horizontal
-        h.alignment = .center
-        h.spacing = 8
-        h.isUserInteractionEnabled = false
-        let t = UILabel()
-        t.text = row.title
-        t.textColor = .white
-        t.font = .systemFont(ofSize: 16, weight: .medium)
-        h.addArrangedSubview(t)
-        if row.isPro {
-            h.addArrangedSubview(MCCFeedOptionPopView.mcvw_proPillView())
-        }
-        h.addArrangedSubview(UIView())
-        if row.isSelected {
-            let check = UIImageView(image: UIImage(systemName: "checkmark.circle.fill"))
-            check.tintColor = UIColor(hex: "00AAFF")!
-            check.contentMode = .scaleAspectFit
-            check.snp.makeConstraints { $0.size.equalTo(22) }
-            h.addArrangedSubview(check)
-        }
-        c.addSubview(h)
-        h.snp.makeConstraints { make in
-            make.top.bottom.equalToSuperview()
-            make.leading.trailing.equalToSuperview().inset(20)
-        }
-        let sep = UIView()
-        sep.backgroundColor = UIColor.white.withAlphaComponent(0.08)
-        sep.isHidden = isLast
-        c.addSubview(sep)
-        sep.snp.makeConstraints { make in
-            make.height.equalTo(0.5)
-            make.leading.trailing.bottom.equalToSuperview()
-        }
-        return c
-    }
+    public let mcvw_titleLabel: UILabel = {
+        let l = UILabel()
+        l.textColor = .white
+        l.font = .systemFont(ofSize: 14, weight: .regular)
+        return l
+    }()
 
-    private static func mcvw_proPillView() -> UIView {
+    public let mcvw_proChip: UIView = {
         let w = UIView()
-        w.backgroundColor = UIColor.systemYellow
-        w.layer.cornerRadius = 4
+        w.backgroundColor = UIColor(hex: "FFC629")!.withAlphaComponent(0.12)
+        w.layer.cornerRadius = 9
         w.clipsToBounds = true
+        w.isHidden = true
         let l = UILabel()
         l.text = "PRO"
-        l.textColor = .black
-        l.font = .systemFont(ofSize: 10, weight: .bold)
+        l.textColor = UIColor(hex: "FFC629")
+        l.font = .systemFont(ofSize: 11, weight: .semibold)
         w.addSubview(l)
         l.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
@@ -114,5 +84,53 @@ public final class MCCFeedOptionPopView: MCCBasePopView {
         }
         w.snp.makeConstraints { $0.height.equalTo(18) }
         return w
+    }()
+
+    private let mcvw_contentStack: UIStackView = {
+        let h = UIStackView()
+        h.axis = .horizontal
+        h.alignment = .center
+        h.spacing = 8
+        h.isUserInteractionEnabled = false
+        return h
+    }()
+
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        clipsToBounds = true
+        backgroundColor = UIColor(white: 1, alpha: 0.06)
+        mcvw_contentStack.addArrangedSubview(mcvw_titleLabel)
+        mcvw_contentStack.addArrangedSubview(UIView())
+        mcvw_contentStack.addArrangedSubview(mcvw_proChip)
+        addSubview(mcvw_contentStack)
+        mcvw_contentStack.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview()
+            make.leading.equalToSuperview().offset(16)
+            make.trailing.equalToSuperview().offset(-16)
+        }
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError() }
+
+    public override var intrinsicContentSize: CGSize {
+        CGSize(width: UIView.noIntrinsicMetric, height: 44)
+    }
+
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        layer.cornerRadius = bounds.height / 2
+    }
+
+    public func mcvw_setSelectedHighlighted(_ on: Bool) {
+        if on {
+            backgroundColor = UIColor(hex: "0077FF")!.withAlphaComponent(0.12)
+            layer.borderColor = UIColor(hex: "0077FF")!.withAlphaComponent(0.4).cgColor
+            layer.borderWidth = 1
+        } else {
+            backgroundColor = UIColor(white: 1, alpha: 0.06)
+            layer.borderColor = nil
+            layer.borderWidth = 0
+        }
     }
 }

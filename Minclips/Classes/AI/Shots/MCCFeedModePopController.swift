@@ -12,16 +12,32 @@ public final class MCCFeedModePopController: MCCPopController<MCCFeedOptionPopVi
         dimmingInsets = .zero
     }
 
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        contentView.mcvw_applyCardCornerRadius()
+    }
+
     public override func mcvc_loadData() {
         super.mcvc_loadData()
-        let rows = [
-            MCCFeedOptionRow(title: "Original", isPro: false, isSelected: mcvc_currentIndex == 0),
-            MCCFeedOptionRow(title: "Generated", isPro: true, isSelected: mcvc_currentIndex == 1)
+        contentView.mcvw_titleLabel.text = "Mode"
+        let entries: [(title: String, isPro: Bool)] = [
+            (title: "Original", isPro: false),
+            (title: "Generated", isPro: true)
         ]
-        contentView.mcvw_setRows(rows) { [weak self] i in
-            guard let self else { return }
-            self.mcvc_onSelectIndex?(i)
-            self.dismiss(animated: true)
+        for (idx, e) in entries.enumerated() {
+            let pill = MCCFeedOptionPillControl()
+            pill.tag = idx
+            pill.mcvw_titleLabel.text = e.title
+            pill.mcvw_proChip.isHidden = !e.isPro
+            pill.mcvw_setSelectedHighlighted(idx == mcvc_currentIndex)
+            pill.addTarget(self, action: #selector(mcvc_pillTapped(_:)), for: .touchUpInside)
+            contentView.mcvw_optionStack.addArrangedSubview(pill)
         }
+    }
+
+    @objc
+    private func mcvc_pillTapped(_ s: UIControl) {
+        mcvc_onSelectIndex?(s.tag)
+        dismiss(animated: true)
     }
 }
