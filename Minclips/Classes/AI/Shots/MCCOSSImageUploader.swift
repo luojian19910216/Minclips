@@ -11,7 +11,7 @@ public enum MCCOSSImageUploadError: Error {
     case backend(MCENetworkError)
 }
 
-/// `composeSeed` 上传链路：每张图先调 `ossToken` 拿 STS（包含 `objectPath`），再用 AliyunOSS PUT 同一个 key；最终 `objectPath` 列表给 `composeSeed.imageList`。
+/// `composeSeed` 上传链路：每张图先调 `ossToken` 拿 STS（包含 `objectPath`、`uploadTargetUrl`），再用 AliyunOSS PUT 同一个 key；成功后把完整图片 URL（`uploadTargetUrl` 与 `objectPath` 拼接）交给 `composeSeed.imageList`。
 public final class MCCOSSImageUploader {
 
     public static let shared = MCCOSSImageUploader()
@@ -81,7 +81,7 @@ public final class MCCOSSImageUploader {
                 toObjectKey: key,
                 onCompleted: { ok, err in
                     if ok {
-                        promise(.success(key))
+                        promise(.success(Self.mcvc_fullImageURL(for: token)))
                     } else {
                         let nsErr = (err as NSError?) ?? NSError(domain: "MCCOSSImageUploader", code: -1, userInfo: nil)
                         promise(.failure(.ossPutFailed(nsErr)))
@@ -92,6 +92,22 @@ public final class MCCOSSImageUploader {
         }
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
+    }
+
+    /// 将 STS 返回的访问域与对象 key 拼成接口所需的完整 URL（仅 object key 时后端无法拉取图）。
+    private static func mcvc_fullImageURL(for token: MCSCfOssTokenResponse) -> String {
+        let key = token.objectPath.trimmingCharacters(in: .whitespacesAndNewlines)
+        var base = token.uploadTargetUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !base.isEmpty else { return key }
+        guard !key.isEmpty else { return base }
+        if base.hasSuffix(key) || base.hasSuffix("/" + key) {
+            return base
+        }
+        while base.hasSuffix("/") {
+            base.removeLast()
+        }
+        let path = key.hasPrefix("/") ? String(key.dropFirst()) : key
+        return base + "/" + path
     }
 
     private static func mcvc_normalizedEndpoint(_ raw: String) -> String {
