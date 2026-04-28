@@ -35,6 +35,16 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         navigationItem.largeTitleDisplayMode = .never
         navigationController?.navigationBar.prefersLargeTitles = false
 
+        let pro = MCCRootTabNavChrome.proBarButtonItem(
+            target: self,
+            action: #selector(mcvc_onProTapped),
+            titleColor: .white
+        )
+        let gapAfterPro = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+        gapAfterPro.width = 8
+        let shots = MCCRootTabNavChrome.leftTitleBarButtonItem(title: "Shots")
+        let gapAfterShots = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+        gapAfterShots.width = 8
         let back = UIBarButtonItem(
             image: UIImage(named: "ic_nav_back")?.withRenderingMode(.alwaysTemplate),
             style: .plain,
@@ -42,15 +52,8 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
             action: #selector(mcvc_detailBackTapped)
         )
         back.tintColor = .white
-        let gap = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
-        gap.width = 8
-        let shots = MCCRootTabNavChrome.leftTitleBarButtonItem(title: "Shots")
-        navigationItem.leftBarButtonItems = [back, gap, shots]
-        navigationItem.rightBarButtonItem = MCCRootTabNavChrome.proBarButtonItem(
-            target: self,
-            action: #selector(mcvc_onProTapped),
-            titleColor: .white
-        )
+        navigationItem.leftBarButtonItems = [pro, gapAfterPro, shots, gapAfterShots, back]
+        navigationItem.rightBarButtonItem = nil
         navigationItem.title = nil
     }
 
@@ -78,6 +81,9 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         v.mcvw_durationPill.addTarget(self, action: #selector(mcvc_durationTapped), for: .touchUpInside)
         v.mcvw_modePill.addTarget(self, action: #selector(mcvc_modeTapped), for: .touchUpInside)
         v.mcvw_continueButton.addTarget(self, action: #selector(mcvc_continueTapped), for: .touchUpInside)
+        v.mcvw_playPauseButton.addTarget(self, action: #selector(mcvc_playPauseTapped), for: .touchUpInside)
+        v.mcvw_muteButton.addTarget(self, action: #selector(mcvc_muteTapped), for: .touchUpInside)
+        v.mcvw_favoriteButton.addTarget(self, action: #selector(mcvc_favoriteTapped), for: .touchUpInside)
         v.mcvw_characterAlbumButton.addTarget(self, action: #selector(mcvc_characterAlbumTapped), for: .touchUpInside)
         for (ix, slot) in v.mcvw_characterCircleSlots.enumerated() {
             slot.mcvw_removeButton.tag = ix
@@ -108,6 +114,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         v.mcvw_progressView.progress = 0.3
         v.mcvw_continueButton.setTitle("Continue + 50", for: .normal)
         v.mcvw_characterTitleLabel.text = "Character"
+        v.mcvw_favoriteCountLabel.text = "1,024"
     }
 
     private func mcvc_applyDetailMedia(item: MCSFeedItem, webpHandoff: MCCWebpPlaybackHandoff?, thumbnailPixelSize: CGSize) {
@@ -136,13 +143,35 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
             v.mcvw_webpImageView.autoPlayAnimatedImage = true
             v.mcvw_webpImageView.isHidden = false
             v.mcvw_webpImageView.sd_setImage(with: u, placeholderImage: nil, options: [], completed: { [weak self] _, _, _, _ in
-                self?.contentView.mcvw_webpImageView.startAnimating()
+                DispatchQueue.main.async {
+                    guard let self else { return }
+                    self.contentView.mcvw_webpImageView.startAnimating()
+                }
             })
         } else {
             v.mcvw_webpImageView.sd_cancelCurrentImageLoad()
             v.mcvw_webpImageView.image = nil
             v.mcvw_webpImageView.isHidden = true
         }
+    }
+
+    @objc
+    private func mcvc_playPauseTapped() {
+        let w = contentView.mcvw_webpImageView
+        guard !w.isHidden, w.image != nil else { return }
+        if w.isAnimating {
+            w.stopAnimating()
+        } else {
+            w.startAnimating()
+        }
+    }
+
+    @objc
+    private func mcvc_muteTapped() {
+    }
+
+    @objc
+    private func mcvc_favoriteTapped() {
     }
 
     private func mcvc_syncBottomBar() {

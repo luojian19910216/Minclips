@@ -154,10 +154,38 @@ public final class MCCFeedDetailView: MCCBaseView {
         b.tintColor = UIColor.white.withAlphaComponent(0.9)
         return b
     }()
+    public let mcvw_videoTransportBar = UIView()
+    public let mcvw_playPauseButton: UIButton = {
+        let b = UIButton(type: .system)
+        b.setImage(UIImage(named: "ic_cm_play_off")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        b.adjustsImageWhenHighlighted = false
+        return b
+    }()
+    public let mcvw_muteButton: UIButton = {
+        let b = UIButton(type: .system)
+        b.setImage(UIImage(named: "ic_cm_volume_on")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        b.adjustsImageWhenHighlighted = false
+        return b
+    }()
+    public let mcvw_favoriteButton: UIButton = {
+        let b = UIButton(type: .system)
+        b.setImage(UIImage(named: "ic_cm_dislike")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        b.adjustsImageWhenHighlighted = false
+        return b
+    }()
+    public let mcvw_favoriteCountLabel: UILabel = {
+        let l = UILabel()
+        l.font = .systemFont(ofSize: 11, weight: .regular)
+        l.textColor = UIColor.white.withAlphaComponent(0.72)
+        l.textAlignment = .center
+        return l
+    }()
     public let mcvw_progressView: UIProgressView = {
         let p = UIProgressView(progressViewStyle: .bar)
-        p.progressTintColor = UIColor(hex: "00AAFF")!
-        p.trackTintColor = UIColor.white.withAlphaComponent(0.25)
+        p.progressTintColor = UIColor(hex: "0077FF")!
+        p.trackTintColor = UIColor.white.withAlphaComponent(0.24)
+        p.layer.cornerRadius = 1
+        p.clipsToBounds = true
         return p
     }()
 
@@ -281,7 +309,7 @@ public final class MCCFeedDetailView: MCCBaseView {
         backgroundColor = .clear
         mcvw_mediaContainer.layer.cornerRadius = 0
         mcvw_mediaContainer.clipsToBounds = true
-        mcvw_mediaContainer.backgroundColor = UIColor.white.withAlphaComponent(0.06)
+        mcvw_mediaContainer.backgroundColor = UIColor.black.withAlphaComponent(0.24)
         mcvw_mediaContainer.addSubview(mcvw_posterImageView)
         mcvw_mediaContainer.addSubview(mcvw_webpImageView)
         mcvw_posterImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
@@ -299,10 +327,41 @@ public final class MCCFeedDetailView: MCCBaseView {
             make.centerY.equalTo(mcvw_creditsLabel)
             make.size.equalTo(28)
         }
-        mcvw_videoOverlay.addSubview(mcvw_progressView)
+        mcvw_videoTransportBar.isUserInteractionEnabled = true
+        mcvw_videoOverlay.addSubview(mcvw_videoTransportBar)
+        mcvw_videoOverlay.addSubview(mcvw_muteButton)
+        mcvw_videoOverlay.addSubview(mcvw_favoriteCountLabel)
+        mcvw_videoOverlay.addSubview(mcvw_favoriteButton)
+        mcvw_videoTransportBar.addSubview(mcvw_playPauseButton)
+        mcvw_videoTransportBar.addSubview(mcvw_progressView)
+        mcvw_videoTransportBar.snp.makeConstraints { make in
+            make.leading.trailing.bottom.equalToSuperview()
+            make.height.equalTo(36)
+        }
+        mcvw_muteButton.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().offset(-12)
+            make.centerY.equalTo(mcvw_videoTransportBar)
+            make.size.equalTo(20)
+        }
+        mcvw_favoriteCountLabel.snp.makeConstraints { make in
+            make.centerX.equalTo(mcvw_muteButton)
+            make.bottom.equalTo(mcvw_videoTransportBar.snp.top).offset(-24)
+        }
+        mcvw_favoriteButton.snp.makeConstraints { make in
+            make.centerX.equalTo(mcvw_muteButton)
+            make.bottom.equalTo(mcvw_favoriteCountLabel.snp.top).offset(-4)
+            make.size.equalTo(20)
+        }
+        mcvw_playPauseButton.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(12)
+            make.centerY.equalToSuperview()
+            make.size.equalTo(20)
+        }
         mcvw_progressView.snp.makeConstraints { make in
-            make.leading.trailing.bottom.equalToSuperview().inset(10)
-            make.height.equalTo(3)
+            make.leading.equalTo(mcvw_playPauseButton.snp.trailing).offset(8)
+            make.trailing.equalTo(mcvw_muteButton.snp.leading).offset(-8)
+            make.centerY.equalToSuperview()
+            make.height.equalTo(2)
         }
         addSubview(mcvw_mediaContainer)
         mcvw_styleRoundPill(mcvw_resolutionPill, iconNamed: "ic_cm_hd", textLabel: mcvw_resolutionValueLabel)
@@ -417,7 +476,7 @@ public final class MCCFeedDetailView: MCCBaseView {
             make.height.equalTo(48)
         }
         mcvw_settingsRow.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(12)
+            make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(mcvw_continueButton.snp.top).offset(-16)
             make.height.equalTo(44)
         }
