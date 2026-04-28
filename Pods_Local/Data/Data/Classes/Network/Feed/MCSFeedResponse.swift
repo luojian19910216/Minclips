@@ -55,7 +55,7 @@ public struct MCSFeedItem: Codable {
     ///
     @MCSSafeBool public var proFeature: Bool
     ///
-    @MCSSafeString public var contentKind: String
+    @MCSSafeEnum public var contentKind: MCEFeedContentKind
     ///
     @MCSSafe public var videoAsset: MCSFeedVideoAssetShell
     ///

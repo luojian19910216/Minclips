@@ -486,6 +486,11 @@ public final class MCCFeedDetailView: MCCBaseView {
         mcvw_applyMediaHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth)
     }
 
+    public func mcvw_configureDurationAndMusicPillsVisible(_ visible: Bool) {
+        mcvw_durationPill.isHidden = !visible
+        mcvw_modePill.isHidden = !visible
+    }
+
     private func mcvw_styleRoundPill(
         _ pill: UIControl,
         iconNamed: String,

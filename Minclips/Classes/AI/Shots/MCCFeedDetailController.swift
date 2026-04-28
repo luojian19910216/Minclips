@@ -241,7 +241,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         !mcvc_characterCircleImages.isEmpty && !mcvc_characterCircleImages.contains(where: { $0 == nil })
     }
 
-    /// 480P → `lowPointsCost`，720P → `pointCost`，1080P → `hiDefPoints`；若某档为 0 则退回 `pointCost`。选 10s 时再加 `tenSecPoints`。
+    /// 480P → `lowPointsCost`，720P → `pointCost`，1080P → `hiDefPoints`；若某档为 0 则退回 `pointCost`。图生视频且选 10s 时再加 `tenSecPoints`。
     private func mcvc_effectiveContinuePointCost() -> Int {
         guard let item = mcvc_feedItem else { return 50 }
         let tier = min(max(mcvc_resolutionIndex, 0), 2)
@@ -258,7 +258,8 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         default:
             base = item.pointCost
         }
-        return base + (mcvc_durationIsTen ? item.tenSecPoints : 0)
+        let videoExtra = item.contentKind.isToVideo && mcvc_durationIsTen ? item.tenSecPoints : 0
+        return base + videoExtra
     }
 
     private func mcvc_refreshContinueButtonState() {
@@ -583,6 +584,8 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
     private func mcvc_syncBottomBar() {
         let v = contentView
+        let showVideoSettings = mcvc_feedItem?.contentKind.isToVideo ?? true
+        v.mcvw_configureDurationAndMusicPillsVisible(showVideoSettings)
         let r = ["480P", "720P", "1080P"]
         v.mcvw_resolutionValueLabel.text = r[min(mcvc_resolutionIndex, r.count - 1)]
         v.mcvw_durationValueLabel.text = mcvc_durationIsTen ? "10s" : "5s"

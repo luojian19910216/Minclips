@@ -7,8 +7,8 @@ import Moya
 
 ///
 public enum MCERunAPI {
-    /// /work/createV2
-    case composeSeed(_ requestModel: MCSRunCreateRequest)
+    /// POST `/gwx/v1/runs/compose/seed`
+    case composeSeed(_ requestModel: MCSComposeSeedRequest)
     /// /work/list
     case inventory(_ requestModel: MCSRunListRequest)
     /// /work/infos

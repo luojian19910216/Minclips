@@ -5,7 +5,9 @@
 import Foundation
 
 ///
-public struct MCSRunCreateRequest: Codable {
+/// Body for `MCERunAPI.composeSeed` → `POST /gwx/v1/runs/compose/seed`.
+/// Add or rename fields when the backend contract is finalized.
+public struct MCSComposeSeedRequest: Codable {
     ///
     public init() {}
     ///

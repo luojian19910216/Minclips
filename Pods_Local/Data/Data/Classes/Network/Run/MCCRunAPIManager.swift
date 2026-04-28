@@ -20,7 +20,7 @@ public final class MCCRunAPIManager {
 
 extension MCCRunAPIManager {
     ///
-    public func composeSeed(with requestModel: MCSRunCreateRequest) -> AnyPublisher<MCSRunItem, MCENetworkError> {
+    public func composeSeed(with requestModel: MCSComposeSeedRequest) -> AnyPublisher<MCSRunItem, MCENetworkError> {
         networkManager.request(.composeSeed(requestModel))
     }
     ///
