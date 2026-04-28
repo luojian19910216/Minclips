@@ -1,0 +1,34 @@
+---
+description: Minclips mcvc_/mcvw_ naming — Shots examples (supplements minclips-always.mdc)
+globs: Minclips/**/AI/Shots/**/*.swift
+alwaysApply: false
+---
+
+# Minclips — Naming (`mcvc_` / `mcvw_`) · Shots 模块
+
+**Primary source**: **`minclips-always.mdc`** (`alwaysApply: true`) defines **`mcvc_`** vs **`mcvw_`**. This file adds **Shots-facing examples** only; do not contradict the global rule.
+
+## Type names
+
+- Prefer **`MCC`** + domain + role: **`MCCShotsController`**, **`MCCShotsView`**, **`MCCShotsListPageController`**.
+- There is **no** **`MCCShotController`** in the repo — use **`MCCShotsController`** (plural **Shots**).
+
+## Quick reference
+
+| Location | Prefix | Example |
+|----------|--------|---------|
+| **`MCCShotsController`** own properties / private methods | **`mcvc_`** | `mcvc_selectedTagIndex`, `mcvc_loadTags()` |
+| **`MCCShotsView`** (and Cells under Shots) members | **`mcvw_`** | `mcvw_tagCollection`, `mcvw_setupPagingView(delegate:)` |
+| From **`MCCShotsController`**, access root view | **`contentView.mcvw_…`** | `contentView.mcvw_applyPagingTagReload(...)` |
+| Child controller you create (e.g. list page) fields you set from parent | **`mcvc_`** on the child | `list.mcvc_labelItem = …`, `list.mcvc_index = …` |
+
+## Anti-patterns
+
+- **`contentView.mcvc_*`** for view members — wrong; use **`mcvw_`** on the View type.
+- **`mcvw_`** prefix on **`MCCShotsController`** for its own state — wrong; use **`mcvc_`**.
+- Module-specific extra prefixes (**`mcsv_`**, etc.) for new code — avoid; rely on type names (**`MCPViewControllerInitProtocol`** lifecycle names like **`mcvc_bind`** stay without the extra `mc` segment by design).
+
+## Protocol & system APIs
+
+- **`override`** lifecycle / **`MCPViewControllerInitProtocol`** hooks keep their **fixed names** (**`mcvc_bind`**, **`mcvc_loadData`**) — no **`mcvc_loadDataTags`** replacing the protocol method.
+- **`UICollectionViewDelegate` / `JXPagingViewDelegate`** methods stay **Apple signatures**; only **your** helpers use **`mcvc_*`**.

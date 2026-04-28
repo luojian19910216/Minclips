@@ -113,7 +113,7 @@ public final class MCCFeedDetailCharacterAvatarSlotView: UIView {
 
     public func mcvw_apply(image: UIImage?) {
         mcvw_imageView.image = image
-        // Keep image view visible when empty so the 56×56 white @ 6% circular fill renders.
+        // 空槽也要有 imageView，才能把 56×56 的白色 6% 圆底板画出来。
         mcvw_placeholderView.isHidden = (image != nil)
         mcvw_removeButton.isHidden = (image == nil)
 
@@ -142,18 +142,6 @@ public final class MCCFeedDetailView: MCCBaseView {
 
     public let mcvw_mediaContainer = UIView()
     public let mcvw_videoOverlay = UIView()
-    public let mcvw_creditsLabel: UILabel = {
-        let l = UILabel()
-        l.textColor = .white
-        l.font = .systemFont(ofSize: 13, weight: .semibold)
-        return l
-    }()
-    public let mcvw_reportButton: UIButton = {
-        let b = UIButton(type: .system)
-        b.setImage(UIImage(systemName: "flag.fill")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        b.tintColor = UIColor.white.withAlphaComponent(0.9)
-        return b
-    }()
     public let mcvw_videoTransportBar = UIView()
     public let mcvw_playPauseButton: UIButton = {
         let b = UIButton(type: .system)
@@ -317,16 +305,6 @@ public final class MCCFeedDetailView: MCCBaseView {
         mcvw_mediaContainer.addSubview(mcvw_videoOverlay)
         mcvw_videoOverlay.isUserInteractionEnabled = true
         mcvw_videoOverlay.snp.makeConstraints { $0.edges.equalToSuperview() }
-        mcvw_videoOverlay.addSubview(mcvw_creditsLabel)
-        mcvw_creditsLabel.snp.makeConstraints { make in
-            make.top.trailing.equalToSuperview().inset(10)
-        }
-        mcvw_videoOverlay.addSubview(mcvw_reportButton)
-        mcvw_reportButton.snp.makeConstraints { make in
-            make.trailing.equalTo(mcvw_creditsLabel.snp.leading).offset(-12)
-            make.centerY.equalTo(mcvw_creditsLabel)
-            make.size.equalTo(28)
-        }
         mcvw_videoTransportBar.isUserInteractionEnabled = true
         mcvw_videoOverlay.addSubview(mcvw_videoTransportBar)
         mcvw_videoOverlay.addSubview(mcvw_muteButton)
@@ -476,7 +454,7 @@ public final class MCCFeedDetailView: MCCBaseView {
             make.height.equalTo(48)
         }
         mcvw_settingsRow.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview()
+            make.leading.trailing.equalTo(mcvw_continueButton)
             make.bottom.equalTo(mcvw_continueButton.snp.top).offset(-16)
             make.height.equalTo(44)
         }

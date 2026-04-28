@@ -1,0 +1,54 @@
+---
+description: MCCShotsController — naming, lifecycle, navigation on tab chrome, paging & bindings
+globs: Minclips/Classes/AI/Shots/MCCShotsController.swift
+alwaysApply: false
+---
+
+# Minclips — `MCCShotsController`
+
+Canonical file: **`MCCShotsController.swift`** (not `MCCShotController`). Type is **`MCCViewController<MCCShotsView, MCCEmptyViewModel>`**.
+
+## Naming (`mcvw_` / `mcvc_`)
+
+- **On this controller**: private state (`Combine`, selection index, `MCSLoadState`, etc.), private helpers, and `@objc` actions use **`mcvc_*`** only.
+- **On root view**: **`contentView.mcvw_*`** — never `contentView.mcvc_*` for View APIs.
+- **Child list controllers** instantiated here (e.g. `MCCShotsListPageController`): assign their **public **`mcvc_*`** fields (`mcvc_labelItem`, `mcvc_index`, closures) — see **`minclips-always.mdc`**.
+
+## Navigation (tab-hosted)
+
+This controller sits **inside a tab** whose **navigation bar belongs to `tabBarController`**, not the child view controller alone.
+
+- Prefer **`tabBarController?.navigationItem`** for **left/right bar items**, e.g. **`MCCRootTabNavChrome.leftTitleBarButtonItem(title:)`** and **`proBarButtonItem(target:action:)`** inside **`mcvc_configureNav`**.
+- Do **not** mirror the **`MCCFeedDetailController`** pattern (**`navigationItem`*** on self) unless this VC is redesigned to own the nav stack.
+
+Push flows (e.g. Pro) typically use **`self.navigationController?.pushViewController`**.
+
+## Lifecycle order (align with **`minclips-always.mdc`**)
+
+Respect **`MCPViewControllerInitProtocol`**: **`mcvc_init`** → **`mcvc_configureNav`** → **`mcvc_setupLocalization`** → **`mcvc_bind`** → **`mcvc_loadData`**.
+
+- **`viewDidLoad`**: kept minimal — **`super.viewDidLoad()`** then **`contentView`** setup that must run once (e.g. paging delegate); place it **after** **`super`** and consistent with repo style (between configureNav and localization in this file).
+
+## Bindings (**`mcvc_bind`**)
+
+Assign **`contentView`** subview **dataSource/delegate** (e.g. tag **`UICollectionView`**). Heavy API wiring stays in **`mcvc_loadData`** / private methods, not **`mcvc_bind`**.
+
+## Data & paging
+
+- **`mcvc_loadData`** triggers tag load (e.g. **`mcvc_loadTags`**).
+- **JXPaging**: implement **`JXPagingViewDelegate`** in a dedicated **`extension MCCShotsController`**. Instantiate **`MCCShotsListPageController`** in **`initListAtIndex`**; set **`mcvc_*`** properties and paging callbacks there.
+- **Tag collection**: **`UICollectionViewDataSource`** / **`Delegate`** in separate **`extension`**(s).
+
+## File layout extensions (bottom-out)
+
+Rough order:
+
+1. **`extension MCCShotsController: JXPagingViewDelegate`**  
+2. **`extension MCCShotsController: UICollectionViewDataSource, UICollectionViewDelegate, …`**  
+3. **`private extension Array`** or other small helpers at **end** of file.
+
+Avoid **`// MARK:`**; separate extensions with blank lines only (**`minclips-always.mdc`**).
+
+## Imports
+
+UIKit, Common, Combine, **`FDFullscreenPopGesture`**, **`JXPagingView`**, Data, **SDWebImage** as needed — match sibling Shots files when adding APIs.

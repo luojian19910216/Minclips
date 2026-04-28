@@ -187,14 +187,14 @@
 		F6E2D13072FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */; };
 		F6E2D13082FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */; };
 		F6E2D13092FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */; };
-		F6E2D13402FC0100002C4F70 /* MCCFeedGeneratingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13382FC0100002C4F70 /* MCCFeedGeneratingView.swift */; };
-		F6E2D13412FC0100002C4F70 /* MCCFeedGeneratingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13382FC0100002C4F70 /* MCCFeedGeneratingView.swift */; };
-		F6E2D13422FC0100002C4F70 /* MCCFeedGeneratingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13382FC0100002C4F70 /* MCCFeedGeneratingView.swift */; };
-		F6E2D13432FC0100002C4F70 /* MCCFeedGeneratingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13382FC0100002C4F70 /* MCCFeedGeneratingView.swift */; };
 		F6E2D131A2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D131B2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift */; };
 		F6E2D131C2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D131B2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift */; };
 		F6E2D131D2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D131B2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift */; };
 		F6E2D131E2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D131B2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift */; };
+		F6E2D13402FC0100002C4F70 /* MCCFeedGeneratingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13382FC0100002C4F70 /* MCCFeedGeneratingView.swift */; };
+		F6E2D13412FC0100002C4F70 /* MCCFeedGeneratingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13382FC0100002C4F70 /* MCCFeedGeneratingView.swift */; };
+		F6E2D13422FC0100002C4F70 /* MCCFeedGeneratingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13382FC0100002C4F70 /* MCCFeedGeneratingView.swift */; };
+		F6E2D13432FC0100002C4F70 /* MCCFeedGeneratingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13382FC0100002C4F70 /* MCCFeedGeneratingView.swift */; };
 		F6E2E0A02FC0200002C4F70 /* MCCProView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2E0912FC0200002C4F70 /* MCCProView.swift */; };
 		F6E2E0A12FC0200002C4F70 /* MCCProView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2E0912FC0200002C4F70 /* MCCProView.swift */; };
 		F6E2E0A22FC0200002C4F70 /* MCCProView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2E0912FC0200002C4F70 /* MCCProView.swift */; };
@@ -279,8 +279,8 @@
 		F6E2D10B2FC0100002C4F70 /* MCCSettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCSettingsController.swift; sourceTree = "<group>"; };
 		F6E2D13012FC0100002C4F70 /* MCCFeedOptionPopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedOptionPopController.swift; sourceTree = "<group>"; };
 		F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedGeneratingSheetController.swift; sourceTree = "<group>"; };
-		F6E2D13382FC0100002C4F70 /* MCCFeedGeneratingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedGeneratingView.swift; sourceTree = "<group>"; };
 		F6E2D131B2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCWebpPlaybackHandoff.swift; sourceTree = "<group>"; };
+		F6E2D13382FC0100002C4F70 /* MCCFeedGeneratingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedGeneratingView.swift; sourceTree = "<group>"; };
 		F6E2E0912FC0200002C4F70 /* MCCProView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProView.swift; sourceTree = "<group>"; };
 		F6E2E0922FC0200002C4F70 /* MCCProController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProController.swift; sourceTree = "<group>"; };
 		F6E2E0942FC0200002C4F70 /* MCCProSkeletonOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProSkeletonOverlay.swift; sourceTree = "<group>"; };
@@ -362,9 +362,9 @@
 				F6E2D1082FC0100002C4F70 /* MCCFeedDetailView.swift */,
 				F6E2D1092FC0100002C4F70 /* MCCFeedDetailController.swift */,
 				F6E2D13012FC0100002C4F70 /* MCCFeedOptionPopController.swift */,
+				F6E2D131B2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift */,
 				F6E2D13382FC0100002C4F70 /* MCCFeedGeneratingView.swift */,
 				F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */,
-				F6E2D131B2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift */,
 			);
 			path = Shots;
 			sourceTree = "<group>";

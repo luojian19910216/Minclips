@@ -18,6 +18,10 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     private var mcvc_didHydrateRecentCharacterPhotoFromLibrary = false
     private var mcvc_characterCircleImages: [UIImage?] = [nil, nil]
 
+    private var mcvc_navCreditsText: String = "9999"
+
+    private weak var mcvc_navCreditsBarButton: UIButton?
+
     public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
     public override func mcvc_init() {
@@ -35,16 +39,6 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         navigationItem.largeTitleDisplayMode = .never
         navigationController?.navigationBar.prefersLargeTitles = false
 
-        let pro = MCCRootTabNavChrome.proBarButtonItem(
-            target: self,
-            action: #selector(mcvc_onProTapped),
-            titleColor: .white
-        )
-        let gapAfterPro = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
-        gapAfterPro.width = 8
-        let shots = MCCRootTabNavChrome.leftTitleBarButtonItem(title: "Shots")
-        let gapAfterShots = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
-        gapAfterShots.width = 8
         let back = UIBarButtonItem(
             image: UIImage(named: "ic_nav_back")?.withRenderingMode(.alwaysTemplate),
             style: .plain,
@@ -52,8 +46,19 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
             action: #selector(mcvc_detailBackTapped)
         )
         back.tintColor = .white
-        navigationItem.leftBarButtonItems = [pro, gapAfterPro, shots, gapAfterShots, back]
-        navigationItem.rightBarButtonItem = nil
+        navigationItem.leftBarButtonItems = nil
+        navigationItem.leftBarButtonItem = back
+
+        let creditsBar = MCCRootTabNavChrome.feedCreditsBarButtonItem(amount: mcvc_navCreditsText)
+        mcvc_navCreditsBarButton = creditsBar.customView as? UIButton
+
+        let betweenCreditsAndReport = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+        betweenCreditsAndReport.width = 8
+        navigationItem.rightBarButtonItems = [
+            MCCRootTabNavChrome.feedReportBarButtonItem(target: self, action: #selector(mcvc_reportTapped)),
+            betweenCreditsAndReport,
+            creditsBar
+        ]
         navigationItem.title = nil
     }
 
@@ -63,9 +68,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     }
 
     @objc
-    private func mcvc_onProTapped() {
-        let vc = MCCProController()
-        navigationController?.pushViewController(vc, animated: true)
+    private func mcvc_reportTapped() {
     }
 
     public override func mcvc_setupLocalization() {
@@ -110,7 +113,8 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
     private func mcvc_applyStaticCopy() {
         let v = contentView
-        v.mcvw_creditsLabel.text = "+ 9999"
+        mcvc_navCreditsText = "9999"
+        mcvc_navCreditsBarButton?.setTitle(mcvc_navCreditsText, for: .normal)
         v.mcvw_progressView.progress = 0.3
         v.mcvw_continueButton.setTitle("Continue + 50", for: .normal)
         v.mcvw_characterTitleLabel.text = "Character"

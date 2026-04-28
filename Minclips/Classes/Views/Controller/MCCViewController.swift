@@ -217,4 +217,30 @@ public enum MCCRootTabNavChrome {
         return UIBarButtonItem(image: UIImage(named: "ic_nav_setting")?.withRenderingMode(.alwaysTemplate), style: .plain, target: target, action: action)
     }
 
+    /// Feed 详情：导航栏积分胶囊 —— `ic_cm_credits` + 数值（排版与 `proBarButtonItem` 同套路）。
+    public static func feedCreditsBarButtonItem(amount: String) -> UIBarButtonItem {
+        let b = UIButton(type: .custom)
+        b.frame = CGRect(x: 0, y: 0, width: 76, height: 44)
+        b.setImage(UIImage(named: "ic_cm_credits")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        b.setTitle(amount, for: .normal)
+        b.setTitleColor(.white, for: .normal)
+        b.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        b.contentEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 17)
+        b.titleEdgeInsets = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: -5)
+        b.layer.cornerRadius = 22
+        b.clipsToBounds = true
+        b.adjustsImageWhenHighlighted = false
+        return UIBarButtonItem(customView: b)
+    }
+
+    /// Feed 详情：导航栏举报 —— `ic_nav_report`，原图着色（不参与导航栏 tint 模板）。
+    public static func feedReportBarButtonItem(target: Any, action: Selector) -> UIBarButtonItem {
+        UIBarButtonItem(
+            image: UIImage(named: "ic_nav_report")?.withRenderingMode(.alwaysOriginal),
+            style: .plain,
+            target: target,
+            action: action
+        )
+    }
+
 }

@@ -43,15 +43,15 @@ public final class MCCFeedOptionPopView: MCCBasePopView {
 public final class MCCFeedOptionPopController: MCCPopController<MCCFeedOptionPopView, MCCEmptyViewModel> {
 
     public var mcvc_onSelectIndex: ((Int) -> Void)?
-
+    
     private var mcvc_rowPick: ((Int) -> Void)?
-
+    
     public override func mcvc_init() {
         super.mcvc_init()
         animationStyle = .easeInEaseOut
         dimmingInsets = .zero
     }
-
+    
     public func mcvc_applyRows(_ rows: [MCCFeedOptionRow], onSelect: @escaping (Int) -> Void) {
         mcvc_rowPick = { [weak self] i in
             onSelect(i)
