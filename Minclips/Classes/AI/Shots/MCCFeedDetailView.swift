@@ -150,21 +150,15 @@ public final class MCCFeedDetailCharacterAvatarSlotView: UIView {
         backgroundColor = .clear
         if image != nil {
             mcvw_imageView.backgroundColor = .clear
-            layer.borderWidth = 0
-            layer.borderColor = nil
         } else {
             mcvw_imageView.backgroundColor = UIColor.white.withAlphaComponent(0.06)
         }
     }
 
-    public func mcvw_setActiveEmptyRing(_ active: Bool) {
-        guard mcvw_imageView.image == nil else {
-            layer.borderWidth = 0
-            layer.borderColor = nil
-            return
-        }
-        layer.borderWidth = active ? 1 : 0
-        layer.borderColor = active ? UIColor(hex: "0077FF")!.cgColor : nil
+    /// 当前槽是否被「选中必有其一」；空槽与已上图槽均显示蓝描边，由上层在 `mcvw_apply` 之后刷新。
+    public func mcvw_setCharacterSlotSelected(_ selected: Bool) {
+        layer.borderWidth = selected ? 1 : 0
+        layer.borderColor = selected ? UIColor(hex: "0077FF")!.cgColor : nil
     }
 }
 
@@ -174,14 +168,14 @@ public final class MCCFeedDetailView: MCCBaseView {
     public let mcvw_videoOverlay = UIView()
     public let mcvw_videoTransportBar = UIView()
     public let mcvw_playPauseButton: UIButton = {
-        let b = UIButton(type: .system)
+        let b = UIButton(type: .custom)
         b.setImage(UIImage(named: "ic_cm_play_off")?.withRenderingMode(.alwaysOriginal), for: .normal)
         b.adjustsImageWhenHighlighted = false
         return b
     }()
     public let mcvw_muteButton: UIButton = {
-        let b = UIButton(type: .system)
-        b.setImage(UIImage(named: "ic_cm_volume_on")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        let b = UIButton(type: .custom)
+        b.setImage(UIImage(named: "ic_cm_volume_off")?.withRenderingMode(.alwaysOriginal), for: .normal)
         b.adjustsImageWhenHighlighted = false
         return b
     }()
@@ -287,7 +281,7 @@ public final class MCCFeedDetailView: MCCBaseView {
 
     public private(set) var mcvw_characterCircleSlots: [MCCFeedDetailCharacterAvatarSlotView] = []
 
-    private var mcvw_presetGalleryTileWraps: [UIView] = []
+    public private(set) var mcvw_presetGalleryTileWraps: [UIView] = []
 
     private let mcvw_characterSlotsScrollView: UIScrollView = {
         let s = UIScrollView()
@@ -589,9 +583,13 @@ public final class MCCFeedDetailView: MCCBaseView {
         }
     }
 
-    public func mcvw_applyCharacterCircleFocus(nextEmptySlotIndex: Int?) {
+    /// 仅头像圈有高亮选中；底部预设参考图为固定描边。
+    public func mcvw_applyCharacterSlotsSelection(activeSlotIndex: Int) {
+        let n = mcvw_characterCircleSlots.count
+        guard n > 0 else { return }
+        let ix = max(0, min(activeSlotIndex, n - 1))
         for (i, slot) in mcvw_characterCircleSlots.enumerated() {
-            slot.mcvw_setActiveEmptyRing(nextEmptySlotIndex == i)
+            slot.mcvw_setCharacterSlotSelected(i == ix)
         }
     }
 

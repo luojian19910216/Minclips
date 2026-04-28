@@ -25,6 +25,10 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
     private var mcvc_characterCircleImages: [UIImage?] = [nil]
 
+    /// 当前选中的上传槽（蓝框）；默认 0，点击图片框或头像圈可切换。
+    private var mcvc_activeCharacterSlotIndex: Int = 0
+    private var mcvc_characterSelectionTapGestures: [UITapGestureRecognizer] = []
+
     private var mcvc_navCreditsBarButton: UIButton?
 
     public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
@@ -35,6 +39,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     }
 
     deinit {
+        mcvc_removeCharacterSelectionGestures()
         mcvc_feedProfileCancellable?.cancel()
         mcvc_integralCancellable?.cancel()
         mcvc_favoriteCancellable?.cancel()
@@ -145,6 +150,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         v.mcvw_characterAlbumButton.addTarget(self, action: #selector(mcvc_characterAlbumTapped), for: .touchUpInside)
         mcvc_bindCharacterCircleRemoveButtons()
         mcvc_refreshContinueButtonState()
+        mcvc_bindCharacterSlotSelectionGestures()
     }
 
     private func mcvc_bindCharacterCircleRemoveButtons() {
@@ -158,19 +164,25 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     private func mcvc_applyPresetGallerySlotsFromFeedItem() {
         let pg = mcvc_feedItem?.presetGallery ?? []
         let n = max(1, pg.count)
+        mcvc_removeCharacterSelectionGestures()
         contentView.mcvw_reloadPresetGallerySlotUI(slotCount: n, entries: pg)
         mcvc_resizeCharacterSlotImages(count: n)
         mcvc_bindCharacterCircleRemoveButtons()
+        mcvc_bindCharacterSlotSelectionGestures()
     }
 
     private func mcvc_resizeCharacterSlotImages(count: Int) {
         let n = max(1, count)
-        guard mcvc_characterCircleImages.count != n else { return }
+        guard mcvc_characterCircleImages.count != n else {
+            mcvc_activeCharacterSlotIndex = mcvc_clampCharacterSlotIndex(mcvc_activeCharacterSlotIndex)
+            return
+        }
         if mcvc_characterCircleImages.count < n {
             mcvc_characterCircleImages += Array(repeating: nil, count: n - mcvc_characterCircleImages.count)
         } else {
             mcvc_characterCircleImages = Array(mcvc_characterCircleImages.prefix(n))
         }
+        mcvc_activeCharacterSlotIndex = mcvc_clampCharacterSlotIndex(mcvc_activeCharacterSlotIndex)
     }
 
     public override func viewWillAppear(_ animated: Bool) {
@@ -184,6 +196,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         mcvc_resolutionIndex = 0
         mcvc_durationIsTen = false
         mcvc_modeIndex = 0
+        mcvc_activeCharacterSlotIndex = 0
 
         let needsHud = !mcvc_hasLocalPreviewMedia()
         if needsHud {
@@ -220,9 +233,29 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         !mcvc_characterCircleImages.isEmpty && !mcvc_characterCircleImages.contains(where: { $0 == nil })
     }
 
+    /// 480P → `lowPointsCost`，720P → `pointCost`，1080P → `hiDefPoints`；若某档为 0 则退回 `pointCost`。选 10s 时再加 `tenSecPoints`。
+    private func mcvc_effectiveContinuePointCost() -> Int {
+        guard let item = mcvc_feedItem else { return 50 }
+        let tier = min(max(mcvc_resolutionIndex, 0), 2)
+        let base: Int
+        switch tier {
+        case 0:
+            let v = item.lowPointsCost
+            base = v > 0 ? v : item.pointCost
+        case 1:
+            base = item.pointCost
+        case 2:
+            let v = item.hiDefPoints
+            base = v > 0 ? v : item.pointCost
+        default:
+            base = item.pointCost
+        }
+        return base + (mcvc_durationIsTen ? item.tenSecPoints : 0)
+    }
+
     private func mcvc_refreshContinueButtonState() {
         let v = contentView
-        let cost = mcvc_feedItem?.pointCost ?? 50
+        let cost = mcvc_effectiveContinuePointCost()
         let filled = mcvc_characterSlotsFullyFilled()
         let enTitle = mcvc_continueButtonAttributedTitle(pointCost: cost, muted: false)
         let disTitle = mcvc_continueButtonAttributedTitle(pointCost: cost, muted: true)
@@ -330,6 +363,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
             mcvc_addMp4ProgressObserver(for: player)
             mcvc_addMp4LoopObserver(for: player)
             player.play()
+            mcvc_refreshTransportControlIcons()
             return
         }
 
@@ -344,6 +378,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
             v.mcvw_webpImageView.player?.seekToFrame(at: h.frameIndex, loopCount: h.loopCount)
             v.mcvw_webpImageView.autoPlayAnimatedImage = true
             v.mcvw_webpImageView.startAnimating()
+            mcvc_refreshTransportControlIcons()
             return
         }
         let webpTrim = asset.webpImageUrl.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -354,6 +389,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
                 DispatchQueue.main.async {
                     guard let self else { return }
                     self.contentView.mcvw_webpImageView.startAnimating()
+                    self.mcvc_refreshTransportControlIcons()
                 }
             })
             return
@@ -361,6 +397,33 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         v.mcvw_webpImageView.sd_cancelCurrentImageLoad()
         v.mcvw_webpImageView.image = nil
         v.mcvw_webpImageView.isHidden = true
+        mcvc_refreshTransportControlIcons()
+    }
+
+    /// 播放中 `ic_cm_play_on` / 未播放 `ic_cm_play_off`；静音 `ic_cm_volume_off` / 出声 `ic_cm_volume_on`。WebP 无音轨：仅更新播放图标，音量示意用 `volume_on`。
+    private func mcvc_refreshTransportControlIcons() {
+        let v = contentView
+        let setPlayIcon: (String) -> Void = { name in
+            v.mcvw_playPauseButton.setImage(UIImage(named: name)?.withRenderingMode(.alwaysOriginal), for: .normal)
+        }
+        let setVolumeIcon: (String) -> Void = { name in
+            v.mcvw_muteButton.setImage(UIImage(named: name)?.withRenderingMode(.alwaysOriginal), for: .normal)
+        }
+
+        if let p = mcvc_mp4Player {
+            let playing = (p.timeControlStatus == .playing)
+            setPlayIcon(playing ? "ic_cm_play_on" : "ic_cm_play_off")
+            setVolumeIcon(p.isMuted ? "ic_cm_volume_off" : "ic_cm_volume_on")
+            return
+        }
+
+        let w = v.mcvw_webpImageView
+        if !w.isHidden, w.image != nil {
+            setPlayIcon(w.isAnimating ? "ic_cm_play_on" : "ic_cm_play_off")
+        } else {
+            setPlayIcon("ic_cm_play_off")
+        }
+        setVolumeIcon("ic_cm_volume_on")
     }
 
     private func mcvc_stringHasHttpHttpsURL(_ raw: String) -> Bool {
@@ -380,12 +443,15 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         mcvc_mp4Player?.pause()
         mcvc_mp4Player = nil
         contentView.mcvw_bindMp4Playback(player: nil, surfaceVisible: false)
+        mcvc_refreshTransportControlIcons()
     }
 
     private func mcvc_addMp4ProgressObserver(for player: AVPlayer) {
         let interval = CMTime(seconds: 0.12, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         mcvc_mp4PeriodicObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
-            guard let self, let item = player.currentItem else { return }
+            guard let self else { return }
+            self.mcvc_refreshTransportControlIcons()
+            guard let item = player.currentItem else { return }
             let duration = item.duration
             guard duration.isNumeric, duration.seconds > 0 else { return }
             self.contentView.mcvw_progressView.progress = Float(time.seconds / duration.seconds)
@@ -415,6 +481,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
             } else {
                 player.play()
             }
+            mcvc_refreshTransportControlIcons()
             return
         }
         let w = contentView.mcvw_webpImageView
@@ -424,12 +491,14 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         } else {
             w.startAnimating()
         }
+        mcvc_refreshTransportControlIcons()
     }
 
     @objc
     private func mcvc_muteTapped() {
         if let player = mcvc_mp4Player {
             player.isMuted.toggle()
+            mcvc_refreshTransportControlIcons()
         }
     }
 
@@ -488,6 +557,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         v.mcvw_durationValueLabel.text = mcvc_durationIsTen ? "10s" : "5s"
         let m = ["Original", "Generated"]
         v.mcvw_modeValueLabel.text = m[min(mcvc_modeIndex, m.count - 1)]
+        mcvc_refreshContinueButtonState()
     }
 
     @objc
@@ -561,25 +631,80 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         let i = sender.tag
         guard (0 ..< mcvc_characterCircleImages.count).contains(i) else { return }
         mcvc_characterCircleImages[i] = nil
+        mcvc_activeCharacterSlotIndex = i
         mcvc_syncCharacterCirclesAppearance()
     }
 
     private func mcvc_syncCharacterCirclesAppearance() {
+        guard !contentView.mcvw_characterCircleSlots.isEmpty,
+              mcvc_characterCircleImages.count == contentView.mcvw_characterCircleSlots.count else { return }
+        mcvc_activeCharacterSlotIndex = mcvc_clampCharacterSlotIndex(mcvc_activeCharacterSlotIndex)
         let v = contentView
         for i in mcvc_characterCircleImages.indices {
             v.mcvw_characterCircleSlots[i].mcvw_apply(image: mcvc_characterCircleImages[i])
         }
-        let nextEmpty = mcvc_characterCircleImages.indices.first { mcvc_characterCircleImages[$0] == nil }
-        v.mcvw_applyCharacterCircleFocus(nextEmptySlotIndex: nextEmpty)
+        v.mcvw_applyCharacterSlotsSelection(activeSlotIndex: mcvc_activeCharacterSlotIndex)
         mcvc_refreshContinueButtonState()
     }
 
     private func mcvc_offerPickedCharacterImageToSlots(_ img: UIImage) {
-        if let ix = mcvc_characterCircleImages.indices.first(where: { mcvc_characterCircleImages[$0] == nil }) {
-            mcvc_characterCircleImages[ix] = img
-            mcvc_syncCharacterCirclesAppearance()
+        guard !mcvc_characterCircleImages.isEmpty else { return }
+        let target = mcvc_clampCharacterSlotIndex(mcvc_activeCharacterSlotIndex)
+        mcvc_characterCircleImages[target] = img
+        mcvc_advanceActiveSlotAfterFill(filledAt: target)
+        mcvc_syncCharacterCirclesAppearance()
+    }
+
+    private func mcvc_advanceActiveSlotAfterFill(filledAt index: Int) {
+        guard !mcvc_characterCircleImages.isEmpty else { return }
+        let n = mcvc_characterCircleImages.count
+        // 全满则保持当前选中，不自动切槽
+        guard mcvc_characterCircleImages.contains(where: { $0 == nil }) else { return }
+        if index + 1 < n, let j = (index + 1 ..< n).first(where: { mcvc_characterCircleImages[$0] == nil }) {
+            mcvc_activeCharacterSlotIndex = j
             return
         }
+        if let j = mcvc_characterCircleImages.indices.first(where: { mcvc_characterCircleImages[$0] == nil }) {
+            mcvc_activeCharacterSlotIndex = j
+        }
+    }
+
+    private func mcvc_clampCharacterSlotIndex(_ i: Int) -> Int {
+        let n = max(1, mcvc_characterCircleImages.count)
+        return min(max(i, 0), n - 1)
+    }
+
+    private func mcvc_removeCharacterSelectionGestures() {
+        for g in mcvc_characterSelectionTapGestures {
+            g.view?.removeGestureRecognizer(g)
+        }
+        mcvc_characterSelectionTapGestures.removeAll()
+    }
+
+    private func mcvc_bindCharacterSlotSelectionGestures() {
+        mcvc_removeCharacterSelectionGestures()
+        guard !contentView.mcvw_characterCircleSlots.isEmpty else { return }
+
+        func add(on view: UIView, index: Int) {
+            view.tag = index
+            view.isUserInteractionEnabled = true
+            let tap = UITapGestureRecognizer(target: self, action: #selector(mcvc_characterSlotTapSelect(_:)))
+            view.addGestureRecognizer(tap)
+            mcvc_characterSelectionTapGestures.append(tap)
+        }
+
+        for (ix, slot) in contentView.mcvw_characterCircleSlots.enumerated() {
+            add(on: slot, index: ix)
+        }
+    }
+
+    @objc
+    private func mcvc_characterSlotTapSelect(_ g: UITapGestureRecognizer) {
+        guard let v = g.view else { return }
+        let ix = v.tag
+        guard (0 ..< mcvc_characterCircleImages.count).contains(ix) else { return }
+        mcvc_activeCharacterSlotIndex = ix
+        mcvc_syncCharacterCirclesAppearance()
     }
 
     @objc
@@ -593,8 +718,9 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     }
 
     private func mcvc_applyCharacterRecentVisibility() {
-        let visible = !MCCRecentPickedPhotoStore.localIdentifiers.isEmpty
-        contentView.mcvw_configureCharacterRecentTileVisible(visible)
+        let hasStore = !MCCRecentPickedPhotoStore.localIdentifiers.isEmpty
+        let hasThumb = contentView.mcvw_characterRecentImageView.image != nil
+        contentView.mcvw_configureCharacterRecentTileVisible(hasStore || hasThumb)
     }
 
     private func mcvc_hydrateRecentCharacterPhotoIfNeeded() {
@@ -641,6 +767,7 @@ extension MCCFeedDetailController: PHPickerViewControllerDelegate {
                 guard let self, let img else { return }
                 self.contentView.mcvw_characterRecentImageView.image = img
                 self.mcvc_offerPickedCharacterImageToSlots(img)
+                self.mcvc_applyCharacterRecentVisibility()
             }
         }
     }
