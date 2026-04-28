@@ -2,6 +2,12 @@ import UIKit
 import Common
 import SnapKit
 
+public enum MCEFeedOptionPopAnchorAlignment {
+    case leading
+    case center
+    case trailing
+}
+
 public final class MCCFeedOptionPopView: MCCBasePopView {
 
     public let mcvw_titleLabel: UILabel = {
@@ -21,16 +27,47 @@ public final class MCCFeedOptionPopView: MCCBasePopView {
     }()
 
     public static let mcvw_cardCornerRadius: CGFloat = 12
+    private let mcvw_glassBlurView: UIVisualEffectView = {
+        let effect = UIBlurEffect(style: .systemChromeMaterialDark)
+        return UIVisualEffectView(effect: effect)
+    }()
+    private let mcvw_glassTintView: UIView = {
+        let v = UIView()
+        v.backgroundColor = UIColor(white: 1, alpha: 0.10)
+        return v
+    }()
+    private let mcvw_glassHighlightView = MCCGlassHighlightView()
+    private let mcvw_glassBorderView: UIView = {
+        let v = UIView()
+        v.backgroundColor = .clear
+        v.layer.borderColor = UIColor.white.withAlphaComponent(0.14).cgColor
+        v.layer.borderWidth = 0.8
+        v.isUserInteractionEnabled = false
+        return v
+    }()
 
     public override func mcvw_setupUI() {
         super.mcvw_setupUI()
-        dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        cardView.backgroundColor = UIColor(white: 1, alpha: 0.06)
+        dimmingView.backgroundColor = UIColor.clear
+        cardView.backgroundColor = .clear
+        cardView.addSubview(mcvw_glassBlurView)
+        cardView.addSubview(mcvw_glassTintView)
+        cardView.addSubview(mcvw_glassHighlightView)
+        cardView.addSubview(mcvw_glassBorderView)
         cardView.addSubview(mcvw_titleLabel)
         cardView.addSubview(mcvw_optionStack)
-        cardView.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
+        mcvw_glassBlurView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        mcvw_glassTintView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        mcvw_glassHighlightView.snp.makeConstraints { make in
+            make.leading.trailing.top.equalToSuperview()
+            make.height.equalTo(64)
+        }
+        mcvw_glassBorderView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
         mcvw_titleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(12)
@@ -41,6 +78,44 @@ public final class MCCFeedOptionPopView: MCCBasePopView {
             make.leading.trailing.equalToSuperview().inset(16)
             make.bottom.equalToSuperview().offset(-12)
         }
+    }
+
+    public func mcvw_applyAnchorFrame(_ frame: CGRect, alignment: MCEFeedOptionPopAnchorAlignment) {
+        let cardWidth = mcvw_computeCardWidth()
+        cardView.snp.remakeConstraints { make in
+            make.bottom.equalTo(self.snp.top).offset(frame.minY - 8)
+            make.width.equalTo(cardWidth)
+            switch alignment {
+            case .leading:
+                make.leading.equalTo(self.snp.leading).offset(frame.minX)
+            case .center:
+                make.centerX.equalTo(self.snp.leading).offset(frame.midX)
+            case .trailing:
+                make.trailing.equalTo(self.snp.leading).offset(frame.maxX)
+            }
+        }
+    }
+
+    private func mcvw_computeCardWidth() -> CGFloat {
+        let outerInset: CGFloat = 16
+        let pillHorizontalInset: CGFloat = 16
+        let titleToChipGap: CGFloat = 8
+        var maxPillContent: CGFloat = 0
+        for sub in mcvw_optionStack.arrangedSubviews {
+            guard let pill = sub as? MCCFeedOptionPillControl else { continue }
+            let titleWidth = pill.mcvw_titleLabel.intrinsicContentSize.width
+            var rowWidth = pillHorizontalInset + titleWidth + pillHorizontalInset
+            if !pill.mcvw_proChip.isHidden {
+                let chipLabelWidth = pill.mcvw_proChip.subviews
+                    .compactMap { $0 as? UILabel }
+                    .first?.intrinsicContentSize.width ?? 0
+                rowWidth += titleToChipGap + chipLabelWidth + 10
+            }
+            maxPillContent = max(maxPillContent, rowWidth)
+        }
+        let titleRowWidth = mcvw_titleLabel.intrinsicContentSize.width
+        let inner = max(maxPillContent, titleRowWidth)
+        return ceil(inner + outerInset * 2)
     }
 
     public func mcvw_applyCardCornerRadius() {
@@ -55,7 +130,32 @@ public final class MCCFeedOptionPopView: MCCBasePopView {
             )
         ).cgPath
         cardView.layer.mask = mask
+        mcvw_glassBorderView.layer.cornerRadius = Self.mcvw_cardCornerRadius
     }
+}
+
+private final class MCCGlassHighlightView: UIView {
+
+    override class var layerClass: AnyClass {
+        CAGradientLayer.self
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        isUserInteractionEnabled = false
+        let g = layer as! CAGradientLayer
+        g.colors = [
+            UIColor.white.withAlphaComponent(0.18).cgColor,
+            UIColor.white.withAlphaComponent(0.06).cgColor,
+            UIColor.white.withAlphaComponent(0).cgColor
+        ]
+        g.locations = [0, 0.45, 1]
+        g.startPoint = CGPoint(x: 0.5, y: 0)
+        g.endPoint = CGPoint(x: 0.5, y: 1)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError() }
 }
 
 public final class MCCFeedOptionPillControl: UIControl {
@@ -86,27 +186,20 @@ public final class MCCFeedOptionPillControl: UIControl {
         return w
     }()
 
-    private let mcvw_contentStack: UIStackView = {
-        let h = UIStackView()
-        h.axis = .horizontal
-        h.alignment = .center
-        h.spacing = 8
-        h.isUserInteractionEnabled = false
-        return h
-    }()
-
     public override init(frame: CGRect) {
         super.init(frame: frame)
         clipsToBounds = true
         backgroundColor = UIColor(white: 1, alpha: 0.06)
-        mcvw_contentStack.addArrangedSubview(mcvw_titleLabel)
-        mcvw_contentStack.addArrangedSubview(UIView())
-        mcvw_contentStack.addArrangedSubview(mcvw_proChip)
-        addSubview(mcvw_contentStack)
-        mcvw_contentStack.snp.makeConstraints { make in
-            make.top.bottom.equalToSuperview()
+        addSubview(mcvw_titleLabel)
+        addSubview(mcvw_proChip)
+        mcvw_titleLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(16)
+            make.centerY.equalToSuperview()
+        }
+        mcvw_proChip.snp.makeConstraints { make in
             make.trailing.equalToSuperview().offset(-16)
+            make.centerY.equalToSuperview()
+            make.leading.greaterThanOrEqualTo(mcvw_titleLabel.snp.trailing).offset(8)
         }
     }
 

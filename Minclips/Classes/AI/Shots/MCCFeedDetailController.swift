@@ -8,6 +8,7 @@ import PhotosUI
 import Photos
 import AVFoundation
 import KTVHTTPCache
+import PanModal
 
 public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView, MCCEmptyViewModel> {
 
@@ -17,6 +18,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     private var mcvc_integralCancellable: AnyCancellable?
     private var mcvc_favoriteCancellable: AnyCancellable?
     private var mcvc_composeSeedCancellable: AnyCancellable?
+    private weak var mcvc_generatingSheet: MCCFeedGeneratingSheetController?
     private var mcvc_mp4Player: AVPlayer?
     private var mcvc_mp4PeriodicObserver: Any?
     private var mcvc_mp4EndObserver: NSObjectProtocol?
@@ -637,8 +639,17 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         guard let item = mcvc_feedItem else { return }
         let templateRef = item.itemId.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !templateRef.isEmpty else { return }
-        MCCToastManager.showHUD(in: view)
+        mcvc_presentGeneratingSheet()
         mcvc_runComposeSeedPipeline(images: images, templateRef: templateRef)
+    }
+
+    private func mcvc_presentGeneratingSheet() {
+        let sheet = MCCFeedGeneratingSheetController()
+        sheet.loadViewIfNeeded()
+        let posterURL = mcvc_feedItem?.videoAsset.posterImageUrl.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        sheet.mcvc_setPosterFromURLString(posterURL)
+        mcvc_generatingSheet = sheet
+        presentPanModal(sheet)
     }
 
     private func mcvc_runComposeSeedPipeline(images: [UIImage], templateRef: String) {
@@ -661,14 +672,19 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 guard let self else { return }
-                MCCToastManager.hide()
                 if case let .failure(err) = completion {
-                    MCCToastManager.showToast(self.mcvc_messageForComposeSeedFailure(err), in: self.view)
+                    let message = self.mcvc_messageForComposeSeedFailure(err)
+                    if let sheet = self.mcvc_generatingSheet {
+                        sheet.dismiss(animated: true) { [weak self] in
+                            guard let self else { return }
+                            MCCToastManager.showToast(message, in: self.view)
+                        }
+                    } else {
+                        MCCToastManager.showToast(message, in: self.view)
+                    }
                 }
             }, receiveValue: { [weak self] _ in
-                guard let self else { return }
-                MCCToastManager.hide()
-                MCCToastManager.showToast("Submitted, please check Projects later.", in: self.view)
+                self?.mcvc_generatingSheet?.mcvc_markGenerationSucceeded()
             })
     }
 
@@ -686,8 +702,11 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     }
 
     private func mcvc_presentResolutionPop() {
+        let pill = contentView.mcvw_resolutionPill
         let p = MCCFeedResolutionPopController()
         p.mcvc_currentIndex = mcvc_resolutionIndex
+        p.mcvc_anchorFrame = mcvc_anchorFrameInPopWindow(of: pill)
+        p.mcvc_anchorAlignment = .leading
         p.mcvc_onSelectIndex = { [weak self] i in
             self?.mcvc_resolutionIndex = i
             self?.mcvc_syncBottomBar()
@@ -696,8 +715,11 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     }
 
     private func mcvc_presentDurationPop() {
+        let pill = contentView.mcvw_durationPill
         let p = MCCFeedDurationPopController()
         p.mcvc_currentIsTen = mcvc_durationIsTen
+        p.mcvc_anchorFrame = mcvc_anchorFrameInPopWindow(of: pill)
+        p.mcvc_anchorAlignment = .center
         p.mcvc_onSelectIsTen = { [weak self] isTen in
             self?.mcvc_durationIsTen = isTen
             self?.mcvc_syncBottomBar()
@@ -706,13 +728,24 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     }
 
     private func mcvc_presentModePop() {
+        let pill = contentView.mcvw_modePill
         let p = MCCFeedModePopController()
         p.mcvc_currentIndex = mcvc_modeIndex
+        p.mcvc_anchorFrame = mcvc_anchorFrameInPopWindow(of: pill)
+        p.mcvc_anchorAlignment = .trailing
         p.mcvc_onSelectIndex = { [weak self] i in
             self?.mcvc_modeIndex = i
             self?.mcvc_syncBottomBar()
         }
         present(p, animated: true)
+    }
+
+    /// `MCCPopController` 把弹窗 view 限定在 `dimmingInsets` 内（顶部 nav、底部 tabBar），
+    /// 这里把 trigger pill 的 frame 转成弹窗 view 自己的坐标系。
+    private func mcvc_anchorFrameInPopWindow(of pill: UIView) -> CGRect {
+        let windowFrame = pill.convert(pill.bounds, to: nil)
+        let topInset = MCCScreenSize.navigationBarHeight
+        return windowFrame.offsetBy(dx: 0, dy: -topInset)
     }
 
     @objc

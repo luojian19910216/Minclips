@@ -197,6 +197,7 @@ public final class MCCInsetPresentationController: UIPresentationController {
     public override func containerViewWillLayoutSubviews() {
         super.containerViewWillLayoutSubviews()
         guard let parent = containerView?.superview else {return}
+        containerView?.backgroundColor = .clear
         containerView?.frame = CGRect(
             x: insets.left,
             y: insets.top,

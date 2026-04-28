@@ -132,6 +132,8 @@ open class MCCBasePopView: MCCBaseView {
     }()
 
     open override func mcvw_setupUI() {
+        backgroundColor = .clear
+        
         addSubview(dimmingView)
         addSubview(cardView)
     }
