@@ -362,7 +362,7 @@ public final class MCCFeedDetailView: MCCBaseView {
         }
         mcvw_favoriteButton.snp.makeConstraints { make in
             make.centerX.equalTo(mcvw_muteButton)
-            make.bottom.equalTo(mcvw_favoriteCountLabel.snp.top).offset(-4)
+            make.bottom.equalTo(mcvw_favoriteCountLabel.snp.top).offset(8)
             make.size.equalTo(Self.mcvw_transportControlHitSide)
         }
         mcvw_playPauseButton.snp.makeConstraints { make in

@@ -749,10 +749,9 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     }
 
     private func mcvc_applyCharacterRecentVisibility() {
-        let ids = MCCRecentPickedPhotoStore.localIdentifiers
-        let hasStore = !ids.isEmpty
-        contentView.mcvw_configureCharacterRecentTileVisible(hasStore)
-        if !hasStore {
+        let ok = MCCRecentPickedPhotoStore.hasValidRecentPickForTile()
+        contentView.mcvw_configureCharacterRecentTileVisible(ok)
+        if !ok {
             mcvc_recentTileSyncedAssetId = nil
             contentView.mcvw_characterRecentImageView.image = nil
         }
@@ -763,6 +762,17 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         mcvc_applyCharacterRecentVisibility()
         guard !contentView.mcvw_characterRecentTile.isHidden else { return }
         guard let id = MCCRecentPickedPhotoStore.localIdentifiers.first else { return }
+        if id == MCCRecentPickedPhotoStore.photoLibraryFallbackPlaceholderId {
+            if id == mcvc_recentTileSyncedAssetId,
+               contentView.mcvw_characterRecentImageView.image != nil {
+                return
+            }
+            guard let url = MCCRecentPickedPhotoStore.fallbackJPEGFileURLIfPresent(),
+                  let img = UIImage(contentsOfFile: url.path) else { return }
+            mcvc_recentTileSyncedAssetId = id
+            contentView.mcvw_characterRecentImageView.image = img
+            return
+        }
         if id == mcvc_recentTileSyncedAssetId,
            contentView.mcvw_characterRecentImageView.image != nil {
             return
@@ -809,6 +819,12 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     @objc
     private func mcvc_characterRecentTapped() {
         guard let id = MCCRecentPickedPhotoStore.localIdentifiers.first else { return }
+        if id == MCCRecentPickedPhotoStore.photoLibraryFallbackPlaceholderId {
+            guard let url = MCCRecentPickedPhotoStore.fallbackJPEGFileURLIfPresent(),
+                  let img = UIImage(contentsOfFile: url.path) else { return }
+            mcvc_offerPickedCharacterImageToSlots(img)
+            return
+        }
         let longest = max(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
         mcvc_requestRecentUIImage(localIdentifier: id, targetPixelSide: UIScreen.main.scale * longest) { [weak self] img in
             guard let self, let img else { return }
@@ -833,6 +849,15 @@ extension MCCFeedDetailController: PHPickerViewControllerDelegate {
             let img = object as? UIImage
             DispatchQueue.main.async {
                 guard let self, let img else { return }
+                if r.assetIdentifier == nil {
+                    if let data = img.jpegData(compressionQuality: 0.92) ?? img.pngData() {
+                        let ok = MCCRecentPickedPhotoStore.recordFallbackJPEGData(data)
+                        if ok {
+                            self.mcvc_recentTileSyncedAssetId = MCCRecentPickedPhotoStore.photoLibraryFallbackPlaceholderId
+                        }
+                        self.mcvc_applyCharacterRecentVisibility()
+                    }
+                }
                 self.contentView.mcvw_characterRecentImageView.image = img
                 self.mcvc_offerPickedCharacterImageToSlots(img)
                 self.mcvc_applyCharacterRecentVisibility()

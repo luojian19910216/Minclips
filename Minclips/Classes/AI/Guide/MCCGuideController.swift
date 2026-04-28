@@ -90,6 +90,11 @@ extension MCCGuideController: PHPickerViewControllerDelegate {
         _ = prov.loadObject(ofClass: UIImage.self) { [weak self] object, _ in
             let img = object as? UIImage
             DispatchQueue.main.async {
+                if r.assetIdentifier == nil,
+                   let img,
+                   let data = img.jpegData(compressionQuality: 0.92) ?? img.pngData() {
+                    _ = MCCRecentPickedPhotoStore.recordFallbackJPEGData(data)
+                }
                 self?.contentView.mcvw_setCastLeadPreview(image: img)
             }
         }
