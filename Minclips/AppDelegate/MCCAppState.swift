@@ -4,7 +4,6 @@ import CombineExt
 
 public enum MCEAppState {
     case launch, guide, main
-
 }
 
 public final class MCCAppStateStore {

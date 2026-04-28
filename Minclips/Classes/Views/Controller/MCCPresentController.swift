@@ -8,7 +8,7 @@ public class MCCPresentController: MCCViewController<MCCBaseView, MCCEmptyViewMo
     public override func mcvc_configureNav() {
         super.mcvc_configureNav()
 
-        self.navigationItem.title = "标题"
+        self.navigationItem.title = "Title"
     }
 
     public override func mcvc_setupLocalization() {
