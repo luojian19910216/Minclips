@@ -686,13 +686,9 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     }
 
     private func mcvc_presentResolutionPop() {
-        let p = MCCFeedOptionPopController()
-        p.loadViewIfNeeded()
-        p.mcvc_applyRows([
-            MCCFeedOptionRow(title: "480P", isPro: false, isSelected: mcvc_resolutionIndex == 0),
-            MCCFeedOptionRow(title: "720P", isPro: false, isSelected: mcvc_resolutionIndex == 1),
-            MCCFeedOptionRow(title: "1080P", isPro: true, isSelected: mcvc_resolutionIndex == 2)
-        ]) { [weak self] i in
+        let p = MCCFeedResolutionPopController()
+        p.mcvc_currentIndex = mcvc_resolutionIndex
+        p.mcvc_onSelectIndex = { [weak self] i in
             self?.mcvc_resolutionIndex = i
             self?.mcvc_syncBottomBar()
         }
@@ -700,25 +696,19 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     }
 
     private func mcvc_presentDurationPop() {
-        let p = MCCFeedOptionPopController()
-        p.loadViewIfNeeded()
-        p.mcvc_applyRows([
-            MCCFeedOptionRow(title: "5s", isPro: false, isSelected: !mcvc_durationIsTen),
-            MCCFeedOptionRow(title: "10s", isPro: true, isSelected: mcvc_durationIsTen)
-        ]) { [weak self] i in
-            self?.mcvc_durationIsTen = (i == 1)
+        let p = MCCFeedDurationPopController()
+        p.mcvc_currentIsTen = mcvc_durationIsTen
+        p.mcvc_onSelectIsTen = { [weak self] isTen in
+            self?.mcvc_durationIsTen = isTen
             self?.mcvc_syncBottomBar()
         }
         present(p, animated: true)
     }
 
     private func mcvc_presentModePop() {
-        let p = MCCFeedOptionPopController()
-        p.loadViewIfNeeded()
-        p.mcvc_applyRows([
-            MCCFeedOptionRow(title: "Original", isPro: false, isSelected: mcvc_modeIndex == 0),
-            MCCFeedOptionRow(title: "Generated", isPro: true, isSelected: mcvc_modeIndex == 1)
-        ]) { [weak self] i in
+        let p = MCCFeedModePopController()
+        p.mcvc_currentIndex = mcvc_modeIndex
+        p.mcvc_onSelectIndex = { [weak self] i in
             self?.mcvc_modeIndex = i
             self?.mcvc_syncBottomBar()
         }

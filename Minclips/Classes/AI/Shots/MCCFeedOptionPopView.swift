@@ -22,7 +22,9 @@ public final class MCCFeedOptionPopView: MCCBasePopView {
         s.alignment = .fill
         return s
     }()
-    
+
+    private var mcvw_rowPick: ((Int) -> Void)?
+
     public override func mcvw_setupUI() {
         super.mcvw_setupUI()
         dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
@@ -38,45 +40,27 @@ public final class MCCFeedOptionPopView: MCCBasePopView {
             make.bottom.equalToSuperview().offset(-12)
         }
     }
-}
 
-public final class MCCFeedOptionPopController: MCCPopController<MCCFeedOptionPopView, MCCEmptyViewModel> {
-
-    public var mcvc_onSelectIndex: ((Int) -> Void)?
-    
-    private var mcvc_rowPick: ((Int) -> Void)?
-    
-    public override func mcvc_init() {
-        super.mcvc_init()
-        animationStyle = .easeInEaseOut
-        dimmingInsets = .zero
-    }
-    
-    public func mcvc_applyRows(_ rows: [MCCFeedOptionRow], onSelect: @escaping (Int) -> Void) {
-        mcvc_rowPick = { [weak self] i in
-            onSelect(i)
-            self?.mcvc_onSelectIndex?(i)
-            self?.dismiss(animated: true)
-        }
-        let stack = contentView.mcvw_optionStack
-        stack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+    public func mcvw_setRows(_ rows: [MCCFeedOptionRow], onSelect: @escaping (Int) -> Void) {
+        mcvw_rowPick = onSelect
+        mcvw_optionStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
         for (idx, row) in rows.enumerated() {
-            let line = mcvc_lineView(row: row, index: idx, isLast: idx == rows.count - 1)
-            stack.addArrangedSubview(line)
+            let line = mcvw_makeLineView(row: row, index: idx, isLast: idx == rows.count - 1)
+            mcvw_optionStack.addArrangedSubview(line)
             line.snp.makeConstraints { $0.height.equalTo(52) }
         }
     }
 
     @objc
-    private func mcvc_lineTapped(_ s: UIControl) {
-        mcvc_rowPick?(s.tag)
+    private func mcvw_lineTapped(_ s: UIControl) {
+        mcvw_rowPick?(s.tag)
     }
 
-    private func mcvc_lineView(row: MCCFeedOptionRow, index: Int, isLast: Bool) -> UIControl {
+    private func mcvw_makeLineView(row: MCCFeedOptionRow, index: Int, isLast: Bool) -> UIControl {
         let c = UIControl()
         c.accessibilityLabel = row.title
         c.tag = index
-        c.addTarget(self, action: #selector(mcvc_lineTapped(_:)), for: .touchUpInside)
+        c.addTarget(self, action: #selector(mcvw_lineTapped(_:)), for: .touchUpInside)
         let h = UIStackView()
         h.axis = .horizontal
         h.alignment = .center
@@ -88,7 +72,7 @@ public final class MCCFeedOptionPopController: MCCPopController<MCCFeedOptionPop
         t.font = .systemFont(ofSize: 16, weight: .medium)
         h.addArrangedSubview(t)
         if row.isPro {
-            h.addArrangedSubview(MCCFeedOptionPopController.mcvc_proPillView())
+            h.addArrangedSubview(MCCFeedOptionPopView.mcvw_proPillView())
         }
         h.addArrangedSubview(UIView())
         if row.isSelected {
@@ -114,7 +98,7 @@ public final class MCCFeedOptionPopController: MCCPopController<MCCFeedOptionPop
         return c
     }
 
-    private static func mcvc_proPillView() -> UIView {
+    private static func mcvw_proPillView() -> UIView {
         let w = UIView()
         w.backgroundColor = UIColor.systemYellow
         w.layer.cornerRadius = 4
