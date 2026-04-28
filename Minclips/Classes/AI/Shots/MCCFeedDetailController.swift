@@ -209,17 +209,6 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
     private func mcvc_presentGenerating() {
         let g = MCCFeedGeneratingSheetController()
-//        g.mcvc_applyCopy(
-//            closeAccessibilityLabel: "Close",
-//            percent: "30%",
-//            title: "Generating",
-//            subtitle: "Please check in Projects later.",
-//            explore: "Explore",
-//            projects: "Projects"
-//        )
-//        if let poster = mcvc_feedItem?.videoAsset.posterImageUrl {
-//            g.mcvc_setPosterFromURLString(poster)
-//        }
         present(g, animated: true)
     }
 }
