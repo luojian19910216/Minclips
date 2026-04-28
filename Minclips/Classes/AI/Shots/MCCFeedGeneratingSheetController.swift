@@ -2,6 +2,8 @@ import UIKit
 import Common
 import PanModal
 import SDWebImage
+import Combine
+import CombineCocoa
 
 public final class MCCFeedGeneratingSheetController: MCCSheetController<MCCFeedGeneratingView, MCCEmptyViewModel> {
 
@@ -14,7 +16,6 @@ public final class MCCFeedGeneratingSheetController: MCCSheetController<MCCFeedG
     public override func mcvc_setupLocalization() {
         super.mcvc_setupLocalization()
         let v = contentView
-        v.mcvw_closeButton.accessibilityLabel = "Close"
         v.mcvw_percentLabel.text = "0%"
         v.mcvw_titleLabel.text = "Generating"
         v.mcvw_subtitleLabel.text = "Please check in Projects later."
@@ -24,11 +25,25 @@ public final class MCCFeedGeneratingSheetController: MCCSheetController<MCCFeedG
 
     public override func mcvc_bind() {
         super.mcvc_bind()
-        
         let v = contentView
-        v.mcvw_closeButton.addTarget(self, action: #selector(mcvc_tapClose), for: .touchUpInside)
-        v.mcvw_exploreButton.addTarget(self, action: #selector(mcvc_tapExplore), for: .touchUpInside)
-        v.mcvw_projectsButton.addTarget(self, action: #selector(mcvc_tapProjects), for: .touchUpInside)
+        v.mcvw_closeButton.controlEventPublisher(for: .touchUpInside)
+            .sink { [weak self] in
+                guard let self = self else { return }
+                self.dismiss(animated: true) {
+                    self.mcvc_dismiss?()
+                }
+            }
+            .store(in: &cancellables)
+        v.mcvw_exploreButton.controlEventPublisher(for: .touchUpInside)
+            .sink { [weak self] in
+                self?.mcvc_dismissAndPopRootSwitchTab(selectedIndex: 0)
+            }
+            .store(in: &cancellables)
+        v.mcvw_projectsButton.controlEventPublisher(for: .touchUpInside)
+            .sink { [weak self] in
+                self?.mcvc_dismissAndPopRootSwitchTab(selectedIndex: 2)
+            }
+            .store(in: &cancellables)
     }
 
     public func mcvc_setPosterFromURLString(_ urlString: String) {
@@ -41,18 +56,18 @@ public final class MCCFeedGeneratingSheetController: MCCSheetController<MCCFeedG
         }
     }
 
-    @objc
-    private func mcvc_tapClose() {
-        dismiss(animated: true) { [weak self] in self?.mcvc_dismiss?() }
-    }
-
-    @objc
-    private func mcvc_tapExplore() {
-        dismiss(animated: true) { [weak self] in self?.mcvc_dismiss?() }
-    }
-
-    @objc
-    private func mcvc_tapProjects() {
-        dismiss(animated: true) { [weak self] in self?.mcvc_dismiss?() }
+    private func mcvc_dismissAndPopRootSwitchTab(selectedIndex: Int) {
+        guard let presenter = presentingViewController else {
+            dismiss(animated: true)
+            return
+        }
+        let nav = (presenter as? UINavigationController) ?? presenter.navigationController
+        let tabBar =
+            presenter.tabBarController as? MCCTabBarController
+            ?? nav?.viewControllers.compactMap({ $0 as? MCCTabBarController }).first
+        dismiss(animated: true) {
+            nav?.popToRootViewController(animated: true)
+            tabBar?.selectedIndex = selectedIndex
+        }
     }
 }
