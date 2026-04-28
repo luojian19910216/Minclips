@@ -6,12 +6,16 @@ import Data
 import SDWebImage
 import PhotosUI
 import Photos
+import AVFoundation
 
 public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView, MCCEmptyViewModel> {
 
     public var mcvc_feedItem: MCSFeedItem!
     public var mcvc_webpHandoff: MCCWebpPlaybackHandoff?
-    private var mcvc_didApplyDetailMedia = false
+    private var mcvc_feedProfileCancellable: AnyCancellable?
+    private var mcvc_mp4Player: AVPlayer?
+    private var mcvc_mp4PeriodicObserver: Any?
+    private var mcvc_mp4EndObserver: NSObjectProtocol?
     private var mcvc_resolutionIndex: Int = 1
     private var mcvc_durationIsTen: Bool = false
     private var mcvc_modeIndex: Int = 0
@@ -29,12 +33,18 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         hidesBottomBarWhenPushed = true
     }
 
+    deinit {
+        mcvc_feedProfileCancellable?.cancel()
+        mcvc_removeMp4ObserversAndPlayer()
+    }
+
     public override func mcvc_needLeftBarButtonItem() -> Bool {
         false
     }
 
     public override func mcvc_configureNav() {
         super.mcvc_configureNav()
+        
         guard navigationController != nil else { return }
         navigationItem.largeTitleDisplayMode = .never
         navigationController?.navigationBar.prefersLargeTitles = false
@@ -94,19 +104,32 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         }
     }
 
-    public override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        guard !mcvc_didApplyDetailMedia, let item = mcvc_feedItem else { return }
-        mcvc_didApplyDetailMedia = true
-        mcvc_durationIsTen = item.tenSecondMode
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        let rawId = mcvc_feedItem?.itemId ?? ""
+        let trimmed = rawId.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, isMovingToParent else { return }
+
         mcvc_resolutionIndex = 1
         mcvc_modeIndex = 0
-        let w = max(1, view.bounds.width)
-        let colW = max(1, w)
-        let thumbPx = MCCShotsListItemMetrics.feedImageThumbnailPixelSize(columnWidthPoints: colW)
-        mcvc_applyDetailMedia(item: item, webpHandoff: mcvc_webpHandoff, thumbnailPixelSize: thumbPx)
-        mcvc_applyStaticCopy()
-        mcvc_syncBottomBar()
+
+        let needsHud = !mcvc_hasLocalPreviewMedia()
+        if needsHud {
+            MCCToastManager.showHUD(in: view)
+        }
+        mcvc_tryApplyOptimisticDetailFromCache()
+        mcvc_requestItemProfile(hudWasShown: needsHud, templateRef: trimmed)
+    }
+
+    public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if isMovingFromParent {
+            mcvc_mp4Player?.pause()
+        }
+    }
+
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         mcvc_hydrateRecentCharacterPhotoIfNeeded()
         mcvc_syncCharacterCirclesAppearance()
     }
@@ -115,7 +138,6 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         let v = contentView
         mcvc_navCreditsText = "9999"
         mcvc_navCreditsBarButton?.setTitle(mcvc_navCreditsText, for: .normal)
-        v.mcvw_progressView.progress = 0.3
         v.mcvw_continueButton.setTitle("Continue + 50", for: .normal)
         v.mcvw_characterTitleLabel.text = "Character"
         v.mcvw_favoriteCountLabel.text = "1,024"
@@ -124,17 +146,45 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     private func mcvc_applyDetailMedia(item: MCSFeedItem, webpHandoff: MCCWebpPlaybackHandoff?, thumbnailPixelSize: CGSize) {
         let v = contentView
         v.mcvw_applyMediaHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth)
+        mcvc_removeMp4ObserversAndPlayer()
+
         let ctx: [SDWebImageContextOption: Any] = [
             .imageThumbnailPixelSize: NSValue(cgSize: thumbnailPixelSize),
             .imagePreserveAspectRatio: true
         ]
         let asset = item.videoAsset
-        if let u = URL(string: asset.posterImageUrl), !asset.posterImageUrl.isEmpty {
+        let posterRaw = asset.posterImageUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let u = URL(string: posterRaw), !posterRaw.isEmpty {
             v.mcvw_posterImageView.sd_setImage(with: u, placeholderImage: nil, options: [], context: ctx)
         } else {
             v.mcvw_posterImageView.sd_cancelCurrentImageLoad()
             v.mcvw_posterImageView.image = nil
         }
+
+        let mp4Raw = asset.videoMp4Url.trimmingCharacters(in: .whitespacesAndNewlines)
+        if mcvc_stringHasHttpHttpsURL(mp4Raw), let mp4URL = URL(string: mp4Raw) {
+            v.mcvw_webpImageView.sd_cancelCurrentImageLoad()
+            v.mcvw_webpImageView.autoPlayAnimatedImage = false
+            v.mcvw_webpImageView.stopAnimating()
+            v.mcvw_webpImageView.image = nil
+            v.mcvw_webpImageView.isHidden = true
+
+            let player = AVPlayer(url: mp4URL)
+            mcvc_mp4Player = player
+            player.isMuted = true
+            player.actionAtItemEnd = .pause
+
+            v.mcvw_bindMp4Playback(player: player, surfaceVisible: true)
+            v.mcvw_progressView.progress = 0
+            mcvc_addMp4ProgressObserver(for: player)
+            mcvc_addMp4LoopObserver(for: player)
+            player.play()
+            return
+        }
+
+        v.mcvw_bindMp4Playback(player: nil, surfaceVisible: false)
+        v.mcvw_progressView.progress = 0.3
+
         if let h = webpHandoff {
             v.mcvw_webpImageView.sd_cancelCurrentImageLoad()
             v.mcvw_webpImageView.autoPlayAnimatedImage = false
@@ -143,7 +193,10 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
             v.mcvw_webpImageView.player?.seekToFrame(at: h.frameIndex, loopCount: h.loopCount)
             v.mcvw_webpImageView.autoPlayAnimatedImage = true
             v.mcvw_webpImageView.startAnimating()
-        } else if let u = URL(string: asset.webpImageUrl), !asset.webpImageUrl.isEmpty {
+            return
+        }
+        let webpTrim = asset.webpImageUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let u = URL(string: webpTrim), !webpTrim.isEmpty {
             v.mcvw_webpImageView.autoPlayAnimatedImage = true
             v.mcvw_webpImageView.isHidden = false
             v.mcvw_webpImageView.sd_setImage(with: u, placeholderImage: nil, options: [], completed: { [weak self] _, _, _, _ in
@@ -152,15 +205,67 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
                     self.contentView.mcvw_webpImageView.startAnimating()
                 }
             })
-        } else {
-            v.mcvw_webpImageView.sd_cancelCurrentImageLoad()
-            v.mcvw_webpImageView.image = nil
-            v.mcvw_webpImageView.isHidden = true
+            return
+        }
+        v.mcvw_webpImageView.sd_cancelCurrentImageLoad()
+        v.mcvw_webpImageView.image = nil
+        v.mcvw_webpImageView.isHidden = true
+    }
+
+    private func mcvc_stringHasHttpHttpsURL(_ raw: String) -> Bool {
+        guard !raw.isEmpty, let u = URL(string: raw), let scheme = u.scheme?.lowercased() else { return false }
+        return scheme == "http" || scheme == "https"
+    }
+
+    private func mcvc_removeMp4ObserversAndPlayer() {
+        if let o = mcvc_mp4PeriodicObserver, let player = mcvc_mp4Player {
+            player.removeTimeObserver(o)
+        }
+        mcvc_mp4PeriodicObserver = nil
+        if let o = mcvc_mp4EndObserver {
+            NotificationCenter.default.removeObserver(o)
+            mcvc_mp4EndObserver = nil
+        }
+        mcvc_mp4Player?.pause()
+        mcvc_mp4Player = nil
+        contentView.mcvw_bindMp4Playback(player: nil, surfaceVisible: false)
+    }
+
+    private func mcvc_addMp4ProgressObserver(for player: AVPlayer) {
+        let interval = CMTime(seconds: 0.12, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+        mcvc_mp4PeriodicObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
+            guard let self, let item = player.currentItem else { return }
+            let duration = item.duration
+            guard duration.isNumeric, duration.seconds > 0 else { return }
+            self.contentView.mcvw_progressView.progress = Float(time.seconds / duration.seconds)
+        }
+    }
+
+    private func mcvc_addMp4LoopObserver(for player: AVPlayer) {
+        mcvc_mp4EndObserver = NotificationCenter.default.addObserver(
+            forName: .AVPlayerItemDidPlayToEndTime,
+            object: nil,
+            queue: .main
+        ) { [weak self] note in
+            guard let self,
+                  let ended = note.object as? AVPlayerItem,
+                  let current = self.mcvc_mp4Player?.currentItem,
+                  ended === current else { return }
+            self.mcvc_mp4Player?.seek(to: .zero)
+            self.mcvc_mp4Player?.play()
         }
     }
 
     @objc
     private func mcvc_playPauseTapped() {
+        if let player = mcvc_mp4Player {
+            if player.timeControlStatus == .playing {
+                player.pause()
+            } else {
+                player.play()
+            }
+            return
+        }
         let w = contentView.mcvw_webpImageView
         guard !w.isHidden, w.image != nil else { return }
         if w.isAnimating {
@@ -172,6 +277,9 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
     @objc
     private func mcvc_muteTapped() {
+        if let player = mcvc_mp4Player {
+            player.isMuted.toggle()
+        }
     }
 
     @objc
@@ -333,5 +441,70 @@ extension MCCFeedDetailController: PHPickerViewControllerDelegate {
                 self.mcvc_offerPickedCharacterImageToSlots(img)
             }
         }
+    }
+}
+
+private extension MCCFeedDetailController {
+
+    func mcvc_effectiveDetailColumnWidth() -> CGFloat {
+        let w = view.bounds.width
+        if w > 1 {
+            return w
+        }
+        if let ww = view.window?.bounds.width, ww > 1 {
+            return ww
+        }
+        return max(1, UIScreen.main.bounds.width)
+    }
+
+    func mcvc_hasLocalPreviewMedia() -> Bool {
+        guard let item = mcvc_feedItem else { return false }
+        if mcvc_webpHandoff != nil {
+            return true
+        }
+        let a = item.videoAsset
+        if mcvc_stringHasHttpHttpsURL(a.videoMp4Url.trimmingCharacters(in: .whitespacesAndNewlines)) {
+            return true
+        }
+        return !a.posterImageUrl.isEmpty || !a.webpImageUrl.isEmpty
+    }
+
+    func mcvc_tryApplyOptimisticDetailFromCache() {
+        guard mcvc_hasLocalPreviewMedia(), let item = mcvc_feedItem else { return }
+        mcvc_durationIsTen = item.tenSecondMode
+        let colW = max(1, mcvc_effectiveDetailColumnWidth())
+        let thumbPx = MCCShotsListItemMetrics.feedImageThumbnailPixelSize(columnWidthPoints: colW)
+        mcvc_applyDetailMedia(item: item, webpHandoff: mcvc_webpHandoff, thumbnailPixelSize: thumbPx)
+        mcvc_applyStaticCopy()
+        mcvc_syncBottomBar()
+    }
+
+    func mcvc_requestItemProfile(hudWasShown: Bool, templateRef: String) {
+        mcvc_feedProfileCancellable?.cancel()
+        var rq = MCSFeedDetailRequest()
+        rq.templateRef = templateRef
+        mcvc_feedProfileCancellable = MCCFeedAPIManager.shared.itemProfile(with: rq)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] completion in
+                guard let self else { return }
+                if hudWasShown {
+                    MCCToastManager.hide()
+                }
+                if case let .failure(err) = completion {
+                    if !self.mcvc_hasLocalPreviewMedia() {
+                        MCCToastManager.showToast(err.localizedDescription, in: self.view)
+                    }
+                }
+            }, receiveValue: { [weak self] item in
+                guard let self else { return }
+                self.mcvc_feedItem = item
+                self.mcvc_webpHandoff = nil
+                self.mcvc_durationIsTen = item.tenSecondMode
+                let colW = max(1, self.mcvc_effectiveDetailColumnWidth())
+                let thumbPx = MCCShotsListItemMetrics.feedImageThumbnailPixelSize(columnWidthPoints: colW)
+                self.mcvc_applyDetailMedia(item: item, webpHandoff: nil, thumbnailPixelSize: thumbPx)
+                self.mcvc_applyStaticCopy()
+                self.mcvc_syncBottomBar()
+            })
     }
 }

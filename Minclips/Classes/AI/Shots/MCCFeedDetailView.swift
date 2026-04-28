@@ -2,6 +2,30 @@ import UIKit
 import Common
 import SnapKit
 import SDWebImage
+import AVFoundation
+
+private final class MCCFeedDetailMp4SurfaceView: UIView {
+
+    override class var layerClass: AnyClass {
+        AVPlayerLayer.self
+    }
+
+    var mcvw_playerLayer: AVPlayerLayer {
+        layer as! AVPlayerLayer
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        clipsToBounds = true
+        mcvw_playerLayer.videoGravity = .resizeAspectFill
+        backgroundColor = .clear
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
 
 private final class MCCBottomBlackFadeGradientView: UIView {
 
@@ -184,6 +208,8 @@ public final class MCCFeedDetailView: MCCBaseView {
         return v
     }()
 
+    fileprivate let mcvw_mp4SurfaceView = MCCFeedDetailMp4SurfaceView()
+
     public let mcvw_webpImageView: SDAnimatedImageView = {
         let v = SDAnimatedImageView()
         v.contentMode = .scaleAspectFill
@@ -299,8 +325,10 @@ public final class MCCFeedDetailView: MCCBaseView {
         mcvw_mediaContainer.clipsToBounds = true
         mcvw_mediaContainer.backgroundColor = UIColor.black.withAlphaComponent(0.24)
         mcvw_mediaContainer.addSubview(mcvw_posterImageView)
+        mcvw_mediaContainer.addSubview(mcvw_mp4SurfaceView)
         mcvw_mediaContainer.addSubview(mcvw_webpImageView)
         mcvw_posterImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        mcvw_mp4SurfaceView.snp.makeConstraints { $0.edges.equalToSuperview() }
         mcvw_webpImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
         mcvw_mediaContainer.addSubview(mcvw_videoOverlay)
         mcvw_videoOverlay.isUserInteractionEnabled = true
@@ -516,6 +544,11 @@ public final class MCCFeedDetailView: MCCBaseView {
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(mcvw_settingsRow.snp.top).offset(-20)
         }
+    }
+
+    public func mcvw_bindMp4Playback(player: AVPlayer?, surfaceVisible: Bool) {
+        mcvw_mp4SurfaceView.mcvw_playerLayer.player = player
+        mcvw_mp4SurfaceView.isHidden = !surfaceVisible
     }
 
     private static func mcvw_makePlaceholderBoxes(count: Int) -> [UIView] {

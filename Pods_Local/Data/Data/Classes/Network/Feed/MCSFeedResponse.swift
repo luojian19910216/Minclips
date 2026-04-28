@@ -30,16 +30,44 @@ public struct MCSFeedSearchResponse: Codable, MCPDefaultInitializable {
 
 ///
 public struct MCSFeedItem: Codable {
-    /// id
+    ///
+    @MCSSafeInt public var homeOrder: Int
+    ///
+    @MCSSafeInt public var lowPointsCost: Int
+    ///
     @MCSSafeString public var itemId: String
-    /// name
-    @MCSSafeString public var itemTitle: String
-    /// media
-    @MCSSafe public var videoAsset: MCSFeedVideoAssetShell
+    ///
+    @MCSSafeString public var showTitle: String
+    ///
+    @MCSSafeBool public var freeToUse: Bool
+    ///
+    @MCSSafeBool public var likedByUser: Bool
+    ///
+    @MCSSafeInt public var likesCount: Int
+    ///
+    @MCSSafeString public var displayName: String
+    ///
+    @MCSSafeInt public var pointCost: Int
+    ///
+    @MCSSafeArray public var presetGallery: [MCSFeedPresetGalleryEntry]
+    ///
+    @MCSSafeInt public var contentLevel: Int
     ///
     @MCSSafeBool public var proFeature: Bool
     ///
+    @MCSSafeString public var contentKind: String
+    ///
+    @MCSSafe public var videoAsset: MCSFeedVideoAssetShell
+    ///
+    @MCSSafeString public var itemTitle: String
+    ///
     @MCSSafeBool public var tenSecondMode: Bool
+    ///
+    @MCSSafeInt public var hiDefPoints: Int
+    ///
+    @MCSSafeInt public var tenSecPoints: Int
+    ///
+    @MCSSafeString public var popularityText: String
 }
 
 ///
@@ -58,4 +86,22 @@ public struct MCSFeedVideoAssetShell: Codable, MCPDefaultInitializable {
     @MCSSafeString public var posterImageUrl: String
     /// webpUrl
     @MCSSafeString public var webpImageUrl: String
+}
+
+///
+public struct MCSFeedPresetGalleryEntry: Codable, MCPDefaultInitializable {
+    ///
+    public init() {}
+    ///
+    @MCSSafeArray public var imageLibrary: [String]
+    ///
+    @MCSSafeString public var defaultImage: String
+    ///
+    @MCSSafeString public var presetDescription: String
+
+    enum CodingKeys: String, CodingKey {
+        case imageLibrary
+        case defaultImage
+        case presetDescription = "description"
+    }
 }
