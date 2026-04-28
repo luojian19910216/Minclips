@@ -4,6 +4,8 @@ import Combine
 import FDFullscreenPopGesture
 import Data
 import SDWebImage
+import PhotosUI
+import Photos
 
 public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView, MCCEmptyViewModel> {
 
@@ -13,6 +15,8 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     private var mcvc_resolutionIndex: Int = 1
     private var mcvc_durationIsTen: Bool = false
     private var mcvc_modeIndex: Int = 0
+    private var mcvc_didHydrateRecentCharacterPhotoFromLibrary = false
+    private var mcvc_characterCircleImages: [UIImage?] = [nil, nil]
 
     public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
@@ -74,6 +78,11 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         v.mcvw_durationPill.addTarget(self, action: #selector(mcvc_durationTapped), for: .touchUpInside)
         v.mcvw_modePill.addTarget(self, action: #selector(mcvc_modeTapped), for: .touchUpInside)
         v.mcvw_continueButton.addTarget(self, action: #selector(mcvc_continueTapped), for: .touchUpInside)
+        v.mcvw_characterAlbumButton.addTarget(self, action: #selector(mcvc_characterAlbumTapped), for: .touchUpInside)
+        for (ix, slot) in v.mcvw_characterCircleSlots.enumerated() {
+            slot.mcvw_removeButton.tag = ix
+            slot.mcvw_removeButton.addTarget(self, action: #selector(mcvc_characterCircleRemoveTapped(_:)), for: .touchUpInside)
+        }
     }
 
     public override func viewDidAppear(_ animated: Bool) {
@@ -84,23 +93,21 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         mcvc_resolutionIndex = 1
         mcvc_modeIndex = 0
         let w = max(1, view.bounds.width)
-        let inset: CGFloat = 16
-        let colW = max(1, w - inset * 2)
+        let colW = max(1, w)
         let thumbPx = MCCShotsListItemMetrics.feedImageThumbnailPixelSize(columnWidthPoints: colW)
         mcvc_applyDetailMedia(item: item, webpHandoff: mcvc_webpHandoff, thumbnailPixelSize: thumbPx)
         mcvc_applyStaticCopy()
         mcvc_syncBottomBar()
+        mcvc_hydrateRecentCharacterPhotoIfNeeded()
+        mcvc_syncCharacterCirclesAppearance()
     }
 
     private func mcvc_applyStaticCopy() {
         let v = contentView
         v.mcvw_creditsLabel.text = "+ 9999"
         v.mcvw_progressView.progress = 0.3
-        v.mcvw_characterTitleLabel.text = "Character"
-        v.mcvw_resolutionTitleLabel.text = "Resolution"
-        v.mcvw_durationTitleLabel.text = "Duration"
-        v.mcvw_modeTitleLabel.text = "Mode"
         v.mcvw_continueButton.setTitle("Continue + 50", for: .normal)
+        v.mcvw_characterTitleLabel.text = "Character"
     }
 
     private func mcvc_applyDetailMedia(item: MCSFeedItem, webpHandoff: MCCWebpPlaybackHandoff?, thumbnailPixelSize: CGSize) {
@@ -210,5 +217,88 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     private func mcvc_presentGenerating() {
         let g = MCCFeedGeneratingSheetController()
         present(g, animated: true)
+    }
+
+    @objc
+    private func mcvc_characterCircleRemoveTapped(_ sender: UIButton) {
+        let i = sender.tag
+        guard (0 ..< mcvc_characterCircleImages.count).contains(i) else { return }
+        mcvc_characterCircleImages[i] = nil
+        mcvc_syncCharacterCirclesAppearance()
+    }
+
+    private func mcvc_syncCharacterCirclesAppearance() {
+        let v = contentView
+        for i in mcvc_characterCircleImages.indices {
+            v.mcvw_characterCircleSlots[i].mcvw_apply(image: mcvc_characterCircleImages[i])
+        }
+        let nextEmpty = mcvc_characterCircleImages.indices.first { mcvc_characterCircleImages[$0] == nil }
+        v.mcvw_applyCharacterCircleFocus(nextEmptySlotIndex: nextEmpty)
+    }
+
+    private func mcvc_offerPickedCharacterImageToSlots(_ img: UIImage) {
+        if let ix = mcvc_characterCircleImages.indices.first(where: { mcvc_characterCircleImages[$0] == nil }) {
+            mcvc_characterCircleImages[ix] = img
+            mcvc_syncCharacterCirclesAppearance()
+            return
+        }
+    }
+
+    @objc
+    private func mcvc_characterAlbumTapped() {
+        var config = PHPickerConfiguration()
+        config.filter = .images
+        config.selectionLimit = 1
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = self
+        present(picker, animated: true)
+    }
+
+    private func mcvc_hydrateRecentCharacterPhotoIfNeeded() {
+        guard !mcvc_didHydrateRecentCharacterPhotoFromLibrary else { return }
+        mcvc_didHydrateRecentCharacterPhotoFromLibrary = true
+        let v = contentView.mcvw_characterRecentImageView
+        guard v.image == nil, let id = MCCRecentPickedPhotoStore.localIdentifiers.first else { return }
+        let assets = PHAsset.fetchAssets(withLocalIdentifiers: [id], options: nil)
+        guard let asset = assets.firstObject else { return }
+        let opts = PHImageRequestOptions()
+        opts.isNetworkAccessAllowed = true
+        opts.deliveryMode = .opportunistic
+        let scale = UIScreen.main.scale
+        let side: CGFloat = 128
+        let px = CGSize(width: side * scale, height: side * scale)
+        PHImageManager.default().requestImage(
+            for: asset,
+            targetSize: px,
+            contentMode: .aspectFill,
+            options: opts
+        ) { [weak self] img, _ in
+            DispatchQueue.main.async {
+                guard let self, self.contentView.mcvw_characterRecentImageView.image == nil else { return }
+                self.contentView.mcvw_characterRecentImageView.image = img
+                self.mcvc_syncCharacterCirclesAppearance()
+            }
+        }
+    }
+}
+
+extension MCCFeedDetailController: PHPickerViewControllerDelegate {
+
+    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        guard let r = results.first else { return }
+        if let id = r.assetIdentifier {
+            MCCRecentPickedPhotoStore.record(localIdentifier: id)
+        }
+        let prov = r.itemProvider
+        guard prov.canLoadObject(ofClass: UIImage.self) else { return }
+        _ = prov.loadObject(ofClass: UIImage.self) { [weak self] object, _ in
+            let img = object as? UIImage
+            DispatchQueue.main.async {
+                guard let self, let img else { return }
+                self.contentView.mcvw_characterRecentImageView.image = img
+                self.mcvc_offerPickedCharacterImageToSlots(img)
+            }
+        }
     }
 }

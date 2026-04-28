@@ -3,16 +3,142 @@ import Common
 import SnapKit
 import SDWebImage
 
-public final class MCCFeedDetailView: MCCBaseView {
+private final class MCCBottomBlackFadeGradientView: UIView {
 
-    public let mcvw_scrollView: UIScrollView = {
-        let s = UIScrollView()
-        s.showsVerticalScrollIndicator = true
-        s.alwaysBounceVertical = true
-        s.contentInsetAdjustmentBehavior = .always
-        s.backgroundColor = .clear
-        return s
+    override class var layerClass: AnyClass {
+        CAGradientLayer.self
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        isUserInteractionEnabled = false
+        let g = layer as! CAGradientLayer
+        g.colors = [
+            UIColor.black.withAlphaComponent(0).cgColor,
+            UIColor.black.withAlphaComponent(0.72).cgColor
+        ]
+        g.locations = [0, 1]
+        g.startPoint = CGPoint(x: 0.5, y: 0)
+        g.endPoint = CGPoint(x: 0.5, y: 1)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+public final class MCCFeedDetailCharacterAvatarSlotView: UIView {
+
+    public let mcvw_imageView: UIImageView = {
+        let v = UIImageView()
+        v.contentMode = .scaleAspectFill
+        v.clipsToBounds = true
+        return v
     }()
+
+    public let mcvw_removeButton: UIButton = {
+        let b = UIButton(type: .system)
+        b.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+        b.tintColor = UIColor(white: 0.08, alpha: 0.92)
+        b.backgroundColor = UIColor.white.withAlphaComponent(0.2)
+        b.layer.cornerRadius = 9
+        b.clipsToBounds = true
+        b.adjustsImageWhenHighlighted = false
+        return b
+    }()
+
+    private let mcvw_placeholderView = UIImageView()
+
+    private let mcvw_outerDiameter: CGFloat
+    private let mcvw_innerImageDiameter: CGFloat
+
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        let oh = bounds.width > 1 ? bounds.width * 0.5 : 0
+        layer.cornerRadius = oh
+        mcvw_imageView.layer.cornerRadius = mcvw_innerImageDiameter * 0.5
+        layer.cornerCurve = .continuous
+    }
+
+    public init(outerDiameter: CGFloat, innerImageDiameter: CGFloat) {
+        mcvw_outerDiameter = outerDiameter
+        mcvw_innerImageDiameter = innerImageDiameter
+        super.init(frame: .zero)
+        mcvw_setup()
+    }
+
+    public convenience init(avatarDiameter: CGFloat) {
+        self.init(outerDiameter: avatarDiameter, innerImageDiameter: avatarDiameter)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func mcvw_setup() {
+        clipsToBounds = true
+
+        let ph = UIImage(systemName: "person.fill")?.withRenderingMode(.alwaysTemplate)
+        mcvw_placeholderView.image = ph
+        mcvw_placeholderView.tintColor = UIColor.white.withAlphaComponent(0.35)
+
+        addSubview(mcvw_imageView)
+        addSubview(mcvw_placeholderView)
+        addSubview(mcvw_removeButton)
+
+        mcvw_imageView.layer.masksToBounds = true
+        mcvw_imageView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.height.equalTo(mcvw_innerImageDiameter)
+        }
+        let phWide = mcvw_innerImageDiameter * 0.38
+        mcvw_placeholderView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.equalTo(phWide)
+            make.height.equalTo(mcvw_placeholderView.snp.width).multipliedBy(1)
+        }
+
+        snp.makeConstraints { make in
+            make.width.height.equalTo(mcvw_outerDiameter)
+        }
+        mcvw_removeButton.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(3)
+            make.trailing.equalToSuperview().offset(-3)
+            make.size.equalTo(18)
+        }
+
+        clipsToBounds = true
+    }
+
+    public func mcvw_apply(image: UIImage?) {
+        mcvw_imageView.image = image
+        // Keep image view visible when empty so the 56×56 white @ 6% circular fill renders.
+        mcvw_placeholderView.isHidden = (image != nil)
+        mcvw_removeButton.isHidden = (image == nil)
+
+        backgroundColor = .clear
+        if image != nil {
+            mcvw_imageView.backgroundColor = .clear
+            layer.borderWidth = 0
+            layer.borderColor = nil
+        } else {
+            mcvw_imageView.backgroundColor = UIColor.white.withAlphaComponent(0.06)
+        }
+    }
+
+    public func mcvw_setActiveEmptyRing(_ active: Bool) {
+        guard mcvw_imageView.image == nil else {
+            layer.borderWidth = 0
+            layer.borderColor = nil
+            return
+        }
+        layer.borderWidth = active ? 1 : 0
+        layer.borderColor = active ? UIColor(hex: "0077FF")!.cgColor : nil
+    }
+}
+
+public final class MCCFeedDetailView: MCCBaseView {
 
     public let mcvw_mediaContainer = UIView()
     public let mcvw_videoOverlay = UIView()
@@ -49,27 +175,6 @@ public final class MCCFeedDetailView: MCCBaseView {
         return v
     }()
 
-    public let mcvw_characterTitleLabel: UILabel = {
-        let l = UILabel()
-        l.textColor = .white
-        l.font = .systemFont(ofSize: 16, weight: .semibold)
-        return l
-    }()
-    public let mcvw_avatarRow: UIStackView = {
-        let s = UIStackView()
-        s.axis = .horizontal
-        s.spacing = 10
-        s.alignment = .center
-        return s
-    }()
-    public let mcvw_characterGrid: UIStackView = {
-        let s = UIStackView()
-        s.axis = .vertical
-        s.spacing = 8
-        s.distribution = .fillEqually
-        return s
-    }()
-
     public let mcvw_settingsRow: UIStackView = {
         let s = UIStackView()
         s.axis = .horizontal
@@ -81,31 +186,32 @@ public final class MCCFeedDetailView: MCCBaseView {
 
     public let mcvw_resolutionValueLabel: UILabel = {
         let l = UILabel()
-        l.textColor = .white
-        l.font = .systemFont(ofSize: 14, weight: .medium)
-        l.textAlignment = .center
+        l.textColor = UIColor(hex: "FFFFFF")!
+        l.font = .systemFont(ofSize: 14, weight: .regular)
+        l.textAlignment = .natural
         return l
     }()
     public let mcvw_durationValueLabel: UILabel = {
         let l = UILabel()
-        l.textColor = .white
-        l.font = .systemFont(ofSize: 14, weight: .medium)
-        l.textAlignment = .center
+        l.textColor = UIColor(hex: "FFFFFF")!
+        l.font = .systemFont(ofSize: 14, weight: .regular)
+        l.textAlignment = .natural
         return l
     }()
     public let mcvw_modeValueLabel: UILabel = {
         let l = UILabel()
-        l.textColor = .white
-        l.font = .systemFont(ofSize: 14, weight: .medium)
-        l.textAlignment = .center
+        l.textColor = UIColor(hex: "FFFFFF")!
+        l.font = .systemFont(ofSize: 14, weight: .regular)
+        l.textAlignment = .natural
         return l
     }()
     public let mcvw_continueButton: UIButton = {
         let b = UIButton(type: .system)
         b.setTitleColor(.white, for: .normal)
-        b.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
+        b.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
         b.backgroundColor = UIColor(hex: "0077FF")!
-        b.layer.cornerRadius = 14
+        b.layer.cornerRadius = 24
+        b.layer.cornerCurve = .continuous
         b.clipsToBounds = true
         return b
     }()
@@ -113,24 +219,67 @@ public final class MCCFeedDetailView: MCCBaseView {
     public let mcvw_resolutionPill = UIControl()
     public let mcvw_durationPill = UIControl()
     public let mcvw_modePill = UIControl()
-    public let mcvw_resolutionTitleLabel = MCCFeedDetailView.mcvw_makePillCaptionLabel()
-    public let mcvw_durationTitleLabel = MCCFeedDetailView.mcvw_makePillCaptionLabel()
-    public let mcvw_modeTitleLabel = MCCFeedDetailView.mcvw_makePillCaptionLabel()
+
+    public let mcvw_characterSection = UIStackView()
+    public let mcvw_characterTitleLabel: UILabel = {
+        let l = UILabel()
+        l.textColor = UIColor(hex: "FFFFFF")!
+        l.font = .systemFont(ofSize: 16, weight: .semibold)
+        return l
+    }()
+
+    public let mcvw_characterCirclesStack: UIStackView = {
+        let s = UIStackView()
+        s.axis = .horizontal
+        s.spacing = 4
+        s.alignment = .center
+        s.distribution = .fill
+        return s
+    }()
+
+    public let mcvw_characterCircleSlots: [MCCFeedDetailCharacterAvatarSlotView] = [
+        MCCFeedDetailCharacterAvatarSlotView(outerDiameter: 64, innerImageDiameter: 56),
+        MCCFeedDetailCharacterAvatarSlotView(outerDiameter: 64, innerImageDiameter: 56)
+    ]
+
+    private let mcvw_characterSlotsScrollView: UIScrollView = {
+        let s = UIScrollView()
+        s.showsHorizontalScrollIndicator = false
+        s.alwaysBounceHorizontal = true
+        s.alwaysBounceVertical = false
+        return s
+    }()
+    public let mcvw_characterSlotsStack = UIStackView()
+
+    public let mcvw_characterAlbumButton: UIButton = {
+        let b = UIButton(type: .system)
+        return b
+    }()
+
+    public let mcvw_characterRecentTile = UIView()
+
+    public let mcvw_characterRecentImageView: UIImageView = {
+        let v = UIImageView()
+        v.contentMode = .scaleAspectFill
+        v.clipsToBounds = true
+        v.backgroundColor = UIColor.white.withAlphaComponent(0.06)
+        return v
+    }()
+
+    public let mcvw_characterRecentLabel: UILabel = {
+        let l = UILabel()
+        l.text = "Recent"
+        l.font = .systemFont(ofSize: 11, weight: .regular)
+        l.textColor = UIColor.white.withAlphaComponent(0.72)
+        l.textAlignment = .center
+        return l
+    }()
+
+    public let mcvw_characterPlaceholderViews: [UIView] = MCCFeedDetailView.mcvw_makePlaceholderBoxes(count: 5)
 
     public override func mcvw_setupUI() {
         backgroundColor = .clear
-        addSubview(mcvw_scrollView)
-        mcvw_scrollView.snp.makeConstraints { $0.edges.equalToSuperview() }
-        let content = UIStackView()
-        content.axis = .vertical
-        content.spacing = 20
-        content.alignment = .fill
-        mcvw_scrollView.addSubview(content)
-        content.snp.makeConstraints { make in
-            make.edges.equalTo(mcvw_scrollView.contentLayoutGuide)
-            make.width.equalTo(mcvw_scrollView.frameLayoutGuide)
-        }
-        mcvw_mediaContainer.layer.cornerRadius = 12
+        mcvw_mediaContainer.layer.cornerRadius = 0
         mcvw_mediaContainer.clipsToBounds = true
         mcvw_mediaContainer.backgroundColor = UIColor.white.withAlphaComponent(0.06)
         mcvw_mediaContainer.addSubview(mcvw_posterImageView)
@@ -155,108 +304,192 @@ public final class MCCFeedDetailView: MCCBaseView {
             make.leading.trailing.bottom.equalToSuperview().inset(10)
             make.height.equalTo(3)
         }
-        content.addArrangedSubview(mcvw_mediaContainer)
-        content.isLayoutMarginsRelativeArrangement = true
-        content.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        mcvw_applyMediaHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth)
-        let charBlock = mcvw_makeCharacterBlock()
-        content.addArrangedSubview(charBlock)
-        mcvw_stylePill(mcvw_resolutionPill, titleLabel: mcvw_resolutionTitleLabel, value: mcvw_resolutionValueLabel)
-        mcvw_stylePill(mcvw_durationPill, titleLabel: mcvw_durationTitleLabel, value: mcvw_durationValueLabel)
-        mcvw_stylePill(mcvw_modePill, titleLabel: mcvw_modeTitleLabel, value: mcvw_modeValueLabel)
-        mcvw_settingsRow.addArrangedSubview(mcvw_resolutionPill)
-        mcvw_settingsRow.addArrangedSubview(mcvw_durationPill)
-        mcvw_settingsRow.addArrangedSubview(mcvw_modePill)
-        mcvw_settingsRow.snp.makeConstraints { $0.height.equalTo(64) }
-        content.addArrangedSubview(mcvw_settingsRow)
-        content.addArrangedSubview(mcvw_continueButton)
-        mcvw_continueButton.snp.makeConstraints { $0.height.equalTo(54) }
-    }
+        addSubview(mcvw_mediaContainer)
+        mcvw_styleRoundPill(mcvw_resolutionPill, iconNamed: "ic_cm_hd", textLabel: mcvw_resolutionValueLabel)
+        mcvw_styleRoundPill(mcvw_durationPill, iconNamed: "ic_cm_duration", textLabel: mcvw_durationValueLabel)
+        mcvw_styleRoundPill(mcvw_modePill, iconNamed: "ic_cm_audio", textLabel: mcvw_modeValueLabel)
 
-    private static func mcvw_makePillCaptionLabel() -> UILabel {
-        let t = UILabel()
-        t.textColor = UIColor.white.withAlphaComponent(0.55)
-        t.font = .systemFont(ofSize: 12, weight: .regular)
-        t.textAlignment = .center
-        return t
-    }
-
-    private func mcvw_stylePill(_ c: UIControl, titleLabel: UILabel, value: UILabel) {
-        c.backgroundColor = UIColor(white: 0.2, alpha: 0.6)
-        c.layer.cornerRadius = 10
-        c.clipsToBounds = true
-        c.addSubview(titleLabel)
-        c.addSubview(value)
-        titleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(8)
-            make.leading.trailing.equalToSuperview().inset(4)
+        for slot in mcvw_characterCircleSlots {
+            mcvw_characterCirclesStack.addArrangedSubview(slot)
         }
-        value.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(2)
+
+        let album = mcvw_characterAlbumButton
+        album.backgroundColor = UIColor.white.withAlphaComponent(0.06)
+        album.layer.cornerRadius = 10
+        album.clipsToBounds = true
+        album.layer.borderWidth = 1
+        album.layer.borderColor = UIColor.white.withAlphaComponent(0.06).cgColor
+        album.setTitle(nil, for: .normal)
+        album.setImage(UIImage(named: "ic_cm_add")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        album.adjustsImageWhenHighlighted = false
+
+        mcvw_characterRecentTile.layer.cornerRadius = 10
+        mcvw_characterRecentTile.layer.masksToBounds = true
+        mcvw_characterRecentTile.clipsToBounds = true
+        mcvw_characterRecentTile.layer.borderWidth = 1
+        mcvw_characterRecentTile.layer.borderColor = UIColor.white.withAlphaComponent(0.06).cgColor
+
+        let recentFade = MCCBottomBlackFadeGradientView(frame: .zero)
+
+        mcvw_characterRecentTile.addSubview(mcvw_characterRecentImageView)
+        mcvw_characterRecentTile.addSubview(recentFade)
+        mcvw_characterRecentTile.addSubview(mcvw_characterRecentLabel)
+
+        mcvw_characterRecentImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
+
+        recentFade.snp.makeConstraints { make in
+            make.leading.trailing.bottom.equalToSuperview()
+            make.height.equalTo(32)
+        }
+        mcvw_characterRecentLabel.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(4)
             make.bottom.equalToSuperview().offset(-8)
         }
-    }
 
-    private func mcvw_makeCharacterBlock() -> UIView {
-        let w = UIView()
-        w.addSubview(mcvw_characterTitleLabel)
+        mcvw_characterSlotsStack.axis = .horizontal
+        mcvw_characterSlotsStack.spacing = 12
+        mcvw_characterSlotsStack.alignment = .center
+        mcvw_characterSlotsStack.distribution = .fill
+
+        let tileWidth: CGFloat = 72
+        let tileHeight: CGFloat = 96
+
+        mcvw_applyGalleryTileIntrinsicSize(album, width: tileWidth, height: tileHeight)
+        mcvw_applyGalleryTileIntrinsicSize(mcvw_characterRecentTile, width: tileWidth, height: tileHeight)
+
+        mcvw_characterSlotsStack.addArrangedSubview(album)
+        mcvw_characterSlotsStack.addArrangedSubview(mcvw_characterRecentTile)
+
+        var placeTag = 0
+        for p in mcvw_characterPlaceholderViews {
+            mcvw_applyGalleryTileIntrinsicSize(p, width: tileWidth, height: tileHeight)
+            p.layer.cornerRadius = 10
+            p.clipsToBounds = true
+            p.layer.borderWidth = 1
+            p.layer.borderColor = UIColor.white.withAlphaComponent(0.06).cgColor
+            p.backgroundColor = UIColor.white.withAlphaComponent(0.06)
+            p.tag = placeTag
+            placeTag += 1
+            mcvw_characterSlotsStack.addArrangedSubview(p)
+        }
+        mcvw_characterSlotsScrollView.addSubview(mcvw_characterSlotsStack)
+        mcvw_characterSlotsStack.snp.makeConstraints { make in
+            make.leading.equalTo(mcvw_characterSlotsScrollView.contentLayoutGuide.snp.leading).offset(12)
+            make.trailing.equalTo(mcvw_characterSlotsScrollView.contentLayoutGuide.snp.trailing).offset(-12)
+            make.top.bottom.equalTo(mcvw_characterSlotsScrollView.contentLayoutGuide)
+            make.height.equalTo(tileHeight)
+        }
+
+        mcvw_characterSection.axis = .vertical
+        mcvw_characterSection.spacing = 14
+        mcvw_characterSection.alignment = .fill
+
+        let titleInsetWrap = UIView()
+        titleInsetWrap.addSubview(mcvw_characterTitleLabel)
         mcvw_characterTitleLabel.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview()
+            make.top.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(16)
         }
-        w.addSubview(mcvw_avatarRow)
-        mcvw_avatarRow.snp.makeConstraints { make in
-            make.top.equalTo(mcvw_characterTitleLabel.snp.bottom).offset(10)
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(40)
+        let circlesInsetWrap = UIView()
+        circlesInsetWrap.addSubview(mcvw_characterCirclesStack)
+        mcvw_characterCirclesStack.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(12)
+            make.top.bottom.equalToSuperview()
+            make.trailing.lessThanOrEqualToSuperview().inset(16)
         }
-        for _ in 0..<3 {
-            mcvw_avatarRow.addArrangedSubview(mcvw_avatarCircle())
+
+        mcvw_characterSection.addArrangedSubview(titleInsetWrap)
+        mcvw_characterSection.addArrangedSubview(circlesInsetWrap)
+        mcvw_characterSection.addArrangedSubview(mcvw_characterSlotsScrollView)
+        mcvw_characterSection.setCustomSpacing(24, after: circlesInsetWrap)
+
+        mcvw_characterSlotsScrollView.snp.makeConstraints { $0.height.equalTo(tileHeight) }
+        addSubview(mcvw_characterSection)
+
+        mcvw_settingsRow.addArrangedSubview(mcvw_resolutionPill)
+        mcvw_settingsRow.addArrangedSubview(mcvw_durationPill)
+        mcvw_settingsRow.addArrangedSubview(mcvw_modePill)
+        addSubview(mcvw_settingsRow)
+        addSubview(mcvw_continueButton)
+        mcvw_continueButton.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(12)
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-12)
+            make.height.equalTo(48)
         }
-        w.addSubview(mcvw_characterGrid)
-        mcvw_characterGrid.snp.makeConstraints { make in
-            make.top.equalTo(mcvw_avatarRow.snp.bottom).offset(10)
-            make.leading.trailing.bottom.equalToSuperview()
+        mcvw_settingsRow.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(12)
+            make.bottom.equalTo(mcvw_continueButton.snp.top).offset(-16)
+            make.height.equalTo(44)
         }
-        let r1 = mcvw_gridRow()
-        let r2 = mcvw_gridRow()
-        mcvw_characterGrid.addArrangedSubview(r1)
-        mcvw_characterGrid.addArrangedSubview(r2)
-        mcvw_characterGrid.snp.makeConstraints { $0.height.equalTo(2 * 56 + 8) }
-        return w
+        mcvw_applyMediaHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth)
     }
 
-    private func mcvw_avatarCircle() -> UIView {
-        let o = UIView()
-        o.layer.cornerRadius = 20
-        o.clipsToBounds = true
-        o.backgroundColor = UIColor.white.withAlphaComponent(0.1)
-        o.snp.makeConstraints { $0.size.equalTo(40) }
-        return o
+    private func mcvw_styleRoundPill(
+        _ pill: UIControl,
+        iconNamed: String,
+        textLabel: UILabel
+    ) {
+        pill.backgroundColor = UIColor.white.withAlphaComponent(0.06)
+        pill.layer.cornerRadius = 22
+        pill.layer.cornerCurve = .continuous
+        pill.clipsToBounds = true
+
+        textLabel.numberOfLines = 1
+        textLabel.lineBreakMode = .byTruncatingTail
+
+        let iconView = UIImageView()
+        iconView.contentMode = .scaleAspectFit
+        iconView.image = UIImage(named: iconNamed)?.withRenderingMode(.alwaysOriginal)
+
+        pill.addSubview(iconView)
+        pill.addSubview(textLabel)
+
+        iconView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(16)
+            make.centerY.equalToSuperview()
+            make.size.equalTo(20)
+        }
+        textLabel.snp.makeConstraints { make in
+            make.leading.equalTo(iconView.snp.trailing).offset(6)
+            make.trailing.equalToSuperview().offset(-10)
+            make.centerY.equalToSuperview()
+        }
     }
 
-    private func mcvw_gridRow() -> UIStackView {
-        let s = UIStackView()
-        s.axis = .horizontal
-        s.spacing = 8
-        s.distribution = .fillEqually
-        s.addArrangedSubview(mcvw_cell())
-        s.addArrangedSubview(mcvw_cell())
-        return s
+    private func mcvw_applyGalleryTileIntrinsicSize(_ v: UIView, width: CGFloat, height: CGFloat) {
+        v.snp.makeConstraints { make in
+            make.width.equalTo(width)
+            make.height.equalTo(height)
+        }
     }
 
-    private func mcvw_cell() -> UIView {
-        let v = UIView()
-        v.layer.cornerRadius = 8
-        v.clipsToBounds = true
-        v.backgroundColor = UIColor.white.withAlphaComponent(0.08)
-        return v
+    public func mcvw_applyCharacterCircleFocus(nextEmptySlotIndex: Int?) {
+        for (i, slot) in mcvw_characterCircleSlots.enumerated() {
+            slot.mcvw_setActiveEmptyRing(nextEmptySlotIndex == i)
+        }
     }
 
     public func mcvw_applyMediaHeightPerWidth(_ ratio: CGFloat) {
         mcvw_mediaContainer.snp.remakeConstraints { make in
             make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(mcvw_characterSection.snp.top).offset(-16)
             make.height.equalTo(mcvw_mediaContainer.snp.width).multipliedBy(ratio)
         }
+        mcvw_characterSection.snp.remakeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(mcvw_settingsRow.snp.top).offset(-20)
+        }
     }
+
+    private static func mcvw_makePlaceholderBoxes(count: Int) -> [UIView] {
+        (0..<count).map { _ in
+            let v = UIView()
+            v.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+            v.layer.cornerRadius = 13
+            v.clipsToBounds = true
+            v.isUserInteractionEnabled = false
+            return v
+        }
+    }
+
 }

@@ -34,11 +34,11 @@ public struct MCSFeedItem: Codable {
     @MCSSafeString public var itemId: String
     /// name
     @MCSSafeString public var itemTitle: String
-    /// media`
+    /// media
     @MCSSafe public var videoAsset: MCSFeedVideoAssetShell
     ///
     @MCSSafeBool public var proFeature: Bool
-    /// 为 `true` 时列表展示 10s，否则 5s
+    ///
     @MCSSafeBool public var tenSecondMode: Bool
 }
 
