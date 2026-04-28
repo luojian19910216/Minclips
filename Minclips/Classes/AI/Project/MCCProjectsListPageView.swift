@@ -4,7 +4,6 @@ import SDWebImage
 
 public final class MCCProjectsListPageView: MCCBaseView {
 
-    /// 左右缩进与单元格间隔一致（4pt）。
     private static let mcvw_horizontalSectionInset: CGFloat = 4
 
     public let mcvw_runsWaterfallLayout: MCCShotsWaterfallLayout = {
@@ -17,7 +16,6 @@ public final class MCCProjectsListPageView: MCCBaseView {
         return l
     }()
 
-    /// Likes：与首页 Shots 相同瀑布流规则，三列。
     public lazy var mcvw_likesWaterfallLayout: MCCShotsWaterfallLayout = {
         let l = MCCShotsWaterfallLayout()
         l.columnCount = 3
@@ -36,8 +34,7 @@ public final class MCCProjectsListPageView: MCCBaseView {
         return cv
     }()
 
-    /// 与 `MCCShotsWaterfallLayout.prepare` 相同列宽：`innerW / 3`（不减 `adjustedContentInset`）。
-    public func mcvp_runsWaterfallColumnWidth(collectionWidth w: CGFloat) -> CGFloat {
+    public func mcvw_runsWaterfallColumnWidth(collectionWidth w: CGFloat) -> CGFloat {
         let width = (w > 0 ? w : UIScreen.main.bounds.width)
         let l = mcvw_runsWaterfallLayout
         let inner = width - l.sectionInset.left - l.sectionInset.right
@@ -46,13 +43,11 @@ public final class MCCProjectsListPageView: MCCBaseView {
         return max(1, (inner - spacing) / CGFloat(cols))
     }
 
-    /// 将 Runs 列表切到三列瀑布（与首页列宽算法一致），已注册 `MCCProjectsRunCell`。
-    public func mcvp_activateRunsWaterfallLayout() {
+    public func mcvw_activateRunsWaterfallLayout() {
         mcvw_collectionView.setCollectionViewLayout(mcvw_runsWaterfallLayout, animated: false)
     }
 
-    /// 将 Likes 列表切换为与首页一致的瀑布流（三列），并注册 `MCCShotsListItemCell`。
-    public func mcvp_activateLikesWaterfallLikeHome() {
+    public func mcvw_activateLikesWaterfallLikeHome() {
         mcvw_collectionView.register(
             MCCShotsListItemCell.self,
             forCellWithReuseIdentifier: MCCShotsListItemCell.mcvw_reuseId
@@ -60,8 +55,7 @@ public final class MCCProjectsListPageView: MCCBaseView {
         mcvw_collectionView.setCollectionViewLayout(mcvw_likesWaterfallLayout, animated: false)
     }
 
-    /// 当前瀑布流下单列内容宽度（用于缩略图与高度计算）。
-    public func mcvp_likesWaterfallColumnWidth(collectionWidth w: CGFloat) -> CGFloat {
+    public func mcvw_likesWaterfallColumnWidth(collectionWidth w: CGFloat) -> CGFloat {
         let width = (w > 0 ? w : UIScreen.main.bounds.width)
         let l = mcvw_likesWaterfallLayout
         let inner = width - l.sectionInset.left - l.sectionInset.right

@@ -35,7 +35,6 @@ private enum MCCProjectListLoadKind: Sendable {
     case loadMore
 }
 
-/// Likes 瀑布流标题：13 regular，白色（与首页 14 区分）。
 private enum MCCProjectsLikesListMetrics {
     static let titleLineHeight: CGFloat = 15
 
@@ -48,16 +47,14 @@ private enum MCCProjectsLikesListMetrics {
     }
 }
 
-// MARK: - Controller
-
 public final class MCCProjectsListPageController: MCCViewController<MCCProjectsListPageView, MCCEmptyViewModel> {
 
-    public var mcpj_segment: MCCProjectSegment!
-    public var mcpj_index: Int = 0
-    public var mcpj_onListDidAppear: (() -> Void)?
+    public var mcvc_projectSegment: MCCProjectSegment!
+    public var mcvc_pageIndex: Int = 0
+    public var mcvc_onListDidAppear: (() -> Void)?
 
-    private var mcpj_pagingScrollCallback: ((UIScrollView) -> Void)?
-    private var mcpj_listState = MCCProjectListState()
+    private var mcvc_pagingScrollCallback: ((UIScrollView) -> Void)?
+    private var mcvc_listState = MCCProjectListState()
 
     public override func mcvc_setupLocalization() {
         super.mcvc_setupLocalization()
@@ -70,28 +67,28 @@ public final class MCCProjectsListPageController: MCCViewController<MCCProjectsL
         let cv = contentView.mcvw_collectionView
         cv.dataSource = self
         cv.delegate = self
-        if mcpj_isLikes {
-            contentView.mcvp_activateLikesWaterfallLikeHome()
+        if mcvc_isLikes {
+            contentView.mcvw_activateLikesWaterfallLikeHome()
             contentView.mcvw_likesWaterfallLayout.delegate = self
             cv.prefetchDataSource = self
         } else {
-            contentView.mcvp_activateRunsWaterfallLayout()
+            contentView.mcvw_activateRunsWaterfallLayout()
             contentView.mcvw_runsWaterfallLayout.delegate = self
         }
         let header = MJRefreshNormalHeader { [weak self] in
-            self?.mcpj_load(kind: .pullToRefresh)
+            self?.mcvc_load(kind: .pullToRefresh)
         }
         header.lastUpdatedTimeLabel?.isHidden = true
         cv.mj_header = header
         cv.mj_footer = MJRefreshAutoNormalFooter { [weak self] in
-            self?.mcpj_load(kind: .loadMore)
+            self?.mcvc_load(kind: .loadMore)
         }
     }
 
     public override func mcvc_loadData() {
         super.mcvc_loadData()
-        guard mcpj_segment != nil else { return }
-        mcpj_load(kind: .initial)
+        guard mcvc_projectSegment != nil else { return }
+        mcvc_load(kind: .initial)
     }
 }
 
@@ -102,30 +99,28 @@ extension MCCProjectsListPageController: JXPagingViewListViewDelegate {
     public func listScrollView() -> UIScrollView { contentView.mcvw_collectionView }
 
     public func listViewDidScrollCallback(callback: @escaping (UIScrollView) -> Void) {
-        mcpj_pagingScrollCallback = callback
+        mcvc_pagingScrollCallback = callback
     }
 
     public func listDidAppear() {
-        mcpj_onListDidAppear?()
+        mcvc_onListDidAppear?()
     }
 }
 
-// MARK: - Paging ↔ tab
 
 extension MCCProjectsListPageController {
 
-    public func mcpj_forwardPagingScroll(_ scrollView: UIScrollView) {
-        mcpj_pagingScrollCallback?(scrollView)
+    public func mcvc_forwardPagingScroll(_ scrollView: UIScrollView) {
+        mcvc_pagingScrollCallback?(scrollView)
     }
 
-    private var mcpj_isLikes: Bool {
-        (mcpj_segment?.ref ?? "").trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == "likes"
+    private var mcvc_isLikes: Bool {
+        (mcvc_projectSegment?.ref ?? "").trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == "likes"
     }
 
-    /// 是否允许发起本次加载（防抖 / 分页边界）。
-    private func mcpj_canFetch(_ kind: MCCProjectListLoadKind) -> Bool {
-        let s = mcpj_listState
-        let lk = mcpj_isLikes
+    private func mcvc_canFetch(_ kind: MCCProjectListLoadKind) -> Bool {
+        let s = mcvc_listState
+        let lk = mcvc_isLikes
         switch kind {
         case .initial:
             if lk {
@@ -141,35 +136,34 @@ extension MCCProjectsListPageController {
     }
 }
 
-// MARK: - Network
 
 private extension MCCProjectsListPageController {
 
-    func mcpj_load(kind: MCCProjectListLoadKind) {
-        guard mcpj_segment != nil, mcpj_canFetch(kind) else { return }
-        if mcpj_isLikes {
-            mcpj_loadLikes(kind)
+    func mcvc_load(kind: MCCProjectListLoadKind) {
+        guard mcvc_projectSegment != nil, mcvc_canFetch(kind) else { return }
+        if mcvc_isLikes {
+            mcvc_loadLikes(kind)
         } else {
-            mcpj_loadRuns(kind)
+            mcvc_loadRuns(kind)
         }
     }
 
-    func mcpj_beginLoadMore() {
-        mcpj_listState.isLoadingMore = true
-        mcpj_applyListUI()
+    func mcvc_beginLoadMore() {
+        mcvc_listState.isLoadingMore = true
+        mcvc_applyListUI()
     }
 
-    func mcpj_endLoadMore() {
-        mcpj_listState.isLoadingMore = false
-        mcpj_applyListUI()
+    func mcvc_endLoadMore() {
+        mcvc_listState.isLoadingMore = false
+        mcvc_applyListUI()
     }
 
-    func mcpj_loadRuns(_ kind: MCCProjectListLoadKind) {
+    func mcvc_loadRuns(_ kind: MCCProjectListLoadKind) {
         if kind == .loadMore {
-            mcpj_beginLoadMore()
+            mcvc_beginLoadMore()
             var request = MCSRunListRequest()
             request.itemsPerPage = MCCProjectsListLayout.pageSize
-            let lastId = mcpj_listState.runItems.last?.runId
+            let lastId = mcvc_listState.runItems.last?.runId
                 .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
             if !lastId.isEmpty {
                 request.resumeAfterId = lastId
@@ -177,11 +171,11 @@ private extension MCCProjectsListPageController {
             MCCRunAPIManager.shared.inventory(with: request)
                 .receive(on: DispatchQueue.main)
                 .sink(
-                    receiveCompletion: { [weak self] _ in self?.mcpj_endLoadMore() },
+                    receiveCompletion: { [weak self] _ in self?.mcvc_endLoadMore() },
                     receiveValue: { [weak self] page in
                         guard let self else { return }
-                        self.mcpj_listState.runItems.append(contentsOf: page.items)
-                        self.mcpj_listState.hasMore = page.items.count >= MCCProjectsListLayout.pageSize
+                        self.mcvc_listState.runItems.append(contentsOf: page.items)
+                        self.mcvc_listState.hasMore = page.items.count >= MCCProjectsListLayout.pageSize
                     }
                 )
                 .store(in: &cancellables)
@@ -195,33 +189,33 @@ private extension MCCProjectsListPageController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 guard let self else { return }
-                self.mcpj_listState.runLoadState = state
+                self.mcvc_listState.runLoadState = state
                 if let m = state.model, !state.isLoading, state.error == nil {
-                    self.mcpj_listState.runItems = m.items
-                    self.mcpj_listState.hasMore = m.items.count >= MCCProjectsListLayout.pageSize
+                    self.mcvc_listState.runItems = m.items
+                    self.mcvc_listState.hasMore = m.items.count >= MCCProjectsListLayout.pageSize
                 }
-                self.mcpj_applyListUI()
+                self.mcvc_applyListUI()
             }
             .store(in: &cancellables)
     }
 
-    func mcpj_loadLikes(_ kind: MCCProjectListLoadKind) {
+    func mcvc_loadLikes(_ kind: MCCProjectListLoadKind) {
         let pageSz = MCCProjectsListLayout.pageSize
 
         if kind == .loadMore {
-            mcpj_beginLoadMore()
+            mcvc_beginLoadMore()
             var request = MCSFeedLikeListRequest()
             request.itemsPerPage = pageSz
-            request.pageIndex = mcpj_listState.favorNextPageIndex
+            request.pageIndex = mcvc_listState.favorNextPageIndex
             MCCFeedAPIManager.shared.favorInventory(with: request)
                 .receive(on: DispatchQueue.main)
                 .sink(
-                    receiveCompletion: { [weak self] _ in self?.mcpj_endLoadMore() },
+                    receiveCompletion: { [weak self] _ in self?.mcvc_endLoadMore() },
                     receiveValue: { [weak self] page in
                         guard let self else { return }
-                        self.mcpj_listState.feedItems.append(contentsOf: page.items)
-                        self.mcpj_listState.hasMore = page.items.count >= pageSz
-                        self.mcpj_listState.favorNextPageIndex += 1
+                        self.mcvc_listState.feedItems.append(contentsOf: page.items)
+                        self.mcvc_listState.hasMore = page.items.count >= pageSz
+                        self.mcvc_listState.favorNextPageIndex += 1
                     }
                 )
                 .store(in: &cancellables)
@@ -229,9 +223,9 @@ private extension MCCProjectsListPageController {
         }
 
         if kind == .pullToRefresh || kind == .initial {
-            mcpj_listState.favorNextPageIndex = 1
-            mcpj_listState.feedItems = []
-            mcpj_listState.hasMore = false
+            mcvc_listState.favorNextPageIndex = 1
+            mcvc_listState.feedItems = []
+            mcvc_listState.hasMore = false
         }
 
         var request = MCSFeedLikeListRequest()
@@ -242,21 +236,21 @@ private extension MCCProjectsListPageController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 guard let self else { return }
-                self.mcpj_listState.feedLoadState = state
+                self.mcvc_listState.feedLoadState = state
                 if let m = state.model, !state.isLoading, state.error == nil {
-                    self.mcpj_listState.feedItems = m.items
+                    self.mcvc_listState.feedItems = m.items
                     let full = m.items.count >= pageSz
-                    self.mcpj_listState.hasMore = full
-                    self.mcpj_listState.favorNextPageIndex = full ? 2 : 1
+                    self.mcvc_listState.hasMore = full
+                    self.mcvc_listState.favorNextPageIndex = full ? 2 : 1
                 }
-                self.mcpj_applyListUI()
+                self.mcvc_applyListUI()
             }
             .store(in: &cancellables)
     }
 
-    func mcpj_applyListUI() {
-        let st = mcpj_listState
-        let likes = mcpj_isLikes
+    func mcvc_applyListUI() {
+        let st = mcvc_listState
+        let likes = mcvc_isLikes
         let count = st.itemCount(isLikes: likes)
         let loading = st.primaryIsLoading(isLikes: likes)
         let cv = contentView.mcvw_collectionView
@@ -267,13 +261,13 @@ private extension MCCProjectsListPageController {
             cv.mj_footer?.isHidden = true
         } else if !loading {
             cv.mj_header?.endRefreshing()
-            mcpj_syncFooter(cv, itemCount: count, hasMore: st.hasMore, loadingMore: st.isLoadingMore)
+            mcvc_syncFooter(cv, itemCount: count, hasMore: st.hasMore, loadingMore: st.isLoadingMore)
         }
         cv.isHidden = false
         cv.reloadData()
     }
 
-    func mcpj_syncFooter(_ cv: UICollectionView, itemCount: Int, hasMore: Bool, loadingMore: Bool) {
+    func mcvc_syncFooter(_ cv: UICollectionView, itemCount: Int, hasMore: Bool, loadingMore: Bool) {
         guard itemCount > 0 else {
             cv.mj_footer?.isHidden = true
             return
@@ -289,36 +283,35 @@ private extension MCCProjectsListPageController {
     }
 }
 
-// MARK: - Collection view
 
 extension MCCProjectsListPageController: UICollectionViewDataSource, UICollectionViewDelegate {
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        mcpj_isLikes ? mcpj_listState.feedItems.count : mcpj_listState.runItems.count
+        mcvc_isLikes ? mcvc_listState.feedItems.count : mcvc_listState.runItems.count
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if mcpj_isLikes {
+        if mcvc_isLikes {
             let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: MCCShotsListItemCell.mcvw_reuseId, for: indexPath
             ) as! MCCShotsListItemCell
-            if let feed = mcpj_listState.feedItems[safe: indexPath.item] {
-                mcpj_styleLikesCell(cell, item: feed, collectionView: collectionView)
+            if let feed = mcvc_listState.feedItems[safe: indexPath.item] {
+                mcvc_styleLikesCell(cell, item: feed, collectionView: collectionView)
             }
             return cell
         }
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: MCCProjectsRunCell.mcvw_reuseId, for: indexPath
         ) as! MCCProjectsRunCell
-        if let run = mcpj_listState.runItems[safe: indexPath.item] {
-            cell.mcpj_apply(run: run)
+        if let run = mcvc_listState.runItems[safe: indexPath.item] {
+            cell.mcvw_apply(run: run)
         }
         return cell
     }
 
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
-        if mcpj_isLikes, let feed = mcpj_listState.feedItems[safe: indexPath.item] {
+        if mcvc_isLikes, let feed = mcvc_listState.feedItems[safe: indexPath.item] {
             let vc = MCCFeedDetailController()
             vc.mcvc_feedItem = feed
             if let cell = collectionView.cellForItem(at: indexPath) as? MCCShotsListItemCell {
@@ -327,7 +320,7 @@ extension MCCProjectsListPageController: UICollectionViewDataSource, UICollectio
             navigationController?.pushViewController(vc, animated: true)
             return
         }
-        guard let run = mcpj_listState.runItems[safe: indexPath.item] else { return }
+        guard let run = mcvc_listState.runItems[safe: indexPath.item] else { return }
         let title = run.runId.isEmpty ? "Project" : run.runId
         let kind: MCCCreationResultKind = indexPath.item % 2 == 0 ? .successImage : .successVideo(totalDuration: 15)
         let vc = MCCCreationResultController(navigationTitle: title, kind: kind, workRef: run.runId)
@@ -335,35 +328,35 @@ extension MCCProjectsListPageController: UICollectionViewDataSource, UICollectio
     }
 
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        guard mcpj_isLikes,
+        guard mcvc_isLikes,
               let cell = cell as? MCCShotsListItemCell,
-              let item = mcpj_listState.feedItems[safe: indexPath.item] else { return }
-        let thumbPx = mcpj_likesThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width)
+              let item = mcvc_listState.feedItems[safe: indexPath.item] else { return }
+        let thumbPx = mcvc_likesThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width)
         cell.mcvw_applyWebpAnimated(webpUrl: item.videoAsset.webpImageUrl, thumbnailPixelSize: thumbPx)
     }
 
     public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        guard mcpj_isLikes else { return }
+        guard mcvc_isLikes else { return }
         (cell as? MCCShotsListItemCell)?.mcvw_clearWebpAnimated()
     }
 
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        mcpj_forwardPagingScroll(scrollView)
+        mcvc_forwardPagingScroll(scrollView)
     }
 }
 
 extension MCCProjectsListPageController: UICollectionViewDataSourcePrefetching {
 
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        guard mcpj_isLikes else { return }
-        let items = mcpj_listState.feedItems
+        guard mcvc_isLikes else { return }
+        let items = mcvc_listState.feedItems
         let cvW = collectionView.bounds.width
         let cvWidth = cvW > 0 ? cvW : view.bounds.width
         for indexPath in indexPaths {
             guard let item = items[safe: indexPath.item] else { continue }
             let s = item.videoAsset.posterImageUrl
             guard !s.isEmpty, let u = URL(string: s) else { continue }
-            let thumbPx = mcpj_likesThumbnailPixelSize(forCollectionWidth: cvWidth)
+            let thumbPx = mcvc_likesThumbnailPixelSize(forCollectionWidth: cvWidth)
             let ctx = MCCShotsListItemMetrics.sdPosterThumbnailContext(thumbnailPixelSize: thumbPx)
             SDWebImagePrefetcher.shared.prefetchURLs(
                 [u],
@@ -383,30 +376,30 @@ extension MCCProjectsListPageController: MCCShotsWaterfallLayoutDelegate {
         heightForItemAt indexPath: IndexPath,
         itemWidth: CGFloat
     ) -> CGFloat {
-        if mcpj_isLikes {
-            guard let item = mcpj_listState.feedItems[safe: indexPath.item] else { return 1 }
-            return mcpj_heightForLikesItem(item, itemWidth: itemWidth)
+        if mcvc_isLikes {
+            guard let item = mcvc_listState.feedItems[safe: indexPath.item] else { return 1 }
+            return mcvc_heightForLikesItem(item, itemWidth: itemWidth)
         }
-        guard mcpj_listState.runItems.indices.contains(indexPath.item) else { return 1 }
+        guard mcvc_listState.runItems.indices.contains(indexPath.item) else { return 1 }
         return itemWidth * 160 / 120
     }
 }
 
 private extension MCCProjectsListPageController {
 
-    func mcpj_likesThumbnailPixelSize(forCollectionWidth width: CGFloat) -> CGSize {
-        let colW = contentView.mcvp_likesWaterfallColumnWidth(collectionWidth: width)
+    func mcvc_likesThumbnailPixelSize(forCollectionWidth width: CGFloat) -> CGSize {
+        let colW = contentView.mcvw_likesWaterfallColumnWidth(collectionWidth: width)
         return MCCShotsListItemMetrics.feedImageThumbnailPixelSize(columnWidthPoints: colW)
     }
 
-    func mcpj_styleLikesCell(_ cell: MCCShotsListItemCell, item: MCSFeedItem, collectionView: UICollectionView) {
+    func mcvc_styleLikesCell(_ cell: MCCShotsListItemCell, item: MCSFeedItem, collectionView: UICollectionView) {
         cell.mcvw_imageContainer.backgroundColor = MCCShotsListItemMetrics.listItemImageContainerBackground
         let a = item.videoAsset
         cell.mcvw_setImageHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth)
-        let thumbPx = mcpj_likesThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width)
+        let thumbPx = mcvc_likesThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width)
         cell.mcvw_applyPosterOnly(posterUrl: a.posterImageUrl, thumbnailPixelSize: thumbPx)
         let displaySeconds = item.tenSecondMode ? 10 : 5
-        cell.mcvw_durationLabel.text = Self.mcpj_formatVideoDurationLabel(seconds: displaySeconds)
+        cell.mcvw_durationLabel.text = Self.mcvc_formatVideoDurationLabel(seconds: displaySeconds)
         cell.mcvw_durationLabel.isHidden = false
         cell.mcvw_durationLabel.font = .systemFont(ofSize: 11, weight: .regular)
         cell.mcvw_durationLabel.textColor = UIColor.white.withAlphaComponent(0.48)
@@ -420,7 +413,7 @@ private extension MCCProjectsListPageController {
         )
     }
 
-    func mcpj_heightForLikesItem(_ item: MCSFeedItem, itemWidth: CGFloat) -> CGFloat {
+    func mcvc_heightForLikesItem(_ item: MCSFeedItem, itemWidth: CGFloat) -> CGFloat {
         let m = MCCShotsListItemMetrics.self
         let title = item.itemTitle
         let imageH = itemWidth * m.imageHeightPerWidth
@@ -440,7 +433,7 @@ private extension MCCProjectsListPageController {
         return imageH + m.imageToTitleSpacing + textH
     }
 
-    static func mcpj_formatVideoDurationLabel(seconds: Int) -> String {
+    static func mcvc_formatVideoDurationLabel(seconds: Int) -> String {
         let sec = max(0, seconds)
         let h = sec / 3600
         let m = (sec % 3600) / 60
@@ -455,17 +448,16 @@ private extension MCCProjectsListPageController {
     }
 }
 
-// MARK: - Cell
 
 private extension MCCProjectsRunCell {
 
-    func mcpj_apply(run: MCSRunItem) {
-        mcvw_imageContainer.backgroundColor = UIColor(hex: Self.mcpj_hex(from: run.runId)) ?? .darkGray
+    func mcvw_apply(run: MCSRunItem) {
+        mcvw_imageContainer.backgroundColor = UIColor(hex: Self.mcvw_hex(from: run.runId)) ?? .darkGray
         mcvw_thumbView.sd_cancelCurrentImageLoad()
         mcvw_thumbView.image = nil
     }
 
-    static func mcpj_hex(from id: String) -> String {
+    static func mcvw_hex(from id: String) -> String {
         var h: UInt = 0
         for c in id.unicodeScalars { h = h &* 31 &+ UInt(c.value) }
         return String(format: "%06X", h % 0xFFFFFF)
@@ -479,7 +471,6 @@ private extension Array {
     }
 }
 
-// MARK: - Segment model
 
 public struct MCCProjectSegment: Equatable {
     public var ref: String
