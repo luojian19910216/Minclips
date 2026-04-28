@@ -171,6 +171,18 @@
 		F6E2D1252FC0100002C4F70 /* MCCFeedDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D1092FC0100002C4F70 /* MCCFeedDetailController.swift */; };
 		F6E2D1262FC0100002C4F70 /* MCCFeedDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D1092FC0100002C4F70 /* MCCFeedDetailController.swift */; };
 		F6E2D1272FC0100002C4F70 /* MCCFeedDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D1092FC0100002C4F70 /* MCCFeedDetailController.swift */; };
+		F6E2D13002FC0100002C4F70 /* MCCFeedOptionPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13012FC0100002C4F70 /* MCCFeedOptionPopController.swift */; };
+		F6E2D13022FC0100002C4F70 /* MCCFeedOptionPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13012FC0100002C4F70 /* MCCFeedOptionPopController.swift */; };
+		F6E2D13032FC0100002C4F70 /* MCCFeedOptionPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13012FC0100002C4F70 /* MCCFeedOptionPopController.swift */; };
+		F6E2D13042FC0100002C4F70 /* MCCFeedOptionPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13012FC0100002C4F70 /* MCCFeedOptionPopController.swift */; };
+		F6E2D13052FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */; };
+		F6E2D13072FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */; };
+		F6E2D13082FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */; };
+		F6E2D13092FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */; };
+		F6E2D131A2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D131B2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift */; };
+		F6E2D131C2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D131B2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift */; };
+		F6E2D131D2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D131B2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift */; };
+		F6E2D131E2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D131B2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift */; };
 		F6E2D1282FC0100002C4F70 /* MCCSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D10A2FC0100002C4F70 /* MCCSettingsView.swift */; };
 		F6E2D1292FC0100002C4F70 /* MCCSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D10A2FC0100002C4F70 /* MCCSettingsView.swift */; };
 		F6E2D12A2FC0100002C4F70 /* MCCSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D10A2FC0100002C4F70 /* MCCSettingsView.swift */; };
@@ -259,6 +271,9 @@
 		F6E2C2302FC0030002C4F70 /* MCCDeleteConfirmPopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCDeleteConfirmPopController.swift; sourceTree = "<group>"; };
 		F6E2D1082FC0100002C4F70 /* MCCFeedDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedDetailView.swift; sourceTree = "<group>"; };
 		F6E2D1092FC0100002C4F70 /* MCCFeedDetailController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedDetailController.swift; sourceTree = "<group>"; };
+		F6E2D13012FC0100002C4F70 /* MCCFeedOptionPopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedOptionPopController.swift; sourceTree = "<group>"; };
+		F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedGeneratingSheetController.swift; sourceTree = "<group>"; };
+		F6E2D131B2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCWebpPlaybackHandoff.swift; sourceTree = "<group>"; };
 		F6E2D10A2FC0100002C4F70 /* MCCSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCSettingsView.swift; sourceTree = "<group>"; };
 		F6E2D10B2FC0100002C4F70 /* MCCSettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCSettingsController.swift; sourceTree = "<group>"; };
 		F6E2E0912FC0200002C4F70 /* MCCProView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProView.swift; sourceTree = "<group>"; };
@@ -341,6 +356,9 @@
 				F6E3C1102FC2000002C4F70 /* MCCShotsWaterfallLayout.swift */,
 				F6E2D1082FC0100002C4F70 /* MCCFeedDetailView.swift */,
 				F6E2D1092FC0100002C4F70 /* MCCFeedDetailController.swift */,
+				F6E2D13012FC0100002C4F70 /* MCCFeedOptionPopController.swift */,
+				F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */,
+				F6E2D131B2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift */,
 			);
 			path = Shots;
 			sourceTree = "<group>";
@@ -946,6 +964,9 @@
 				F6E2C2B42FC0030002C4F70 /* MCCDeleteConfirmPopController.swift in Sources */,
 				F6E2D1202FC0100002C4F70 /* MCCFeedDetailView.swift in Sources */,
 				F6E2D1242FC0100002C4F70 /* MCCFeedDetailController.swift in Sources */,
+				F6E2D13002FC0100002C4F70 /* MCCFeedOptionPopController.swift in Sources */,
+				F6E2D13052FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */,
+				F6E2D131A2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift in Sources */,
 				F6E2D1282FC0100002C4F70 /* MCCSettingsView.swift in Sources */,
 				F6E2D12C2FC0100002C4F70 /* MCCSettingsController.swift in Sources */,
 				F6E2E0A02FC0200002C4F70 /* MCCProView.swift in Sources */,
@@ -993,6 +1014,9 @@
 				F6E2C2B52FC0030002C4F70 /* MCCDeleteConfirmPopController.swift in Sources */,
 				F6E2D1212FC0100002C4F70 /* MCCFeedDetailView.swift in Sources */,
 				F6E2D1252FC0100002C4F70 /* MCCFeedDetailController.swift in Sources */,
+				F6E2D13022FC0100002C4F70 /* MCCFeedOptionPopController.swift in Sources */,
+				F6E2D13072FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */,
+				F6E2D131C2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift in Sources */,
 				F6E2D1292FC0100002C4F70 /* MCCSettingsView.swift in Sources */,
 				F6E2D12D2FC0100002C4F70 /* MCCSettingsController.swift in Sources */,
 				F6E2E0A12FC0200002C4F70 /* MCCProView.swift in Sources */,
@@ -1046,6 +1070,9 @@
 				F6E2C2B62FC0030002C4F70 /* MCCDeleteConfirmPopController.swift in Sources */,
 				F6E2D1222FC0100002C4F70 /* MCCFeedDetailView.swift in Sources */,
 				F6E2D1262FC0100002C4F70 /* MCCFeedDetailController.swift in Sources */,
+				F6E2D13032FC0100002C4F70 /* MCCFeedOptionPopController.swift in Sources */,
+				F6E2D13082FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */,
+				F6E2D131D2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift in Sources */,
 				F6E2D12A2FC0100002C4F70 /* MCCSettingsView.swift in Sources */,
 				F6E2D12E2FC0100002C4F70 /* MCCSettingsController.swift in Sources */,
 				F6E2E0A22FC0200002C4F70 /* MCCProView.swift in Sources */,
@@ -1096,6 +1123,9 @@
 				F6E2C2B72FC0030002C4F70 /* MCCDeleteConfirmPopController.swift in Sources */,
 				F6E2D1232FC0100002C4F70 /* MCCFeedDetailView.swift in Sources */,
 				F6E2D1272FC0100002C4F70 /* MCCFeedDetailController.swift in Sources */,
+				F6E2D13042FC0100002C4F70 /* MCCFeedOptionPopController.swift in Sources */,
+				F6E2D13092FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */,
+				F6E2D131E2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift in Sources */,
 				F6E2D12B2FC0100002C4F70 /* MCCSettingsView.swift in Sources */,
 				F6E2D12F2FC0100002C4F70 /* MCCSettingsController.swift in Sources */,
 				F6E2E0A32FC0200002C4F70 /* MCCProView.swift in Sources */,
