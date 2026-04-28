@@ -7,6 +7,7 @@ import SDWebImage
 import PhotosUI
 import Photos
 import AVFoundation
+import KTVHTTPCache
 
 public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView, MCCEmptyViewModel> {
 
@@ -16,15 +17,13 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     private var mcvc_mp4Player: AVPlayer?
     private var mcvc_mp4PeriodicObserver: Any?
     private var mcvc_mp4EndObserver: NSObjectProtocol?
-    private var mcvc_resolutionIndex: Int = 1
+    private var mcvc_resolutionIndex: Int = 0
     private var mcvc_durationIsTen: Bool = false
     private var mcvc_modeIndex: Int = 0
-    private var mcvc_didHydrateRecentCharacterPhotoFromLibrary = false
-    private var mcvc_characterCircleImages: [UIImage?] = [nil, nil]
 
-    private var mcvc_navCreditsText: String = "9999"
+    private var mcvc_characterCircleImages: [UIImage?] = [nil]
 
-    private weak var mcvc_navCreditsBarButton: UIButton?
+    private var mcvc_navCreditsBarButton: UIButton?
 
     public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
@@ -59,7 +58,11 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         navigationItem.leftBarButtonItems = nil
         navigationItem.leftBarButtonItem = back
 
-        let creditsBar = MCCRootTabNavChrome.feedCreditsBarButtonItem(amount: mcvc_navCreditsText)
+        let creditsBar = MCCRootTabNavChrome.feedCreditsBarButtonItem(
+            amount: mcvc_navCreditsDisplayText(),
+            target: self,
+            action: #selector(mcvc_navCreditsTapped)
+        )
         mcvc_navCreditsBarButton = creditsBar.customView as? UIButton
 
         let betweenCreditsAndReport = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
@@ -78,6 +81,21 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     }
 
     @objc
+    private func mcvc_navCreditsTapped() {
+        let vc = MCCProController()
+        navigationController?.pushViewController(vc, animated: true)
+    }
+
+    private func mcvc_navCreditsDisplayText() -> String {
+        let n = max(0, MCCAccountService.shared.currentUser.value?.pointsBalance ?? 0)
+        return NumberFormatter.localizedString(from: NSNumber(value: n), number: .decimal)
+    }
+
+    private func mcvc_refreshNavCreditsDisplay() {
+        mcvc_navCreditsBarButton?.setTitle(mcvc_navCreditsDisplayText(), for: .normal)
+    }
+
+    @objc
     private func mcvc_reportTapped() {
     }
 
@@ -89,6 +107,14 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
     public override func mcvc_bind() {
         super.mcvc_bind()
+        MCCAccountService.shared.currentUser
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.mcvc_refreshNavCreditsDisplay()
+            }
+            .store(in: &cancellables)
+
+        mcvc_applyCharacterRecentVisibility()
         let v = contentView
         v.mcvw_resolutionPill.addTarget(self, action: #selector(mcvc_resolutionTapped), for: .touchUpInside)
         v.mcvw_durationPill.addTarget(self, action: #selector(mcvc_durationTapped), for: .touchUpInside)
@@ -98,19 +124,45 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         v.mcvw_muteButton.addTarget(self, action: #selector(mcvc_muteTapped), for: .touchUpInside)
         v.mcvw_favoriteButton.addTarget(self, action: #selector(mcvc_favoriteTapped), for: .touchUpInside)
         v.mcvw_characterAlbumButton.addTarget(self, action: #selector(mcvc_characterAlbumTapped), for: .touchUpInside)
-        for (ix, slot) in v.mcvw_characterCircleSlots.enumerated() {
+        mcvc_bindCharacterCircleRemoveButtons()
+        mcvc_refreshContinueButtonState()
+    }
+
+    private func mcvc_bindCharacterCircleRemoveButtons() {
+        for (ix, slot) in contentView.mcvw_characterCircleSlots.enumerated() {
             slot.mcvw_removeButton.tag = ix
+            slot.mcvw_removeButton.removeTarget(nil, action: nil, for: .allEvents)
             slot.mcvw_removeButton.addTarget(self, action: #selector(mcvc_characterCircleRemoveTapped(_:)), for: .touchUpInside)
+        }
+    }
+
+    private func mcvc_applyPresetGallerySlotsFromFeedItem() {
+        let pg = mcvc_feedItem?.presetGallery ?? []
+        let n = max(1, pg.count)
+        contentView.mcvw_reloadPresetGallerySlotUI(slotCount: n, entries: pg)
+        mcvc_resizeCharacterSlotImages(count: n)
+        mcvc_bindCharacterCircleRemoveButtons()
+    }
+
+    private func mcvc_resizeCharacterSlotImages(count: Int) {
+        let n = max(1, count)
+        guard mcvc_characterCircleImages.count != n else { return }
+        if mcvc_characterCircleImages.count < n {
+            mcvc_characterCircleImages += Array(repeating: nil, count: n - mcvc_characterCircleImages.count)
+        } else {
+            mcvc_characterCircleImages = Array(mcvc_characterCircleImages.prefix(n))
         }
     }
 
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        mcvc_applyCharacterRecentVisibility()
         let rawId = mcvc_feedItem?.itemId ?? ""
         let trimmed = rawId.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, isMovingToParent else { return }
 
-        mcvc_resolutionIndex = 1
+        mcvc_resolutionIndex = 0
+        mcvc_durationIsTen = false
         mcvc_modeIndex = 0
 
         let needsHud = !mcvc_hasLocalPreviewMedia()
@@ -135,12 +187,94 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     }
 
     private func mcvc_applyStaticCopy() {
+        mcvc_applyCharacterRecentVisibility()
         let v = contentView
-        mcvc_navCreditsText = "9999"
-        mcvc_navCreditsBarButton?.setTitle(mcvc_navCreditsText, for: .normal)
-        v.mcvw_continueButton.setTitle("Continue + 50", for: .normal)
+        mcvc_refreshNavCreditsDisplay()
         v.mcvw_characterTitleLabel.text = "Character"
-        v.mcvw_favoriteCountLabel.text = "1,024"
+        let likes = max(0, mcvc_feedItem?.likesCount ?? 0)
+        v.mcvw_favoriteCountLabel.text = NumberFormatter.localizedString(from: NSNumber(value: likes), number: .decimal)
+        mcvc_applyPresetGallerySlotsFromFeedItem()
+        mcvc_syncCharacterCirclesAppearance()
+    }
+
+    private func mcvc_characterSlotsFullyFilled() -> Bool {
+        !mcvc_characterCircleImages.isEmpty && !mcvc_characterCircleImages.contains(where: { $0 == nil })
+    }
+
+    private func mcvc_refreshContinueButtonState() {
+        let v = contentView
+        let cost = mcvc_feedItem?.pointCost ?? 50
+        let filled = mcvc_characterSlotsFullyFilled()
+        let enTitle = mcvc_continueButtonAttributedTitle(pointCost: cost, muted: false)
+        let disTitle = mcvc_continueButtonAttributedTitle(pointCost: cost, muted: true)
+        v.mcvw_continueButton.setAttributedTitle(enTitle, for: .normal)
+        v.mcvw_continueButton.setAttributedTitle(disTitle, for: .disabled)
+        v.mcvw_continueButton.isEnabled = filled
+        v.mcvw_continueButton.backgroundColor = filled ? UIColor(hex: "0077FF")! : UIColor.white.withAlphaComponent(0.06)
+    }
+
+    private func mcvc_continueButtonAttributedTitle(pointCost: Int, muted: Bool) -> NSAttributedString {
+        let font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        let color = muted ? UIColor.white.withAlphaComponent(0.24) : UIColor.white
+        let out = NSMutableAttributedString()
+        out.append(NSAttributedString(string: "Continue", attributes: [
+            .font: font,
+            .foregroundColor: color
+        ]))
+        out.append(NSAttributedString(string: " ", attributes: [
+            .font: font,
+            .foregroundColor: color
+        ]))
+        if let base = UIImage(named: "ic_cm_credits") {
+            let att = NSTextAttachment()
+            if muted {
+                att.image = mcvc_imageWithAlpha(base, alpha: 0.24)
+            } else {
+                att.image = base.withRenderingMode(.alwaysOriginal)
+            }
+            let h: CGFloat = 18
+            let scale = max(h / base.size.height, 0.001)
+            let w = base.size.width * scale
+            att.bounds = CGRect(x: 0, y: (font.capHeight - h) / 2 - font.descender / 3, width: w, height: h)
+            out.append(NSAttributedString(attachment: att))
+        }
+        out.append(NSAttributedString(string: " ", attributes: [
+            .font: font,
+            .foregroundColor: color
+        ]))
+        out.append(NSAttributedString(string: "\(pointCost)", attributes: [
+            .font: font,
+            .foregroundColor: color
+        ]))
+        return out
+    }
+
+    private func mcvc_imageWithAlpha(_ image: UIImage, alpha: CGFloat) -> UIImage {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = image.scale
+        format.opaque = false
+        let r = UIGraphicsImageRenderer(size: image.size, format: format)
+        return r.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: image.size), blendMode: .normal, alpha: alpha)
+        }
+    }
+
+    /// 远程 MP4：`AVURLAsset` + `PreferPreciseDuration=false` + 缓冲策略边下边播；经 `KTVHTTPCache` 代理 URL 走时移缓存。
+    /// （仍依赖 CDN 支持 `Accept-Ranges`/`206` 与 moov 前置等。）
+    private func mcvc_remoteMp4StreamingPlayer(url: URL) -> AVPlayer {
+        /// `bindToLocalhost: false` 与官方 README 一致，便于 AirPlay / 非同设备输出；仅本地预览时也可为 `true`。
+        let playURL = KTVHTTPCache.proxyURL(withOriginalURL: url, bindToLocalhost: false) as URL
+        let assetOpts: [String: Any] = [
+            AVURLAssetPreferPreciseDurationAndTimingKey: false,
+        ]
+        let asset = AVURLAsset(url: playURL, options: assetOpts)
+        let item = AVPlayerItem(asset: asset)
+        item.preferredForwardBufferDuration = 4
+        let player = AVPlayer(playerItem: item)
+        player.automaticallyWaitsToMinimizeStalling = false
+        player.isMuted = true
+        player.actionAtItemEnd = .pause
+        return player
     }
 
     private func mcvc_applyDetailMedia(item: MCSFeedItem, webpHandoff: MCCWebpPlaybackHandoff?, thumbnailPixelSize: CGSize) {
@@ -169,10 +303,8 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
             v.mcvw_webpImageView.image = nil
             v.mcvw_webpImageView.isHidden = true
 
-            let player = AVPlayer(url: mp4URL)
+            let player = mcvc_remoteMp4StreamingPlayer(url: mp4URL)
             mcvc_mp4Player = player
-            player.isMuted = true
-            player.actionAtItemEnd = .pause
 
             v.mcvw_bindMp4Playback(player: player, surfaceVisible: true)
             v.mcvw_progressView.progress = 0
@@ -312,6 +444,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
     @objc
     private func mcvc_continueTapped() {
+        guard mcvc_characterSlotsFullyFilled() else { return }
         mcvc_presentGenerating()
     }
 
@@ -375,6 +508,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         }
         let nextEmpty = mcvc_characterCircleImages.indices.first { mcvc_characterCircleImages[$0] == nil }
         v.mcvw_applyCharacterCircleFocus(nextEmptySlotIndex: nextEmpty)
+        mcvc_refreshContinueButtonState()
     }
 
     private func mcvc_offerPickedCharacterImageToSlots(_ img: UIImage) {
@@ -395,9 +529,13 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         present(picker, animated: true)
     }
 
+    private func mcvc_applyCharacterRecentVisibility() {
+        let visible = !MCCRecentPickedPhotoStore.localIdentifiers.isEmpty
+        contentView.mcvw_configureCharacterRecentTileVisible(visible)
+    }
+
     private func mcvc_hydrateRecentCharacterPhotoIfNeeded() {
-        guard !mcvc_didHydrateRecentCharacterPhotoFromLibrary else { return }
-        mcvc_didHydrateRecentCharacterPhotoFromLibrary = true
+        guard !contentView.mcvw_characterRecentTile.isHidden else { return }
         let v = contentView.mcvw_characterRecentImageView
         guard v.image == nil, let id = MCCRecentPickedPhotoStore.localIdentifiers.first else { return }
         let assets = PHAsset.fetchAssets(withLocalIdentifiers: [id], options: nil)
@@ -431,6 +569,7 @@ extension MCCFeedDetailController: PHPickerViewControllerDelegate {
         if let id = r.assetIdentifier {
             MCCRecentPickedPhotoStore.record(localIdentifier: id)
         }
+        mcvc_applyCharacterRecentVisibility()
         let prov = r.itemProvider
         guard prov.canLoadObject(ofClass: UIImage.self) else { return }
         _ = prov.loadObject(ofClass: UIImage.self) { [weak self] object, _ in
@@ -471,7 +610,6 @@ private extension MCCFeedDetailController {
 
     func mcvc_tryApplyOptimisticDetailFromCache() {
         guard mcvc_hasLocalPreviewMedia(), let item = mcvc_feedItem else { return }
-        mcvc_durationIsTen = item.tenSecondMode
         let colW = max(1, mcvc_effectiveDetailColumnWidth())
         let thumbPx = MCCShotsListItemMetrics.feedImageThumbnailPixelSize(columnWidthPoints: colW)
         mcvc_applyDetailMedia(item: item, webpHandoff: mcvc_webpHandoff, thumbnailPixelSize: thumbPx)
@@ -499,7 +637,6 @@ private extension MCCFeedDetailController {
                 guard let self else { return }
                 self.mcvc_feedItem = item
                 self.mcvc_webpHandoff = nil
-                self.mcvc_durationIsTen = item.tenSecondMode
                 let colW = max(1, self.mcvc_effectiveDetailColumnWidth())
                 let thumbPx = MCCShotsListItemMetrics.feedImageThumbnailPixelSize(columnWidthPoints: colW)
                 self.mcvc_applyDetailMedia(item: item, webpHandoff: nil, thumbnailPixelSize: thumbPx)

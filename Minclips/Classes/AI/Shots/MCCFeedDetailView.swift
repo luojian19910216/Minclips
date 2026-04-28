@@ -3,6 +3,7 @@ import Common
 import SnapKit
 import SDWebImage
 import AVFoundation
+import Data
 
 private final class MCCFeedDetailMp4SurfaceView: UIView {
 
@@ -62,13 +63,15 @@ public final class MCCFeedDetailCharacterAvatarSlotView: UIView {
     }()
 
     public let mcvw_removeButton: UIButton = {
-        let b = UIButton(type: .system)
-        b.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+        let b = UIButton(type: .custom)
+        b.setImage(UIImage(named: "ic_cm_delete")?.withRenderingMode(.alwaysOriginal), for: .normal)
         b.tintColor = UIColor(white: 0.08, alpha: 0.92)
         b.backgroundColor = UIColor.white.withAlphaComponent(0.2)
-        b.layer.cornerRadius = 9
-        b.clipsToBounds = true
+        b.imageView?.contentMode = .scaleAspectFit
+        b.contentHorizontalAlignment = .fill
+        b.contentVerticalAlignment = .fill
         b.adjustsImageWhenHighlighted = false
+        b.imageEdgeInsets = .zero
         return b
     }()
 
@@ -76,14 +79,6 @@ public final class MCCFeedDetailCharacterAvatarSlotView: UIView {
 
     private let mcvw_outerDiameter: CGFloat
     private let mcvw_innerImageDiameter: CGFloat
-
-    public override func layoutSubviews() {
-        super.layoutSubviews()
-        let oh = bounds.width > 1 ? bounds.width * 0.5 : 0
-        layer.cornerRadius = oh
-        mcvw_imageView.layer.cornerRadius = mcvw_innerImageDiameter * 0.5
-        layer.cornerCurve = .continuous
-    }
 
     public init(outerDiameter: CGFloat, innerImageDiameter: CGFloat) {
         mcvw_outerDiameter = outerDiameter
@@ -101,8 +96,6 @@ public final class MCCFeedDetailCharacterAvatarSlotView: UIView {
     }
 
     private func mcvw_setup() {
-        clipsToBounds = true
-
         let ph = UIImage(systemName: "person.fill")?.withRenderingMode(.alwaysTemplate)
         mcvw_placeholderView.image = ph
         mcvw_placeholderView.tintColor = UIColor.white.withAlphaComponent(0.35)
@@ -110,6 +103,9 @@ public final class MCCFeedDetailCharacterAvatarSlotView: UIView {
         addSubview(mcvw_imageView)
         addSubview(mcvw_placeholderView)
         addSubview(mcvw_removeButton)
+
+        /// 必须为 `false`，否则圆形 `layer.mask` 等效裁剪会把右上角删除键裁掉一截。
+        clipsToBounds = false
 
         mcvw_imageView.layer.masksToBounds = true
         mcvw_imageView.snp.makeConstraints { make in
@@ -126,13 +122,23 @@ public final class MCCFeedDetailCharacterAvatarSlotView: UIView {
         snp.makeConstraints { make in
             make.width.height.equalTo(mcvw_outerDiameter)
         }
+        let removeSide: CGFloat = 20
         mcvw_removeButton.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(3)
-            make.trailing.equalToSuperview().offset(-3)
-            make.size.equalTo(18)
+            make.top.equalToSuperview().offset(2)
+            make.trailing.equalToSuperview().offset(-2)
+            make.size.equalTo(removeSide)
         }
+    }
 
-        clipsToBounds = true
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        let oh = bounds.width > 1 ? bounds.width * 0.5 : 0
+        layer.cornerRadius = oh
+        mcvw_imageView.layer.cornerRadius = mcvw_innerImageDiameter * 0.5
+        layer.cornerCurve = .continuous
+        let r = min(mcvw_removeButton.bounds.width, mcvw_removeButton.bounds.height) * 0.5
+        mcvw_removeButton.layer.cornerRadius = r
+        mcvw_removeButton.clipsToBounds = true
     }
 
     public func mcvw_apply(image: UIImage?) {
@@ -248,7 +254,7 @@ public final class MCCFeedDetailView: MCCBaseView {
         return l
     }()
     public let mcvw_continueButton: UIButton = {
-        let b = UIButton(type: .system)
+        let b = UIButton(type: .custom)
         b.setTitleColor(.white, for: .normal)
         b.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
         b.backgroundColor = UIColor(hex: "0077FF")!
@@ -279,10 +285,9 @@ public final class MCCFeedDetailView: MCCBaseView {
         return s
     }()
 
-    public let mcvw_characterCircleSlots: [MCCFeedDetailCharacterAvatarSlotView] = [
-        MCCFeedDetailCharacterAvatarSlotView(outerDiameter: 64, innerImageDiameter: 56),
-        MCCFeedDetailCharacterAvatarSlotView(outerDiameter: 64, innerImageDiameter: 56)
-    ]
+    public private(set) var mcvw_characterCircleSlots: [MCCFeedDetailCharacterAvatarSlotView] = []
+
+    private var mcvw_presetGalleryTileWraps: [UIView] = []
 
     private let mcvw_characterSlotsScrollView: UIScrollView = {
         let s = UIScrollView()
@@ -316,8 +321,6 @@ public final class MCCFeedDetailView: MCCBaseView {
         l.textAlignment = .center
         return l
     }()
-
-    public let mcvw_characterPlaceholderViews: [UIView] = MCCFeedDetailView.mcvw_makePlaceholderBoxes(count: 5)
 
     public override func mcvw_setupUI() {
         backgroundColor = .clear
@@ -374,10 +377,6 @@ public final class MCCFeedDetailView: MCCBaseView {
         mcvw_styleRoundPill(mcvw_durationPill, iconNamed: "ic_cm_duration", textLabel: mcvw_durationValueLabel)
         mcvw_styleRoundPill(mcvw_modePill, iconNamed: "ic_cm_audio", textLabel: mcvw_modeValueLabel)
 
-        for slot in mcvw_characterCircleSlots {
-            mcvw_characterCirclesStack.addArrangedSubview(slot)
-        }
-
         let album = mcvw_characterAlbumButton
         album.backgroundColor = UIColor.white.withAlphaComponent(0.06)
         album.layer.cornerRadius = 10
@@ -393,6 +392,7 @@ public final class MCCFeedDetailView: MCCBaseView {
         mcvw_characterRecentTile.clipsToBounds = true
         mcvw_characterRecentTile.layer.borderWidth = 1
         mcvw_characterRecentTile.layer.borderColor = UIColor.white.withAlphaComponent(0.06).cgColor
+        mcvw_characterRecentTile.isHidden = true
 
         let recentFade = MCCBottomBlackFadeGradientView(frame: .zero)
 
@@ -425,18 +425,8 @@ public final class MCCFeedDetailView: MCCBaseView {
         mcvw_characterSlotsStack.addArrangedSubview(album)
         mcvw_characterSlotsStack.addArrangedSubview(mcvw_characterRecentTile)
 
-        var placeTag = 0
-        for p in mcvw_characterPlaceholderViews {
-            mcvw_applyGalleryTileIntrinsicSize(p, width: tileWidth, height: tileHeight)
-            p.layer.cornerRadius = 10
-            p.clipsToBounds = true
-            p.layer.borderWidth = 1
-            p.layer.borderColor = UIColor.white.withAlphaComponent(0.06).cgColor
-            p.backgroundColor = UIColor.white.withAlphaComponent(0.06)
-            p.tag = placeTag
-            placeTag += 1
-            mcvw_characterSlotsStack.addArrangedSubview(p)
-        }
+        mcvw_reloadPresetGallerySlotUI(slotCount: 1, entries: [])
+
         mcvw_characterSlotsScrollView.addSubview(mcvw_characterSlotsStack)
         mcvw_characterSlotsStack.snp.makeConstraints { make in
             make.leading.equalTo(mcvw_characterSlotsScrollView.contentLayoutGuide.snp.leading).offset(12)
@@ -521,6 +511,77 @@ public final class MCCFeedDetailView: MCCBaseView {
         }
     }
 
+    public func mcvw_reloadPresetGallerySlotUI(slotCount raw: Int, entries: [MCSFeedPresetGalleryEntry]) {
+        let tileWidth: CGFloat = 72
+        let tileHeight: CGFloat = 96
+        let n = max(1, raw)
+
+        mcvw_characterCirclesStack.arrangedSubviews.forEach {
+            mcvw_characterCirclesStack.removeArrangedSubview($0)
+            $0.removeFromSuperview()
+        }
+        var built: [MCCFeedDetailCharacterAvatarSlotView] = []
+        for _ in 0 ..< n {
+            let slot = MCCFeedDetailCharacterAvatarSlotView(outerDiameter: 64, innerImageDiameter: 56)
+            mcvw_characterCirclesStack.addArrangedSubview(slot)
+            built.append(slot)
+        }
+        mcvw_characterCircleSlots = built
+
+        for w in mcvw_presetGalleryTileWraps {
+            mcvw_characterSlotsStack.removeArrangedSubview(w)
+            w.removeFromSuperview()
+        }
+        mcvw_presetGalleryTileWraps.removeAll()
+
+        for i in 0 ..< n {
+            let wrap = UIView()
+            wrap.clipsToBounds = true
+            wrap.layer.cornerRadius = 10
+            wrap.layer.borderWidth = 1
+            wrap.layer.borderColor = UIColor.white.withAlphaComponent(0.06).cgColor
+            wrap.backgroundColor = UIColor.white.withAlphaComponent(0.06)
+
+            let hintIv = UIImageView()
+            hintIv.contentMode = .scaleAspectFill
+            hintIv.clipsToBounds = true
+            hintIv.backgroundColor = UIColor.white.withAlphaComponent(0.04)
+
+            let caption = UILabel()
+            caption.font = .systemFont(ofSize: 11, weight: .regular)
+            caption.textColor = UIColor.white.withAlphaComponent(0.72)
+            caption.textAlignment = .center
+            caption.numberOfLines = 2
+            if i < entries.count {
+                let t = entries[i].presetDescription.trimmingCharacters(in: .whitespacesAndNewlines)
+                caption.text = t.isEmpty ? nil : t
+            } else {
+                caption.text = nil
+            }
+            caption.isHidden = (caption.text?.isEmpty ?? true)
+
+            wrap.addSubview(hintIv)
+            wrap.addSubview(caption)
+            hintIv.snp.makeConstraints { $0.edges.equalToSuperview() }
+            caption.snp.makeConstraints { make in
+                make.leading.trailing.equalToSuperview().inset(4)
+                make.bottom.equalToSuperview().offset(-8)
+            }
+
+            if i < entries.count {
+                let libs = entries[i].imageLibrary
+                let rawUrl = libs.first?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+                if !rawUrl.isEmpty, let u = URL(string: rawUrl) {
+                    hintIv.sd_setImage(with: u, placeholderImage: nil)
+                }
+            }
+
+            mcvw_applyGalleryTileIntrinsicSize(wrap, width: tileWidth, height: tileHeight)
+            mcvw_characterSlotsStack.addArrangedSubview(wrap)
+            mcvw_presetGalleryTileWraps.append(wrap)
+        }
+    }
+
     private func mcvw_applyGalleryTileIntrinsicSize(_ v: UIView, width: CGFloat, height: CGFloat) {
         v.snp.makeConstraints { make in
             make.width.equalTo(width)
@@ -546,20 +607,16 @@ public final class MCCFeedDetailView: MCCBaseView {
         }
     }
 
+    public func mcvw_configureCharacterRecentTileVisible(_ visible: Bool) {
+        mcvw_characterRecentTile.isHidden = !visible
+        if !visible {
+            mcvw_characterRecentImageView.image = nil
+        }
+    }
+
     public func mcvw_bindMp4Playback(player: AVPlayer?, surfaceVisible: Bool) {
         mcvw_mp4SurfaceView.mcvw_playerLayer.player = player
         mcvw_mp4SurfaceView.isHidden = !surfaceVisible
-    }
-
-    private static func mcvw_makePlaceholderBoxes(count: Int) -> [UIView] {
-        (0..<count).map { _ in
-            let v = UIView()
-            v.backgroundColor = UIColor.white.withAlphaComponent(0.1)
-            v.layer.cornerRadius = 13
-            v.clipsToBounds = true
-            v.isUserInteractionEnabled = false
-            return v
-        }
     }
 
 }

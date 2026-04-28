@@ -8,6 +8,7 @@ import CoreTelephony
 import Combine
 import CombineExt
 import MJRefresh
+import KTVHTTPCache
 
 @main
 public class MCCAppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,6 +18,8 @@ public class MCCAppDelegate: UIResponder, UIApplicationDelegate {
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         MCCViewControllerCore.swizzle()
+
+        MCCAppDelegate.mcva_startKTVHTTPCache()
 
         MCCLanguageTool.languages = [.en]
         MCCLanguageTool.defaultLanguage = .en
@@ -71,6 +74,20 @@ public class MCCAppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 extension MCCAppDelegate {
+
+    /// Feed 等处 MP4 经 `KTVHTTPCache` 本地代理走时移缓存（边下边播 + 二次进入命中磁盘）。
+    private static func mcva_startKTVHTTPCache() {
+        guard !KTVHTTPCache.proxyIsRunning() else {
+            return
+        }
+        /// ObjC `-proxyStart:` 对外为 `NSError **`，Swift 映射为 `throws`。
+        do {
+            try KTVHTTPCache.proxyStart()
+            KTVHTTPCache.cacheSetMaxCacheLength(Int64(512 * 1024 * 1024))
+        } catch {
+            // 代理未启动时仍可走直连 MP4，见 `proxyURL(withOriginalURL:)` 文档。
+        }
+    }
 
     private func observeNetworkReachability() {
         NetworkReachabilityManager.default?.startListening { status in

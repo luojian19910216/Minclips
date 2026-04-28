@@ -218,7 +218,7 @@ public enum MCCRootTabNavChrome {
     }
 
     /// Feed 详情：导航栏积分胶囊 —— `ic_cm_credits` + 数值（排版与 `proBarButtonItem` 同套路）。
-    public static func feedCreditsBarButtonItem(amount: String) -> UIBarButtonItem {
+    public static func feedCreditsBarButtonItem(amount: String, target: Any? = nil, action: Selector? = nil) -> UIBarButtonItem {
         let b = UIButton(type: .custom)
         b.frame = CGRect(x: 0, y: 0, width: 76, height: 44)
         b.setImage(UIImage(named: "ic_cm_credits")?.withRenderingMode(.alwaysOriginal), for: .normal)
@@ -230,6 +230,9 @@ public enum MCCRootTabNavChrome {
         b.layer.cornerRadius = 22
         b.clipsToBounds = true
         b.adjustsImageWhenHighlighted = false
+        if let target, let action {
+            b.addTarget(target, action: action, for: .touchUpInside)
+        }
         return UIBarButtonItem(customView: b)
     }
 
