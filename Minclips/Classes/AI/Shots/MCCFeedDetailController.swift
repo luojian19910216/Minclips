@@ -14,6 +14,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     public var mcvc_feedItem: MCSFeedItem!
     public var mcvc_webpHandoff: MCCWebpPlaybackHandoff?
     private var mcvc_feedProfileCancellable: AnyCancellable?
+    private var mcvc_integralCancellable: AnyCancellable?
     private var mcvc_mp4Player: AVPlayer?
     private var mcvc_mp4PeriodicObserver: Any?
     private var mcvc_mp4EndObserver: NSObjectProtocol?
@@ -34,6 +35,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
     deinit {
         mcvc_feedProfileCancellable?.cancel()
+        mcvc_integralCancellable?.cancel()
         mcvc_removeMp4ObserversAndPlayer()
     }
 
@@ -93,6 +95,21 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
     private func mcvc_refreshNavCreditsDisplay() {
         mcvc_navCreditsBarButton?.setTitle(mcvc_navCreditsDisplayText(), for: .normal)
+    }
+
+    /// 进入详情拉取 `integralStatement`，更新本地 `MCSUser.pointsBalance`（`MCCAccountService` 落库 + 广播，导航栏积分自动刷新）。
+    private func mcvc_refreshIntegralStatement() {
+        guard MCCAccountService.shared.currentUser.value != nil else { return }
+        mcvc_integralCancellable?.cancel()
+        mcvc_integralCancellable = MCCUmAPIManager.shared.integralStatement()
+            .sink(
+                receiveCompletion: { _ in },
+                receiveValue: { balance in
+                    MCCAccountService.shared.update {
+                        $0.pointsBalance = max(0, balance)
+                    }
+                }
+            )
     }
 
     @objc
@@ -156,6 +173,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        mcvc_refreshIntegralStatement()
         mcvc_applyCharacterRecentVisibility()
         let rawId = mcvc_feedItem?.itemId ?? ""
         let trimmed = rawId.trimmingCharacters(in: .whitespacesAndNewlines)
