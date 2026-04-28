@@ -186,7 +186,7 @@ public final class MCCFeedDetailView: MCCBaseView {
         return b
     }()
     public let mcvw_favoriteButton: UIButton = {
-        let b = UIButton(type: .system)
+        let b = UIButton(type: .custom)
         b.setImage(UIImage(named: "ic_cm_dislike")?.withRenderingMode(.alwaysOriginal), for: .normal)
         b.adjustsImageWhenHighlighted = false
         return b

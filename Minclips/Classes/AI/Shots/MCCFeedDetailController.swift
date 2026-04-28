@@ -15,6 +15,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     public var mcvc_webpHandoff: MCCWebpPlaybackHandoff?
     private var mcvc_feedProfileCancellable: AnyCancellable?
     private var mcvc_integralCancellable: AnyCancellable?
+    private var mcvc_favoriteCancellable: AnyCancellable?
     private var mcvc_mp4Player: AVPlayer?
     private var mcvc_mp4PeriodicObserver: Any?
     private var mcvc_mp4EndObserver: NSObjectProtocol?
@@ -36,6 +37,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     deinit {
         mcvc_feedProfileCancellable?.cancel()
         mcvc_integralCancellable?.cancel()
+        mcvc_favoriteCancellable?.cancel()
         mcvc_removeMp4ObserversAndPlayer()
     }
 
@@ -209,8 +211,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         let v = contentView
         mcvc_refreshNavCreditsDisplay()
         v.mcvw_characterTitleLabel.text = "Character"
-        let likes = max(0, mcvc_feedItem?.likesCount ?? 0)
-        v.mcvw_favoriteCountLabel.text = NumberFormatter.localizedString(from: NSNumber(value: likes), number: .decimal)
+        mcvc_refreshFavoriteChrome()
         mcvc_applyPresetGallerySlotsFromFeedItem()
         mcvc_syncCharacterCirclesAppearance()
     }
@@ -432,8 +433,52 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         }
     }
 
+    private func mcvc_refreshFavoriteChrome() {
+        let v = contentView
+        let liked = mcvc_feedItem?.likedByUser ?? false
+        let iconName = liked ? "ic_cm_like" : "ic_cm_dislike"
+        v.mcvw_favoriteButton.setImage(UIImage(named: iconName)?.withRenderingMode(.alwaysOriginal), for: .normal)
+        let likes = max(0, mcvc_feedItem?.likesCount ?? 0)
+        v.mcvw_favoriteCountLabel.text = NumberFormatter.localizedString(from: NSNumber(value: likes), number: .decimal)
+    }
+
     @objc
     private func mcvc_favoriteTapped() {
+        guard let item = mcvc_feedItem else { return }
+        let ref = item.itemId.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !ref.isEmpty else { return }
+
+        mcvc_favoriteCancellable?.cancel()
+
+        let wasLiked = item.likedByUser
+        var rq = MCSFeedDetailRequest()
+        rq.templateRef = ref
+
+        let pipeline: AnyPublisher<MCSEmpty, MCENetworkError> =
+            wasLiked ? MCCFeedAPIManager.shared.favorCancel(with: rq) : MCCFeedAPIManager.shared.favorApply(with: rq)
+
+        contentView.mcvw_favoriteButton.isUserInteractionEnabled = false
+        mcvc_favoriteCancellable = pipeline
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] completion in
+                guard let self else { return }
+                self.contentView.mcvw_favoriteButton.isUserInteractionEnabled = true
+                if case let .failure(err) = completion {
+                    MCCToastManager.showToast(err.localizedDescription, in: self.view)
+                }
+            }, receiveValue: { [weak self] _ in
+                guard let self else { return }
+                var next = item
+                if wasLiked {
+                    next.likedByUser = false
+                    next.likesCount = max(0, next.likesCount - 1)
+                } else {
+                    next.likedByUser = true
+                    next.likesCount = next.likesCount + 1
+                }
+                self.mcvc_feedItem = next
+                self.mcvc_refreshFavoriteChrome()
+            })
     }
 
     private func mcvc_syncBottomBar() {
