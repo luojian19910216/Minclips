@@ -113,7 +113,8 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     }
 
     private func mcvc_refreshNavCreditsDisplay() {
-        mcvc_navCreditsBarButton?.setTitle(mcvc_navCreditsDisplayText(), for: .normal)
+        let t = mcvc_navCreditsDisplayText()
+        MCCRootTabNavChrome.updateFeedCreditsBarButtonSizing(mcvc_navCreditsBarButton, amount: t)
     }
 
     /// 进入详情拉取 `integralStatement`，更新本地 `MCSUser.pointsBalance`（`MCCAccountService` 落库 + 广播，导航栏积分自动刷新）。
@@ -683,7 +684,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         } else {
             firstPreviewURL = nil
         }
-
+        
         let qualityRaw = mcvc_resolutionIndex
         let durationRaw = mcvc_durationIsTen ? 10 : 5
         mcvc_composeSeedCancellable?.cancel()

@@ -217,14 +217,14 @@ public enum MCCRootTabNavChrome {
         return UIBarButtonItem(image: UIImage(named: "ic_nav_setting")?.withRenderingMode(.alwaysTemplate), style: .plain, target: target, action: action)
     }
 
-    /// Feed 详情：导航栏积分胶囊 —— `ic_cm_credits` + 数值（排版与 `proBarButtonItem` 同套路）。
+    /// Feed 详情：导航栏积分胶囊 —— `ic_cm_credits` + 数值（宽度随位数变化，避免固定 76 导致 `...`）。
     public static func feedCreditsBarButtonItem(amount: String, target: Any? = nil, action: Selector? = nil) -> UIBarButtonItem {
         let b = UIButton(type: .custom)
-        b.frame = CGRect(x: 0, y: 0, width: 76, height: 44)
         b.setImage(UIImage(named: "ic_cm_credits")?.withRenderingMode(.alwaysOriginal), for: .normal)
         b.setTitle(amount, for: .normal)
         b.setTitleColor(.white, for: .normal)
         b.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        b.titleLabel?.lineBreakMode = .byClipping
         b.contentEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 17)
         b.titleEdgeInsets = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: -5)
         b.layer.cornerRadius = 22
@@ -233,7 +233,24 @@ public enum MCCRootTabNavChrome {
         if let target, let action {
             b.addTarget(target, action: action, for: .touchUpInside)
         }
+        Self.mcvc_applyFeedCreditsButtonWidth(b)
         return UIBarButtonItem(customView: b)
+    }
+
+    /// 积分数字变更后刷新右侧胶囊宽度（与 `feedCreditsBarButtonItem` 同套 insets）。
+    public static func updateFeedCreditsBarButtonSizing(_ button: UIButton?, amount: String) {
+        guard let b = button else { return }
+        b.setTitle(amount, for: .normal)
+        Self.mcvc_applyFeedCreditsButtonWidth(b)
+    }
+
+    private static func mcvc_applyFeedCreditsButtonWidth(_ b: UIButton) {
+        b.titleLabel?.lineBreakMode = .byClipping
+        b.invalidateIntrinsicContentSize()
+        b.sizeToFit()
+        let w = max(76, ceil(b.bounds.width))
+        b.bounds = CGRect(x: 0, y: 0, width: w, height: 44)
+        b.frame = CGRect(x: 0, y: 0, width: w, height: 44)
     }
 
     /// Feed 详情：导航栏举报 —— `ic_nav_report`，原图着色（不参与导航栏 tint 模板）。
