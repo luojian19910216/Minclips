@@ -20,12 +20,9 @@ public struct MCSRunItem: Codable, MCPDefaultInitializable {
 //    @MCSSafeEnum public var failCode: MCERunFailCode
 //    ///
 //    @MCSSafeString public var failReason: String = ""
-//    ///
-//    @MCSSafeString public var imageUrl: String = ""
-//    ///
-//    @MCSSafeString public var coverUrl: String = ""
-//    ///
-//    @MCSSafeArray public var result: [MCSRunResult]
+    @MCSSafeString public var imageUrl: String = ""
+    @MCSSafeString public var coverUrl: String = ""
+    @MCSSafeArray public var result: [MCSRunResult] = []
 //    ///
 //    @MCSSafeEnum public var clarity: MCEClarity
 //    ///

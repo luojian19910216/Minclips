@@ -11,14 +11,12 @@ public enum MCCOSSImageUploadError: Error {
     case backend(MCENetworkError)
 }
 
-/// `composeSeed` 上传链路：每张图先调 `ossToken` 拿 STS（包含 `objectPath`、`uploadTargetUrl`），再用 AliyunOSS PUT 同一个 key；成功后把完整图片 URL（`uploadTargetUrl` 与 `objectPath` 拼接）交给 `composeSeed.imageList`。
 public final class MCCOSSImageUploader {
 
     public static let shared = MCCOSSImageUploader()
 
     private init() {}
 
-    /// 顺序上传，输出顺序与输入顺序对应（保留 character slot 顺序）。失败立刻终止。
     public func mcvc_uploadCharacterImages(_ images: [UIImage]) -> AnyPublisher<[String], MCCOSSImageUploadError> {
         guard !images.isEmpty else {
             return Just([]).setFailureType(to: MCCOSSImageUploadError.self).eraseToAnyPublisher()
@@ -30,6 +28,32 @@ public final class MCCOSSImageUploader {
                     return Fail(error: .missingObjectKey).eraseToAnyPublisher()
                 }
                 return self.mcvc_uploadOneImage(image)
+            }
+            .collect()
+            .eraseToAnyPublisher()
+    }
+
+    public func mcvc_resolveImageListURLs(
+        images: [UIImage?],
+        existingRemoteURLs: [String?]
+    ) -> AnyPublisher<[String], MCCOSSImageUploadError> {
+        guard !images.isEmpty, images.count == existingRemoteURLs.count else {
+            return Fail(error: .missingImageData).eraseToAnyPublisher()
+        }
+        let n = images.count
+        return Array(0 ..< n).publisher
+            .setFailureType(to: MCCOSSImageUploadError.self)
+            .flatMap(maxPublishers: .max(1)) { [weak self] idx -> AnyPublisher<String, MCCOSSImageUploadError> in
+                let trimmedRemote = existingRemoteURLs[idx]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+                if !trimmedRemote.isEmpty {
+                    return Just(trimmedRemote)
+                        .setFailureType(to: MCCOSSImageUploadError.self)
+                        .eraseToAnyPublisher()
+                }
+                guard let self, let img = images[idx] else {
+                    return Fail(error: .missingImageData).eraseToAnyPublisher()
+                }
+                return self.mcvc_uploadOneImage(img)
             }
             .collect()
             .eraseToAnyPublisher()
@@ -53,7 +77,6 @@ public final class MCCOSSImageUploader {
             .eraseToAnyPublisher()
     }
 
-    /// AliyunOSS `uploadData:` 旧式 block API，避免直接处理 `OSSTask`。
     private func mcvc_putToOSS(data: Data, token: MCSCfOssTokenResponse) -> AnyPublisher<String, MCCOSSImageUploadError> {
         Future<String, MCCOSSImageUploadError> { promise in
             let key = token.objectPath.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -94,7 +117,6 @@ public final class MCCOSSImageUploader {
         .eraseToAnyPublisher()
     }
 
-    /// 将 STS 返回的访问域与对象 key 拼成接口所需的完整 URL（仅 object key 时后端无法拉取图）。
     private static func mcvc_fullImageURL(for token: MCSCfOssTokenResponse) -> String {
         let key = token.objectPath.trimmingCharacters(in: .whitespacesAndNewlines)
         var base = token.uploadTargetUrl.trimmingCharacters(in: .whitespacesAndNewlines)

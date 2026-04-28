@@ -31,6 +31,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     private var mcvc_modeIndex: Int = 0
 
     private var mcvc_characterCircleImages: [UIImage?] = [nil]
+    private var mcvc_characterRemoteImageURLs: [String?] = [nil]
 
     /// 当前选中的上传槽（蓝框）；默认 0，点击图片框或头像圈可切换。
     private var mcvc_activeCharacterSlotIndex: Int = 0
@@ -191,9 +192,12 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
             return
         }
         if mcvc_characterCircleImages.count < n {
-            mcvc_characterCircleImages += Array(repeating: nil, count: n - mcvc_characterCircleImages.count)
+            let addCount = n - mcvc_characterCircleImages.count
+            mcvc_characterCircleImages += Array(repeating: nil, count: addCount)
+            mcvc_characterRemoteImageURLs += Array(repeating: nil, count: addCount)
         } else {
             mcvc_characterCircleImages = Array(mcvc_characterCircleImages.prefix(n))
+            mcvc_characterRemoteImageURLs = Array(mcvc_characterRemoteImageURLs.prefix(n))
         }
         mcvc_activeCharacterSlotIndex = mcvc_clampCharacterSlotIndex(mcvc_activeCharacterSlotIndex)
     }
@@ -243,7 +247,29 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     }
 
     private func mcvc_characterSlotsFullyFilled() -> Bool {
-        !mcvc_characterCircleImages.isEmpty && !mcvc_characterCircleImages.contains(where: { $0 == nil })
+        guard !mcvc_characterCircleImages.isEmpty else { return false }
+        let n = mcvc_characterCircleImages.count
+        guard mcvc_characterRemoteImageURLs.count == n else { return false }
+        for i in mcvc_characterCircleImages.indices {
+            let hasPic = mcvc_characterCircleImages[i] != nil
+            let url = mcvc_characterRemoteImageURLs[i]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            let hasRemote = !url.isEmpty
+            if !hasPic && !hasRemote { return false }
+        }
+        return true
+    }
+
+    public func mcvc_applyRemoteCharacterImageURLs(_ urls: [String]) {
+        guard !urls.isEmpty else { return }
+        guard mcvc_characterCircleImages.count == mcvc_characterRemoteImageURLs.count else { return }
+        let n = min(mcvc_characterCircleImages.count, urls.count)
+        for i in 0 ..< n {
+            let raw = urls[i].trimmingCharacters(in: .whitespacesAndNewlines)
+            mcvc_characterCircleImages[i] = nil
+            mcvc_characterRemoteImageURLs[i] = raw.isEmpty ? nil : raw
+        }
+        mcvc_syncCharacterCirclesAppearance()
+        mcvc_refreshContinueButtonState()
     }
 
     /// 480P → `lowPointsCost`，720P → `pointCost`，1080P → `hiDefPoints`；若某档为 0 则退回 `pointCost`。图生视频且选 10s 时再加 `tenSecPoints`。
@@ -633,21 +659,42 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     @objc
     private func mcvc_continueTapped() {
         guard mcvc_characterSlotsFullyFilled() else { return }
-        let images = mcvc_characterCircleImages.compactMap { $0 }
-        guard !images.isEmpty else { return }
         guard let item = mcvc_feedItem else { return }
         let templateRef = item.itemId.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !templateRef.isEmpty else { return }
         MCCToastManager.showHUD(in: self.view)
-        mcvc_runComposeSeedPipeline(images: images, templateRef: templateRef)
+        mcvc_runComposeSeedPipeline(
+            images: mcvc_characterCircleImages,
+            existingRemoteURLs: mcvc_characterRemoteImageURLs,
+            templateRef: templateRef
+        )
     }
 
-    private func mcvc_runComposeSeedPipeline(images: [UIImage], templateRef: String) {
+    private func mcvc_runComposeSeedPipeline(images: [UIImage?], existingRemoteURLs: [String?], templateRef: String) {
+        guard images.count == existingRemoteURLs.count, !images.isEmpty else {
+            MCCToastManager.hide()
+            return
+        }
+        let firstUIImage = images.first.flatMap { $0 }
+        let tf = existingRemoteURLs.first.flatMap { $0 }?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let firstPreviewURL: String?
+        if firstUIImage == nil, !tf.isEmpty {
+            firstPreviewURL = tf
+        } else {
+            firstPreviewURL = nil
+        }
+
         let qualityRaw = mcvc_resolutionIndex
         let durationRaw = mcvc_durationIsTen ? 10 : 5
         mcvc_composeSeedCancellable?.cancel()
         mcvc_composeSeedCancellable = MCCOSSImageUploader.shared
-            .mcvc_uploadCharacterImages(images)
+            .mcvc_resolveImageListURLs(images: images, existingRemoteURLs: existingRemoteURLs)
+            .handleEvents(receiveOutput: { [weak self] keys in
+                guard let self else { return }
+                for i in keys.indices where i < self.mcvc_characterRemoteImageURLs.count {
+                    self.mcvc_characterRemoteImageURLs[i] = keys[i]
+                }
+            })
             .flatMap { keys -> AnyPublisher<MCSRunItem, MCCOSSImageUploadError> in
                 var rq = MCSComposeSeedRequest()
                 rq.templateRef = templateRef
@@ -663,11 +710,18 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
             .sink(receiveCompletion: { [weak self] completion in
                 guard let self else { return }
                 if case let .failure(err) = completion {
+                    MCCToastManager.hide()
                     let message = self.mcvc_messageForComposeSeedFailure(err)
                     MCCToastManager.showToast(message, in: self.view)
                 }
-            }, receiveValue: { [weak self] _ in
+            }, receiveValue: { [weak self] runItem in
+                MCCToastManager.hide()
                 let sheet = MCCFeedGeneratingSheetController()
+                sheet.mcvc_configure(
+                    userPreview: firstUIImage,
+                    userPreviewFallbackURLString: firstPreviewURL,
+                    seedRunItem: runItem
+                )
                 self?.present(sheet, animated: true)
             })
     }
@@ -737,6 +791,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         let i = sender.tag
         guard (0 ..< mcvc_characterCircleImages.count).contains(i) else { return }
         mcvc_characterCircleImages[i] = nil
+        mcvc_characterRemoteImageURLs[i] = nil
         mcvc_activeCharacterSlotIndex = i
         mcvc_syncCharacterCirclesAppearance()
     }
@@ -747,7 +802,10 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         mcvc_activeCharacterSlotIndex = mcvc_clampCharacterSlotIndex(mcvc_activeCharacterSlotIndex)
         let v = contentView
         for i in mcvc_characterCircleImages.indices {
-            v.mcvw_characterCircleSlots[i].mcvw_apply(image: mcvc_characterCircleImages[i])
+            v.mcvw_characterCircleSlots[i].mcvw_apply(
+                image: mcvc_characterCircleImages[i],
+                remotePreviewURL: mcvc_characterRemoteImageURLs[i]
+            )
         }
         v.mcvw_applyCharacterSlotsSelection(activeSlotIndex: mcvc_activeCharacterSlotIndex)
         mcvc_refreshContinueButtonState()
@@ -757,6 +815,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         guard !mcvc_characterCircleImages.isEmpty else { return }
         let target = mcvc_clampCharacterSlotIndex(mcvc_activeCharacterSlotIndex)
         mcvc_characterCircleImages[target] = img
+        mcvc_characterRemoteImageURLs[target] = nil
         mcvc_advanceActiveSlotAfterFill(filledAt: target)
         mcvc_syncCharacterCirclesAppearance()
     }
@@ -764,7 +823,6 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     private func mcvc_advanceActiveSlotAfterFill(filledAt index: Int) {
         guard !mcvc_characterCircleImages.isEmpty else { return }
         let n = mcvc_characterCircleImages.count
-        // 全满则保持当前选中，不自动切槽
         guard mcvc_characterCircleImages.contains(where: { $0 == nil }) else { return }
         if index + 1 < n, let j = (index + 1 ..< n).first(where: { mcvc_characterCircleImages[$0] == nil }) {
             mcvc_activeCharacterSlotIndex = j

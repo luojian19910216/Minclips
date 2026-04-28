@@ -4,10 +4,25 @@ import PanModal
 import SDWebImage
 import Combine
 import CombineCocoa
+import Data
 
 public final class MCCFeedGeneratingSheetController: MCCSheetController<MCCFeedGeneratingView, MCCEmptyViewModel> {
 
     public var mcvc_dismiss: (() -> Void)?
+
+    public private(set) var mcvc_userPreviewImage: UIImage?
+    public private(set) var mcvc_userPreviewFallbackURLString: String?
+    public private(set) var mcvc_seedRunItem = MCSRunItem()
+
+    public func mcvc_configure(
+        userPreview: UIImage?,
+        userPreviewFallbackURLString: String? = nil,
+        seedRunItem: MCSRunItem
+    ) {
+        mcvc_userPreviewImage = userPreview
+        mcvc_userPreviewFallbackURLString = userPreviewFallbackURLString
+        mcvc_seedRunItem = seedRunItem
+    }
 
     public func mcvc_markGenerationSucceeded() {
         mcvc_resultReceived = true
@@ -58,6 +73,7 @@ public final class MCCFeedGeneratingSheetController: MCCSheetController<MCCFeedG
 
     public override func mcvc_loadData() {
         super.mcvc_loadData()
+        mcvc_applySeedPreviewAssets()
         mcvc_startProgressSimulation()
     }
 
@@ -76,6 +92,37 @@ public final class MCCFeedGeneratingSheetController: MCCSheetController<MCCFeedG
             v.sd_cancelCurrentImageLoad()
             v.image = nil
         }
+    }
+
+    private func mcvc_applySeedPreviewAssets() {
+        let v = contentView.mcvw_previewImageView
+        let poster = Self.mcvc_posterURLString(from: mcvc_seedRunItem)
+        let fb = mcvc_userPreviewFallbackURLString?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
+        if let pu = URL(string: poster), !poster.isEmpty {
+            let ph = mcvc_userPreviewImage
+            v.sd_setImage(with: pu, placeholderImage: ph, options: [])
+        } else if !fb.isEmpty, let uf = URL(string: fb) {
+            v.sd_setImage(with: uf, placeholderImage: mcvc_userPreviewImage, options: [])
+        } else {
+            v.sd_cancelCurrentImageLoad()
+            v.image = mcvc_userPreviewImage
+        }
+    }
+
+    private static func mcvc_posterURLString(from item: MCSRunItem) -> String {
+        let trimmed = { (s: String) -> String in s.trimmingCharacters(in: .whitespacesAndNewlines) }
+        let cover = trimmed(item.coverUrl)
+        if !cover.isEmpty { return cover }
+        let img = trimmed(item.imageUrl)
+        if !img.isEmpty { return img }
+        for r in item.result {
+            let u = trimmed(r.url)
+            if !u.isEmpty { return u }
+            let w = trimmed(r.watermarkUrl)
+            if !w.isEmpty { return w }
+        }
+        return ""
     }
 
     private func mcvc_startProgressSimulation() {

@@ -123,7 +123,7 @@ private final class MCCToastView: UIView {
     
     private lazy var contentView: UIView = {
         let item: UIView = .init()
-        item.backgroundColor = .black.withAlphaComponent(0.7)
+        item.backgroundColor = .white.withAlphaComponent(0.6)
         item.layer.cornerRadius = 8
         item.alpha = 0
         return item
@@ -131,7 +131,6 @@ private final class MCCToastView: UIView {
     
     private lazy var indicatorView: UIActivityIndicatorView = {
         let item: UIActivityIndicatorView = .init(style: .large)
-        item.tintColor = .white
         item.startAnimating()
         return item
     }()

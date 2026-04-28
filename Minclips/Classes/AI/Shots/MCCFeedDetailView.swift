@@ -141,21 +141,30 @@ public final class MCCFeedDetailCharacterAvatarSlotView: UIView {
         mcvw_removeButton.clipsToBounds = true
     }
 
-    public func mcvw_apply(image: UIImage?) {
-        mcvw_imageView.image = image
-        // 空槽也要有 imageView，才能把 56×56 的白色 6% 圆底板画出来。
-        mcvw_placeholderView.isHidden = (image != nil)
-        mcvw_removeButton.isHidden = (image == nil)
+    public func mcvw_apply(image: UIImage?, remotePreviewURL: String? = nil) {
+        let trimmed = remotePreviewURL?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let hasRemote = !trimmed.isEmpty
+        if let img = image {
+            mcvw_imageView.sd_cancelCurrentImageLoad()
+            mcvw_imageView.image = img
+        } else if hasRemote, let url = URL(string: trimmed) {
+            mcvw_imageView.sd_setImage(with: url, placeholderImage: nil, options: [])
+        } else {
+            mcvw_imageView.sd_cancelCurrentImageLoad()
+            mcvw_imageView.image = nil
+        }
+        let hasContent = (image != nil) || hasRemote
+        mcvw_placeholderView.isHidden = hasContent
+        mcvw_removeButton.isHidden = !hasContent
 
         backgroundColor = .clear
-        if image != nil {
+        if hasContent {
             mcvw_imageView.backgroundColor = .clear
         } else {
             mcvw_imageView.backgroundColor = UIColor.white.withAlphaComponent(0.06)
         }
     }
 
-    /// 当前槽是否被「选中必有其一」；空槽与已上图槽均显示蓝描边，由上层在 `mcvw_apply` 之后刷新。
     public func mcvw_setCharacterSlotSelected(_ selected: Bool) {
         layer.borderWidth = selected ? 1 : 0
         layer.borderColor = selected ? UIColor(hex: "0077FF")!.cgColor : nil

@@ -18,6 +18,11 @@ public final class MCCFeedGeneratingView: MCCBaseView {
         v.clipsToBounds = true
         return v
     }()
+    public let mcvw_previewBlurView: UIVisualEffectView = {
+        let v = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
+        v.isUserInteractionEnabled = false
+        return v
+    }()
     public let mcvw_percentLabel: UILabel = {
         let l = UILabel()
         l.textColor = .white
@@ -85,6 +90,8 @@ public final class MCCFeedGeneratingView: MCCBaseView {
         mcvw_previewBox.clipsToBounds = true
         mcvw_previewBox.addSubview(mcvw_previewImageView)
         mcvw_previewImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        mcvw_previewBox.addSubview(mcvw_previewBlurView)
+        mcvw_previewBlurView.snp.makeConstraints { $0.edges.equalToSuperview() }
         mcvw_previewBox.addSubview(mcvw_percentLabel)
         mcvw_percentLabel.snp.makeConstraints { $0.center.equalToSuperview() }
         mcvw_percentLabel.layer.shadowColor = UIColor.black.cgColor
