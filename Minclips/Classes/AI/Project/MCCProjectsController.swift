@@ -7,6 +7,12 @@ import SDWebImage
 
 public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyViewModel> {
 
+    private static let mcvc_fallbackProjectSegments: [MCCProjectSegment] = [
+        MCCProjectSegment(ref: "clips", title: "Clips"),
+        MCCProjectSegment(ref: "character", title: "Character"),
+        MCCProjectSegment(ref: "likes", title: "Likes"),
+    ]
+
     private var mcvc_tagsLoadState: MCSLoadState<[MCCProjectSegment]> = MCSLoadState()
 
     private var mcvc_selectedTagIndex: Int = 0
@@ -76,15 +82,15 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
     }
 
     private func mcvc_requestProjectTabTitles() {
-        mcvc_tagsLoadState = MCSLoadState(isLoading: true, error: nil, model: nil)
-        contentView.mcvw_setTabHomeSkeletonVisible(true)
+        mcvc_tagsLoadState = MCSLoadState(isLoading: true, error: nil, model: Self.mcvc_fallbackProjectSegments)
+        mcvc_syncTagChrome()
+        mcvc_reloadPagingForTags()
         Self.mcvc_fetchProjectTabTitlesSimulated()
             .map { segs in MCSLoadState(isLoading: false, error: nil, model: segs) }
             .receive(on: DispatchQueue.main)
             .sink { [weak self] s in
                 guard let self = self else { return }
                 self.mcvc_tagsLoadState = s
-                self.contentView.mcvw_setTabHomeSkeletonVisible(s.isLoading)
                 self.mcvc_syncTagChrome()
                 self.mcvc_reloadPagingForTags()
             }

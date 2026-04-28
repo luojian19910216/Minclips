@@ -37,20 +37,9 @@ public final class MCCProjectsView: MCCBaseView {
 
     public var mcvw_pagingListContainer: JXPagingListContainerView? { mcvw_pagingViewRef?.listContainerView }
 
-    public lazy var mcvw_skeletonOverlay: MCCGradientHomeSkeletonOverlay = {
-        MCCGradientHomeSkeletonOverlay(style: .tagsAndDoubleColumn)
-    }()
-
     public override func mcvw_setupUI() {
         mcvw_pinHeaderView.addSubview(mcvw_tagCollection)
         mcvw_tagCollection.snp.makeConstraints { $0.edges.equalToSuperview() }
-
-        addSubview(mcvw_skeletonOverlay)
-        mcvw_skeletonOverlay.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top)
-            make.leading.trailing.bottom.equalToSuperview()
-        }
-        mcvw_skeletonOverlay.isHidden = true
     }
 
     public func mcvw_setupPagingView(delegate: JXPagingViewDelegate) {
@@ -64,15 +53,6 @@ public final class MCCProjectsView: MCCBaseView {
         pv.snp.remakeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top)
             make.leading.trailing.bottom.equalToSuperview()
-        }
-        bringSubviewToFront(mcvw_skeletonOverlay)
-    }
-
-    public func mcvw_setTabHomeSkeletonVisible(_ visible: Bool) {
-        if visible {
-            mcvw_skeletonOverlay.mcvw_showHomeSkeleton()
-        } else {
-            mcvw_skeletonOverlay.mcvw_hideHomeSkeleton()
         }
     }
 

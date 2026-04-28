@@ -64,6 +64,7 @@ public final class MCCProjectsListPageController: MCCViewController<MCCProjectsL
 
     public override func mcvc_bind() {
         super.mcvc_bind()
+        contentView.mcvw_configureListSkeleton(isLikesLayout: mcvc_isLikes)
         let cv = contentView.mcvw_collectionView
         cv.dataSource = self
         cv.delegate = self

@@ -32,13 +32,48 @@ private enum MCCShotsSkeletonMetrics {
     static let titleBlockHeight: CGFloat = 32
 }
 
+private enum MCCProjectsListSkeletonMetrics {
+
+    static let horizontalSectionInset: CGFloat = 4
+    static let sectionTopInset: CGFloat = 4
+    static let columnCount = 3
+    static let interitemSpacing: CGFloat = 4
+    static let runsLineSpacing: CGFloat = 4
+    static let likesLineSpacing: CGFloat = 16
+    static let skeletonWidth: CGFloat = UIScreen.main.bounds.width
+
+    static func columnWidth(containerWidth: CGFloat) -> CGFloat {
+        let inner = containerWidth - horizontalSectionInset * 2
+        let gutters = CGFloat(columnCount - 1) * interitemSpacing
+        return max(1, (inner - gutters) / CGFloat(columnCount))
+    }
+
+    static var runsBlockHeight: CGFloat {
+        columnWidth(containerWidth: skeletonWidth) * 160 / 120
+    }
+
+    static var likesThumbHeight: CGFloat {
+        columnWidth(containerWidth: skeletonWidth) * MCCShotsListItemMetrics.imageHeightPerWidth
+    }
+
+    static let projectsLikesTitleBlockHeight: CGFloat = 30
+
+    static var likesRowHeight: CGFloat {
+        likesThumbHeight + MCCShotsListItemMetrics.imageToTitleSpacing + projectsLikesTitleBlockHeight
+    }
+
+    static let rowsRuns = 9
+    static let rowsLikes = 10
+}
+
 public final class MCCGradientHomeSkeletonOverlay: UIView {
 
     public enum MCCStyle {
         case tagsAndDoubleColumn
         case singleColumnList
         case doubleColumnGrid
-        case tripleColumnGrid
+        case projectsRunsThreeColumn
+        case projectsLikesThreeColumn
     }
 
     private let mcvw_stack: UIStackView = {
@@ -63,9 +98,9 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
         case .singleColumnList:
             topInset = MCCToolsListSkeletonMetrics.sectionTopInset
             horizontalInset = MCCToolsListSkeletonMetrics.sectionHorizontalInset
-        case .tripleColumnGrid:
-            topInset = 0
-            horizontalInset = 16
+        case .projectsRunsThreeColumn, .projectsLikesThreeColumn:
+            topInset = MCCProjectsListSkeletonMetrics.sectionTopInset
+            horizontalInset = MCCProjectsListSkeletonMetrics.horizontalSectionInset
         }
         mcvw_stack.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(topInset)
@@ -149,10 +184,18 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
                 )
                 mcvw_stack.addArrangedSubview(row)
             }
-        case .tripleColumnGrid:
-            mcvw_stack.spacing = 12
-            for _ in 0..<Self.mcvw_rowCountTripleGrid {
-                mcvw_stack.addArrangedSubview(mcvw_makeTripleColumnRow(blockHeight: Self.mcvw_tripleColumnBlockHeight))
+        case .projectsRunsThreeColumn:
+            mcvw_stack.spacing = MCCProjectsListSkeletonMetrics.runsLineSpacing
+            let h = MCCProjectsListSkeletonMetrics.runsBlockHeight
+            for _ in 0..<MCCProjectsListSkeletonMetrics.rowsRuns {
+                mcvw_stack.addArrangedSubview(mcvw_makeProjectsRunsTripleRow(blockHeight: h))
+            }
+        case .projectsLikesThreeColumn:
+            mcvw_stack.spacing = MCCProjectsListSkeletonMetrics.likesLineSpacing
+            let thumbH = MCCProjectsListSkeletonMetrics.likesThumbHeight
+            let rowH = MCCProjectsListSkeletonMetrics.likesRowHeight
+            for _ in 0..<MCCProjectsListSkeletonMetrics.rowsLikes {
+                mcvw_stack.addArrangedSubview(mcvw_makeProjectsLikesTripleRow(thumbHeight: thumbH, rowHeight: rowH))
             }
         }
     }
@@ -170,17 +213,6 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
         mcvw_skeletonThumbHeight
             + MCCShotsSkeletonMetrics.imageToTitleSpacing
             + MCCShotsSkeletonMetrics.titleBlockHeight
-    }
-
-    private static let mcvw_rowCountTripleGrid = 10
-
-    private static let mcvw_tripleColumnBlockHeight: CGFloat = 122
-
-    private func mcvw_skeletonize(_ v: UIView, radius: CGFloat, height: CGFloat) {
-        v.isSkeletonable = true
-        v.skeletonCornerRadius = Float(radius)
-        v.clipsToBounds = true
-        v.snp.makeConstraints { $0.height.equalTo(height) }
     }
 
     private func mcvw_makeShotsWaterfallColumn(thumbHeight: CGFloat) -> UIStackView {
@@ -229,17 +261,64 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
         return wrap
     }
 
-    private func mcvw_makeTripleColumnRow(blockHeight: CGFloat) -> UIStackView {
+    private func mcvw_makeProjectsRunsTripleRow(blockHeight: CGFloat) -> UIView {
+        let wrap = UIView()
+        wrap.snp.makeConstraints { $0.height.equalTo(blockHeight) }
         let row = UIStackView()
         row.axis = .horizontal
-        row.spacing = 8
+        row.spacing = MCCProjectsListSkeletonMetrics.interitemSpacing
         row.distribution = .fillEqually
-        for _ in 0..<3 {
+        wrap.addSubview(row)
+        row.snp.makeConstraints { $0.edges.equalToSuperview() }
+        for _ in 0..<MCCProjectsListSkeletonMetrics.columnCount {
             let v = UIView()
             mcvw_skeletonize(v, radius: 8, height: blockHeight)
             row.addArrangedSubview(v)
         }
-        return row
+        return wrap
     }
 
+    private func mcvw_makeProjectsLikesSkeletonColumn(thumbHeight: CGFloat) -> UIStackView {
+        let col = UIStackView()
+        col.axis = .vertical
+        col.alignment = .fill
+        col.spacing = MCCShotsListItemMetrics.imageToTitleSpacing
+        let thumb = UIView()
+        thumb.backgroundColor = MCCShotsListItemMetrics.listItemImageContainerBackground
+        thumb.isSkeletonable = true
+        thumb.skeletonCornerRadius = Float(MCCShotsSkeletonMetrics.thumbCornerRadius)
+        thumb.clipsToBounds = true
+        thumb.snp.makeConstraints { make in
+            make.height.equalTo(thumbHeight)
+        }
+        let title = UIView()
+        title.backgroundColor = MCCShotsListItemMetrics.listItemImageContainerBackground
+        mcvw_skeletonize(title, radius: 4, height: MCCProjectsListSkeletonMetrics.projectsLikesTitleBlockHeight)
+        col.addArrangedSubview(thumb)
+        col.addArrangedSubview(title)
+        return col
+    }
+
+    private func mcvw_makeProjectsLikesTripleRow(thumbHeight: CGFloat, rowHeight: CGFloat) -> UIView {
+        let wrap = UIView()
+        wrap.snp.makeConstraints { $0.height.equalTo(rowHeight) }
+        let row = UIStackView()
+        row.axis = .horizontal
+        row.spacing = MCCProjectsListSkeletonMetrics.interitemSpacing
+        row.distribution = .fillEqually
+        wrap.addSubview(row)
+        row.snp.makeConstraints { $0.edges.equalToSuperview() }
+        for _ in 0..<MCCProjectsListSkeletonMetrics.columnCount {
+            row.addArrangedSubview(mcvw_makeProjectsLikesSkeletonColumn(thumbHeight: thumbHeight))
+        }
+        return wrap
+    }
+
+    private func mcvw_skeletonize(_ v: UIView, radius: CGFloat, height: CGFloat) {
+        v.backgroundColor = MCCShotsListItemMetrics.listItemImageContainerBackground
+        v.isSkeletonable = true
+        v.skeletonCornerRadius = Float(radius)
+        v.clipsToBounds = true
+        v.snp.makeConstraints { $0.height.equalTo(height) }
+    }
 }

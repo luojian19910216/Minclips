@@ -64,24 +64,31 @@ public final class MCCProjectsListPageView: MCCBaseView {
         return max(1, (inner - spacing) / CGFloat(cols))
     }
 
-    public lazy var mcvw_skeletonOverlay: MCCGradientHomeSkeletonOverlay = {
-        MCCGradientHomeSkeletonOverlay(style: .tripleColumnGrid)
-    }()
+    public private(set) var mcvw_skeletonOverlay: MCCGradientHomeSkeletonOverlay?
+
+    public func mcvw_configureListSkeleton(isLikesLayout: Bool) {
+        mcvw_skeletonOverlay?.removeFromSuperview()
+        let style: MCCGradientHomeSkeletonOverlay.MCCStyle = isLikesLayout
+            ? .projectsLikesThreeColumn
+            : .projectsRunsThreeColumn
+        let o = MCCGradientHomeSkeletonOverlay(style: style)
+        addSubview(o)
+        o.snp.makeConstraints { $0.edges.equalToSuperview() }
+        o.isHidden = true
+        mcvw_skeletonOverlay = o
+    }
 
     public override func mcvw_setupUI() {
         addSubview(mcvw_collectionView)
         mcvw_collectionView.snp.makeConstraints { $0.edges.equalToSuperview() }
-
-        addSubview(mcvw_skeletonOverlay)
-        mcvw_skeletonOverlay.snp.makeConstraints { $0.edges.equalToSuperview() }
-        mcvw_skeletonOverlay.isHidden = true
     }
 
     public func mcvw_setListSkeletonVisible(_ visible: Bool) {
+        guard let overlay = mcvw_skeletonOverlay else { return }
         if visible {
-            mcvw_skeletonOverlay.mcvw_showHomeSkeleton()
+            overlay.mcvw_showHomeSkeleton()
         } else {
-            mcvw_skeletonOverlay.mcvw_hideHomeSkeleton()
+            overlay.mcvw_hideHomeSkeleton()
         }
     }
 
