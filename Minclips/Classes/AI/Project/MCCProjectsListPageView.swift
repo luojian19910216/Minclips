@@ -7,12 +7,13 @@ public final class MCCProjectsListPageView: MCCBaseView {
     /// 左右缩进与单元格间隔一致（4pt）。
     private static let mcvw_horizontalSectionInset: CGFloat = 4
 
-    public let mcvw_flow: UICollectionViewFlowLayout = {
-        let l = UICollectionViewFlowLayout()
-        l.minimumInteritemSpacing = 4
-        l.minimumLineSpacing = 4
+    public let mcvw_runsWaterfallLayout: MCCShotsWaterfallLayout = {
+        let l = MCCShotsWaterfallLayout()
+        l.columnCount = 3
         let h = MCCProjectsListPageView.mcvw_horizontalSectionInset
         l.sectionInset = UIEdgeInsets(top: 4, left: h, bottom: 4, right: h)
+        l.minimumInteritemSpacing = 4
+        l.minimumLineSpacing = 4
         return l
     }()
 
@@ -28,12 +29,27 @@ public final class MCCProjectsListPageView: MCCBaseView {
     }()
 
     public lazy var mcvw_collectionView: UICollectionView = {
-        let cv = UICollectionView(frame: .zero, collectionViewLayout: mcvw_flow)
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: mcvw_runsWaterfallLayout)
         cv.alwaysBounceVertical = true
         cv.contentInsetAdjustmentBehavior = .always
         cv.register(MCCProjectsRunCell.self, forCellWithReuseIdentifier: MCCProjectsRunCell.mcvw_reuseId)
         return cv
     }()
+
+    /// 与 `MCCShotsWaterfallLayout.prepare` 相同列宽：`innerW / 3`（不减 `adjustedContentInset`）。
+    public func mcvp_runsWaterfallColumnWidth(collectionWidth w: CGFloat) -> CGFloat {
+        let width = (w > 0 ? w : UIScreen.main.bounds.width)
+        let l = mcvw_runsWaterfallLayout
+        let inner = width - l.sectionInset.left - l.sectionInset.right
+        let cols = max(1, l.columnCount)
+        let spacing = CGFloat(cols - 1) * l.minimumInteritemSpacing
+        return max(1, (inner - spacing) / CGFloat(cols))
+    }
+
+    /// 将 Runs 列表切到三列瀑布（与首页列宽算法一致），已注册 `MCCProjectsRunCell`。
+    public func mcvp_activateRunsWaterfallLayout() {
+        mcvw_collectionView.setCollectionViewLayout(mcvw_runsWaterfallLayout, animated: false)
+    }
 
     /// 将 Likes 列表切换为与首页一致的瀑布流（三列），并注册 `MCCShotsListItemCell`。
     public func mcvp_activateLikesWaterfallLikeHome() {
@@ -51,7 +67,7 @@ public final class MCCProjectsListPageView: MCCBaseView {
         let inner = width - l.sectionInset.left - l.sectionInset.right
         let cols = max(1, l.columnCount)
         let spacing = CGFloat(cols - 1) * l.minimumInteritemSpacing
-        return max(1, floor((inner - spacing) / CGFloat(cols)))
+        return max(1, (inner - spacing) / CGFloat(cols))
     }
 
     public lazy var mcvw_skeletonOverlay: MCCGradientHomeSkeletonOverlay = {

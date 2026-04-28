@@ -9,8 +9,9 @@ public final class MCCProjectsView: MCCBaseView {
     public let mcvw_tagFlowLayout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
         l.scrollDirection = .horizontal
-        l.minimumInteritemSpacing = 12
+        l.minimumInteritemSpacing = 24
         l.minimumLineSpacing = 0
+        l.sectionInset = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
         return l
     }()
 
@@ -18,7 +19,8 @@ public final class MCCProjectsView: MCCBaseView {
         let cv = UICollectionView(frame: .zero, collectionViewLayout: mcvw_tagFlowLayout)
         cv.showsHorizontalScrollIndicator = false
         cv.alwaysBounceHorizontal = true
-        cv.contentInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        cv.contentInset = .zero
+        cv.contentInsetAdjustmentBehavior = .never
         cv.register(MCCProjectsTagCell.self, forCellWithReuseIdentifier: MCCProjectsTagCell.mcvw_reuseId)
         return cv
     }()

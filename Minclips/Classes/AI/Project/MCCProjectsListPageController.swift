@@ -74,6 +74,9 @@ public final class MCCProjectsListPageController: MCCViewController<MCCProjectsL
             contentView.mcvp_activateLikesWaterfallLikeHome()
             contentView.mcvw_likesWaterfallLayout.delegate = self
             cv.prefetchDataSource = self
+        } else {
+            contentView.mcvp_activateRunsWaterfallLayout()
+            contentView.mcvw_runsWaterfallLayout.delegate = self
         }
         let header = MJRefreshNormalHeader { [weak self] in
             self?.mcpj_load(kind: .pullToRefresh)
@@ -288,7 +291,7 @@ private extension MCCProjectsListPageController {
 
 // MARK: - Collection view
 
-extension MCCProjectsListPageController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+extension MCCProjectsListPageController: UICollectionViewDataSource, UICollectionViewDelegate {
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         mcpj_isLikes ? mcpj_listState.feedItems.count : mcpj_listState.runItems.count
@@ -344,26 +347,6 @@ extension MCCProjectsListPageController: UICollectionViewDataSource, UICollectio
         (cell as? MCCShotsListItemCell)?.mcvw_clearWebpAnimated()
     }
 
-    public func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAt indexPath: IndexPath
-    ) -> CGSize {
-        guard mcpj_isLikes == false,
-              let flow = collectionViewLayout as? UICollectionViewFlowLayout else {
-            return CGSize(width: 100, height: 160)
-        }
-        let columns = 3
-        let inset = flow.sectionInset
-        let spacing = flow.minimumInteritemSpacing
-        let inner = collectionView.bounds.width - inset.left - inset.right
-        let w = (inner - spacing * CGFloat(columns - 1)) / CGFloat(columns)
-        if w <= 0 { return CGSize(width: 100, height: 160) }
-        // Runs 封面：宽高 120×160（竖图），仅图片无文案 → 单元格高度 = 宽 × 160/120
-        let h = w * 160 / 120
-        return CGSize(width: floor(w), height: floor(h))
-    }
-
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         mcpj_forwardPagingScroll(scrollView)
     }
@@ -400,8 +383,12 @@ extension MCCProjectsListPageController: MCCShotsWaterfallLayoutDelegate {
         heightForItemAt indexPath: IndexPath,
         itemWidth: CGFloat
     ) -> CGFloat {
-        guard mcpj_isLikes, let item = mcpj_listState.feedItems[safe: indexPath.item] else { return 1 }
-        return mcpj_heightForLikesItem(item, itemWidth: itemWidth)
+        if mcpj_isLikes {
+            guard let item = mcpj_listState.feedItems[safe: indexPath.item] else { return 1 }
+            return mcpj_heightForLikesItem(item, itemWidth: itemWidth)
+        }
+        guard mcpj_listState.runItems.indices.contains(indexPath.item) else { return 1 }
+        return itemWidth * 160 / 120
     }
 }
 
