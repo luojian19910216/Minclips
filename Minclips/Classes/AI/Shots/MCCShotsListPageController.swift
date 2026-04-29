@@ -260,13 +260,19 @@ extension MCCShotsListPageController {
         cell.mcvw_setImageHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth)
         let thumbPx = mcvc_feedThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width)
         cell.mcvw_applyPosterOnly(posterUrl: a.posterImageUrl, thumbnailPixelSize: thumbPx)
-        let displaySeconds = item.tenSecondMode ? 10 : 5
-        cell.mcvw_durationLabel.text = Self.mcvc_formatVideoDurationLabel(seconds: displaySeconds)
-        cell.mcvw_durationLabel.isHidden = false
-        cell.mcvw_durationLabel.font = .systemFont(ofSize: 11, weight: .regular)
-        cell.mcvw_durationLabel.textColor = UIColor.white.withAlphaComponent(0.48)
-        cell.mcvw_durationLabel.backgroundColor = .clear
-        cell.mcvw_durationLabel.textAlignment = .natural
+        let isVideo = item.contentKind.isToVideo
+        if isVideo {
+            let displaySeconds = item.tenSecondMode ? 10 : 5
+            cell.mcvw_durationLabel.text = Self.mcvc_formatVideoDurationLabel(seconds: displaySeconds)
+            cell.mcvw_durationLabel.isHidden = false
+            cell.mcvw_durationLabel.font = .systemFont(ofSize: 11, weight: .regular)
+            cell.mcvw_durationLabel.textColor = UIColor.white.withAlphaComponent(0.48)
+            cell.mcvw_durationLabel.backgroundColor = .clear
+            cell.mcvw_durationLabel.textAlignment = .natural
+        } else {
+            cell.mcvw_durationLabel.isHidden = true
+            cell.mcvw_durationLabel.text = nil
+        }
         let showPro = item.proFeature
         cell.mcvw_proBadge.isHidden = !showPro
         cell.mcvw_titleLabel.attributedText = NSAttributedString(
