@@ -26,6 +26,8 @@ public struct MCSRunListRequest: Codable {
     public var itemsPerPage: Int = 20
     /// lastId
     public var resumeAfterId: String?
+    /// image/video
+    public var resultType: String?
 }
 
 ///
