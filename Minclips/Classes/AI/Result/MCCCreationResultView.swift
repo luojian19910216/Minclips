@@ -39,8 +39,16 @@ private enum MCCCreationResultPreviewMetrics {
     /// White hairline stroke on the circular **source thumbnail** (failed Retry & restricted Edit).
     static let primaryActionSourceBorderWidth: CGFloat = 0.5
 
-    static let primaryButtonSize = CGSize(width: 88, height: 66)
-    static let bottomSafeInsetPrimaryButton: CGFloat = 16
+    /// Glass bar inset from safe area bottom; horizontal inset matches page gutter (`horizontalInset`).
+    static let primaryActionBarBottomInset: CGFloat = 8
+
+    /// Padding inside chip (icon↔rounded edge left/right).
+    static let primaryActionBarInteriorHorizontalPadding: CGFloat = 20
+
+    /// Icon+title stack inset top/bottom inside the glass chip.
+    static let primaryActionBarContentVerticalPadding: CGFloat = 8
+
+    static let primaryActionBarCornerRadius: CGFloat = 24
 }
 
 private enum MCCCreationFailureSubtitleStyle {
@@ -191,9 +199,29 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
     public let mccr_actionButton: UIButton = {
         let b = UIButton(type: .custom)
         b.setContentHuggingPriority(.required, for: .vertical)
+        b.backgroundColor = .clear
         return b
     }()
 
+    /// Chrome for bottom Retry/Edit (`systemChromeMaterialDark`).
+    private let mccr_actionGlassBar: UIVisualEffectView = {
+        let v = UIVisualEffectView(effect: UIBlurEffect(style: .systemChromeMaterialDark))
+        v.layer.cornerCurve = .continuous
+        v.layer.cornerRadius = MCCCreationResultPreviewMetrics.primaryActionBarCornerRadius
+        v.clipsToBounds = true
+        v.isUserInteractionEnabled = true
+        v.isHidden = true
+        return v
+    }()
+
+    private let mccr_actionPrimaryStack: UIStackView = {
+        let s = UIStackView()
+        s.axis = .vertical
+        s.alignment = .center
+        s.spacing = 4
+        s.isUserInteractionEnabled = false
+        return s
+    }()
 
     private let mccr_actionIconContainer: UIView = {
         let v = UIView()
@@ -325,11 +353,15 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         )
         mccr_subtitleLabel.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
 
-        addSubview(mccr_actionButton)
-        mccr_actionButton.addSubview(mccr_actionIconContainer)
+        addSubview(mccr_actionGlassBar)
+        mccr_actionPrimaryStack.addArrangedSubview(mccr_actionIconContainer)
+        mccr_actionPrimaryStack.addArrangedSubview(mccr_actionTitleLabel)
+
         mccr_actionIconContainer.addSubview(mccr_actionIconView)
         mccr_actionIconContainer.addSubview(mccr_actionAvatarView)
-        mccr_actionButton.addSubview(mccr_actionTitleLabel)
+
+        mccr_actionGlassBar.contentView.addSubview(mccr_actionPrimaryStack)
+        mccr_actionGlassBar.contentView.addSubview(mccr_actionButton)
 
         addSubview(mccr_videoChrome)
         mccr_videoChrome.isHidden = true
@@ -345,17 +377,27 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_successPill.isHidden = true
         mccr_buildSuccessToolbar()
 
-        mccr_actionButton.snp.makeConstraints { make in
+        let hInset = MCCCreationResultPreviewMetrics.primaryActionBarInteriorHorizontalPadding
+        let vInset = MCCCreationResultPreviewMetrics.primaryActionBarContentVerticalPadding
+
+        mccr_actionPrimaryStack.snp.makeConstraints { $0.center.equalToSuperview() }
+
+        mccr_actionGlassBar.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.size.equalTo(MCCCreationResultPreviewMetrics.primaryButtonSize)
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
-                .offset(-MCCCreationResultPreviewMetrics.bottomSafeInsetPrimaryButton)
+                .offset(-MCCCreationResultPreviewMetrics.primaryActionBarBottomInset)
+            make.leading.greaterThanOrEqualToSuperview().offset(MCCCreationResultPreviewMetrics.horizontalInset)
+            make.trailing.lessThanOrEqualToSuperview().offset(-MCCCreationResultPreviewMetrics.horizontalInset)
+            make.width.equalTo(mccr_actionPrimaryStack.snp.width).offset(hInset * 2)
+            make.height.equalTo(mccr_actionPrimaryStack.snp.height).offset(vInset * 2)
         }
+
+        mccr_actionButton.snp.makeConstraints { $0.edges.equalToSuperview() }
 
         mccr_mediaContainer.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(MCCCreationResultPreviewMetrics.topInset)
             make.leading.trailing.equalToSuperview().inset(MCCCreationResultPreviewMetrics.horizontalInset)
-            make.bottom.equalTo(mccr_actionButton.snp.top)
+            make.bottom.equalTo(mccr_actionGlassBar.snp.top)
                 .offset(-MCCCreationResultPreviewMetrics.gapImageToPrimaryButton)
         }
 
@@ -374,17 +416,10 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         let iconSZ = MCCCreationResultPreviewMetrics.primaryActionIconSize
 
         mccr_actionIconContainer.snp.makeConstraints { make in
-            make.top.centerX.equalToSuperview()
             make.size.equalTo(iconSZ)
         }
         mccr_actionIconView.snp.makeConstraints { $0.edges.equalToSuperview() }
         mccr_actionAvatarView.snp.makeConstraints { $0.edges.equalToSuperview() }
-        mccr_actionTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(mccr_actionIconContainer.snp.bottom).offset(4)
-            make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview()
-        }
-
         mccr_successPill.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-20)
@@ -653,21 +688,29 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_isVideoMode = false
         mccr_successPill.isHidden = true
         mccr_videoChrome.isHidden = true
+        mccr_actionGlassBar.isHidden = false
         mccr_actionButton.isHidden = false
         mccr_blurView.isHidden = false
         mccr_statusStack.isHidden = false
         mccr_mediaContainer.layer.cornerRadius = 0
         mccr_mediaContainer.backgroundColor = UIColor(white: 1, alpha: MCCCreationResultPreviewMetrics.previewPlateBackgroundAlpha)
-        mccr_actionButton.snp.remakeConstraints { make in
+        mccr_actionGlassBar.snp.remakeConstraints { make in
             make.centerX.equalToSuperview()
-            make.size.equalTo(MCCCreationResultPreviewMetrics.primaryButtonSize)
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
-                .offset(-MCCCreationResultPreviewMetrics.bottomSafeInsetPrimaryButton)
+                .offset(-MCCCreationResultPreviewMetrics.primaryActionBarBottomInset)
+            make.leading.greaterThanOrEqualToSuperview().offset(MCCCreationResultPreviewMetrics.horizontalInset)
+            make.trailing.lessThanOrEqualToSuperview().offset(-MCCCreationResultPreviewMetrics.horizontalInset)
+            make.width.equalTo(mccr_actionPrimaryStack.snp.width).offset(
+                MCCCreationResultPreviewMetrics.primaryActionBarInteriorHorizontalPadding * 2
+            )
+            make.height.equalTo(mccr_actionPrimaryStack.snp.height).offset(
+                MCCCreationResultPreviewMetrics.primaryActionBarContentVerticalPadding * 2
+            )
         }
         mccr_mediaContainer.snp.remakeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(MCCCreationResultPreviewMetrics.topInset)
             make.leading.trailing.equalToSuperview().inset(MCCCreationResultPreviewMetrics.horizontalInset)
-            make.bottom.equalTo(mccr_actionButton.snp.top)
+            make.bottom.equalTo(mccr_actionGlassBar.snp.top)
                 .offset(-MCCCreationResultPreviewMetrics.gapImageToPrimaryButton)
         }
         setPlaceholderImage()
@@ -679,6 +722,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_videoDuration = duration
         mccr_successPill.isHidden = false
         mccr_videoChrome.isHidden = !isVideo
+        mccr_actionGlassBar.isHidden = true
         mccr_actionButton.isHidden = true
         mccr_blurView.isHidden = true
         mccr_statusStack.isHidden = true
