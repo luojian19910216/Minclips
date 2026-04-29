@@ -53,7 +53,7 @@ private enum MCCProjectsListSkeletonMetrics {
     }
 
     static var likesThumbHeight: CGFloat {
-        columnWidth(containerWidth: skeletonWidth) * MCCShotsListItemMetrics.imageHeightPerWidth
+        columnWidth(containerWidth: skeletonWidth) * (4.0 / 3.0)
     }
 
     static let projectsLikesTitleBlockHeight: CGFloat = 30

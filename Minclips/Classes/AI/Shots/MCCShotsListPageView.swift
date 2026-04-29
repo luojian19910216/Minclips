@@ -87,6 +87,22 @@ public final class MCCShotsListPageView: MCCBaseView {
 
 }
 
+public final class MCCVerticalTopAlignedLabel: UILabel {
+
+    override public func textRect(forBounds bounds: CGRect, limitedToNumberOfLines numberOfLines: Int) -> CGRect {
+        var rect = super.textRect(forBounds: bounds, limitedToNumberOfLines: numberOfLines)
+        if rect.height <= bounds.height {
+            rect.origin.y = bounds.minY
+        }
+        return rect
+    }
+
+    override public func drawText(in _: CGRect) {
+        let r = textRect(forBounds: bounds, limitedToNumberOfLines: numberOfLines)
+        super.drawText(in: r)
+    }
+}
+
 public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
 
     public static let mcvw_reuseId = "MCCShotsListItemCell"
@@ -119,7 +135,7 @@ public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
         return v
     }()
 
-    public let mcvw_titleLabel = UILabel()
+    public let mcvw_titleLabel = MCCVerticalTopAlignedLabel()
 
     public override func mcvw_setupUI() {
         contentView.addSubview(mcvw_imageContainer)

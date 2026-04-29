@@ -38,6 +38,14 @@ private enum MCCProjectListLoadKind: Sendable {
 private enum MCCProjectsLikesListMetrics {
     static let titleLineHeight: CGFloat = 15
 
+    static let titleLineCount: Int = 2
+
+    static let imageHeightPerWidth: CGFloat = 4.0 / 3.0
+
+    static var fixedTitleBlockHeight: CGFloat {
+        CGFloat(titleLineCount) * titleLineHeight
+    }
+
     static func titleTextAttributes(textColor: UIColor = .white) -> [NSAttributedString.Key: Any] {
         let p = NSMutableParagraphStyle()
         p.minimumLineHeight = titleLineHeight
@@ -390,13 +398,17 @@ private extension MCCProjectsListPageController {
 
     func mcvc_likesThumbnailPixelSize(forCollectionWidth width: CGFloat) -> CGSize {
         let colW = contentView.mcvw_likesWaterfallColumnWidth(collectionWidth: width)
-        return MCCShotsListItemMetrics.feedImageThumbnailPixelSize(columnWidthPoints: colW)
+        return MCCShotsListItemMetrics.feedImageThumbnailPixelSize(
+            columnWidthPoints: colW,
+            heightPerWidth: MCCProjectsLikesListMetrics.imageHeightPerWidth
+        )
     }
 
     func mcvc_styleLikesCell(_ cell: MCCShotsListItemCell, item: MCSFeedItem, collectionView: UICollectionView) {
         cell.mcvw_imageContainer.backgroundColor = MCCShotsListItemMetrics.listItemImageContainerBackground
         let a = item.videoAsset
-        cell.mcvw_setImageHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth)
+        cell.mcvw_setImageHeightPerWidth(MCCProjectsLikesListMetrics.imageHeightPerWidth)
+        cell.mcvw_titleLabel.numberOfLines = MCCProjectsLikesListMetrics.titleLineCount
         let thumbPx = mcvc_likesThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width)
         cell.mcvw_applyPosterOnly(posterUrl: a.posterImageUrl, thumbnailPixelSize: thumbPx)
         let displaySeconds = item.tenSecondMode ? 10 : 5
@@ -415,23 +427,9 @@ private extension MCCProjectsListPageController {
     }
 
     func mcvc_heightForLikesItem(_ item: MCSFeedItem, itemWidth: CGFloat) -> CGFloat {
-        let m = MCCShotsListItemMetrics.self
-        let title = item.itemTitle
-        let imageH = itemWidth * m.imageHeightPerWidth
-        let attrs = MCCProjectsLikesListMetrics.titleTextAttributes()
-        let maxTextH = ceil(MCCProjectsLikesListMetrics.titleLineHeight * CGFloat(m.titleMaxLines))
-        let textH = min(
-            ceil(
-                (title as NSString).boundingRect(
-                    with: CGSize(width: itemWidth, height: .greatestFiniteMagnitude),
-                    options: [.usesLineFragmentOrigin, .usesFontLeading],
-                    attributes: attrs,
-                    context: nil
-                ).height
-            ),
-            maxTextH
-        )
-        return imageH + m.imageToTitleSpacing + textH
+        let imageH = itemWidth * MCCProjectsLikesListMetrics.imageHeightPerWidth
+        let textH = MCCProjectsLikesListMetrics.fixedTitleBlockHeight
+        return imageH + MCCShotsListItemMetrics.imageToTitleSpacing + textH
     }
 
     static func mcvc_formatVideoDurationLabel(seconds: Int) -> String {
