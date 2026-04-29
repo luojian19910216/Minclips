@@ -80,7 +80,7 @@ public enum MCERunFailCode: String, CaseIterable, Codable {
     ///
     case fail
     ///
-    case reject = "audit_reject"
+    case auditFail = "audit_reject"
 }
 
 extension MCERunFailCode: MCPDefaultInitializable {}

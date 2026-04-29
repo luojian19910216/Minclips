@@ -216,7 +216,7 @@ public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
         let l = UILabel()
         l.textColor = .white
         l.textAlignment = .center
-        l.font = .systemFont(ofSize: 20, weight: .bold)
+        l.font = .systemFont(ofSize: 16, weight: .semibold)
         l.layer.shadowColor = UIColor.black.cgColor
         l.layer.shadowOpacity = 0.45
         l.layer.shadowRadius = 3
@@ -228,7 +228,7 @@ public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
         let l = UILabel()
         l.textAlignment = .center
         l.textColor = .white
-        l.font = .systemFont(ofSize: 12, weight: .regular)
+        l.font = .systemFont(ofSize: 16, weight: .regular)
         return l
     }()
 
@@ -236,7 +236,7 @@ public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
         let s = UIStackView()
         s.axis = .vertical
         s.alignment = .center
-        s.spacing = 4
+        s.spacing = 12
         s.isUserInteractionEnabled = false
         return s
     }()
@@ -299,17 +299,15 @@ public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
         mcvw_generatingOverlay.snp.makeConstraints { $0.edges.equalToSuperview() }
         mcvw_generatingDimView.snp.makeConstraints { $0.edges.equalToSuperview() }
 
+        mcvw_generatingShimmer.snp.makeConstraints { $0.edges.equalToSuperview() }
+
         mcvw_generatingTextStack.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(11)
+            $0.center.equalToSuperview()
             $0.leading.greaterThanOrEqualToSuperview().offset(4)
             $0.trailing.lessThanOrEqualToSuperview().offset(-4)
         }
 
-        mcvw_generatingShimmer.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
-            $0.bottom.equalTo(mcvw_generatingTextStack.snp.top).offset(-8)
-        }
+        mcvw_generatingOverlay.bringSubviewToFront(mcvw_generatingTextStack)
 
     }
 
@@ -363,6 +361,7 @@ public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
             return
         }
         mcvw_generatingOverlay.isHidden = false
+        mcvw_generatingOverlay.bringSubviewToFront(mcvw_generatingTextStack)
         mcvw_generatingElapsedAnchor = run.createTime
         mcvw_generatingStatusLabel.text = "Generating"
         mcvw_tickGeneratingPercentDisplay()

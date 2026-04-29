@@ -227,7 +227,7 @@ private extension MCCProjectsListPageController {
                 .store(in: &cancellables)
             return
         }
-
+        
         var request = MCSRunListRequest()
         request.itemsPerPage = MCCProjectsListLayout.pageSize
         request.outputKind = mcvc_inventoryResultType
@@ -493,7 +493,7 @@ private extension MCCProjectsListPageController {
     func mcvc_projectsCreationKind(for run: MCSRunItem) -> MCCCreationResultKind {
         switch run.runState {
         case .failed:
-            return run.failureCode == .reject ? .restricted : .failed
+            return run.failureCode == .auditFail ? .restricted : .failed
         case .generating:
             if run.contentKind.isToVideo {
                 let sec = run.tenSecondMode != 0 ? 10 : 5
@@ -541,7 +541,7 @@ private extension MCCProjectsRunCell {
         }
         mcvw_failureBadgeContainer.isHidden = false
         switch run.failureCode {
-        case .reject:
+        case .auditFail:
             mcvw_failureIconView.image = UIImage(named: "ic_cm_restricted")?.withRenderingMode(.alwaysOriginal)
             mcvw_failureTitleLabel.text = "Restricted"
             mcvw_failureTitleLabel.textColor = UIColor(hex: "FFC629")

@@ -46,7 +46,6 @@ final class MCCRunGeneratingShimmerView: UIView {
         shimmerLayer.startPoint = CGPoint(x: 0, y: 0.5)
         shimmerLayer.endPoint = CGPoint(x: 1, y: 0.5)
         shimmerLayer.opacity = 0.52
-        shimmerLayer.drawsAsynchronously = true
     }
 
     @available(*, unavailable)
