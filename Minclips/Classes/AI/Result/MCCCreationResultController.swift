@@ -39,23 +39,11 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
 
     public required init?(coder: NSCoder) { fatalError() }
 
-    public override func mcvc_init() {
-        fd_prefersNavigationBarHidden = false
-    }
-
     public override func mcvc_configureNav() {
-        guard let nav = navigationController else { return }
-        nav.navigationBar.mc_barStyle = .transparentLight
-        nav.navigationBar.mc_shadowHidden = true
-        let item = navigationItem
-        item.title = nil
-        item.largeTitleDisplayMode = .never
-        nav.navigationBar.prefersLargeTitles = false
-        mccr_navTitleLabel.text = mccr_pageTitle
-        mccr_navTitleLabel.sizeToFit()
-        item.titleView = mccr_navTitleLabel
-        item.leftBarButtonItem = mccr_barCircleItem(systemName: "chevron.left", action: #selector(mccr_onBack))
-        item.rightBarButtonItem = mccr_barCircleItem(systemName: "trash", action: #selector(mccr_onDelete))
+        super.mcvc_configureNav()
+        
+        self.navigationItem.title = mccr_pageTitle
+        self.navigationItem.rightBarButtonItem = mccr_barCircleItem(imageName: "ic_cm_run_delete", action: #selector(mccr_onDelete))
     }
 
     public override func mcvc_setupLocalization() {
@@ -63,6 +51,12 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
         view.backgroundColor = UIColor(hex: "121212")
         contentView.backgroundColor = view.backgroundColor
         contentView.mccr_apply(kind: mccr_kind)
+        if let run = mccr_seedRun {
+            contentView.mccr_bindPosterFrom(run: run)
+            if run.runState == .failed {
+                contentView.mccr_applyFailureSubtitle(from: run)
+            }
+        }
     }
 
     public override func mcvc_loadData() {
@@ -87,6 +81,16 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
         b.setImage(UIImage(systemName: systemName, withConfiguration: cfg), for: .normal)
         b.tintColor = .white
         b.snp.makeConstraints { $0.size.equalTo(36) }
+        b.addTarget(self, action: action, for: .touchUpInside)
+        return UIBarButtonItem(customView: b)
+    }
+
+    private func mccr_barCircleItem(imageName: String, action: Selector) -> UIBarButtonItem {
+        let b = UIButton(type: .custom)
+        b.backgroundColor = .clear
+        b.adjustsImageWhenHighlighted = false
+        let img = UIImage(named: imageName)?.withRenderingMode(.alwaysOriginal)
+        b.setImage(img, for: .normal)
         b.addTarget(self, action: action, for: .touchUpInside)
         return UIBarButtonItem(customView: b)
     }
@@ -181,6 +185,10 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
         mccr_navTitleLabel.text = title
         mccr_navTitleLabel.sizeToFit()
         contentView.mccr_apply(kind: nextKind)
+        contentView.mccr_bindPosterFrom(run: run)
+        if run.runState == .failed {
+            contentView.mccr_applyFailureSubtitle(from: run)
+        }
     }
 
 }

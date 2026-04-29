@@ -1,5 +1,7 @@
 import UIKit
 import Common
+import Data
+import SDWebImage
 import SnapKit
 
 public enum MCCCreationResultKind {
@@ -17,16 +19,62 @@ public enum MCCCreationSuccessToolbarAction: Int {
 
 }
 
-/// Preview metrics for failed/restricted result — aligns with project list thumbnails (`height = width × imageHeightPerWidth`).
+/// Failed/restricted detail preview insets & plate fill (white @ 6% alpha, square corners).
 private enum MCCCreationResultPreviewMetrics {
     static let horizontalInset: CGFloat = 28
+    static let topInset: CGFloat = 12
     static let gapImageToPrimaryButton: CGFloat = 32
 
-    /// Same numeric intent as `MCCProjectsLikesListMetrics.imageHeightPerWidth`.
-    static let imageHeightPerWidth: CGFloat = 4.0 / 3.0
+    static let previewPlateBackgroundAlpha: CGFloat = 0.06
+
+    /// Icon → title, title → body, and paragraph gaps inside the body (reason vs credits note).
+    static let failureDetailVerticalSpacing: CGFloat = 8
 
     static let primaryButtonSize = CGSize(width: 88, height: 66)
     static let bottomSafeInsetPrimaryButton: CGFloat = 16
+}
+
+private enum MCCCreationFailureSubtitleStyle {
+    /// `UILabel.textAlignment` is ignored for `attributedText`; alignment must live in `NSParagraphStyle`.
+    private static func typographyBase(paragraphSpacingAfter: CGFloat? = nil) -> [NSAttributedString.Key: Any] {
+        let ps = NSMutableParagraphStyle()
+        ps.alignment = .center
+        if let spacing = paragraphSpacingAfter {
+            ps.paragraphSpacing = spacing
+        }
+        return [
+            .font: UIFont.systemFont(ofSize: 14, weight: .regular),
+            .foregroundColor: UIColor.white.withAlphaComponent(0.48),
+            .paragraphStyle: ps,
+        ]
+    }
+
+    static func attributed(_ plain: String) -> NSAttributedString {
+        attributedParagraphsSeparatedByDoubleNewline(plain)
+    }
+
+    /// Splits by `\n\n`; matches stack spacing (`failureDetailVerticalSpacing`) between paragraphs (reason vs credits lines).
+    private static func attributedParagraphsSeparatedByDoubleNewline(_ plain: String) -> NSAttributedString {
+        let parts = plain.components(separatedBy: "\n\n").map {
+            $0.trimmingCharacters(in: .whitespacesAndNewlines)
+        }.filter { !$0.isEmpty }
+        guard !parts.isEmpty else {
+            return NSAttributedString(string: "")
+        }
+        if parts.count == 1 {
+            return NSAttributedString(string: parts[0], attributes: typographyBase())
+        }
+        let gap = MCCCreationResultPreviewMetrics.failureDetailVerticalSpacing
+        let out = NSMutableAttributedString()
+        for (i, part) in parts.enumerated() {
+            if i > 0 {
+                out.append(NSAttributedString(string: "\n"))
+            }
+            let attrs = typographyBase(paragraphSpacingAfter: i < parts.count - 1 ? gap : nil)
+            out.append(NSAttributedString(string: part, attributes: attrs))
+        }
+        return out
+    }
 }
 
 private final class MCCFrameStripCell: UICollectionViewCell {
@@ -76,7 +124,8 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
     private let mccr_mediaContainer: UIView = {
         let v = UIView()
         v.clipsToBounds = true
-        v.layer.cornerRadius = 12
+        v.layer.cornerRadius = 0
+        v.backgroundColor = UIColor(white: 1, alpha: MCCCreationResultPreviewMetrics.previewPlateBackgroundAlpha)
         return v
     }()
 
@@ -87,30 +136,36 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         return iv
     }()
 
+    /// Same blur as works-list thumbnails (`MCCProjectsListPageView.mcvw_blurOverlay` — `.dark`).
     private let mccr_blurView: UIVisualEffectView = {
-        let e = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterialDark))
+        let e = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
+        e.isUserInteractionEnabled = false
         return e
     }()
 
-    private let mccr_iconBase = UIView()
-
-    private let mccr_filmImageView = UIImageView()
-
-    private let mccr_badgeImageView = UIImageView()
+    /// Detail badges: `ic_cm_failed_detail` / `ic_cm_restricted_detail` (works list keeps `ic_cm_*` without `_detail`).
+    private let mccr_failureStatusIconView: UIImageView = {
+        let v = UIImageView()
+        v.contentMode = .scaleAspectFit
+        v.setContentCompressionResistancePriority(.required, for: .vertical)
+        return v
+    }()
 
     private let mccr_statusStack: UIStackView = {
         let s = UIStackView()
         s.axis = .vertical
         s.alignment = .center
-        s.spacing = 8
+        s.spacing = MCCCreationResultPreviewMetrics.failureDetailVerticalSpacing
         return s
     }()
 
     public let mccr_titleLabel: UILabel = {
         let l = UILabel()
         l.textAlignment = .center
-        l.font = .systemFont(ofSize: 19, weight: .bold)
-        l.numberOfLines = 0
+        l.font = .systemFont(ofSize: 12, weight: .regular)
+        l.numberOfLines = 1
+        l.lineBreakMode = .byTruncatingTail
+        l.setContentCompressionResistancePriority(.required, for: .vertical)
         return l
     }()
 
@@ -118,7 +173,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         let l = UILabel()
         l.textAlignment = .center
         l.font = .systemFont(ofSize: 14, weight: .regular)
-        l.textColor = UIColor(white: 1, alpha: 0.6)
+        l.textColor = UIColor.white.withAlphaComponent(0.48)
         l.numberOfLines = 0
         l.setContentHuggingPriority(.required, for: .vertical)
         return l
@@ -162,7 +217,8 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         return l
     }()
 
-    private var mccr_didConfigureFilm: Bool = false
+    /// Invalidates stale `sd_setImage` completions when rebound or leaving failed detail.
+    private var mccr_posterLoadGeneration: UInt = 0
 
     private let mccr_successPill: UIVisualEffectView = {
         let v = UIVisualEffectView(effect: UIBlurEffect(style: .systemChromeMaterialDark))
@@ -239,9 +295,6 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     private var mccr_isPlaying: Bool = false
 
-    /// Locks `mccr_mediaContainer` to the same **width:height** proportions as project list thumbnails (`height = width × imageHeightPerWidth`).
-    private var mccr_mediaAspectRatioConstraint: NSLayoutConstraint?
-
     public var mccr_onSuccessToolbar: ((MCCCreationSuccessToolbarAction) -> Void)?
 
     public override func mcvw_setupUI() {
@@ -252,11 +305,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_mediaContainer.addSubview(mccr_blurView)
         mccr_mediaContainer.addSubview(mccr_statusStack)
 
-        configureFilmIcon()
-        mccr_iconBase.snp.makeConstraints { $0.size.equalTo(56) }
-
-        mccr_statusStack.addArrangedSubview(mccr_iconBase)
-        mccr_statusStack.setCustomSpacing(12, after: mccr_iconBase)
+        mccr_statusStack.addArrangedSubview(mccr_failureStatusIconView)
         mccr_statusStack.addArrangedSubview(mccr_titleLabel)
         mccr_statusStack.addArrangedSubview(mccr_subtitleLabel)
         mccr_subtitleLabel.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
@@ -289,11 +338,11 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         }
 
         mccr_mediaContainer.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(MCCCreationResultPreviewMetrics.topInset)
             make.leading.trailing.equalToSuperview().inset(MCCCreationResultPreviewMetrics.horizontalInset)
             make.bottom.equalTo(mccr_actionButton.snp.top)
                 .offset(-MCCCreationResultPreviewMetrics.gapImageToPrimaryButton)
         }
-        mccr_attachPreviewImageAspectRatioConstraint()
 
         mccr_imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
         mccr_blurView.snp.makeConstraints { $0.edges.equalToSuperview() }
@@ -455,6 +504,60 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_editThumbHost?.image = mccr_imageView.image
     }
 
+    private func mccr_cancelPosterLoad() {
+        mccr_posterLoadGeneration &+= 1
+        mccr_imageView.sd_cancelCurrentImageLoad()
+    }
+
+    /// Same **`sourceImageUrl`/poster URL + blur** policy as works-list cells (`mcvw_bindThumbnail`).
+    public func mccr_bindPosterFrom(run: MCSRunItem) {
+        guard run.runState == .failed else { return }
+        mccr_posterLoadGeneration &+= 1
+        let token = mccr_posterLoadGeneration
+        mccr_imageView.sd_cancelCurrentImageLoad()
+
+        let pick = run.mcc_worksListThumbnail()
+        let raw = pick.urlString.mcc_normalizedRemoteURL()
+        guard raw.isEmpty == false, let remoteURL = URL(string: raw) else {
+            mccr_blurView.isHidden = true
+            mccr_imageView.image = nil
+            setPlaceholderImage()
+            return
+        }
+
+        mccr_blurView.isHidden = !pick.blurOverlay
+        mccr_imageView.image = nil
+        mccr_imageView.sd_setImage(with: remoteURL, placeholderImage: Self.mccr_placeholderGradient(), options: [.retryFailed]) {
+            [weak self] _, _, _, _ in
+            guard let self else { return }
+            guard self.mccr_posterLoadGeneration == token else { return }
+            self.mccr_editThumbHost?.image = self.mccr_imageView.image
+        }
+    }
+
+    /// Refreshes server `failureReason` when present (`.fail`), then shared credit line — 14pt regular, white 48% opacity.
+    public func mccr_applyFailureSubtitle(from run: MCSRunItem) {
+        guard run.runState == .failed else { return }
+
+        let credits = "Your credits have been restored"
+
+        switch run.failureCode {
+        case .fail:
+            let detail = run.failureReason.trimmingCharacters(in: .whitespacesAndNewlines)
+            let body: String
+            if detail.isEmpty {
+                body = credits
+            } else {
+                body = detail + "\n\n" + credits
+            }
+            mccr_subtitleLabel.attributedText = MCCCreationFailureSubtitleStyle.attributed(body)
+        case .auditFail:
+            let first = "There are copyright risks associated with your character"
+            mccr_subtitleLabel.attributedText = MCCCreationFailureSubtitleStyle.attributed(first + "\n\n" + credits)
+        }
+
+        mccr_subtitleLabel.isHidden = false
+    }
     static func mccr_placeholderGradient() -> UIImage {
         let w: CGFloat = 3
 
@@ -484,41 +587,6 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         }
     }
 
-    private func configureFilmIcon() {
-        guard !mccr_didConfigureFilm else { return }
-        mccr_didConfigureFilm = true
-        let c = UIImage.SymbolConfiguration(pointSize: 40, weight: .regular)
-        mccr_filmImageView.image = UIImage(systemName: "film", withConfiguration: c)
-        mccr_filmImageView.tintColor = .white
-        mccr_filmImageView.contentMode = .scaleAspectFit
-        mccr_iconBase.addSubview(mccr_filmImageView)
-        mccr_filmImageView.snp.makeConstraints { $0.center.equalToSuperview() }
-        mccr_iconBase.addSubview(mccr_badgeImageView)
-        mccr_badgeImageView.snp.makeConstraints { make in
-            make.centerX.equalToSuperview().offset(4)
-            make.centerY.equalToSuperview().offset(-4)
-            make.size.equalTo(24)
-        }
-    }
-
-    private func mccr_resetPreviewImageAspectRatioConstraint() {
-        mccr_mediaAspectRatioConstraint?.isActive = false
-        mccr_mediaAspectRatioConstraint = nil
-    }
-
-    /// Locks `mccr_mediaContainer` to the same proportional framing as project list cells: `height = width × imageHeightPerWidth` (often described as 「4:3」 in tandem with those cells).
-    private func mccr_attachPreviewImageAspectRatioConstraint() {
-        mccr_resetPreviewImageAspectRatioConstraint()
-        let c = mccr_mediaContainer.heightAnchor.constraint(
-            equalTo: mccr_mediaContainer.widthAnchor,
-            multiplier: MCCCreationResultPreviewMetrics.imageHeightPerWidth
-        )
-        c.priority = .required
-        c.identifier = "MCCR.preview.heightPerWidthAspect"
-        c.isActive = true
-        mccr_mediaAspectRatioConstraint = c
-    }
-
     public func mccr_apply(kind: MCCCreationResultKind) {
 
         switch kind {
@@ -542,8 +610,8 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_actionButton.isHidden = false
         mccr_blurView.isHidden = false
         mccr_statusStack.isHidden = false
-        mccr_iconBase.isHidden = false
-        mccr_mediaContainer.layer.cornerRadius = 12
+        mccr_mediaContainer.layer.cornerRadius = 0
+        mccr_mediaContainer.backgroundColor = UIColor(white: 1, alpha: MCCCreationResultPreviewMetrics.previewPlateBackgroundAlpha)
         mccr_actionButton.snp.remakeConstraints { make in
             make.centerX.equalToSuperview()
             make.size.equalTo(MCCCreationResultPreviewMetrics.primaryButtonSize)
@@ -551,16 +619,16 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
                 .offset(-MCCCreationResultPreviewMetrics.bottomSafeInsetPrimaryButton)
         }
         mccr_mediaContainer.snp.remakeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(MCCCreationResultPreviewMetrics.topInset)
             make.leading.trailing.equalToSuperview().inset(MCCCreationResultPreviewMetrics.horizontalInset)
             make.bottom.equalTo(mccr_actionButton.snp.top)
                 .offset(-MCCCreationResultPreviewMetrics.gapImageToPrimaryButton)
         }
-        mccr_attachPreviewImageAspectRatioConstraint()
         setPlaceholderImage()
     }
 
     private func mccr_applySuccessChrome(isVideo: Bool, duration: TimeInterval) {
-        mccr_resetPreviewImageAspectRatioConstraint()
+        mccr_cancelPosterLoad()
         mccr_isVideoMode = isVideo
         mccr_videoDuration = duration
         mccr_successPill.isHidden = false
@@ -568,8 +636,8 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_actionButton.isHidden = true
         mccr_blurView.isHidden = true
         mccr_statusStack.isHidden = true
-        mccr_iconBase.isHidden = true
         mccr_mediaContainer.layer.cornerRadius = 0
+        mccr_mediaContainer.backgroundColor = .clear
         mccr_mediaContainer.snp.remakeConstraints { make in
             if isVideo {
                 make.top.equalTo(safeAreaLayoutGuide.snp.top)
@@ -647,39 +715,23 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     private func mccr_applyFailedContent() {
         setPlaceholderImage()
-        let badgeSmall = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
-        mccr_badgeImageView.isHidden = false
-        mccr_badgeImageView.image = UIImage(systemName: "xmark.circle.fill", withConfiguration: badgeSmall)
-        mccr_badgeImageView.tintColor = .systemRed
+        mccr_failureStatusIconView.image = UIImage(named: "ic_cm_failed_detail")?.withRenderingMode(.alwaysOriginal)
         mccr_titleLabel.text = "Failed"
-        mccr_titleLabel.textColor = .systemRed
-        mccr_subtitleLabel.text = "Your credits have been restored"
+        mccr_titleLabel.textColor = UIColor(hex: "F54545")
+        let credits = "Your credits have been restored"
+        mccr_subtitleLabel.attributedText = MCCCreationFailureSubtitleStyle.attributed(credits)
         mccr_subtitleLabel.isHidden = false
         applyFailedAction()
     }
 
     private func mccr_applyRestrictedContent() {
         setPlaceholderImage()
-        let badgeSmall = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
-        mccr_badgeImageView.isHidden = false
-        mccr_badgeImageView.image = UIImage(
-            systemName: "exclamationmark.triangle.fill",
-            withConfiguration: badgeSmall
-        )
-        mccr_badgeImageView.tintColor = .systemOrange
+        mccr_failureStatusIconView.image = UIImage(named: "ic_cm_restricted_detail")?.withRenderingMode(.alwaysOriginal)
         mccr_titleLabel.text = "Restricted"
-        mccr_titleLabel.textColor = .systemOrange
+        mccr_titleLabel.textColor = UIColor(hex: "FFC629")
         let first = "There are copyright risks associated with your character"
-
         let second = "Your credits have been restored"
-
-        let full = first + "\n" + second
-
-        let a = NSMutableAttributedString(string: full, attributes: [
-            .font: UIFont.systemFont(ofSize: 14, weight: .regular),
-            .foregroundColor: UIColor(white: 1, alpha: 0.6)
-        ])
-        mccr_subtitleLabel.attributedText = a
+        mccr_subtitleLabel.attributedText = MCCCreationFailureSubtitleStyle.attributed(first + "\n\n" + second)
         mccr_subtitleLabel.isHidden = false
         applyRestrictedAction()
     }

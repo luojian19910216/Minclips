@@ -362,7 +362,7 @@ public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
         }
         mcvw_generatingOverlay.isHidden = false
         mcvw_generatingOverlay.bringSubviewToFront(mcvw_generatingTextStack)
-        mcvw_generatingElapsedAnchor = run.createTime
+        mcvw_generatingElapsedAnchor = run.createdAt
         mcvw_generatingStatusLabel.text = "Generating"
         mcvw_tickGeneratingPercentDisplay()
         mcvw_startGeneratingProgressTickerIfNeeded()

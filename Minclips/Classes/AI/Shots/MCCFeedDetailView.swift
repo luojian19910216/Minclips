@@ -64,7 +64,7 @@ public final class MCCFeedDetailCharacterAvatarSlotView: UIView {
 
     public let mcvw_removeButton: UIButton = {
         let b = UIButton(type: .custom)
-        b.setImage(UIImage(named: "ic_cm_delete")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        b.setImage(UIImage(named: "ic_cm_img_delete")?.withRenderingMode(.alwaysOriginal), for: .normal)
         b.tintColor = UIColor(white: 0.08, alpha: 0.92)
         b.backgroundColor = UIColor.white.withAlphaComponent(0.2)
         b.imageView?.contentMode = .scaleAspectFit
