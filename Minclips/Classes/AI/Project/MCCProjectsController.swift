@@ -40,8 +40,7 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
 
     public override func mcvc_setupLocalization() {
         super.mcvc_setupLocalization()
-        view.backgroundColor = UIColor(hex: "000000")!
-        contentView.backgroundColor = view.backgroundColor
+        
         contentView.mcvw_tagCollection.backgroundColor = .clear
         contentView.mcvw_pinHeaderView.backgroundColor = .clear
     }

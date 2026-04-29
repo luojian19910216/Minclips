@@ -46,6 +46,7 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
         super.mcvc_configureNav()
         
         self.navigationItem.title = mccr_pageTitle
+        
         self.navigationItem.rightBarButtonItem = mccr_barCircleItem(imageName: "ic_cm_run_delete", action: #selector(mccr_onDelete))
     }
 

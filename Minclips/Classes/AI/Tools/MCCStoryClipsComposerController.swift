@@ -2,6 +2,15 @@ import UIKit
 import Common
 public final class MCCStoryClipsComposerController: MCCViewController<MCCStoryClipsComposerView, MCCEmptyViewModel> {
 
+    public override init() {
+        super.init()
+        hidesBottomBarWhenPushed = true
+    }
+
+    public required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
     public override func mcvc_configureNav() {

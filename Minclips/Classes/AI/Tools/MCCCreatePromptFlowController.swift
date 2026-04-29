@@ -1,5 +1,7 @@
 import UIKit
 import Common
+import Combine
+
 public enum MCCCreatePromptFlowKind {
     case character
     case shot
@@ -49,16 +51,20 @@ public final class MCCCreatePromptFlowController: MCCViewController<MCCCreatePro
 
         let ph: String
         let cta: String
+        let heroAsset: String
         switch mcvc_promptKind {
         case .character:
             ph = "Describe what character you want"
             cta = "Continue + 250"
+            heroAsset = "ic_bg_guide_1"
             v.mcvw_trashFooter.isHidden = true
         case .shot:
             ph = "Describe what shot you want"
             cta = "Continue + 250"
+            heroAsset = "ic_bg_guide_2"
             v.mcvw_trashFooter.isHidden = false
         }
+        v.mcvw_heroImageView.image = UIImage(named: heroAsset)
         v.mcvw_setShotSettingsVisible(mcvc_promptKind == .shot)
         let p = NSMutableParagraphStyle()
         p.lineSpacing = 2
@@ -71,6 +77,12 @@ public final class MCCCreatePromptFlowController: MCCViewController<MCCCreatePro
             ]
         )
         v.mcvw_continueButton.setTitle(cta, for: .normal)
+    }
+
+    public override func mcvc_bind() {
+        super.mcvc_bind()
+        mcvc_observeKeyboardNotifications()
+        mcvc_installDismissTap()
     }
 
     private func mcvc_circleBackItem() -> UIBarButtonItem {
@@ -89,5 +101,45 @@ public final class MCCCreatePromptFlowController: MCCViewController<MCCCreatePro
     @objc
     private func mcvc_back() {
         navigationController?.popViewController(animated: true)
+    }
+}
+
+extension MCCCreatePromptFlowController: UIGestureRecognizerDelegate {
+
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        guard let touched = touch.view else { return true }
+        if touched.isDescendant(of: contentView.mcvw_textView) { return false }
+        return true
+    }
+}
+
+private extension MCCCreatePromptFlowController {
+
+    func mcvc_observeKeyboardNotifications() {
+        NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.contentView.mcvw_setKeyboardActive(true, animated: true)
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.contentView.mcvw_setKeyboardActive(false, animated: true)
+            }
+            .store(in: &cancellables)
+    }
+
+    func mcvc_installDismissTap() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(mcvc_dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        tap.delegate = self
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc
+    func mcvc_dismissKeyboard() {
+        view.endEditing(true)
     }
 }

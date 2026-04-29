@@ -58,10 +58,6 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         mcvc_removeMp4ObserversAndPlayer()
     }
 
-    public override func mcvc_needLeftBarButtonItem() -> Bool {
-        false
-    }
-
     public override func mcvc_configureNav() {
         super.mcvc_configureNav()
  
@@ -75,6 +71,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
         let betweenCreditsAndReport = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
         betweenCreditsAndReport.width = 8
+        
         navigationItem.rightBarButtonItems = [
             MCCRootTabNavChrome.capsuleBarButtonItem(
                 icon: UIImage(named: "ic_nav_report")?.withRenderingMode(.alwaysOriginal),
@@ -84,7 +81,6 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
             betweenCreditsAndReport,
             creditsBar
         ]
-        navigationItem.title = nil
     }
 
     @objc
@@ -125,12 +121,6 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
     @objc
     private func mcvc_reportTapped() {
-    }
-
-    public override func mcvc_setupLocalization() {
-        super.mcvc_setupLocalization()
-        view.backgroundColor = UIColor(hex: "000000")
-        contentView.backgroundColor = view.backgroundColor
     }
 
     public override func mcvc_bind() {

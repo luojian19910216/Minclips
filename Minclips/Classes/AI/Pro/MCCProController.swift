@@ -26,14 +26,14 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
     public override func mcvc_configureNav() {
         super.mcvc_configureNav()
         
-        navigationItem.setHidesBackButton(true, animated: false)
         navigationItem.leftBarButtonItem = nil
+        navigationItem.setHidesBackButton(true, animated: false)
+        
         navigationItem.rightBarButtonItem = MCCRootTabNavChrome.capsuleBarButtonItem(
             icon: UIImage(named: "ic_cm_close")?.withRenderingMode(.alwaysTemplate),
             target: self,
             action: #selector(mcvc_leftBarButtonItemAction)
         )
-        navigationItem.rightBarButtonItem?.tintColor = .white
     }
 
     public override func mcvc_setupLocalization() {

@@ -46,7 +46,7 @@ public final class MCCToolsController: MCCViewController<MCCToolsView, MCCEmptyV
         let cv = contentView.mcvw_collectionView
         cv.dataSource = self
         cv.delegate = self
-        cv.allowsSelection = false
+        cv.allowsSelection = true
 
         let header = MJRefreshNormalHeader { [weak self] in
             self?.mcvc_loadStudioToolbox()
@@ -104,6 +104,22 @@ extension MCCToolsController: UICollectionViewDataSource, UICollectionViewDelega
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
         mcvc_itemSize(in: collectionView)
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        guard let nav = navigationController else { return }
+
+        switch indexPath.item {
+        case 0:
+            nav.pushViewController(MCCStoryClipsComposerController(), animated: true)
+        case 1:
+            nav.pushViewController(MCCCreatePromptFlowController(kind: .character), animated: true)
+        case 2:
+            nav.pushViewController(MCCCreatePromptFlowController(kind: .shot), animated: true)
+        default:
+            break
+        }
     }
 
 }
