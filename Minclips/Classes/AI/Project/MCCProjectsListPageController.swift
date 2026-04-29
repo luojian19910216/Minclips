@@ -356,6 +356,12 @@ extension MCCProjectsListPageController: UICollectionViewDataSource, UICollectio
         return cell
     }
 
+    public func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        if mcvc_isLikes { return true }
+        guard let run = mcvc_listState.runItems[safe: indexPath.item] else { return false }
+        return run.runState != .generating
+    }
+
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
         if mcvc_isLikes, let feed = mcvc_listState.feedItems[safe: indexPath.item] {
@@ -368,6 +374,7 @@ extension MCCProjectsListPageController: UICollectionViewDataSource, UICollectio
             return
         }
         guard let run = mcvc_listState.runItems[safe: indexPath.item] else { return }
+        guard run.runState != .generating else { return }
         if let cell = collectionView.cellForItem(at: indexPath) as? MCCProjectsRunCell {
             let bound = cell.mcvw_boundRunId.trimmingCharacters(in: .whitespacesAndNewlines)
             let rid = run.runId.trimmingCharacters(in: .whitespacesAndNewlines)
