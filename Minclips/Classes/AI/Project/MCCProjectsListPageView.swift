@@ -99,7 +99,7 @@ public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
     public static let mcvw_reuseId = "MCCProjectsRunCell"
 
     /// Last `runId` applied to this cell — validates collection view index vs visible cell before navigation.
-    public private(set) var mcvw_boundRunId: String = ""
+    public internal(set) var mcvw_boundRunId: String = ""
 
     /// Bumps on reuse and on each thumbnail bind so stray `sd_setImage` completions are ignored.
     private var mcvw_thumbLoadGeneration: UInt = 0

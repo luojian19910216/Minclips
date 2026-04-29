@@ -17,19 +17,20 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
     private var mcvc_selectedTagIndex: Int = 0
     
     private var mcvc_labelItems: [MCSFeedLabelItem] { mcvc_tagsState.model?.items ?? [] }
-        
+
+    public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
+
     public override func mcvc_configureNav() {
         super.mcvc_configureNav()
-        
-        self.tabBarController?.navigationItem.leftBarButtonItem = MCCRootTabNavChrome.leftTitleBarButtonItem(title: "Shots")
-        
-        self.tabBarController?.navigationItem.rightBarButtonItem = MCCRootTabNavChrome.proBarButtonItem(
+
+        tabBarController?.navigationItem.leftBarButtonItem = MCCRootTabNavChrome.leftTitleBarButtonItem(title: "Shots")
+        tabBarController?.navigationItem.rightBarButtonItem = MCCRootTabNavChrome.proBarButtonItem(
             target: self,
             action: #selector(mcvc_onProTapped),
             titleColor: .white
         )
     }
-    
+
     public override func mcvc_setupLocalization() {
         contentView.backgroundColor = view.backgroundColor
         contentView.mcvw_tagCollection.backgroundColor = .clear
@@ -55,9 +56,14 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
 
 extension MCCShotsController: JXPagingViewDelegate {
 
-    public func tableHeaderViewHeight(in pagingView: JXPagingView) -> Int { 0 }
+    public func tableHeaderViewHeight(in pagingView: JXPagingView) -> Int {
+        let w = max(1, view.bounds.width > 1 ? view.bounds.width : UIScreen.main.bounds.width)
+        return Int(MCCShotsCarouselMetrics.headerHeight(forWidth: w))
+    }
 
-    public func tableHeaderView(in pagingView: JXPagingView) -> UIView { UIView() }
+    public func tableHeaderView(in pagingView: JXPagingView) -> UIView {
+        contentView.mcvw_carouselHeaderView
+    }
 
     public func heightForPinSectionHeader(in pagingView: JXPagingView) -> Int {
         48
@@ -126,7 +132,7 @@ extension MCCShotsController: UICollectionViewDataSource, UICollectionViewDelega
 }
 
 extension MCCShotsController {
-    
+
     @objc public func mcvc_onProTapped() {
         let vc: MCCProController = .init()
         self.navigationController?.pushViewController(vc, animated: true)

@@ -30,6 +30,9 @@ private enum MCCShotsSkeletonMetrics {
     static let imageHeightPerWidth: CGFloat = 16.0 / 9.0
     static let imageToTitleSpacing: CGFloat = 8
     static let titleBlockHeight: CGFloat = 32
+
+    /// Matches `MCCShotsCarouselMetrics.headerHeight` stub hero until API-backed banner exists.
+    static let heroCarouselPlaceholderHeight: CGFloat = MCCShotsCarouselMetrics.headerHeight(forWidth: UIScreen.main.bounds.width)
 }
 
 private enum MCCProjectsListSkeletonMetrics {
@@ -145,6 +148,12 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
         switch style {
         case .tagsAndDoubleColumn:
             mcvw_stack.spacing = MCCShotsSkeletonMetrics.rowSpacing
+            let carouselSk = UIView()
+            carouselSk.layer.cornerRadius = 6
+            carouselSk.clipsToBounds = true
+            mcvw_skeletonize(carouselSk, radius: 6, height: MCCShotsSkeletonMetrics.heroCarouselPlaceholderHeight)
+            mcvw_stack.addArrangedSubview(carouselSk)
+
             let tagHost = UIView()
             tagHost.snp.makeConstraints { $0.height.equalTo(MCCShotsSkeletonMetrics.tagPinHeaderHeight) }
             let tagBar = UIView()
@@ -160,7 +169,7 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
                 make.height.equalTo(MCCShotsSkeletonMetrics.tagSkeletonPillHeight)
             }
             mcvw_stack.addArrangedSubview(tagHost)
-            mcvw_stack.setCustomSpacing(MCCShotsSkeletonMetrics.listSectionTopInset, after: tagHost)
+            mcvw_stack.setCustomSpacing(MCCShotsSkeletonMetrics.listSectionTopInset, after: carouselSk)
             for _ in 0..<Self.mcvw_rowCountShotsWaterfall {
                 mcvw_stack.addArrangedSubview(mcvw_makeShotsWaterfallRow())
             }

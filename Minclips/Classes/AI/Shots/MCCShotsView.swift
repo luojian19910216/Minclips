@@ -6,6 +6,12 @@ import SDWebImage
 
 public final class MCCShotsView: MCCBaseView {
 
+    /// JXPaging `tableHeaderView`: paging-sized height comes from `MCCShotsController.tableHeaderViewHeight`.
+    public lazy var mcvw_carouselHeaderView: MCCShotsCarouselHeaderView = {
+        let v = MCCShotsCarouselHeaderView()
+        return v
+    }()
+
     public let mcvw_tagFlowLayout: UICollectionViewFlowLayout = {
         let l = UICollectionViewFlowLayout()
         l.scrollDirection = .horizontal
@@ -47,22 +53,21 @@ public final class MCCShotsView: MCCBaseView {
         addSubview(mcvw_skeletonOverlay)
         mcvw_skeletonOverlay.isUserInteractionEnabled = false
         mcvw_skeletonOverlay.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top)
-            make.leading.trailing.bottom.equalToSuperview()
+            make.edges.equalToSuperview()
         }
     }
 
     public func mcvw_setupPagingView(delegate: JXPagingViewDelegate) {
         let pv = JXPagingListRefreshView(delegate: delegate, listContainerType: .scrollView)
         pv.mainTableView.backgroundColor = .clear
+        pv.mainTableView.contentInsetAdjustmentBehavior = .never
         pv.allowsCacheList = true
         mcvw_pagingViewRef = pv
         if pv.superview == nil {
             addSubview(pv)
         }
         pv.snp.remakeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top)
-            make.leading.trailing.bottom.equalToSuperview()
+            make.edges.equalToSuperview()
         }
         bringSubviewToFront(mcvw_skeletonOverlay)
     }

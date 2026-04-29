@@ -227,6 +227,10 @@
 		C0040002000100000000D002 /* MCCFeedModePopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0040000000100000000D000 /* MCCFeedModePopController.swift */; };
 		C0040003000100000000D003 /* MCCFeedModePopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0040000000100000000D000 /* MCCFeedModePopController.swift */; };
 		C0040004000100000000D004 /* MCCFeedModePopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0040000000100000000D000 /* MCCFeedModePopController.swift */; };
+		C0050001000100000000E001 /* MCCShotsCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0050000000100000000E000 /* MCCShotsCarouselHeaderView.swift */; };
+		C0050002000100000000E002 /* MCCShotsCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0050000000100000000E000 /* MCCShotsCarouselHeaderView.swift */; };
+		C0050003000100000000E003 /* MCCShotsCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0050000000100000000E000 /* MCCShotsCarouselHeaderView.swift */; };
+		C0050004000100000000E004 /* MCCShotsCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0050000000100000000E000 /* MCCShotsCarouselHeaderView.swift */; };
 		F6E2D13052FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */; };
 		F6E2D13072FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */; };
 		F6E2D13082FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */; };
@@ -333,6 +337,7 @@
 		C0020000000100000000B000 /* MCCFeedResolutionPopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedResolutionPopController.swift; sourceTree = "<group>"; };
 		C0030000000100000000C000 /* MCCFeedDurationPopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedDurationPopController.swift; sourceTree = "<group>"; };
 		C0040000000100000000D000 /* MCCFeedModePopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedModePopController.swift; sourceTree = "<group>"; };
+		C0050000000100000000E000 /* MCCShotsCarouselHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsCarouselHeaderView.swift; sourceTree = "<group>"; };
 		F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedGeneratingSheetController.swift; sourceTree = "<group>"; };
 		F6E2D131B2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCWebpPlaybackHandoff.swift; sourceTree = "<group>"; };
 		F6E2D13382FC0100002C4F70 /* MCCFeedGeneratingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedGeneratingView.swift; sourceTree = "<group>"; };
@@ -409,6 +414,7 @@
 			isa = PBXGroup;
 			children = (
 				F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */,
+				C0050000000100000000E000 /* MCCShotsCarouselHeaderView.swift */,
 				F6E2B0132FA20301002C4F70 /* MCCShotsController.swift */,
 				F6E2B04A2FA20501002C4F70 /* MCCShotsListPageView.swift */,
 				F6E2B0392FA20301002C4F70 /* MCCShotsListPageController.swift */,
@@ -1055,6 +1061,7 @@
 				C0020001000100000000B001 /* MCCFeedResolutionPopController.swift in Sources */,
 				C0030001000100000000C001 /* MCCFeedDurationPopController.swift in Sources */,
 				C0040001000100000000D001 /* MCCFeedModePopController.swift in Sources */,
+				C0050001000100000000E001 /* MCCShotsCarouselHeaderView.swift in Sources */,
 				F6E2D13402FC0100002C4F70 /* MCCFeedGeneratingView.swift in Sources */,
 				F6E2D13052FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */,
 				C0010001000100000000A001 /* MCCOSSImageUploader.swift in Sources */,
@@ -1117,6 +1124,7 @@
 				C0020002000100000000B002 /* MCCFeedResolutionPopController.swift in Sources */,
 				C0030002000100000000C002 /* MCCFeedDurationPopController.swift in Sources */,
 				C0040002000100000000D002 /* MCCFeedModePopController.swift in Sources */,
+				C0050002000100000000E002 /* MCCShotsCarouselHeaderView.swift in Sources */,
 				F6E2D13412FC0100002C4F70 /* MCCFeedGeneratingView.swift in Sources */,
 				F6E2D13072FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */,
 				C0010002000100000000A002 /* MCCOSSImageUploader.swift in Sources */,
@@ -1185,6 +1193,7 @@
 				C0020003000100000000B003 /* MCCFeedResolutionPopController.swift in Sources */,
 				C0030003000100000000C003 /* MCCFeedDurationPopController.swift in Sources */,
 				C0040003000100000000D003 /* MCCFeedModePopController.swift in Sources */,
+				C0050003000100000000E003 /* MCCShotsCarouselHeaderView.swift in Sources */,
 				F6E2D13422FC0100002C4F70 /* MCCFeedGeneratingView.swift in Sources */,
 				F6E2D13082FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */,
 				C0010003000100000000A003 /* MCCOSSImageUploader.swift in Sources */,
@@ -1250,6 +1259,7 @@
 				C0020004000100000000B004 /* MCCFeedResolutionPopController.swift in Sources */,
 				C0030004000100000000C004 /* MCCFeedDurationPopController.swift in Sources */,
 				C0040004000100000000D004 /* MCCFeedModePopController.swift in Sources */,
+				C0050004000100000000E004 /* MCCShotsCarouselHeaderView.swift in Sources */,
 				F6E2D13432FC0100002C4F70 /* MCCFeedGeneratingView.swift in Sources */,
 				F6E2D13092FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */,
 				C0010004000100000000A004 /* MCCOSSImageUploader.swift in Sources */,
