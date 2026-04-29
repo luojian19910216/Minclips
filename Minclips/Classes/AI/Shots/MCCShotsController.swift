@@ -51,6 +51,16 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
         
         contentView.mcvw_setupPagingView(delegate: self)
     }
+
+    public override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        contentView.mcvw_syncPinSectionHeaderOffset(navSafeInsetTop: view.safeAreaInsets.top)
+    }
+
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        contentView.mcvw_syncPinSectionHeaderOffset(navSafeInsetTop: view.safeAreaInsets.top)
+    }
     
 }
 

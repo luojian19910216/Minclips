@@ -72,6 +72,16 @@ public final class MCCShotsView: MCCBaseView {
         bringSubviewToFront(mcvw_skeletonOverlay)
     }
 
+    /// JX：`pinSectionHeaderVerticalOffset` — 悬浮标签栏粘在导航栏下缘（不与状态栏重合）。
+    public func mcvw_syncPinSectionHeaderOffset(navSafeInsetTop: CGFloat) {
+        guard let pv = mcvw_pagingViewRef else { return }
+        let inset = navSafeInsetTop > 1 ? navSafeInsetTop : MCCScreenSize.navigationBarHeight
+        let next = Int(inset.rounded(.up))
+        guard next > 0, pv.pinSectionHeaderVerticalOffset != next else { return }
+        pv.pinSectionHeaderVerticalOffset = next
+        pv.reloadData()
+    }
+
     public func mcvw_setTabHomeSkeletonVisible(_ visible: Bool) {
         mcvw_skeletonOverlay.isUserInteractionEnabled = visible
         if visible {
