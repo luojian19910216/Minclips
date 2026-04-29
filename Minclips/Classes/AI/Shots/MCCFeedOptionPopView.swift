@@ -28,12 +28,17 @@ public final class MCCFeedOptionPopView: MCCBasePopView {
 
     public static let mcvw_cardCornerRadius: CGFloat = 12
     private let mcvw_glassBlurView: UIVisualEffectView = {
-        let effect = UIBlurEffect(style: .systemChromeMaterialDark)
+        let effect: UIVisualEffect
+        if #available(iOS 26.0, *) {
+            effect = UIGlassEffect()
+        } else {
+            effect = UIBlurEffect(style: .regular)
+        }
         return UIVisualEffectView(effect: effect)
     }()
     private let mcvw_glassTintView: UIView = {
         let v = UIView()
-        v.backgroundColor = UIColor(white: 1, alpha: 0.10)
+        v.backgroundColor = UIColor.white.withAlphaComponent(0.06)
         return v
     }()
     private let mcvw_glassHighlightView = MCCGlassHighlightView()
