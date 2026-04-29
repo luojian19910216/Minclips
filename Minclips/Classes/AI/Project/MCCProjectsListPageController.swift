@@ -394,7 +394,10 @@ extension MCCProjectsListPageController: UICollectionViewDataSource, UICollectio
         guard mcvc_isLikes else { return }
         (cell as? MCCShotsListItemCell)?.mcvw_clearWebpAnimated()
     }
+}
 
+// UIScrollView 回调单独放一段，避免与 Collection 协议挤在同一 extension 里触发见证表/`scrollView(_:)` 重载混淆。
+extension MCCProjectsListPageController {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         mcvc_forwardPagingScroll(scrollView)
     }

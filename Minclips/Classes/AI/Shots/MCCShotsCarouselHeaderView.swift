@@ -1,50 +1,105 @@
 import UIKit
 import SnapKit
 import SDWebImage
+import FSPagerView
+import Common
 
 public enum MCCShotsCarouselMetrics {
 
-    /// Hero aspect tuned for shots header; swaps with API-driven assets later.
+    /// 轮播 strip 底色（占位 / 留白时露出）。仅涂在 header 根视图，下层勿再叠同色以免发灰。
+    public static let mcvw_carouselBackgroundFill = UIColor.white.withAlphaComponent(0.06)
+
+    /// Hero height: width × (256 / 375). Replace when API-backed banner sizing exists.
     public static func headerHeight(forWidth width: CGFloat) -> CGFloat {
         let w = max(1, width)
-        return ceil(w * (200.0 / 375.0))
+        return ceil(w * (256.0 / 375.0))
+    }
+
+    /// 底部叠渐变层高度（上沿透明 → 下沿 `#0F0F12`）
+    public static let mcvw_carouselBottomGradientHeight: CGFloat = 96
+}
+
+private final class MCCShotsPagerCell: FSPagerViewCell {
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        mcvw_stripFSPagerCellDefaultHeavyShadow()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        mcvw_stripFSPagerCellDefaultHeavyShadow()
+    }
+
+    /// `FSPagerViewCell.commonInit()` 默认给 contentView `shadowOpacity = 0.75`，整块会像又脏又深的灰底。
+    private func mcvw_stripFSPagerCellDefaultHeavyShadow() {
+        contentView.layer.shadowOpacity = 0
+        contentView.layer.shadowColor = UIColor.clear.cgColor
+        contentView.layer.shadowRadius = 0
+        layer.shadowOpacity = 0
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        contentView.layer.shadowOpacity = 0
+        contentView.backgroundColor = .clear
+        contentView.clipsToBounds = true
+        if let iv = imageView {
+            iv.frame = contentView.bounds
+            iv.clipsToBounds = true
+        }
     }
 }
 
-public final class MCCShotsCarouselHeaderView: UIView, UIScrollViewDelegate {
+public final class MCCShotsCarouselHeaderView: UIView, FSPagerViewDataSource, FSPagerViewDelegate {
 
-    private let mcvw_scrollView: UIScrollView = {
-        let s = UIScrollView()
-        s.isPagingEnabled = true
-        s.showsHorizontalScrollIndicator = false
-        s.showsVerticalScrollIndicator = false
-        s.bounces = true
-        s.backgroundColor = UIColor.white.withAlphaComponent(0.06)
-        s.contentInsetAdjustmentBehavior = .never
-        return s
+    private let mcvw_bottomGradientHost: UIView = {
+        let v = UIView()
+        v.isUserInteractionEnabled = false
+        return v
     }()
 
-    private let mcvw_pageStack: UIStackView = {
-        let s = UIStackView()
-        s.axis = .horizontal
-        s.alignment = .center
-        s.spacing = 6
-        s.distribution = .equalSpacing
-        return s
+    private let mcvw_bottomGradientLayer: CAGradientLayer = {
+        let l = CAGradientLayer()
+        l.colors = [UIColor.clear.cgColor, UIColor(hex: "0F0F12")!.cgColor]
+        l.locations = [0, 1]
+        l.startPoint = CGPoint(x: 0.5, y: 0)
+        l.endPoint = CGPoint(x: 0.5, y: 1)
+        return l
     }()
 
-    private var mcvw_pageDots: [UIView] = []
-    private var mcvw_imageViews: [UIImageView] = []
-    private var mcvw_appliedDotPage = -1
+    private let mcvw_pager: FSPagerView = {
+        let p = FSPagerView()
+        p.isInfinite = true
+        p.automaticSlidingInterval = 4
+        p.itemSize = FSPagerView.automaticSize
+        p.interitemSpacing = 0
+        p.removesInfiniteLoopForSingleItem = true
+        p.backgroundColor = .clear
+        p.clipsToBounds = true
+        return p
+    }()
 
+    /// 系统控件按点距布局；`FSPageControl` 固定步长在「圆点 + 长条选中」混搭时易与相邻重叠。
+    private let mcvw_pageControl: UIPageControl = {
+        let p = UIPageControl()
+        p.isUserInteractionEnabled = false
+        p.currentPageIndicatorTintColor = .white
+        p.pageIndicatorTintColor = UIColor.white.withAlphaComponent(0.38)
+        return p
+    }()
+
+    /// Stub asset count (replace with remote model later).
     private static let mcvw_stubImageURLs: [URL] = {
-        let s = [
+        [
             "https://images.unsplash.com/photo-1552674605-db6ffd4acf9f?w=960&q=80",
             "https://images.unsplash.com/photo-1434394354979-a235cd36269d?w=960&q=80",
             "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=960&q=80",
         ]
-        return s.compactMap { URL(string: $0) }
+            .compactMap { URL(string: $0) }
     }()
+
+    private var mcvw_lastSyncedPage = -1
 
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -56,88 +111,76 @@ public final class MCCShotsCarouselHeaderView: UIView, UIScrollViewDelegate {
     }
 
     private func mcvw_setup() {
-        backgroundColor = .clear
+        backgroundColor = MCCShotsCarouselMetrics.mcvw_carouselBackgroundFill
         clipsToBounds = true
-        mcvw_scrollView.delegate = self
-        addSubview(mcvw_scrollView)
-        addSubview(mcvw_pageStack)
 
-        let pageCount = Self.mcvw_stubImageURLs.count
+        mcvw_pager.dataSource = self
+        mcvw_pager.delegate = self
+        mcvw_pager.register(MCCShotsPagerCell.self, forCellWithReuseIdentifier: "carousel")
 
-        let ivs = (0 ..< pageCount).map { i -> UIImageView in
-            let iv = UIImageView()
-            iv.contentMode = .scaleAspectFill
-            iv.clipsToBounds = true
-            iv.backgroundColor = UIColor.white.withAlphaComponent(0.06)
-            iv.sd_setImage(with: Self.mcvw_stubImageURLs[i], placeholderImage: nil, options: [.retryFailed])
-            mcvw_scrollView.addSubview(iv)
-            return iv
+        let n = Self.mcvw_stubImageURLs.count
+        mcvw_pageControl.numberOfPages = n
+        mcvw_pageControl.isHidden = n <= 1
+
+        addSubview(mcvw_pager)
+        addSubview(mcvw_bottomGradientHost)
+        addSubview(mcvw_pageControl)
+        mcvw_bottomGradientHost.layer.insertSublayer(mcvw_bottomGradientLayer, at: 0)
+
+        mcvw_pager.snp.makeConstraints { $0.edges.equalToSuperview() }
+        mcvw_bottomGradientHost.snp.makeConstraints { make in
+            make.leading.trailing.bottom.equalToSuperview()
+            make.height.equalTo(MCCShotsCarouselMetrics.mcvw_carouselBottomGradientHeight)
         }
-        mcvw_imageViews = ivs
-
-        for _ in 0 ..< pageCount {
-            let dot = UIView()
-            dot.layer.cornerRadius = 3
-            mcvw_pageDots.append(dot)
-            mcvw_pageStack.addArrangedSubview(dot)
-            dot.snp.makeConstraints { $0.width.height.equalTo(6) }
-        }
-
-        mcvw_scrollView.snp.makeConstraints { $0.edges.equalToSuperview() }
-        mcvw_pageStack.snp.makeConstraints { make in
+        mcvw_pageControl.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.bottom.equalToSuperview().offset(-12)
         }
 
-        mcvw_refreshPageIndicator(page: 0)
+        mcvw_pager.reloadData()
     }
 
     public override func layoutSubviews() {
         super.layoutSubviews()
-        let w = bounds.width
-        let h = bounds.height
-        guard w > 0.5, h > 0.5 else { return }
+        mcvw_bottomGradientLayer.frame = mcvw_bottomGradientHost.bounds
+    }
 
-        let count = CGFloat(mcvw_imageViews.count)
-        mcvw_scrollView.contentSize = CGSize(width: w * count, height: h)
-        var x: CGFloat = 0
-        for iv in mcvw_imageViews {
-            iv.frame = CGRect(x: x, y: 0, width: w, height: h)
-            x += w
+    private func mcvw_syncPageIndicatorIfNeeded(_ index: Int) {
+        guard index != mcvw_lastSyncedPage else { return }
+        mcvw_lastSyncedPage = index
+        guard Self.mcvw_stubImageURLs.count > 1 else { return }
+        mcvw_pageControl.currentPage = index
+    }
+
+    // MARK: - FSPagerViewDataSource
+
+    public func numberOfItems(in pagerView: FSPagerView) -> Int {
+        Self.mcvw_stubImageURLs.count
+    }
+
+    public func pagerView(_ pagerView: FSPagerView, cellForItemAt index: Int) -> FSPagerViewCell {
+        let cell = pagerView.dequeueReusableCell(withReuseIdentifier: "carousel", at: index) as! MCCShotsPagerCell
+        if let iv = cell.imageView {
+            iv.contentMode = .scaleAspectFill
+            iv.backgroundColor = .clear
+            iv.clipsToBounds = true
+            iv.sd_setImage(with: Self.mcvw_stubImageURLs[index], placeholderImage: nil, options: [.retryFailed])
         }
-        mcvw_syncPageIndicatorsFromScroll()
+        return cell
     }
 
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard scrollView === mcvw_scrollView, bounds.width > 0 else { return }
-        let page = Int(round(scrollView.contentOffset.x / max(1, bounds.width)))
-        mcvw_refreshPageIndicator(page: page)
+    // MARK: - FSPagerViewDelegate
+
+    public func pagerViewDidScroll(_ pagerView: FSPagerView) {
+        if pagerView.isTracking { return }
+        mcvw_syncPageIndicatorIfNeeded(pagerView.currentIndex)
     }
 
-    private func mcvw_syncPageIndicatorsFromScroll() {
-        let w = max(1, bounds.width)
-        let page = Int(round(mcvw_scrollView.contentOffset.x / w))
-        mcvw_refreshPageIndicator(page: page)
+    public func pagerViewDidEndDecelerating(_ pagerView: FSPagerView) {
+        mcvw_syncPageIndicatorIfNeeded(pagerView.currentIndex)
     }
 
-    private func mcvw_refreshPageIndicator(page: Int) {
-        let n = mcvw_pageDots.count
-        guard n > 0 else { return }
-        let p = min(max(0, page), n - 1)
-        guard p != mcvw_appliedDotPage else { return }
-        mcvw_appliedDotPage = p
-        for (i, dot) in mcvw_pageDots.enumerated() {
-            let active = i == p
-            dot.backgroundColor = active ? .white : UIColor.white.withAlphaComponent(0.35)
-            dot.layer.cornerRadius = active ? 2 : 3
-            dot.snp.remakeConstraints { make in
-                if active {
-                    make.width.equalTo(18)
-                    make.height.equalTo(4)
-                } else {
-                    make.width.height.equalTo(6)
-                }
-            }
-        }
+    public func pagerViewDidEndScrollAnimation(_ pagerView: FSPagerView) {
+        mcvw_syncPageIndicatorIfNeeded(pagerView.currentIndex)
     }
 }

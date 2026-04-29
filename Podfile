@@ -31,9 +31,9 @@ def commonPods
   #
   pod 'IQKeyboardManager'
   #
-  pod 'SkeletonView'
-  #
   pod 'MBProgressHUD'
+  #
+  pod 'SkeletonView'
   #
   pod 'FSPagerView'
   #

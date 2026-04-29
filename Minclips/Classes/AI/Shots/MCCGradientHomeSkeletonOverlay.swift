@@ -22,17 +22,30 @@ private enum MCCShotsSkeletonMetrics {
     static let tagPinHeaderHeight: CGFloat = 48
     static let tagSkeletonPillHeight: CGFloat = 32
     static let tagHorizontalInset: CGFloat = 12
+    /// 与列表 `MCCShotsWaterfallLayout.sectionInset` 左右一致
     static let gridHorizontalInset: CGFloat = 4
-    static let listSectionTopInset: CGFloat = 4
+    /// 标签条下缘到首行 cell：`sectionInset.top`
+    static let tagToFirstGridRowSpacing: CGFloat = 4
     static let columnSpacing: CGFloat = 4
-    static let rowSpacing: CGFloat = 16
+    /// 与 `minimumLineSpacing`
+    static let waterfallLineSpacing: CGFloat = 16
     static let thumbCornerRadius: CGFloat = 12
-    static let imageHeightPerWidth: CGFloat = 16.0 / 9.0
-    static let imageToTitleSpacing: CGFloat = 8
+    static let imageHeightPerWidth: CGFloat = MCCShotsListItemMetrics.imageHeightPerWidth
+    static let imageToTitleSpacing: CGFloat = MCCShotsListItemMetrics.imageToTitleSpacing
     static let titleBlockHeight: CGFloat = 32
 
-    /// Matches `MCCShotsCarouselMetrics.headerHeight` stub hero until API-backed banner exists.
-    static let heroCarouselPlaceholderHeight: CGFloat = MCCShotsCarouselMetrics.headerHeight(forWidth: UIScreen.main.bounds.width)
+    static func columnWidth(containerWidth w: CGFloat) -> CGFloat {
+        let inner = w - gridHorizontalInset * 2
+        return max(1, (inner - columnSpacing) / 2)
+    }
+
+    static func thumbHeight(containerWidth w: CGFloat) -> CGFloat {
+        columnWidth(containerWidth: w) * imageHeightPerWidth
+    }
+
+    static func waterfallRowHeight(containerWidth w: CGFloat) -> CGFloat {
+        thumbHeight(containerWidth: w) + imageToTitleSpacing + titleBlockHeight
+    }
 }
 
 private enum MCCProjectsListSkeletonMetrics {
@@ -79,6 +92,11 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
         case projectsLikesThreeColumn
     }
 
+    private let mcvw_style: MCCStyle
+    /// Shots：`tagsAndDoubleColumn` 下与真实轮播宽高、网格列宽同步。
+    private weak var mcvw_shotsCarouselPlaceholder: UIView?
+    private var mcvw_shotsWaterfallSkeletonRows: [(wrap: UIView, thumbs: [UIView])] = []
+
     private let mcvw_stack: UIStackView = {
         let s = UIStackView()
         s.axis = .vertical
@@ -88,6 +106,7 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
     }()
 
     public init(style: MCCStyle) {
+        mcvw_style = style
         super.init(frame: .zero)
         isSkeletonable = false
         backgroundColor = .clear
@@ -144,14 +163,40 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
         }
     }
 
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        guard mcvw_style == .tagsAndDoubleColumn else { return }
+        let w = bounds.width
+        guard w > 1 else { return }
+
+        let carH = MCCShotsCarouselMetrics.headerHeight(forWidth: w)
+        if let carousel = mcvw_shotsCarouselPlaceholder {
+            _ = carousel.snp.updateConstraints { $0.height.equalTo(carH) }
+        }
+
+        let thumbH = MCCShotsSkeletonMetrics.thumbHeight(containerWidth: w)
+        let rowH = MCCShotsSkeletonMetrics.waterfallRowHeight(containerWidth: w)
+        for row in mcvw_shotsWaterfallSkeletonRows {
+            _ = row.wrap.snp.updateConstraints { $0.height.equalTo(rowH) }
+            for t in row.thumbs {
+                _ = t.snp.updateConstraints { $0.height.equalTo(thumbH) }
+            }
+        }
+    }
+
     private func mcvw_build(style: MCCStyle) {
         switch style {
         case .tagsAndDoubleColumn:
-            mcvw_stack.spacing = MCCShotsSkeletonMetrics.rowSpacing
+            mcvw_shotsWaterfallSkeletonRows.removeAll()
+            mcvw_stack.spacing = MCCShotsSkeletonMetrics.waterfallLineSpacing
+
+            let refW = bounds.width > 1 ? bounds.width : UIScreen.main.bounds.width
+            let carH = MCCShotsCarouselMetrics.headerHeight(forWidth: refW)
             let carouselSk = UIView()
             carouselSk.layer.cornerRadius = 6
             carouselSk.clipsToBounds = true
-            mcvw_skeletonize(carouselSk, radius: 6, height: MCCShotsSkeletonMetrics.heroCarouselPlaceholderHeight)
+            mcvw_skeletonize(carouselSk, radius: 6, height: carH)
+            mcvw_shotsCarouselPlaceholder = carouselSk
             mcvw_stack.addArrangedSubview(carouselSk)
 
             let tagHost = UIView()
@@ -169,18 +214,30 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
                 make.height.equalTo(MCCShotsSkeletonMetrics.tagSkeletonPillHeight)
             }
             mcvw_stack.addArrangedSubview(tagHost)
-            mcvw_stack.setCustomSpacing(MCCShotsSkeletonMetrics.listSectionTopInset, after: carouselSk)
+            // tableHeader 与 pinHeader 紧贴
+            mcvw_stack.setCustomSpacing(0, after: carouselSk)
+            // 与列表 `sectionInset.top` 一致（首行 cell 顶距）
+            mcvw_stack.setCustomSpacing(MCCShotsSkeletonMetrics.tagToFirstGridRowSpacing, after: tagHost)
+
+            let thumbH = MCCShotsSkeletonMetrics.thumbHeight(containerWidth: refW)
+            let rowH = MCCShotsSkeletonMetrics.waterfallRowHeight(containerWidth: refW)
             for _ in 0..<Self.mcvw_rowCountShotsWaterfall {
-                mcvw_stack.addArrangedSubview(mcvw_makeShotsWaterfallRow())
+                let built = mcvw_makeShotsWaterfallRow(thumbHeight: thumbH, rowHeight: rowH)
+                mcvw_shotsWaterfallSkeletonRows.append((wrap: built.wrap, thumbs: built.thumbs))
+                mcvw_stack.addArrangedSubview(built.wrap)
             }
         case .doubleColumnGrid:
-            mcvw_stack.spacing = MCCShotsSkeletonMetrics.rowSpacing
+            mcvw_stack.spacing = MCCShotsSkeletonMetrics.waterfallLineSpacing
+            let gw = bounds.width > 1 ? bounds.width : UIScreen.main.bounds.width
+            let th = MCCShotsSkeletonMetrics.thumbHeight(containerWidth: gw)
+            let rh = MCCShotsSkeletonMetrics.waterfallRowHeight(containerWidth: gw)
             let topPad = UIView()
-            topPad.snp.makeConstraints { $0.height.equalTo(MCCShotsSkeletonMetrics.listSectionTopInset) }
+            topPad.snp.makeConstraints { $0.height.equalTo(MCCShotsSkeletonMetrics.tagToFirstGridRowSpacing) }
             mcvw_stack.addArrangedSubview(topPad)
             mcvw_stack.setCustomSpacing(0, after: topPad)
             for _ in 0..<Self.mcvw_rowCountShotsWaterfall {
-                mcvw_stack.addArrangedSubview(mcvw_makeShotsWaterfallRow())
+                let built = mcvw_makeShotsWaterfallRow(thumbHeight: th, rowHeight: rh)
+                mcvw_stack.addArrangedSubview(built.wrap)
             }
         case .singleColumnList:
             mcvw_stack.spacing = MCCToolsListSkeletonMetrics.lineSpacing
@@ -211,20 +268,7 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
 
     private static let mcvw_rowCountShotsWaterfall = 5
 
-    private static var mcvw_skeletonThumbHeight: CGFloat {
-        let w = UIScreen.main.bounds.width
-        let inner = w - MCCShotsSkeletonMetrics.gridHorizontalInset * 2
-        let colW = max(1, (inner - MCCShotsSkeletonMetrics.columnSpacing) / 2)
-        return colW * MCCShotsSkeletonMetrics.imageHeightPerWidth
-    }
-
-    private static var mcvw_skeletonWaterfallRowHeight: CGFloat {
-        mcvw_skeletonThumbHeight
-            + MCCShotsSkeletonMetrics.imageToTitleSpacing
-            + MCCShotsSkeletonMetrics.titleBlockHeight
-    }
-
-    private func mcvw_makeShotsWaterfallColumn(thumbHeight: CGFloat) -> UIStackView {
+    private func mcvw_makeShotsWaterfallColumn(thumbHeight: CGFloat) -> (column: UIStackView, thumb: UIView) {
         let col = UIStackView()
         col.axis = .vertical
         col.alignment = .fill
@@ -242,14 +286,12 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
         mcvw_skeletonize(title, radius: 4, height: MCCShotsSkeletonMetrics.titleBlockHeight)
         col.addArrangedSubview(thumb)
         col.addArrangedSubview(title)
-        return col
+        return (col, thumb)
     }
 
-    private func mcvw_makeShotsWaterfallRow() -> UIView {
+    private func mcvw_makeShotsWaterfallRow(thumbHeight: CGFloat, rowHeight: CGFloat) -> (wrap: UIView, thumbs: [UIView]) {
         let wrap = UIView()
-        let thumbH = Self.mcvw_skeletonThumbHeight
-        let rowH = Self.mcvw_skeletonWaterfallRowHeight
-        wrap.snp.makeConstraints { $0.height.equalTo(rowH) }
+        wrap.snp.makeConstraints { $0.height.equalTo(rowHeight) }
         let row = UIStackView()
         row.axis = .horizontal
         row.spacing = MCCShotsSkeletonMetrics.columnSpacing
@@ -265,9 +307,11 @@ public final class MCCGradientHomeSkeletonOverlay: UIView {
                 )
             )
         }
-        row.addArrangedSubview(mcvw_makeShotsWaterfallColumn(thumbHeight: thumbH))
-        row.addArrangedSubview(mcvw_makeShotsWaterfallColumn(thumbHeight: thumbH))
-        return wrap
+        let a = mcvw_makeShotsWaterfallColumn(thumbHeight: thumbHeight)
+        let b = mcvw_makeShotsWaterfallColumn(thumbHeight: thumbHeight)
+        row.addArrangedSubview(a.column)
+        row.addArrangedSubview(b.column)
+        return (wrap, [a.thumb, b.thumb])
     }
 
     private func mcvw_makeProjectsRunsTripleRow(blockHeight: CGFloat) -> UIView {
