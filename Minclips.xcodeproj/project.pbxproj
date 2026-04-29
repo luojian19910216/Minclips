@@ -147,6 +147,34 @@
 		F6E2C12D2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */; };
 		F6E2C12E2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */; };
 		F6E2C12F2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */; };
+		A0F7900102FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */; };
+		A0F7900202FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */; };
+		A0F7900302FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */; };
+		A0F7900402FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */; };
+		A0F7900502FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */; };
+		A0F7900602FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */; };
+		A0F7900702FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */; };
+		A0F7900802FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */; };
+		A0F7900902FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */; };
+		A0F7900A02FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */; };
+		A0F7900B02FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */; };
+		A0F7900C02FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */; };
+		A0F7900D02FD000100AA0004 /* MCCCreatePromptFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */; };
+		A0F7900E02FD000100AA0004 /* MCCCreatePromptFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */; };
+		A0F7900F02FD000100AA0004 /* MCCCreatePromptFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */; };
+		A0F7911002FD000100AA0004 /* MCCCreatePromptFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */; };
+		A0F7911102FD000100AA0005 /* MCCShotsStockPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */; };
+		A0F7911202FD000100AA0005 /* MCCShotsStockPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */; };
+		A0F7911302FD000100AA0005 /* MCCShotsStockPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */; };
+		A0F7911402FD000100AA0005 /* MCCShotsStockPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */; };
+		A0F7911502FD000100AA0006 /* MCCShotsStockPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */; };
+		A0F7911602FD000100AA0006 /* MCCShotsStockPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */; };
+		A0F7911702FD000100AA0006 /* MCCShotsStockPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */; };
+		A0F7911802FD000100AA0006 /* MCCShotsStockPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */; };
+		A0F7911902FD000100AA0007 /* MCCShotsStockPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */; };
+		A0F7911A02FD000100AA0007 /* MCCShotsStockPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */; };
+		A0F7911B02FD000100AA0007 /* MCCShotsStockPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */; };
+		A0F7911C02FD000100AA0007 /* MCCShotsStockPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */; };
 		F6E2C2102FC0020002C4F70 /* MCCToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2002FC0020002C4F70 /* MCCToolsView.swift */; };
 		F6E2C2112FC0020002C4F70 /* MCCToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2002FC0020002C4F70 /* MCCToolsView.swift */; };
 		F6E2C2122FC0020002C4F70 /* MCCToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2002FC0020002C4F70 /* MCCToolsView.swift */; };
@@ -285,6 +313,13 @@
 		F6E2C1012FC0010002C4F70 /* MCCProjectsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProjectsController.swift; sourceTree = "<group>"; };
 		F6E2C1022FC0010002C4F70 /* MCCProjectsListPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProjectsListPageView.swift; sourceTree = "<group>"; };
 		F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProjectsListPageController.swift; sourceTree = "<group>"; };
+		A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCStoryClipsComposerView.swift; sourceTree = "<group>"; };
+		A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCStoryClipsComposerController.swift; sourceTree = "<group>"; };
+		A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCCreatePromptFlowView.swift; sourceTree = "<group>"; };
+		A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCCreatePromptFlowController.swift; sourceTree = "<group>"; };
+		A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsStockPickerCell.swift; sourceTree = "<group>"; };
+		A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsStockPickerView.swift; sourceTree = "<group>"; };
+		A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsStockPickerController.swift; sourceTree = "<group>"; };
 		F6E2C2002FC0020002C4F70 /* MCCToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCToolsView.swift; sourceTree = "<group>"; };
 		F6E2C2012FC0020002C4F70 /* MCCToolsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCToolsController.swift; sourceTree = "<group>"; };
 		F6E2C22E2FC0030002C4F70 /* MCCCreationResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCCreationResultView.swift; sourceTree = "<group>"; };
@@ -403,6 +438,7 @@
 				F6E2C2A82FC0030002C4F70 /* Result */,
 				F6E2D0F02FC0100002C4F70 /* Settings */,
 				F6E2E0902FC0200002C4F70 /* Pro */,
+				A0F7902502FD000100AA0000 /* StoryComposer */,
 			);
 			path = AI;
 			sourceTree = "<group>";
@@ -598,6 +634,20 @@
 				F6E2D10B2FC0100002C4F70 /* MCCSettingsController.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		A0F7902502FD000100AA0000 /* StoryComposer */ = {
+			isa = PBXGroup;
+			children = (
+				A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */,
+				A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */,
+				A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */,
+				A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */,
+				A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */,
+				A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */,
+				A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */,
+			);
+			path = StoryComposer;
 			sourceTree = "<group>";
 		};
 		F6E2E0902FC0200002C4F70 /* Pro */ = {
@@ -987,6 +1037,13 @@
 				F6E2C1242FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
 				F6E2C1282FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
 				F6E2C12C2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
+				A0F7900102FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */,
+				A0F7900502FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */,
+				A0F7900902FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */,
+				A0F7900D02FD000100AA0004 /* MCCCreatePromptFlowController.swift in Sources */,
+				A0F7911102FD000100AA0005 /* MCCShotsStockPickerCell.swift in Sources */,
+				A0F7911502FD000100AA0006 /* MCCShotsStockPickerView.swift in Sources */,
+				A0F7911902FD000100AA0007 /* MCCShotsStockPickerController.swift in Sources */,
 				F6E2C2102FC0020002C4F70 /* MCCToolsView.swift in Sources */,
 				F6E2C2142FC0020002C4F70 /* MCCToolsController.swift in Sources */,
 				F6E2C2A02FC0030002C4F70 /* MCCCreationResultView.swift in Sources */,
@@ -1042,6 +1099,13 @@
 				F6E2C1252FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
 				F6E2C1292FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
 				F6E2C12D2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
+				A0F7900202FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */,
+				A0F7900602FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */,
+				A0F7900A02FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */,
+				A0F7900E02FD000100AA0004 /* MCCCreatePromptFlowController.swift in Sources */,
+				A0F7911202FD000100AA0005 /* MCCShotsStockPickerCell.swift in Sources */,
+				A0F7911602FD000100AA0006 /* MCCShotsStockPickerView.swift in Sources */,
+				A0F7911A02FD000100AA0007 /* MCCShotsStockPickerController.swift in Sources */,
 				F6E2C2112FC0020002C4F70 /* MCCToolsView.swift in Sources */,
 				F6E2C2152FC0020002C4F70 /* MCCToolsController.swift in Sources */,
 				F6E2C2A12FC0030002C4F70 /* MCCCreationResultView.swift in Sources */,
@@ -1103,6 +1167,13 @@
 				F6E2C1262FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
 				F6E2C12A2FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
 				F6E2C12E2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
+				A0F7900302FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */,
+				A0F7900702FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */,
+				A0F7900B02FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */,
+				A0F7900F02FD000100AA0004 /* MCCCreatePromptFlowController.swift in Sources */,
+				A0F7911302FD000100AA0005 /* MCCShotsStockPickerCell.swift in Sources */,
+				A0F7911702FD000100AA0006 /* MCCShotsStockPickerView.swift in Sources */,
+				A0F7911B02FD000100AA0007 /* MCCShotsStockPickerController.swift in Sources */,
 				F6E2C2122FC0020002C4F70 /* MCCToolsView.swift in Sources */,
 				F6E2C2162FC0020002C4F70 /* MCCToolsController.swift in Sources */,
 				F6E2C2A22FC0030002C4F70 /* MCCCreationResultView.swift in Sources */,
@@ -1161,6 +1232,13 @@
 				F6E2C1272FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
 				F6E2C12B2FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
 				F6E2C12F2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
+				A0F7900402FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */,
+				A0F7900802FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */,
+				A0F7900C02FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */,
+				A0F7911002FD000100AA0004 /* MCCCreatePromptFlowController.swift in Sources */,
+				A0F7911402FD000100AA0005 /* MCCShotsStockPickerCell.swift in Sources */,
+				A0F7911802FD000100AA0006 /* MCCShotsStockPickerView.swift in Sources */,
+				A0F7911C02FD000100AA0007 /* MCCShotsStockPickerController.swift in Sources */,
 				F6E2C2132FC0020002C4F70 /* MCCToolsView.swift in Sources */,
 				F6E2C2172FC0020002C4F70 /* MCCToolsController.swift in Sources */,
 				F6E2C2A32FC0030002C4F70 /* MCCCreationResultView.swift in Sources */,
