@@ -155,14 +155,14 @@
 		F6D5476D2F9B478A002C4F70 /* MCCPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547612F9B478A002C4F70 /* MCCPopController.swift */; };
 		F6D5476E2F9B478A002C4F70 /* MCCSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547622F9B478A002C4F70 /* MCCSheetController.swift */; };
 		F6D5476F2F9B478A002C4F70 /* MCCViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547632F9B478A002C4F70 /* MCCViewController.swift */; };
-		F6D548012F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D548002F9B478A002C4F70 /* MCCRootTabNavChrome.swift */; };
-		F6D548022F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D548002F9B478A002C4F70 /* MCCRootTabNavChrome.swift */; };
-		F6D548032F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D548002F9B478A002C4F70 /* MCCRootTabNavChrome.swift */; };
-		F6D548042F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D548002F9B478A002C4F70 /* MCCRootTabNavChrome.swift */; };
 		F6D547712F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
 		F6D547722F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
 		F6D547732F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
 		F6D547742F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
+		F6D548012F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D548002F9B478A002C4F70 /* MCCRootTabNavChrome.swift */; };
+		F6D548022F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D548002F9B478A002C4F70 /* MCCRootTabNavChrome.swift */; };
+		F6D548032F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D548002F9B478A002C4F70 /* MCCRootTabNavChrome.swift */; };
+		F6D548042F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D548002F9B478A002C4F70 /* MCCRootTabNavChrome.swift */; };
 		F6E2B0252FA20301002C4F70 /* MCCShotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */; };
 		F6E2B0262FA20301002C4F70 /* MCCShotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */; };
 		F6E2B0272FA20301002C4F70 /* MCCShotsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */; };
@@ -331,8 +331,8 @@
 		F6D547612F9B478A002C4F70 /* MCCPopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCPopController.swift; sourceTree = "<group>"; };
 		F6D547622F9B478A002C4F70 /* MCCSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCSheetController.swift; sourceTree = "<group>"; };
 		F6D547632F9B478A002C4F70 /* MCCViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCViewController.swift; sourceTree = "<group>"; };
-		F6D548002F9B478A002C4F70 /* MCCRootTabNavChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCRootTabNavChrome.swift; sourceTree = "<group>"; };
 		F6D547702F9B4796002C4F70 /* MCCBaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCBaseView.swift; sourceTree = "<group>"; };
+		F6D548002F9B478A002C4F70 /* MCCRootTabNavChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCRootTabNavChrome.swift; sourceTree = "<group>"; };
 		F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsView.swift; sourceTree = "<group>"; };
 		F6E2B0132FA20301002C4F70 /* MCCShotsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsController.swift; sourceTree = "<group>"; };
 		F6E2B0392FA20301002C4F70 /* MCCShotsListPageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsListPageController.swift; sourceTree = "<group>"; };
@@ -460,23 +460,8 @@
 				F6E2C2A82FC0030002C4F70 /* Result */,
 				F6E2D0F02FC0100002C4F70 /* Settings */,
 				F6E2E0902FC0200002C4F70 /* Pro */,
-				A0F7902502FD000100AA0000 /* StoryComposer */,
 			);
 			path = AI;
-			sourceTree = "<group>";
-		};
-		A0F7902502FD000100AA0000 /* StoryComposer */ = {
-			isa = PBXGroup;
-			children = (
-				A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */,
-				A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */,
-				A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */,
-				A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */,
-				A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */,
-				A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */,
-				A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */,
-			);
-			path = StoryComposer;
 			sourceTree = "<group>";
 		};
 		B0D36159DDD01BDC90144D9D /* Frameworks */ = {
@@ -651,6 +636,13 @@
 			children = (
 				F6E2C2002FC0020002C4F70 /* MCCToolsView.swift */,
 				F6E2C2012FC0020002C4F70 /* MCCToolsController.swift */,
+				A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */,
+				A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */,
+				A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */,
+				A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */,
+				A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */,
+				A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */,
+				A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */,
 			);
 			path = Tools;
 			sourceTree = "<group>";
@@ -859,9 +851,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_P/Pods-Minclips_P-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_P/Pods-Minclips_P-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -942,9 +938,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_R/Pods-Minclips_R-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_R/Pods-Minclips_R-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -959,9 +959,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_T/Pods-Minclips_T-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_T/Pods-Minclips_T-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -976,9 +980,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_D/Pods-Minclips_D-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_D/Pods-Minclips_D-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
