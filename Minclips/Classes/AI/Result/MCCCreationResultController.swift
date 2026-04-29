@@ -50,6 +50,9 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
         super.mcvc_setupLocalization()
         view.backgroundColor = UIColor(hex: "121212")
         contentView.backgroundColor = view.backgroundColor
+        if let run = mccr_seedRun, run.contentKind.isToVideo {
+            contentView.mccr_setVideoArtifactPixelDimensions(from: run)
+        }
         contentView.mccr_apply(kind: mccr_kind)
         if let run = mccr_seedRun {
             contentView.mccr_bindPosterFrom(run: run)
@@ -184,6 +187,9 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
         let title = run.mcc_workNavigationTitlePreferringHumanReadable()
         mccr_navTitleLabel.text = title
         mccr_navTitleLabel.sizeToFit()
+        if run.contentKind.isToVideo {
+            contentView.mccr_setVideoArtifactPixelDimensions(from: run)
+        }
         contentView.mccr_apply(kind: nextKind)
         contentView.mccr_bindPosterFrom(run: run)
         if run.runState == .failed {

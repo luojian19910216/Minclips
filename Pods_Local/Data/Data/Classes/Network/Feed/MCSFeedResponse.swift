@@ -84,6 +84,8 @@ public struct MCSFeedVideoAssetShell: Codable, MCPDefaultInitializable {
     @MCSSafeString public var videoMp4Url: String
     /// staticCoverUrl
     @MCSSafeString public var posterImageUrl: String
+    /// output cover thumb — prefer for detail poster when set
+    @MCSSafeString public var outputCoverThumbUrl: String
     /// webpUrl
     @MCSSafeString public var webpImageUrl: String
 }
