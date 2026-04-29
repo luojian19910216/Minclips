@@ -156,7 +156,7 @@ extension MCSRunItem {
         return ""
     }
 
-    /// Pending / failed tiles: blurred **only** when the visible URL is `sourceImageUrl` (same field everywhere: user’s first uploaded image). If that is empty, falls back via `mcc_firstPosterImageURLString()` **without** blur—even if extras live in `inputBundle`.
+    /// Pending tiles: blurred user upload when `sourceImageUrl` is set; otherwise same fallback poster as `mcc_firstPosterImageURLString()`, **still with blur** so generating vs failed thumbnails read the same.
     public func mcc_worksListThumbnail() -> (urlString: String, blurOverlay: Bool) {
         func pick(_ s: String) -> String? {
             let u = s.mcc_normalizedRemoteURL()
@@ -171,7 +171,8 @@ extension MCSRunItem {
             if let firstUser = pick(sourceImageUrl) {
                 return (firstUser, true)
             }
-            return (mcc_firstPosterImageURLString(), false)
+            let fallback = mcc_firstPosterImageURLString()
+            return (fallback, true)
         }
     }
 }

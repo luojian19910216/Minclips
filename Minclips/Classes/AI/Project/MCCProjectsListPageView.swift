@@ -97,6 +97,12 @@ public final class MCCProjectsListPageView: MCCBaseView {
 public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
     
     public static let mcvw_reuseId = "MCCProjectsRunCell"
+
+    /// Last `runId` applied to this cell — validates collection view index vs visible cell before navigation.
+    public private(set) var mcvw_boundRunId: String = ""
+
+    /// Bumps on reuse and on each thumbnail bind so stray `sd_setImage` completions are ignored.
+    private var mcvw_thumbLoadGeneration: UInt = 0
     
     public let mcvw_imageContainer: UIView = {
         let v = UIView()
@@ -113,7 +119,7 @@ public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
         return v
     }()
     
-    /// Blur overlay on user image when generating / pending.
+    /// Frosted overlay for non‑success thumbnails (covers user upload + poster fallbacks uniformly).
     public let mcvw_blurOverlay: UIVisualEffectView = {
         let v = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
         v.isHidden = true
@@ -155,14 +161,34 @@ public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
         return l
     }()
 
-    public let mcvw_failureSubtitleLabel: UILabel = {
+    /// Success only — first output artifact duration (video workflows), top‑leading corner.
+    public let mcvw_successDurationLabel: UILabel = {
+        let l = UILabel()
+        l.isHidden = true
+        l.font = .systemFont(ofSize: 11, weight: .regular)
+        l.textAlignment = .natural
+        l.textColor = UIColor.white.withAlphaComponent(0.48)
+        l.backgroundColor = .clear
+        return l
+    }()
+
+    /// Success only — holds `qualityTier` text (480p / 720p / 1080p) with dark chip background.
+    public let mcvw_successQualityPill: UIView = {
+        let v = UIView()
+        v.isHidden = true
+        v.backgroundColor = UIColor.black.withAlphaComponent(0.24)
+        v.layer.cornerRadius = 6
+        v.clipsToBounds = true
+        return v
+    }()
+
+    /// Success only — `qualityTier` label inside `mcvw_successQualityPill`.
+    public let mcvw_successQualityLabel: UILabel = {
         let l = UILabel()
         l.font = .systemFont(ofSize: 11, weight: .regular)
         l.textAlignment = .center
-        l.textColor = UIColor.white.withAlphaComponent(0.55)
-        l.numberOfLines = 2
-        l.lineBreakMode = .byTruncatingTail
-        l.setContentCompressionResistancePriority(.required, for: .vertical)
+        l.textColor = UIColor.white.withAlphaComponent(0.72)
+        l.backgroundColor = .clear
         return l
     }()
 
@@ -170,16 +196,34 @@ public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
         contentView.addSubview(mcvw_imageContainer)
         mcvw_imageContainer.addSubview(mcvw_thumbView)
         mcvw_imageContainer.addSubview(mcvw_blurOverlay)
+        mcvw_imageContainer.addSubview(mcvw_successDurationLabel)
+        mcvw_imageContainer.addSubview(mcvw_successQualityPill)
+        mcvw_successQualityPill.addSubview(mcvw_successQualityLabel)
         mcvw_failureBadgeStack.addArrangedSubview(mcvw_failureIconView)
         mcvw_failureBadgeStack.addArrangedSubview(mcvw_failureTitleLabel)
-        mcvw_failureBadgeStack.addArrangedSubview(mcvw_failureSubtitleLabel)
-        mcvw_failureBadgeStack.setCustomSpacing(4, after: mcvw_failureTitleLabel)
         mcvw_failureBadgeContainer.addSubview(mcvw_failureBadgeStack)
         mcvw_imageContainer.addSubview(mcvw_failureBadgeContainer)
         
         mcvw_imageContainer.snp.makeConstraints { $0.edges.equalToSuperview() }
         mcvw_thumbView.snp.makeConstraints { $0.edges.equalToSuperview() }
         mcvw_blurOverlay.snp.makeConstraints { $0.edges.equalToSuperview() }
+
+        mcvw_successDurationLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(10)
+            $0.leading.equalToSuperview().offset(8)
+        }
+
+        mcvw_successQualityPill.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(8)
+            $0.trailing.equalToSuperview().offset(-8)
+            $0.height.equalTo(20)
+        }
+
+        mcvw_successQualityLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().offset(6)
+            $0.trailing.equalToSuperview().offset(-6)
+        }
         
         mcvw_failureBadgeStack.snp.makeConstraints { $0.edges.equalToSuperview() }
         
@@ -190,24 +234,45 @@ public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
         }
         
     }
-    
+
+    /// Cancels stale decoding when the cell is recycled or bound to another run; completion handler ignores late frames.
+    public func mcvw_bindThumbnail(remoteURL: URL?, blurOverlayShown: Bool) {
+        mcvw_thumbLoadGeneration &+= 1
+        let token = mcvw_thumbLoadGeneration
+        mcvw_thumbView.sd_cancelCurrentImageLoad()
+        guard let remoteURL else {
+            mcvw_thumbView.image = nil
+            mcvw_blurOverlay.isHidden = true
+            return
+        }
+        mcvw_blurOverlay.isHidden = !blurOverlayShown
+        mcvw_thumbView.image = nil
+        mcvw_thumbView.sd_setImage(with: remoteURL, placeholderImage: nil, options: [.retryFailed]) { [weak self] _, _, _, _ in
+            guard let self else { return }
+            guard self.mcvw_thumbLoadGeneration == token else { return }
+        }
+    }
+
     public override func prepareForReuse() {
         super.prepareForReuse()
+        mcvw_thumbLoadGeneration &+= 1
+        mcvw_boundRunId = ""
         mcvw_thumbView.image = nil
         mcvw_thumbView.sd_cancelCurrentImageLoad()
         mcvw_blurOverlay.isHidden = true
         mcvw_failureBadgeContainer.isHidden = true
         mcvw_failureIconView.image = nil
         mcvw_failureTitleLabel.text = nil
-        mcvw_failureSubtitleLabel.text = nil
-        mcvw_failureSubtitleLabel.isHidden = false
+        mcvw_successDurationLabel.isHidden = true
+        mcvw_successDurationLabel.text = nil
+        mcvw_successQualityPill.isHidden = true
+        mcvw_successQualityLabel.text = nil
     }
 
     public override func layoutSubviews() {
         super.layoutSubviews()
         let w = max(0, mcvw_failureBadgeContainer.bounds.width - 8)
         mcvw_failureTitleLabel.preferredMaxLayoutWidth = w
-        mcvw_failureSubtitleLabel.preferredMaxLayoutWidth = w
     }
 
 }

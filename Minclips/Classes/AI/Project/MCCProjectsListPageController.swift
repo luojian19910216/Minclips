@@ -11,6 +11,33 @@ private enum MCCProjectsListLayout {
     static let pageSize = 20
 }
 
+/// Shared with likes list duration (` \  mm:ss \ `) and run-cell success overlay.
+fileprivate enum MCCProjectsVideoDurationLabelText {
+    static func format(seconds: Int) -> String {
+        let sec = max(0, seconds)
+        let h = sec / 3600
+        let m = (sec % 3600) / 60
+        let s = sec % 60
+        let inner: String
+        if h > 0 {
+            inner = String(format: "%d:%02d:%02d", h, m, s)
+        } else {
+            inner = String(format: "%02d:%02d", m, s)
+        }
+        return " \(inner) "
+    }
+}
+
+fileprivate extension MCEClarity {
+    var mcc_projectsRunListResolutionLabel: String {
+        switch self {
+        case .fast: return "480p"
+        case .standard: return "720p"
+        case .high: return "1080p"
+        }
+    }
+}
+
 private struct MCCProjectListState {
     var runItems: [MCSRunItem] = []
     var feedItems: [MCSFeedItem] = []
@@ -341,8 +368,16 @@ extension MCCProjectsListPageController: UICollectionViewDataSource, UICollectio
             return
         }
         guard let run = mcvc_listState.runItems[safe: indexPath.item] else { return }
-        let title = run.runId.isEmpty ? "Project" : run.runId
-        let kind: MCCCreationResultKind = indexPath.item % 2 == 0 ? .successImage : .successVideo(totalDuration: 15)
+        if let cell = collectionView.cellForItem(at: indexPath) as? MCCProjectsRunCell {
+            let bound = cell.mcvw_boundRunId.trimmingCharacters(in: .whitespacesAndNewlines)
+            let rid = run.runId.trimmingCharacters(in: .whitespacesAndNewlines)
+            if bound.isEmpty == false, rid.isEmpty == false, bound != rid {
+                collectionView.reloadItems(at: [indexPath])
+                return
+            }
+        }
+        let title = mcvc_projectsNavTitle(for: run)
+        let kind = mcvc_projectsCreationKind(for: run)
         let vc = MCCCreationResultController(navigationTitle: title, kind: kind, workRef: run.runId)
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -423,7 +458,7 @@ private extension MCCProjectsListPageController {
         let thumbPx = mcvc_likesThumbnailPixelSize(forCollectionWidth: collectionView.bounds.width)
         cell.mcvw_applyPosterOnly(posterUrl: a.posterImageUrl, thumbnailPixelSize: thumbPx)
         let displaySeconds = item.tenSecondMode ? 10 : 5
-        cell.mcvw_durationLabel.text = Self.mcvc_formatVideoDurationLabel(seconds: displaySeconds)
+        cell.mcvw_durationLabel.text = MCCProjectsVideoDurationLabelText.format(seconds: displaySeconds)
         cell.mcvw_durationLabel.isHidden = false
         cell.mcvw_durationLabel.font = .systemFont(ofSize: 11, weight: .regular)
         cell.mcvw_durationLabel.textColor = UIColor.white.withAlphaComponent(0.48)
@@ -443,18 +478,32 @@ private extension MCCProjectsListPageController {
         return imageH + MCCShotsListItemMetrics.imageToTitleSpacing + textH
     }
 
-    static func mcvc_formatVideoDurationLabel(seconds: Int) -> String {
-        let sec = max(0, seconds)
-        let h = sec / 3600
-        let m = (sec % 3600) / 60
-        let s = sec % 60
-        let inner: String
-        if h > 0 {
-            inner = String(format: "%d:%02d:%02d", h, m, s)
-        } else {
-            inner = String(format: "%02d:%02d", m, s)
+    func mcvc_projectsNavTitle(for run: MCSRunItem) -> String {
+        let raw = run.showTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        if raw.isEmpty == false { return raw }
+        let tmpl = run.templateName.trimmingCharacters(in: .whitespacesAndNewlines)
+        if tmpl.isEmpty == false { return tmpl }
+        let id = run.runId.trimmingCharacters(in: .whitespacesAndNewlines)
+        return id.isEmpty ? "Project" : id
+    }
+
+    func mcvc_projectsCreationKind(for run: MCSRunItem) -> MCCCreationResultKind {
+        switch run.runState {
+        case .failed:
+            return run.failureCode == .reject ? .restricted : .failed
+        case .generating:
+            if run.contentKind.isToVideo {
+                let sec = run.tenSecondMode != 0 ? 10 : 5
+                return .successVideo(totalDuration: TimeInterval(sec))
+            }
+            return .successImage
+        case .success:
+            if run.contentKind.isToVideo {
+                let s = max(0, run.outputArtifacts.first?.duration ?? 0)
+                return .successVideo(totalDuration: TimeInterval(max(s, 1)))
+            }
+            return .successImage
         }
-        return " \(inner) "
     }
 }
 
@@ -462,22 +511,20 @@ private extension MCCProjectsListPageController {
 private extension MCCProjectsRunCell {
 
     func mcvw_apply(run: MCSRunItem) {
+        mcvw_boundRunId = run.runId.trimmingCharacters(in: .whitespacesAndNewlines)
         mcvw_imageContainer.backgroundColor = UIColor.white.withAlphaComponent(0.06)
 
-        mcvw_thumbView.sd_cancelCurrentImageLoad()
-        mcvw_thumbView.image = nil
-
         mcvc_configureFailureBadge(for: run)
+        mcvc_configureSuccessOverlays(for: run)
 
         let pick = run.mcc_worksListThumbnail()
         let urlStr = pick.urlString.trimmingCharacters(in: .whitespacesAndNewlines)
         guard urlStr.isEmpty == false, let u = URL(string: urlStr) else {
-            mcvw_blurOverlay.isHidden = true
+            mcvw_bindThumbnail(remoteURL: nil, blurOverlayShown: false)
             return
         }
 
-        mcvw_blurOverlay.isHidden = !pick.blurOverlay
-        mcvw_thumbView.sd_setImage(with: u, placeholderImage: nil, options: [.retryFailed])
+        mcvw_bindThumbnail(remoteURL: u, blurOverlayShown: pick.blurOverlay)
     }
 
     func mcvc_configureFailureBadge(for run: MCSRunItem) {
@@ -485,8 +532,6 @@ private extension MCCProjectsRunCell {
             mcvw_failureBadgeContainer.isHidden = true
             mcvw_failureIconView.image = nil
             mcvw_failureTitleLabel.text = nil
-            mcvw_failureSubtitleLabel.text = nil
-            mcvw_failureSubtitleLabel.isHidden = false
             return
         }
         mcvw_failureBadgeContainer.isHidden = false
@@ -500,9 +545,29 @@ private extension MCCProjectsRunCell {
             mcvw_failureTitleLabel.text = "Failed"
             mcvw_failureTitleLabel.textColor = UIColor(hex: "F54545")
         }
-        let sub = run.failureReason.trimmingCharacters(in: .whitespacesAndNewlines)
-        mcvw_failureSubtitleLabel.text = sub
-        mcvw_failureSubtitleLabel.isHidden = sub.isEmpty
+    }
+
+    func mcvc_configureSuccessOverlays(for run: MCSRunItem) {
+        guard run.runState == .success else {
+            mcvw_successQualityPill.isHidden = true
+            mcvw_successQualityLabel.text = nil
+            mcvw_successDurationLabel.isHidden = true
+            mcvw_successDurationLabel.text = nil
+            return
+        }
+        let res = run.qualityTier.mcc_projectsRunListResolutionLabel
+        mcvw_successQualityLabel.text = res
+        mcvw_successQualityPill.isHidden = false
+
+        if run.contentKind.isToVideo,
+           let first = run.outputArtifacts.first,
+           first.duration > 0 {
+            mcvw_successDurationLabel.text = MCCProjectsVideoDurationLabelText.format(seconds: first.duration)
+            mcvw_successDurationLabel.isHidden = false
+        } else {
+            mcvw_successDurationLabel.isHidden = true
+            mcvw_successDurationLabel.text = nil
+        }
     }
 }
 
