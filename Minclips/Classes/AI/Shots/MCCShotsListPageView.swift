@@ -17,6 +17,9 @@ public enum MCCShotsListItemMetrics {
 
     public static let imageHeightPerWidth: CGFloat = 16.0 / 9.0
 
+    /// 列表缩略图区域顶部叠色高度（黑 72% → 透明）
+    public static let listItemImageTopGradientHeight: CGFloat = 36
+
     public static func titleTextAttributes(textColor: UIColor) -> [NSAttributedString.Key: Any] {
         let p = NSMutableParagraphStyle()
         p.minimumLineHeight = titleLineHeight
@@ -103,6 +106,26 @@ public final class MCCVerticalTopAlignedLabel: UILabel {
     }
 }
 
+private final class MCCShotsListItemTopFadeView: UIView {
+
+    override class var layerClass: AnyClass { CAGradientLayer.self }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        isUserInteractionEnabled = false
+        let gradient = layer as! CAGradientLayer
+        gradient.colors = [UIColor.black.withAlphaComponent(0.72).cgColor, UIColor.clear.cgColor]
+        gradient.locations = [0, 1]
+        gradient.startPoint = CGPoint(x: 0.5, y: 0)
+        gradient.endPoint = CGPoint(x: 0.5, y: 1)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
 
     public static let mcvw_reuseId = "MCCShotsListItemCell"
@@ -137,11 +160,15 @@ public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
 
     public let mcvw_titleLabel = MCCVerticalTopAlignedLabel()
 
+    /// 盖住缩略图顶缘（`layerClass` 渐变与本 view.bounds 同源，首轮布局就有面积，不靠滚动后才 `layoutSubviews`）
+    private let mcvw_topImageGradientView = MCCShotsListItemTopFadeView(frame: .zero)
+
     public override func mcvw_setupUI() {
         contentView.addSubview(mcvw_imageContainer)
         contentView.addSubview(mcvw_titleLabel)
         mcvw_imageContainer.addSubview(mcvw_posterImageView)
         mcvw_imageContainer.addSubview(mcvw_webpImageView)
+        mcvw_imageContainer.addSubview(mcvw_topImageGradientView)
         mcvw_imageContainer.addSubview(mcvw_durationLabel)
         mcvw_imageContainer.addSubview(mcvw_proBadge)
         mcvw_proBadge.addSubview(mcvw_proIcon)
@@ -153,6 +180,10 @@ public final class MCCShotsListItemCell: MCCBaseCollectionViewCell {
         mcvw_imageContainer.clipsToBounds = true
         mcvw_posterImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
         mcvw_webpImageView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        mcvw_topImageGradientView.snp.makeConstraints { make in
+            make.leading.trailing.top.equalToSuperview()
+            make.height.equalTo(MCCShotsListItemMetrics.listItemImageTopGradientHeight)
+        }
         mcvw_setImageHeightPerWidth(MCCShotsListItemMetrics.imageHeightPerWidth)
         mcvw_titleLabel.font = MCCShotsListItemMetrics.titleFont
         mcvw_titleLabel.numberOfLines = MCCShotsListItemMetrics.titleMaxLines
