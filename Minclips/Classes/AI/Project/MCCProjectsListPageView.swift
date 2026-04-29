@@ -1,6 +1,7 @@
 import UIKit
 import SnapKit
 import SDWebImage
+import Data
 
 public final class MCCProjectsListPageView: MCCBaseView {
     
@@ -194,6 +195,55 @@ public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
         return l
     }()
 
+    private let mcvw_generatingOverlay: UIView = {
+        let v = UIView()
+        v.isHidden = true
+        v.isUserInteractionEnabled = false
+        v.clipsToBounds = true
+        return v
+    }()
+
+    private let mcvw_generatingDimView: UIView = {
+        let v = UIView()
+        v.isUserInteractionEnabled = false
+        v.backgroundColor = UIColor(red: 14 / 255, green: 21 / 255, blue: 40 / 255, alpha: 0.86)
+        return v
+    }()
+
+    private let mcvw_generatingShimmer = MCCRunGeneratingShimmerView(frame: .zero)
+
+    private let mcvw_generatingPercentLabel: UILabel = {
+        let l = UILabel()
+        l.textColor = .white
+        l.textAlignment = .center
+        l.font = .systemFont(ofSize: 20, weight: .bold)
+        l.layer.shadowColor = UIColor.black.cgColor
+        l.layer.shadowOpacity = 0.45
+        l.layer.shadowRadius = 3
+        l.layer.shadowOffset = .zero
+        return l
+    }()
+
+    private let mcvw_generatingStatusLabel: UILabel = {
+        let l = UILabel()
+        l.textAlignment = .center
+        l.textColor = .white
+        l.font = .systemFont(ofSize: 12, weight: .regular)
+        return l
+    }()
+
+    private let mcvw_generatingTextStack: UIStackView = {
+        let s = UIStackView()
+        s.axis = .vertical
+        s.alignment = .center
+        s.spacing = 4
+        s.isUserInteractionEnabled = false
+        return s
+    }()
+
+    private var mcvw_generatingProgressTimer: Timer?
+    private var mcvw_generatingElapsedAnchor: Date?
+
     public override func mcvw_setupUI() {
         contentView.addSubview(mcvw_imageContainer)
         mcvw_imageContainer.addSubview(mcvw_thumbView)
@@ -206,6 +256,12 @@ public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
         mcvw_failureBadgeStack.addArrangedSubview(mcvw_failureTitleLabel)
         mcvw_failureBadgeContainer.addSubview(mcvw_failureBadgeStack)
         mcvw_imageContainer.addSubview(mcvw_failureBadgeContainer)
+        mcvw_generatingTextStack.addArrangedSubview(mcvw_generatingPercentLabel)
+        mcvw_generatingTextStack.addArrangedSubview(mcvw_generatingStatusLabel)
+        mcvw_generatingOverlay.addSubview(mcvw_generatingDimView)
+        mcvw_generatingOverlay.addSubview(mcvw_generatingShimmer)
+        mcvw_generatingOverlay.addSubview(mcvw_generatingTextStack)
+        mcvw_imageContainer.addSubview(mcvw_generatingOverlay)
         
         mcvw_imageContainer.snp.makeConstraints { $0.edges.equalToSuperview() }
         mcvw_thumbView.snp.makeConstraints { $0.edges.equalToSuperview() }
@@ -239,7 +295,22 @@ public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
             $0.leading.greaterThanOrEqualToSuperview().offset(4)
             $0.trailing.lessThanOrEqualToSuperview().offset(-4)
         }
-        
+
+        mcvw_generatingOverlay.snp.makeConstraints { $0.edges.equalToSuperview() }
+        mcvw_generatingDimView.snp.makeConstraints { $0.edges.equalToSuperview() }
+
+        mcvw_generatingTextStack.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(11)
+            $0.leading.greaterThanOrEqualToSuperview().offset(4)
+            $0.trailing.lessThanOrEqualToSuperview().offset(-4)
+        }
+
+        mcvw_generatingShimmer.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(mcvw_generatingTextStack.snp.top).offset(-8)
+        }
+
     }
 
     /// Cancels stale decoding when the cell is recycled or bound to another run; completion handler ignores late frames.
@@ -274,6 +345,53 @@ public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
         mcvw_successDurationLabel.text = nil
         mcvw_successQualityPill.isHidden = true
         mcvw_successQualityLabel.text = nil
+        mcvw_generatingOverlay.isHidden = true
+        mcvw_generatingProgressTimer?.invalidate()
+        mcvw_generatingProgressTimer = nil
+        mcvw_generatingElapsedAnchor = nil
+        mcvw_generatingPercentLabel.text = nil
+        mcvw_generatingShimmer.mcvw_stopAnimating()
+    }
+
+    func mcvw_configureGeneratingOverlay(for run: MCSRunItem) {
+        guard run.runState == .generating else {
+            mcvw_generatingOverlay.isHidden = true
+            mcvw_generatingProgressTimer?.invalidate()
+            mcvw_generatingProgressTimer = nil
+            mcvw_generatingElapsedAnchor = nil
+            mcvw_generatingShimmer.mcvw_stopAnimating()
+            return
+        }
+        mcvw_generatingOverlay.isHidden = false
+        mcvw_generatingElapsedAnchor = run.createTime
+        mcvw_generatingStatusLabel.text = "Generating"
+        mcvw_tickGeneratingPercentDisplay()
+        mcvw_startGeneratingProgressTickerIfNeeded()
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.mcvw_generatingOverlay.layoutIfNeeded()
+            self.mcvw_generatingShimmer.layoutIfNeeded()
+            self.mcvw_generatingShimmer.mcvw_startAnimating()
+        }
+    }
+
+    private func mcvw_tickGeneratingPercentDisplay() {
+        guard let anchor = mcvw_generatingElapsedAnchor else {
+            mcvw_generatingPercentLabel.text = "0%"
+            return
+        }
+        let elapsed = Date().timeIntervalSince(anchor)
+        let p = MCCGenerationProgressSimulation.percent(elapsedSinceStart: elapsed)
+        mcvw_generatingPercentLabel.text = "\(p)%"
+    }
+
+    private func mcvw_startGeneratingProgressTickerIfNeeded() {
+        mcvw_generatingProgressTimer?.invalidate()
+        let t = Timer(timeInterval: 0.4, repeats: true) { [weak self] _ in
+            self?.mcvw_tickGeneratingPercentDisplay()
+        }
+        RunLoop.main.add(t, forMode: .common)
+        mcvw_generatingProgressTimer = t
     }
 
     public override func layoutSubviews() {

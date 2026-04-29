@@ -137,30 +137,11 @@ public final class MCCFeedGeneratingSheetController: MCCSheetController<MCCFeedG
             return
         }
         let elapsed = Date().timeIntervalSince(start)
-        let display = Self.mcvc_simulatedPercent(atElapsed: elapsed)
+        let display = MCCGenerationProgressSimulation.percent(elapsedSinceStart: elapsed)
         contentView.mcvw_percentLabel.text = "\(display)%"
         if elapsed >= 120 && display == 99 {
             mcvc_stopProgressTicker()
         }
-    }
-
-    private static func mcvc_simulatedPercent(atElapsed elapsed: TimeInterval) -> Int {
-        if elapsed <= 15 {
-            return min(30, Int((elapsed / 15 * 30).rounded(.towardZero)))
-        }
-        if elapsed <= 90 {
-            let t = elapsed - 15
-            return min(
-                85,
-                max(31, Int((31 + t / 75 * (85 - 31)).rounded(.towardZero))))
-        }
-        if elapsed <= 120 {
-            let t = elapsed - 90
-            return min(
-                99,
-                max(86, Int((86 + t / 30 * (99 - 86)).rounded(.towardZero))))
-        }
-        return 99
     }
 
     private func mcvc_dismissAndPopRootSwitchTab(selectedIndex: Int) {

@@ -147,6 +147,10 @@
 		F6E2C12D2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */; };
 		F6E2C12E2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */; };
 		F6E2C12F2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */; };
+		F6E2C1302FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1042FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift */; };
+		F6E2C1312FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1042FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift */; };
+		F6E2C1322FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1042FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift */; };
+		F6E2C1332FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1042FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift */; };
 		A0F7900102FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */; };
 		A0F7900202FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */; };
 		A0F7900302FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */; };
@@ -321,6 +325,7 @@
 		F6E2C1012FC0010002C4F70 /* MCCProjectsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProjectsController.swift; sourceTree = "<group>"; };
 		F6E2C1022FC0010002C4F70 /* MCCProjectsListPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProjectsListPageView.swift; sourceTree = "<group>"; };
 		F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProjectsListPageController.swift; sourceTree = "<group>"; };
+		F6E2C1042FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProjectsRunGeneratingDecoration.swift; sourceTree = "<group>"; };
 		A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCStoryClipsComposerView.swift; sourceTree = "<group>"; };
 		A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCStoryClipsComposerController.swift; sourceTree = "<group>"; };
 		A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCCreatePromptFlowView.swift; sourceTree = "<group>"; };
@@ -616,6 +621,7 @@
 				F6E2C1012FC0010002C4F70 /* MCCProjectsController.swift */,
 				F6E2C1022FC0010002C4F70 /* MCCProjectsListPageView.swift */,
 				F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */,
+				F6E2C1042FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift */,
 			);
 			path = Project;
 			sourceTree = "<group>";
@@ -1050,6 +1056,7 @@
 				F6E2C1242FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
 				F6E2C1282FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
 				F6E2C12C2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
+				F6E2C1302FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift in Sources */,
 				A0F7900102FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */,
 				A0F7900502FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */,
 				A0F7900902FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */,
@@ -1114,6 +1121,7 @@
 				F6E2C1252FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
 				F6E2C1292FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
 				F6E2C12D2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
+				F6E2C1312FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift in Sources */,
 				A0F7900202FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */,
 				A0F7900602FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */,
 				A0F7900A02FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */,
@@ -1184,6 +1192,7 @@
 				F6E2C1262FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
 				F6E2C12A2FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
 				F6E2C12E2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
+				F6E2C1322FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift in Sources */,
 				A0F7900302FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */,
 				A0F7900702FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */,
 				A0F7900B02FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */,
@@ -1251,6 +1260,7 @@
 				F6E2C1272FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
 				F6E2C12B2FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
 				F6E2C12F2FC0010002C4F70 /* MCCProjectsListPageController.swift in Sources */,
+				F6E2C1332FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift in Sources */,
 				A0F7900402FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */,
 				A0F7900802FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */,
 				A0F7900C02FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */,

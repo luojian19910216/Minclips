@@ -208,7 +208,7 @@ private extension MCCProjectsListPageController {
             mcvc_beginLoadMore()
             var request = MCSRunListRequest()
             request.itemsPerPage = MCCProjectsListLayout.pageSize
-            request.resultType = mcvc_inventoryResultType
+            request.outputKind = mcvc_inventoryResultType
             let lastId = mcvc_listState.runItems.last?.runId
                 .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
             if !lastId.isEmpty {
@@ -230,7 +230,7 @@ private extension MCCProjectsListPageController {
 
         var request = MCSRunListRequest()
         request.itemsPerPage = MCCProjectsListLayout.pageSize
-        request.resultType = mcvc_inventoryResultType
+        request.outputKind = mcvc_inventoryResultType
         MCCRunAPIManager.shared.inventory(with: request)
             .asLoadState()
             .receive(on: DispatchQueue.main)
@@ -524,10 +524,12 @@ private extension MCCProjectsRunCell {
         let urlStr = pick.urlString.trimmingCharacters(in: .whitespacesAndNewlines)
         guard urlStr.isEmpty == false, let u = URL(string: urlStr) else {
             mcvw_bindThumbnail(remoteURL: nil, blurOverlayShown: false)
+            mcvw_configureGeneratingOverlay(for: run)
             return
         }
 
         mcvw_bindThumbnail(remoteURL: u, blurOverlayShown: pick.blurOverlay)
+        mcvw_configureGeneratingOverlay(for: run)
     }
 
     func mcvc_configureFailureBadge(for run: MCSRunItem) {

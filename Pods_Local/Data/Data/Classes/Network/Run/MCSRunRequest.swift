@@ -27,7 +27,7 @@ public struct MCSRunListRequest: Codable {
     /// lastId
     public var resumeAfterId: String?
     /// image/video
-    public var resultType: String?
+    public var outputKind: String?
 }
 
 ///
