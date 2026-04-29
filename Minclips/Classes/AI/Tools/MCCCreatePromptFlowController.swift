@@ -56,15 +56,15 @@ public final class MCCCreatePromptFlowController: MCCViewController<MCCCreatePro
         case .character:
             ph = "Describe what character you want"
             cta = "Continue + 250"
-            heroAsset = "ic_bg_guide_1"
+            heroAsset = "ic_bg_toImage"
             v.mcvw_trashFooter.isHidden = true
         case .shot:
             ph = "Describe what shot you want"
             cta = "Continue + 250"
-            heroAsset = "ic_bg_guide_2"
+            heroAsset = "ic_bg_toVideo"
             v.mcvw_trashFooter.isHidden = false
         }
-        v.mcvw_heroImageView.image = UIImage(named: heroAsset)
+        v.mcvw_setHeroImage(UIImage(named: heroAsset))
         v.mcvw_setShotSettingsVisible(mcvc_promptKind == .shot)
         let p = NSMutableParagraphStyle()
         p.lineSpacing = 2

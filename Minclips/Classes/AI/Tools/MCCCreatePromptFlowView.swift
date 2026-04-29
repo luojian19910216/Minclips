@@ -81,6 +81,7 @@ public final class MCCCreatePromptFlowView: MCCBaseView {
 
     private var mcvw_cardTopHeroConstraint: Constraint?
     private var mcvw_cardTopKeyboardConstraint: Constraint?
+    private var mcvw_heroAspectConstraint: Constraint?
 
     public override func mcvw_setupUI() {
         backgroundColor = UIColor(hex: "0F0F12")
@@ -88,7 +89,7 @@ public final class MCCCreatePromptFlowView: MCCBaseView {
         addSubview(mcvw_heroImageView)
         mcvw_heroImageView.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
-            make.height.equalToSuperview().multipliedBy(0.42)
+            mcvw_heroAspectConstraint = make.height.equalTo(mcvw_heroImageView.snp.width).multipliedBy(0.5).constraint
         }
 
         addSubview(mcvw_cardContainer)
@@ -152,6 +153,20 @@ public final class MCCCreatePromptFlowView: MCCBaseView {
     public func mcvw_setShotSettingsVisible(_ show: Bool) {
         mcvw_shotSettingsStack.isHidden = !show
         mcvw_trashFooter.isHidden = !show
+    }
+
+    public func mcvw_setHeroImage(_ image: UIImage?) {
+        mcvw_heroImageView.image = image
+        let ratio: CGFloat
+        if let s = image?.size, s.width > 0, s.height > 0 {
+            ratio = s.height / s.width
+        } else {
+            ratio = 0.5
+        }
+        mcvw_heroAspectConstraint?.deactivate()
+        mcvw_heroImageView.snp.makeConstraints { make in
+            mcvw_heroAspectConstraint = make.height.equalTo(mcvw_heroImageView.snp.width).multipliedBy(ratio).constraint
+        }
     }
 
     public func mcvw_setKeyboardActive(_ active: Bool, animated: Bool) {
