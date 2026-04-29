@@ -27,8 +27,17 @@ private enum MCCCreationResultPreviewMetrics {
 
     static let previewPlateBackgroundAlpha: CGFloat = 0.06
 
-    /// Icon → title, title → body, and paragraph gaps inside the body (reason vs credits note).
+    /// Gap between failure/restrict icon and status title (Failed / Restricted).
+    static let failureIconToTitleVerticalSpacing: CGFloat = 20
+
+    /// Title → subtitle, and paragraph gaps inside the subtitle (reason vs credits note).
     static let failureDetailVerticalSpacing: CGFloat = 8
+
+    /// Bottom primary: circular **source thumbnail** (`sourceImageUrl` + fallbacks) + title (failed & restricted share this row).
+    static let primaryActionIconSize: CGFloat = 28
+
+    /// White hairline stroke on the circular **source thumbnail** (failed Retry & restricted Edit).
+    static let primaryActionSourceBorderWidth: CGFloat = 0.5
 
     static let primaryButtonSize = CGSize(width: 88, height: 66)
     static let bottomSafeInsetPrimaryButton: CGFloat = 16
@@ -162,7 +171,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
     public let mccr_titleLabel: UILabel = {
         let l = UILabel()
         l.textAlignment = .center
-        l.font = .systemFont(ofSize: 12, weight: .regular)
+        l.font = .systemFont(ofSize: 18, weight: .semibold)
         l.numberOfLines = 1
         l.lineBreakMode = .byTruncatingTail
         l.setContentCompressionResistancePriority(.required, for: .vertical)
@@ -185,32 +194,32 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         return b
     }()
 
+
     private let mccr_actionIconContainer: UIView = {
         let v = UIView()
         v.isUserInteractionEnabled = false
-        v.layer.cornerRadius = 22
         v.clipsToBounds = true
-        v.backgroundColor = UIColor(white: 0, alpha: 0.35)
-        v.layer.borderWidth = 1
-        v.layer.borderColor = UIColor(white: 1, alpha: 0.35).cgColor
+        v.backgroundColor = .clear
         return v
     }()
 
-    private let mccr_actionIconView = UIImageView()
+    private let mccr_actionIconView: UIImageView = {
+        let iv = UIImageView()
+        iv.contentMode = .scaleAspectFit
+        return iv
+    }()
 
     private let mccr_actionAvatarView: UIImageView = {
         let iv = UIImageView()
         iv.isHidden = true
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
-        iv.layer.cornerRadius = 16
-        iv.tintColor = .white
         return iv
     }()
 
     private let mccr_actionTitleLabel: UILabel = {
         let l = UILabel()
-        l.font = .systemFont(ofSize: 13, weight: .medium)
+        l.font = .systemFont(ofSize: 12, weight: .regular)
         l.textColor = .white
         l.textAlignment = .center
         l.isUserInteractionEnabled = false
@@ -219,6 +228,8 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     /// Invalidates stale `sd_setImage` completions when rebound or leaving failed detail.
     private var mccr_posterLoadGeneration: UInt = 0
+
+    private var mccr_actionThumbLoadGeneration: UInt = 0
 
     private let mccr_successPill: UIVisualEffectView = {
         let v = UIVisualEffectView(effect: UIBlurEffect(style: .systemChromeMaterialDark))
@@ -308,6 +319,10 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_statusStack.addArrangedSubview(mccr_failureStatusIconView)
         mccr_statusStack.addArrangedSubview(mccr_titleLabel)
         mccr_statusStack.addArrangedSubview(mccr_subtitleLabel)
+        mccr_statusStack.setCustomSpacing(
+            MCCCreationResultPreviewMetrics.failureIconToTitleVerticalSpacing,
+            after: mccr_failureStatusIconView
+        )
         mccr_subtitleLabel.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
 
         addSubview(mccr_actionButton)
@@ -356,18 +371,14 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         layoutIfNeeded()
         setPlaceholderImage()
 
+        let iconSZ = MCCCreationResultPreviewMetrics.primaryActionIconSize
+
         mccr_actionIconContainer.snp.makeConstraints { make in
             make.top.centerX.equalToSuperview()
-            make.size.equalTo(44)
+            make.size.equalTo(iconSZ)
         }
-        mccr_actionIconView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-            make.size.equalTo(22)
-        }
-        mccr_actionAvatarView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-            make.size.equalTo(32)
-        }
+        mccr_actionIconView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        mccr_actionAvatarView.snp.makeConstraints { $0.edges.equalToSuperview() }
         mccr_actionTitleLabel.snp.makeConstraints { make in
             make.top.equalTo(mccr_actionIconContainer.snp.bottom).offset(4)
             make.centerX.equalToSuperview()
@@ -507,6 +518,8 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
     private func mccr_cancelPosterLoad() {
         mccr_posterLoadGeneration &+= 1
         mccr_imageView.sd_cancelCurrentImageLoad()
+        mccr_actionThumbLoadGeneration &+= 1
+        mccr_actionAvatarView.sd_cancelCurrentImageLoad()
     }
 
     /// Same **`sourceImageUrl`/poster URL + blur** policy as works-list cells (`mcvw_bindThumbnail`).
@@ -522,6 +535,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
             mccr_blurView.isHidden = true
             mccr_imageView.image = nil
             setPlaceholderImage()
+            mccr_bindPrimaryActionThumbnailIfNeeded(from: run)
             return
         }
 
@@ -533,6 +547,38 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
             guard self.mccr_posterLoadGeneration == token else { return }
             self.mccr_editThumbHost?.image = self.mccr_imageView.image
         }
+        mccr_bindPrimaryActionThumbnailIfNeeded(from: run)
+    }
+
+    private func mccr_bindPrimaryActionThumbnailIfNeeded(from run: MCSRunItem) {
+        guard run.runState == .failed else { return }
+
+        mccr_actionThumbLoadGeneration &+= 1
+        let token = mccr_actionThumbLoadGeneration
+        mccr_actionAvatarView.sd_cancelCurrentImageLoad()
+
+        let raw = Self.mccr_actionButtonSourceURLString(from: run)
+        guard raw.isEmpty == false, let remoteURL = URL(string: raw) else {
+            mccr_actionAvatarView.image = nil
+            return
+        }
+
+        mccr_actionAvatarView.sd_setImage(
+            with: remoteURL,
+            placeholderImage: Self.mccr_placeholderGradient(),
+            options: [.retryFailed]
+        ) { [weak self] _, _, _, _ in
+            guard let self else { return }
+            guard self.mccr_actionThumbLoadGeneration == token else { return }
+        }
+    }
+
+    private static func mccr_actionButtonSourceURLString(from run: MCSRunItem) -> String {
+        let direct = run.sourceImageUrl.mcc_normalizedRemoteURL()
+        if direct.isEmpty == false { return direct }
+        let bundle0 = run.inputBundle.sourceImage0.mcc_normalizedRemoteURL()
+        if bundle0.isEmpty == false { return bundle0 }
+        return run.mcc_firstPosterImageURLString().mcc_normalizedRemoteURL()
     }
 
     /// Refreshes server `failureReason` when present (`.fail`), then shared credit line — 14pt regular, white 48% opacity.
@@ -736,26 +782,29 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         applyRestrictedAction()
     }
 
+    /// Bottom row shared by **failed** (Retry) and **restricted** (Edit): circular `sourceImageUrl`, 0.5pt white stroke.
+    private func mccr_configurePrimaryActionSourceThumbnail(title: String) {
+        let sz = MCCCreationResultPreviewMetrics.primaryActionIconSize
+        mccr_actionIconContainer.layer.cornerRadius = sz * 0.5
+        mccr_actionIconContainer.layer.borderWidth = MCCCreationResultPreviewMetrics.primaryActionSourceBorderWidth
+        mccr_actionIconContainer.layer.borderColor = UIColor.white.cgColor
+
+        mccr_actionIconView.isHidden = true
+        mccr_actionIconView.image = nil
+        mccr_actionAvatarView.isHidden = false
+        mccr_actionAvatarView.layer.cornerRadius = sz * 0.5
+
+        mccr_actionTitleLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        mccr_actionTitleLabel.textColor = .white
+        mccr_actionTitleLabel.text = title
+    }
+
     private func applyFailedAction() {
-        let ic = UIImage.SymbolConfiguration(pointSize: 26, weight: .regular)
-        mccr_actionIconView.isHidden = false
-        mccr_actionAvatarView.isHidden = true
-        mccr_actionIconView.image = UIImage(systemName: "sparkles", withConfiguration: ic)
-        mccr_actionIconView.tintColor = .white
-        mccr_actionTitleLabel.text = "Retry"
+        mccr_configurePrimaryActionSourceThumbnail(title: "Retry")
     }
 
     private func applyRestrictedAction() {
-        mccr_actionIconView.isHidden = true
-        mccr_actionAvatarView.isHidden = false
-        if mccr_actionAvatarView.image == nil {
-            let ac = UIImage.SymbolConfiguration(pointSize: 30, weight: .regular)
-            mccr_actionAvatarView.image = UIImage(
-                systemName: "person.crop.circle.fill",
-                withConfiguration: ac
-            )
-        }
-        mccr_actionTitleLabel.text = "Edit"
+        mccr_configurePrimaryActionSourceThumbnail(title: "Edit")
     }
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
