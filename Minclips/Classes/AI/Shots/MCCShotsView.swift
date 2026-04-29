@@ -40,6 +40,9 @@ public final class MCCShotsView: MCCBaseView {
 
     public var mcvw_pagingListContainer: JXPagingListContainerView? { mcvw_pagingViewRef?.listContainerView }
 
+    /// 供 Shots VC 读取主滚动与 `pinSectionHeaderVerticalOffset`（粘性导航底同步）
+    public var mcvw_homePagingView: JXPagingListRefreshView? { mcvw_pagingViewRef }
+
     public lazy var mcvw_skeletonOverlay: MCCGradientHomeSkeletonOverlay = {
         let item = MCCGradientHomeSkeletonOverlay(style: .tagsAndDoubleColumn)
         item.isHidden = true

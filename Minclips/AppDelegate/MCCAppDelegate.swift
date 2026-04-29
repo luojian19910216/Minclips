@@ -270,6 +270,7 @@ extension MCCViewControllerCore {
         case .transparentDark: return .darkContent
         case .transparentLight: return .lightContent
         case .opaqueLight: return .darkContent
+        case .opaqueDark: return .lightContent
         }
     }
 

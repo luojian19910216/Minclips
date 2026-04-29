@@ -17,6 +17,9 @@ public enum MCCShotsCarouselMetrics {
 
     /// 底部叠渐变层高度（上沿透明 → 下沿 `#0F0F12`）
     public static let mcvw_carouselBottomGradientHeight: CGFloat = 96
+
+    /// 顶部叠渐变层高度（上沿黑 72% alpha → 下沿透明）
+    public static let mcvw_carouselTopGradientHeight: CGFloat = 120
 }
 
 private final class MCCShotsPagerCell: FSPagerViewCell {
@@ -62,6 +65,21 @@ public final class MCCShotsCarouselHeaderView: UIView, FSPagerViewDataSource, FS
     private let mcvw_bottomGradientLayer: CAGradientLayer = {
         let l = CAGradientLayer()
         l.colors = [UIColor.clear.cgColor, UIColor(hex: "0F0F12")!.cgColor]
+        l.locations = [0, 1]
+        l.startPoint = CGPoint(x: 0.5, y: 0)
+        l.endPoint = CGPoint(x: 0.5, y: 1)
+        return l
+    }()
+
+    private let mcvw_topGradientHost: UIView = {
+        let v = UIView()
+        v.isUserInteractionEnabled = false
+        return v
+    }()
+
+    private let mcvw_topGradientLayer: CAGradientLayer = {
+        let l = CAGradientLayer()
+        l.colors = [UIColor.black.withAlphaComponent(0.72).cgColor, UIColor.clear.cgColor]
         l.locations = [0, 1]
         l.startPoint = CGPoint(x: 0.5, y: 0)
         l.endPoint = CGPoint(x: 0.5, y: 1)
@@ -124,13 +142,19 @@ public final class MCCShotsCarouselHeaderView: UIView, FSPagerViewDataSource, FS
 
         addSubview(mcvw_pager)
         addSubview(mcvw_bottomGradientHost)
+        addSubview(mcvw_topGradientHost)
         addSubview(mcvw_pageControl)
         mcvw_bottomGradientHost.layer.insertSublayer(mcvw_bottomGradientLayer, at: 0)
+        mcvw_topGradientHost.layer.insertSublayer(mcvw_topGradientLayer, at: 0)
 
         mcvw_pager.snp.makeConstraints { $0.edges.equalToSuperview() }
         mcvw_bottomGradientHost.snp.makeConstraints { make in
             make.leading.trailing.bottom.equalToSuperview()
             make.height.equalTo(MCCShotsCarouselMetrics.mcvw_carouselBottomGradientHeight)
+        }
+        mcvw_topGradientHost.snp.makeConstraints { make in
+            make.leading.trailing.top.equalToSuperview()
+            make.height.equalTo(MCCShotsCarouselMetrics.mcvw_carouselTopGradientHeight)
         }
         mcvw_pageControl.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
@@ -143,6 +167,7 @@ public final class MCCShotsCarouselHeaderView: UIView, FSPagerViewDataSource, FS
     public override func layoutSubviews() {
         super.layoutSubviews()
         mcvw_bottomGradientLayer.frame = mcvw_bottomGradientHost.bounds
+        mcvw_topGradientLayer.frame = mcvw_topGradientHost.bounds
     }
 
     private func mcvw_syncPageIndicatorIfNeeded(_ index: Int) {

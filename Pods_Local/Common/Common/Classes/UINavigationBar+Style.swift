@@ -11,6 +11,8 @@ public enum MCENavigationBarStyle: Int {
     case transparentDark
     case transparentLight
     case opaqueLight
+    /// Solid `#0F0F12`; light chrome（与深色页、Tab 悬停对齐）
+    case opaqueDark
 }
 
 extension UINavigationBar {
@@ -64,6 +66,11 @@ extension UINavigationBar {
             appearance.configureWithOpaqueBackground()
             appearance.backgroundColor = .white
             appearance.backgroundEffect = nil
+        case .opaqueDark:
+            tintColor = .white
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = UIColor(hex: "0F0F12")!
+            appearance.backgroundEffect = nil
         }
 
         appearance.titleTextAttributes = [
@@ -83,31 +90,52 @@ extension UINavigationBar {
         self.scrollEdgeAppearance = appearance
 
         self.tintColor = tintColor
-        self.isTranslucent = style != .opaqueLight
+        switch style {
+        /// `opaqueDark` 仍保持 translucent=true：仅靠背景色出实色，避免切样式时 `safeAreaInsets.top` 改变
+        /// 进而触发 `pinSectionHeaderVerticalOffset` 变化 → `JXPagingView.reloadData()` → 主表 `contentOffset` 被重置
+        case .opaqueLight: self.isTranslucent = false
+        default: self.isTranslucent = true
+        }
     }
 
     @available(iOS 26.0, *)
     private func mc_applyNavigationBarStyleLiquidGlass(_ style: MCENavigationBarStyle) {
         let titleFont = UIFont.boldSystemFont(ofSize: 18)
         let itemFont = UIFont.systemFont(ofSize: 16)
+
         let tintColor: UIColor
         let titleColor: UIColor
+
+        let appearance = UINavigationBarAppearance()
+        appearance.shadowColor = .clear
 
         switch style {
         case .transparentDark:
             tintColor = .black
             titleColor = .black
+            appearance.configureWithTransparentBackground()
+            appearance.backgroundColor = .clear
+            appearance.backgroundEffect = nil
         case .transparentLight:
             tintColor = .white
             titleColor = .white
+            appearance.configureWithTransparentBackground()
+            appearance.backgroundColor = .clear
+            appearance.backgroundEffect = nil
         case .opaqueLight:
             tintColor = .label
             titleColor = .label
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = .white
+            appearance.backgroundEffect = nil
+        case .opaqueDark:
+            tintColor = .white
+            titleColor = .white
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = UIColor(hex: "0F0F12")!
+            appearance.backgroundEffect = nil
         }
 
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithDefaultBackground()
-        appearance.shadowColor = .clear
         appearance.titleTextAttributes = [
             .font: titleFont,
             .foregroundColor: titleColor
@@ -127,7 +155,11 @@ extension UINavigationBar {
         self.compactScrollEdgeAppearance = appearance
 
         self.tintColor = tintColor
-        self.isTranslucent = true
+        switch style {
+        /// 同 legacy：保持 `opaqueDark` translucent=true，避免触发 safeArea 变更
+        case .opaqueLight: self.isTranslucent = false
+        default: self.isTranslucent = true
+        }
     }
 
 }
