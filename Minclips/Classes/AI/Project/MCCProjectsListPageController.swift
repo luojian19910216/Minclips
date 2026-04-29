@@ -383,9 +383,9 @@ extension MCCProjectsListPageController: UICollectionViewDataSource, UICollectio
                 return
             }
         }
-        let title = mcvc_projectsNavTitle(for: run)
-        let kind = mcvc_projectsCreationKind(for: run)
-        let vc = MCCCreationResultController(navigationTitle: title, kind: kind, workRef: run.runId)
+        let title = run.mcc_workNavigationTitlePreferringHumanReadable()
+        let kind = run.mcc_creationResultPresentationKind()
+        let vc = MCCCreationResultController(navigationTitle: title, kind: kind, workRef: run.runId, seedRun: run)
         navigationController?.pushViewController(vc, animated: true)
     }
 
@@ -486,34 +486,6 @@ private extension MCCProjectsListPageController {
         let imageH = itemWidth * MCCProjectsLikesListMetrics.imageHeightPerWidth
         let textH = MCCProjectsLikesListMetrics.fixedTitleBlockHeight
         return imageH + MCCShotsListItemMetrics.imageToTitleSpacing + textH
-    }
-
-    func mcvc_projectsNavTitle(for run: MCSRunItem) -> String {
-        let raw = run.showTitle.trimmingCharacters(in: .whitespacesAndNewlines)
-        if raw.isEmpty == false { return raw }
-        let tmpl = run.templateName.trimmingCharacters(in: .whitespacesAndNewlines)
-        if tmpl.isEmpty == false { return tmpl }
-        let id = run.runId.trimmingCharacters(in: .whitespacesAndNewlines)
-        return id.isEmpty ? "Project" : id
-    }
-
-    func mcvc_projectsCreationKind(for run: MCSRunItem) -> MCCCreationResultKind {
-        switch run.runState {
-        case .failed:
-            return run.failureCode == .auditFail ? .restricted : .failed
-        case .generating:
-            if run.contentKind.isToVideo {
-                let sec = run.tenSecondMode != 0 ? 10 : 5
-                return .successVideo(totalDuration: TimeInterval(sec))
-            }
-            return .successImage
-        case .success:
-            if run.contentKind.isToVideo {
-                let s = max(0, run.outputArtifacts.first?.duration ?? 0)
-                return .successVideo(totalDuration: TimeInterval(max(s, 1)))
-            }
-            return .successImage
-        }
     }
 }
 

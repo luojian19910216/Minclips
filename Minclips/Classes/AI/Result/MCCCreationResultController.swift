@@ -11,7 +11,9 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
 
     public let mccr_workRef: String
 
-    public let mccr_kind: MCCCreationResultKind
+    public private(set) var mccr_kind: MCCCreationResultKind
+
+    public let mccr_seedRun: MCSRunItem?
 
     private lazy var mccr_navTitleLabel: UILabel = {
         let t = UILabel()
@@ -26,10 +28,11 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
 
     public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
 
-    public init(navigationTitle: String, kind: MCCCreationResultKind, workRef: String? = nil) {
+    public init(navigationTitle: String, kind: MCCCreationResultKind, workRef: String? = nil, seedRun: MCSRunItem? = nil) {
         self.mccr_pageTitle = navigationTitle
         self.mccr_workRef = workRef ?? navigationTitle
         self.mccr_kind = kind
+        self.mccr_seedRun = seedRun
         super.init()
         hidesBottomBarWhenPushed = true
     }
@@ -60,6 +63,11 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
         view.backgroundColor = UIColor(hex: "121212")
         contentView.backgroundColor = view.backgroundColor
         contentView.mccr_apply(kind: mccr_kind)
+    }
+
+    public override func mcvc_loadData() {
+        super.mcvc_loadData()
+        mccr_maybeFetchRunDetail()
     }
 
     public override func mcvc_bind() {
@@ -141,4 +149,71 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
         }
     }
 
+    private func mccr_maybeFetchRunDetail() {
+        let ref = mccr_workRef.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard ref.isEmpty == false else { return }
+
+        let needsDetail: Bool = {
+            if let seed = mccr_seedRun {
+                return seed.runState == .generating
+            }
+            return true
+        }()
+        guard needsDetail else { return }
+
+        var request = MCSRunInfoRequest()
+        request.workRef = ref
+        MCCRunAPIManager.shared.detail(with: request)
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { _ in },
+                receiveValue: { [weak self] run in
+                    self?.mccr_applyFetchedRun(run)
+                }
+            )
+            .store(in: &cancellables)
+    }
+
+    private func mccr_applyFetchedRun(_ run: MCSRunItem) {
+        let nextKind = run.mcc_creationResultPresentationKind()
+        mccr_kind = nextKind
+        let title = run.mcc_workNavigationTitlePreferringHumanReadable()
+        mccr_navTitleLabel.text = title
+        mccr_navTitleLabel.sizeToFit()
+        contentView.mccr_apply(kind: nextKind)
+    }
+
+}
+
+extension MCSRunItem {
+
+    /// Mirrors project list title; used after detail fetch when only `workRef` was known.
+    func mcc_workNavigationTitlePreferringHumanReadable() -> String {
+        let raw = showTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        if raw.isEmpty == false { return raw }
+        let tmpl = templateName.trimmingCharacters(in: .whitespacesAndNewlines)
+        if tmpl.isEmpty == false { return tmpl }
+        let id = runId.trimmingCharacters(in: .whitespacesAndNewlines)
+        return id.isEmpty ? "Project" : id
+    }
+
+    /// Mirrors project list → result kind mapping (list has full model; push/detail fetch supplies the rest).
+    func mcc_creationResultPresentationKind() -> MCCCreationResultKind {
+        switch runState {
+        case .failed:
+            return failureCode == .auditFail ? .restricted : .failed
+        case .generating:
+            if contentKind.isToVideo {
+                let sec = tenSecondMode != 0 ? 10 : 5
+                return .successVideo(totalDuration: TimeInterval(sec))
+            }
+            return .successImage
+        case .success:
+            if contentKind.isToVideo {
+                let s = max(0, outputArtifacts.first?.duration ?? 0)
+                return .successVideo(totalDuration: TimeInterval(max(s, 1)))
+            }
+            return .successImage
+        }
+    }
 }
