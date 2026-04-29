@@ -156,7 +156,35 @@ extension MCSRunItem {
         return ""
     }
 
-    /// Pending tiles: blurred user upload when `sourceImageUrl` is set; otherwise same fallback poster as `mcc_firstPosterImageURLString()`, **still with blur** so generating vs failed thumbnails read the same.
+    /// Creation result **image** preview: **`outputArtifacts[0].url`** when non-empty; otherwise same fallbacks as `mcc_firstPosterImageURLString()`.
+    public func mcc_resultSuccessImageURLString() -> String {
+        if let first = outputArtifacts.first {
+            let u = first.url.mcc_normalizedRemoteURL()
+            if u.isEmpty == false { return u }
+        }
+        return mcc_firstPosterImageURLString()
+    }
+
+    /// Pixel size of the first output (`outputArtifacts[0]`) for result UI aspect layout; **16∶9** when unknown.
+    public func mcc_primaryOutputArtifactPixelDimensions() -> CGSize {
+        guard let o = outputArtifacts.first, o.width > 0, o.height > 0 else {
+            return CGSize(width: 16, height: 9)
+        }
+        return CGSize(width: o.width, height: o.height)
+    }
+
+    /// Success video (**`runState == .success`**, **`contentKind.isToVideo`**): **`outputArtifacts`**, first nonempty **`url`** (MP4 from server).
+    public func mcc_resultSuccessVideoMp4URLString() -> String {
+        for r in outputArtifacts {
+            let u = r.url.mcc_normalizedRemoteURL()
+            if u.isEmpty == false {
+                return u
+            }
+        }
+        return ""
+    }
+
+    /// Success: **`outputCoverThumbUrl`** only. Generating / failed: blurred `sourceImageUrl` when set, else `mcc_firstPosterImageURLString()` with blur.
     public func mcc_worksListThumbnail() -> (urlString: String, blurOverlay: Bool) {
         func pick(_ s: String) -> String? {
             let u = s.mcc_normalizedRemoteURL()
@@ -165,7 +193,7 @@ extension MCSRunItem {
 
         switch runState {
         case .success:
-            return (mcc_firstPosterImageURLString(), false)
+            return (outputCoverThumbUrl.mcc_normalizedRemoteURL(), false)
 
         case .generating, .failed:
             if let firstUser = pick(sourceImageUrl) {

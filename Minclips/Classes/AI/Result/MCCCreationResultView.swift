@@ -3,6 +3,8 @@ import Common
 import Data
 import SDWebImage
 import SnapKit
+import AVFoundation
+import KTVHTTPCache
 
 public enum MCCCreationResultKind {
     case failed
@@ -23,7 +25,19 @@ public enum MCCCreationSuccessToolbarAction: Int {
 private enum MCCCreationResultPreviewMetrics {
     static let horizontalInset: CGFloat = 28
     static let topInset: CGFloat = 12
-    static let gapImageToPrimaryButton: CGFloat = 32
+
+    /// Primary bottom bar (**`mccr_actionGlassBar`**, **`mccr_successPill`**) trailing edge inset from bottom **safe area** (**16**).
+    static let toolbarBottomInsetFromSafeArea: CGFloat = 16
+
+    /// Bottom compact bar height (**Retry / Edit / Save** — **66** pt).
+    static let bottomButtonBarHeight: CGFloat = 66
+
+    /// Gap above the bottom bar (**32**): tools↔pill on video, poster↔bar on failure / success‑image.
+    static let previewContentAboveButtonBarGap: CGFloat = 32
+
+    /// **`mccr_mediaContainer`** bottom inset (failure / success‑image): **114** (= **16** + **66** + **32**).
+    static let previewPlateBottomInsetFromSafeArea: CGFloat =
+        toolbarBottomInsetFromSafeArea + bottomButtonBarHeight + previewContentAboveButtonBarGap
 
     static let previewPlateBackgroundAlpha: CGFloat = 0.06
 
@@ -39,16 +53,35 @@ private enum MCCCreationResultPreviewMetrics {
     /// White hairline stroke on the circular **source thumbnail** (failed Retry & restricted Edit).
     static let primaryActionSourceBorderWidth: CGFloat = 0.5
 
-    /// Glass bar inset from safe area bottom; horizontal inset matches page gutter (`horizontalInset`).
-    static let primaryActionBarBottomInset: CGFloat = 8
-
     /// Padding inside chip (icon↔rounded edge left/right).
     static let primaryActionBarInteriorHorizontalPadding: CGFloat = 20
 
-    /// Icon+title stack inset top/bottom inside the glass chip.
-    static let primaryActionBarContentVerticalPadding: CGFloat = 8
+    /// Legacy name: vertical inset was used when chip height inferred from stack. Kept **0** — chip height uses `bottomButtonBarHeight`.
+    static let primaryActionBarContentVerticalPadding: CGFloat = 0
 
-    static let primaryActionBarCornerRadius: CGFloat = 24
+    /// Success video: playback band top inset from **safe area top**.
+    static let videoPlaybackTopInsetFromSafeArea: CGFloat = 12
+
+    /// Breathing room between **`mccr_mediaContainer`** bottom and **`mccr_videoChrome`** top.
+    static let videoChromeTopGapBelowPlaybackBand: CGFloat = 8
+
+    /// Timeline + scrubber strip (**`mccr_videoChrome`**) intrinsic height (**178** pt). Below: **`previewContentAboveButtonBarGap`** then **`bottomButtonBarHeight`**; bottom bar bottom = **`toolbarBottomInsetFromSafeArea`** above safe bottom.
+    static let videoToolsZoneHeight: CGFloat = 178
+
+    /// Vertical gap (**32**) between **`mccr_videoChrome`** bottom and **`mccr_successPill`** top.
+    static let videoChromeSpacingToSuccessPill: CGFloat =
+        previewContentAboveButtonBarGap
+
+    /// Same as **`videoToolsZoneHeight`** (**178** ⌚ row + spacer + strip).
+    static let videoChromeInteriorHeight: CGFloat = videoToolsZoneHeight
+
+    static let videoTimelineControlRowHeight: CGFloat = 32
+
+    static let videoTimelineControlToStripGap: CGFloat = 10
+
+    /// Frame strip (**136** with **`videoChromeInteriorHeight`** = **178**, ⌚ **32**, gap **10**).
+    static let videoFrameStripHeight: CGFloat =
+        videoChromeInteriorHeight - videoTimelineControlRowHeight - videoTimelineControlToStripGap
 }
 
 private enum MCCCreationFailureSubtitleStyle {
@@ -136,6 +169,29 @@ private final class MCCFrameStripCell: UICollectionViewCell {
 
 }
 
+private final class MCCCreationResultMp4SurfaceView: UIView {
+
+    override class var layerClass: AnyClass {
+        AVPlayerLayer.self
+    }
+
+    var mccr_playerLayer: AVPlayerLayer {
+        layer as! AVPlayerLayer
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        clipsToBounds = true
+        mccr_playerLayer.videoGravity = .resizeAspectFill
+        backgroundColor = .clear
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     private let mccr_mediaContainer: UIView = {
@@ -150,6 +206,8 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
+        iv.backgroundColor = .clear
+        iv.isOpaque = false
         return iv
     }()
 
@@ -200,15 +258,15 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         let b = UIButton(type: .custom)
         b.setContentHuggingPriority(.required, for: .vertical)
         b.backgroundColor = .clear
+        b.isOpaque = false
         return b
     }()
 
-    /// Chrome for bottom Retry/Edit (`systemChromeMaterialDark`).
+    /// Chrome for bottom Retry/Edit (`systemChromeMaterialDark`). Corner radius synced in layout (pill = height / 2).
     private let mccr_actionGlassBar: UIVisualEffectView = {
         let v = UIVisualEffectView(effect: UIBlurEffect(style: .systemChromeMaterialDark))
-        v.layer.cornerCurve = .continuous
-        v.layer.cornerRadius = MCCCreationResultPreviewMetrics.primaryActionBarCornerRadius
         v.clipsToBounds = true
+        v.layer.masksToBounds = true
         v.isUserInteractionEnabled = true
         v.isHidden = true
         return v
@@ -216,9 +274,9 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     private let mccr_actionPrimaryStack: UIStackView = {
         let s = UIStackView()
-        s.axis = .vertical
+        s.axis = .horizontal
         s.alignment = .center
-        s.spacing = 4
+        s.spacing = 8
         s.isUserInteractionEnabled = false
         return s
     }()
@@ -261,7 +319,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     private let mccr_successPill: UIVisualEffectView = {
         let v = UIVisualEffectView(effect: UIBlurEffect(style: .systemChromeMaterialDark))
-        v.layer.cornerRadius = 28
+        v.layer.cornerRadius = MCCCreationResultPreviewMetrics.bottomButtonBarHeight / 2
         v.clipsToBounds = true
         return v
     }()
@@ -272,7 +330,12 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         s.alignment = .center
         s.distribution = .equalSpacing
         s.isLayoutMarginsRelativeArrangement = true
-        s.layoutMargins = UIEdgeInsets(top: 14, left: 20, bottom: 14, right: 20)
+        s.layoutMargins = UIEdgeInsets(
+            top: 0,
+            left: MCCCreationResultPreviewMetrics.primaryActionBarInteriorHorizontalPadding,
+            bottom: 0,
+            right: MCCCreationResultPreviewMetrics.primaryActionBarInteriorHorizontalPadding
+        )
         return s
     }()
 
@@ -332,18 +395,54 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     private var mccr_isVideoMode: Bool = false
 
+    /// First `outputArtifacts` **`width`**×**`height`** (fallback 16∶9); drives aspect-fit rect for `mccr_mediaContainer` in video result mode.
+    private var mccr_videoArtifactPixelSize: CGSize = CGSize(width: 16, height: 9)
+
     private var mccr_isPlaying: Bool = false
 
+    private let mccr_mp4SurfaceView = MCCCreationResultMp4SurfaceView()
+
+    private var mccr_resultPlayer: AVPlayer?
+
+    private var mccr_resultVideoEndObserver: NSObjectProtocol?
+
     public var mccr_onSuccessToolbar: ((MCCCreationSuccessToolbarAction) -> Void)?
+
+    /// Initial layout mirrors `mccr_applyErrorChrome` preview + bottom primary row (blur pill + Retry/Edit).
+    private func mccr_installPrimaryActionChromeLayout() {
+        let hInset = MCCCreationResultPreviewMetrics.primaryActionBarInteriorHorizontalPadding
+
+        mccr_actionPrimaryStack.snp.makeConstraints { $0.center.equalToSuperview() }
+
+        mccr_actionGlassBar.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
+                .offset(-MCCCreationResultPreviewMetrics.toolbarBottomInsetFromSafeArea)
+            make.leading.greaterThanOrEqualToSuperview().offset(MCCCreationResultPreviewMetrics.horizontalInset)
+            make.trailing.lessThanOrEqualToSuperview().offset(-MCCCreationResultPreviewMetrics.horizontalInset)
+            make.width.equalTo(mccr_actionPrimaryStack.snp.width).offset(hInset * 2)
+            make.height.equalTo(MCCCreationResultPreviewMetrics.bottomButtonBarHeight)
+        }
+
+        mccr_actionButton.snp.makeConstraints { $0.edges.equalToSuperview() }
+
+        mccr_mediaContainer.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(MCCCreationResultPreviewMetrics.topInset)
+            make.leading.trailing.equalToSuperview().inset(MCCCreationResultPreviewMetrics.horizontalInset)
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
+                .offset(-MCCCreationResultPreviewMetrics.previewPlateBottomInsetFromSafeArea)
+        }
+    }
 
     public override func mcvw_setupUI() {
         backgroundColor = UIColor(hex: "121212")
 
         addSubview(mccr_mediaContainer)
         mccr_mediaContainer.addSubview(mccr_imageView)
+        mccr_mediaContainer.addSubview(mccr_mp4SurfaceView)
         mccr_mediaContainer.addSubview(mccr_blurView)
         mccr_mediaContainer.addSubview(mccr_statusStack)
-
+        
         mccr_statusStack.addArrangedSubview(mccr_failureStatusIconView)
         mccr_statusStack.addArrangedSubview(mccr_titleLabel)
         mccr_statusStack.addArrangedSubview(mccr_subtitleLabel)
@@ -352,7 +451,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
             after: mccr_failureStatusIconView
         )
         mccr_subtitleLabel.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-
+        
         addSubview(mccr_actionGlassBar)
         mccr_actionPrimaryStack.addArrangedSubview(mccr_actionIconContainer)
         mccr_actionPrimaryStack.addArrangedSubview(mccr_actionTitleLabel)
@@ -360,8 +459,11 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_actionIconContainer.addSubview(mccr_actionIconView)
         mccr_actionIconContainer.addSubview(mccr_actionAvatarView)
 
-        mccr_actionGlassBar.contentView.addSubview(mccr_actionPrimaryStack)
+        // Tap target fills the glass; visual content must be above so label + thumbnails show through.
         mccr_actionGlassBar.contentView.addSubview(mccr_actionButton)
+        mccr_actionGlassBar.contentView.addSubview(mccr_actionPrimaryStack)
+
+        mccr_installPrimaryActionChromeLayout()
 
         addSubview(mccr_videoChrome)
         mccr_videoChrome.isHidden = true
@@ -377,31 +479,9 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_successPill.isHidden = true
         mccr_buildSuccessToolbar()
 
-        let hInset = MCCCreationResultPreviewMetrics.primaryActionBarInteriorHorizontalPadding
-        let vInset = MCCCreationResultPreviewMetrics.primaryActionBarContentVerticalPadding
-
-        mccr_actionPrimaryStack.snp.makeConstraints { $0.center.equalToSuperview() }
-
-        mccr_actionGlassBar.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
-                .offset(-MCCCreationResultPreviewMetrics.primaryActionBarBottomInset)
-            make.leading.greaterThanOrEqualToSuperview().offset(MCCCreationResultPreviewMetrics.horizontalInset)
-            make.trailing.lessThanOrEqualToSuperview().offset(-MCCCreationResultPreviewMetrics.horizontalInset)
-            make.width.equalTo(mccr_actionPrimaryStack.snp.width).offset(hInset * 2)
-            make.height.equalTo(mccr_actionPrimaryStack.snp.height).offset(vInset * 2)
-        }
-
-        mccr_actionButton.snp.makeConstraints { $0.edges.equalToSuperview() }
-
-        mccr_mediaContainer.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(MCCCreationResultPreviewMetrics.topInset)
-            make.leading.trailing.equalToSuperview().inset(MCCCreationResultPreviewMetrics.horizontalInset)
-            make.bottom.equalTo(mccr_actionGlassBar.snp.top)
-                .offset(-MCCCreationResultPreviewMetrics.gapImageToPrimaryButton)
-        }
-
         mccr_imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        mccr_mp4SurfaceView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        mccr_mp4SurfaceView.isHidden = true
         mccr_blurView.snp.makeConstraints { $0.edges.equalToSuperview() }
 
         mccr_statusStack.snp.makeConstraints { make in
@@ -414,7 +494,6 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         setPlaceholderImage()
 
         let iconSZ = MCCCreationResultPreviewMetrics.primaryActionIconSize
-
         mccr_actionIconContainer.snp.makeConstraints { make in
             make.size.equalTo(iconSZ)
         }
@@ -422,29 +501,32 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_actionAvatarView.snp.makeConstraints { $0.edges.equalToSuperview() }
         mccr_successPill.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-20)
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
+                .offset(-MCCCreationResultPreviewMetrics.toolbarBottomInsetFromSafeArea)
             make.leading.greaterThanOrEqualToSuperview().offset(24)
             make.trailing.lessThanOrEqualToSuperview().offset(-24)
+            make.height.equalTo(MCCCreationResultPreviewMetrics.bottomButtonBarHeight)
         }
         mccr_successStack.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-            make.height.greaterThanOrEqualTo(72)
         }
 
         mccr_videoChrome.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(mccr_successPill.snp.top).offset(-12)
+            make.bottom.equalTo(mccr_successPill.snp.top)
+                .offset(-MCCCreationResultPreviewMetrics.videoChromeSpacingToSuccessPill)
+            make.height.equalTo(MCCCreationResultPreviewMetrics.videoChromeInteriorHeight)
         }
         ctrlRow.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.leading.equalToSuperview().offset(20)
             make.trailing.equalToSuperview().offset(-20)
-            make.height.equalTo(32)
+            make.height.equalTo(MCCCreationResultPreviewMetrics.videoTimelineControlRowHeight)
         }
         mccr_frameCollection.snp.makeConstraints { make in
-            make.top.equalTo(ctrlRow.snp.bottom).offset(10)
+            make.top.equalTo(ctrlRow.snp.bottom).offset(MCCCreationResultPreviewMetrics.videoTimelineControlToStripGap)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(56)
+            make.height.equalTo(MCCCreationResultPreviewMetrics.videoFrameStripHeight)
             make.bottom.equalToSuperview()
         }
         mccr_playheadView.snp.makeConstraints { make in
@@ -454,38 +536,120 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         }
 
         mccr_playButton.addTarget(self, action: #selector(mccr_togglePlay), for: .touchUpInside)
+        mccr_volumeButton.addTarget(self, action: #selector(mccr_toggleResultVideoMute), for: .touchUpInside)
+    }
+
+    /// Sets `outputArtifacts.first` pixel sizing for playback aspect layout (typically before `mccr_apply(kind:)` when kind is `.successVideo`).
+    public func mccr_setVideoArtifactPixelDimensions(from run: MCSRunItem) {
+        let s = run.mcc_primaryOutputArtifactPixelDimensions()
+        mccr_setVideoArtifactPixelDimensions(width: s.width, height: s.height)
+    }
+
+    public func mccr_setVideoArtifactPixelDimensions(width: CGFloat, height: CGFloat) {
+        mccr_videoArtifactPixelSize = CGSize(width: max(1, width), height: max(1, height))
+        if mccr_isVideoMode {
+            setNeedsLayout()
+        }
+    }
+
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        mccr_syncPrimaryActionGlassCorner()
+        mccr_relayoutVideoPlaybackAreaIfNeeded()
+    }
+
+    /// Video result: bottom‑up stack from **`toolbarBottomInsetFromSafeArea`** (pill) through chrome; aspect‑fit **`mccr_mediaContainer`** in the band capped at **`mediaBottomMaxY`**, with **`videoChromeTopGapBelowPlaybackBand`** between rect bottom and chrome **top**.
+    private func mccr_relayoutVideoPlaybackAreaIfNeeded() {
+        guard mccr_isVideoMode else { return }
+        guard bounds.width > 8, bounds.height > 8 else { return }
+
+        let m = MCCCreationResultPreviewMetrics.self
+        let bandTopY = safeAreaInsets.top + m.videoPlaybackTopInsetFromSafeArea
+        let contentSafeBottomY = bounds.height - safeAreaInsets.bottom
+        let pillBottomY = contentSafeBottomY - m.toolbarBottomInsetFromSafeArea
+        let barH = m.bottomButtonBarHeight
+        let vcH = m.videoChromeInteriorHeight
+        let pillTopY = pillBottomY - barH
+        let chromeTopY = pillTopY - m.videoChromeSpacingToSuccessPill - vcH
+        let mediaBottomMaxY = chromeTopY - m.videoChromeTopGapBelowPlaybackBand
+        guard mediaBottomMaxY > bandTopY + 44 else { return }
+
+        let maxW = bounds.width
+        let maxH = mediaBottomMaxY - bandTopY
+        let vw = mccr_videoArtifactPixelSize.width
+        let vh = mccr_videoArtifactPixelSize.height
+        let scale = min(maxW / vw, maxH / vh)
+        let w = vw * scale
+        let h = vh * scale
+        let x = (bounds.width - w) * 0.5
+        let y = bandTopY + (maxH - h) * 0.5
+
+        mccr_successPill.snp.remakeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
+                .offset(-m.toolbarBottomInsetFromSafeArea)
+            make.leading.greaterThanOrEqualToSuperview().offset(24)
+            make.trailing.lessThanOrEqualToSuperview().offset(-24)
+            make.height.equalTo(barH)
+        }
+
+        mccr_mediaContainer.snp.remakeConstraints { make in
+            make.leading.equalToSuperview().offset(x)
+            make.top.equalToSuperview().offset(y)
+            make.width.equalTo(w)
+            make.height.equalTo(h)
+        }
+
+        mccr_videoChrome.snp.remakeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.top.equalToSuperview().offset(chromeTopY)
+            make.height.equalTo(vcH)
+        }
+    }
+
+    /// `UIVisualEffectView` needs a nonzero `bounds` before `cornerRadius` clips the blur; use a full pill (height/2).
+    private func mccr_syncPrimaryActionGlassCorner() {
+        guard mccr_actionGlassBar.isHidden == false else { return }
+        let b = mccr_actionGlassBar.bounds
+        guard b.width > 1, b.height > 1 else { return }
+        let r = b.height * 0.5
+        let v = mccr_actionGlassBar
+        v.layer.cornerRadius = r
+        v.layer.cornerCurve = .continuous
+        v.layer.masksToBounds = true
+        v.contentView.layer.cornerRadius = r
+        v.contentView.layer.cornerCurve = .continuous
+        v.contentView.layer.masksToBounds = true
     }
 
     private func mccr_buildSuccessToolbar() {
+        let barH = MCCCreationResultPreviewMetrics.bottomButtonBarHeight
+
         mccr_successStack.arrangedSubviews.forEach {
             mccr_successStack.removeArrangedSubview($0)
             $0.removeFromSuperview()
         }
         mccr_successActionButtons.removeAll()
         mccr_editThumbHost = nil
-        let cfg = UIImage.SymbolConfiguration(pointSize: 22, weight: .medium)
+        let cfg = UIImage.SymbolConfiguration(pointSize: 17, weight: .medium)
 
         let specs: [(String, String, MCCCreationSuccessToolbarAction, Bool)] = [
             ("sparkles", "Retry", .retry, false),
-            ("", "Edit", .edit, true),
+            ("square.and.pencil", "Edit", .edit, true),
             ("arrow.down.circle.fill", "Save", .save, false)
         ]
         for (sym, title, action, useEditThumb) in specs {
-            let col = UIStackView()
-            col.axis = .vertical
-            col.alignment = .center
-            col.spacing = 6
             let circle = UIView()
             circle.backgroundColor = UIColor(white: 0, alpha: 0.35)
-            circle.layer.cornerRadius = 22
-            circle.snp.makeConstraints { $0.size.equalTo(44) }
+            circle.layer.cornerRadius = 14
+            circle.snp.makeConstraints { $0.size.equalTo(28) }
             if useEditThumb {
                 let thumb = UIImageView()
                 thumb.contentMode = .scaleAspectFill
                 thumb.clipsToBounds = true
-                thumb.layer.cornerRadius = 12
+                thumb.layer.cornerRadius = 10
                 circle.addSubview(thumb)
-                thumb.snp.makeConstraints { $0.edges.equalToSuperview().inset(4) }
+                thumb.snp.makeConstraints { $0.edges.equalToSuperview().inset(2) }
                 mccr_editThumbHost = thumb
             } else {
                 let iv = UIImageView(image: UIImage(systemName: sym, withConfiguration: cfg))
@@ -494,33 +658,27 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
                 circle.addSubview(iv)
                 iv.snp.makeConstraints { make in
                     make.center.equalToSuperview()
-                    make.size.equalTo(24)
+                    make.size.equalTo(18)
                 }
             }
 
-            let lab = UILabel()
-            lab.text = title
-            lab.font = .systemFont(ofSize: 11, weight: .medium)
-            lab.textColor = .white
-            col.addArrangedSubview(circle)
-            col.addArrangedSubview(lab)
             let btn = UIButton(type: .custom)
             btn.tag = action.rawValue
+            btn.accessibilityLabel = title
             btn.addTarget(self, action: #selector(mccr_successToolbarTap(_:)), for: .touchUpInside)
             let wrap = UIView()
-            wrap.addSubview(col)
-            col.snp.makeConstraints { make in
-                make.centerX.equalToSuperview()
-                make.top.greaterThanOrEqualToSuperview()
-                make.bottom.lessThanOrEqualToSuperview()
-                make.centerY.equalToSuperview()
-            }
+            wrap.addSubview(circle)
+            circle.snp.makeConstraints { $0.center.equalToSuperview() }
             wrap.addSubview(btn)
             btn.snp.makeConstraints { $0.edges.equalToSuperview() }
+            wrap.snp.makeConstraints { make in
+                make.height.equalTo(barH)
+                make.width.equalTo(28)
+            }
             mccr_successStack.addArrangedSubview(wrap)
             mccr_successActionButtons.append(btn)
         }
-        mccr_successStack.spacing = 16
+        mccr_successStack.spacing = 20
     }
 
     private var mccr_editThumbHost: UIImageView?
@@ -533,6 +691,18 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     @objc
     private func mccr_togglePlay() {
+        if let p = mccr_resultPlayer {
+            if p.rate > 0.01 {
+                p.pause()
+                mccr_isPlaying = false
+            } else {
+                p.play()
+                mccr_isPlaying = true
+            }
+            mccr_updateResultPlaybackTransportIcons()
+            return
+        }
+
         mccr_isPlaying.toggle()
         let c = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
 
@@ -540,49 +710,204 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_playButton.setImage(UIImage(systemName: name, withConfiguration: c), for: .normal)
     }
 
+    @objc
+    private func mccr_toggleResultVideoMute() {
+        guard let p = mccr_resultPlayer else { return }
+        p.isMuted.toggle()
+        mccr_updateResultPlaybackTransportIcons()
+    }
+
+    /// When the success toolbar is visible and we are not in video result mode, show a **clear** placeholder so
+    /// `mccr_mediaContainer`’s plate (white @ 6 %) is visible; otherwise use the blue shimmer used on failed/restricted rows.
+    private var mccr_successToolbarShowsPlateBehindImage: Bool {
+        mccr_successPill.isHidden == false && mccr_isVideoMode == false
+    }
+
+    private func mccr_placeholderImageForMedia() -> UIImage {
+        mccr_successToolbarShowsPlateBehindImage ? Self.mccr_placeholderClearForPlate : Self.mccr_placeholderGradient()
+    }
+
+    private static let mccr_placeholderClearForPlate: UIImage = {
+        let sz = CGSize(width: 1, height: 1)
+        let f = UIGraphicsImageRendererFormat()
+        f.opaque = false
+        f.scale = UIScreen.main.scale
+        return UIGraphicsImageRenderer(size: sz, format: f).image { ctx in
+            UIColor.clear.setFill()
+            ctx.fill(CGRect(origin: .zero, size: sz))
+        }
+    }()
+
     private func setPlaceholderImage() {
         if mccr_imageView.image != nil { return }
-        mccr_imageView.image = Self.mccr_placeholderGradient()
+        mccr_imageView.image = mccr_placeholderImageForMedia()
     }
 
     public func mccr_setPreviewImage(_ image: UIImage?) {
-        mccr_imageView.image = image ?? Self.mccr_placeholderGradient()
+        mccr_imageView.image = image ?? mccr_placeholderImageForMedia()
         mccr_editThumbHost?.image = mccr_imageView.image
     }
 
     private func mccr_cancelPosterLoad() {
+        mccr_removeResultVideoPlayback()
         mccr_posterLoadGeneration &+= 1
         mccr_imageView.sd_cancelCurrentImageLoad()
         mccr_actionThumbLoadGeneration &+= 1
         mccr_actionAvatarView.sd_cancelCurrentImageLoad()
     }
 
-    /// Same **`sourceImageUrl`/poster URL + blur** policy as works-list cells (`mcvw_bindThumbnail`).
-    public func mccr_bindPosterFrom(run: MCSRunItem) {
-        guard run.runState == .failed else { return }
-        mccr_posterLoadGeneration &+= 1
-        let token = mccr_posterLoadGeneration
-        mccr_imageView.sd_cancelCurrentImageLoad()
+    private func mccr_removeResultVideoPlayback() {
+        if let o = mccr_resultVideoEndObserver {
+            NotificationCenter.default.removeObserver(o)
+            mccr_resultVideoEndObserver = nil
+        }
+        mccr_resultPlayer?.pause()
+        mccr_resultPlayer = nil
+        mccr_mp4SurfaceView.mccr_playerLayer.player = nil
+        mccr_mp4SurfaceView.isHidden = true
+    }
 
-        let pick = run.mcc_worksListThumbnail()
-        let raw = pick.urlString.mcc_normalizedRemoteURL()
-        guard raw.isEmpty == false, let remoteURL = URL(string: raw) else {
+    private func mccr_remoteResultMp4Player(url: URL) -> AVPlayer {
+        let playURL = KTVHTTPCache.proxyURL(withOriginalURL: url, bindToLocalhost: false) as URL
+        let assetOpts: [String: Any] = [
+            AVURLAssetPreferPreciseDurationAndTimingKey: false
+        ]
+        let asset = AVURLAsset(url: playURL, options: assetOpts)
+        let item = AVPlayerItem(asset: asset)
+        item.preferredForwardBufferDuration = 4
+        let player = AVPlayer(playerItem: item)
+        player.automaticallyWaitsToMinimizeStalling = false
+        player.isMuted = true
+        player.actionAtItemEnd = .none
+        return player
+    }
+
+    private func mccr_attachResultVideoEndLoop(for player: AVPlayer) {
+        if let o = mccr_resultVideoEndObserver {
+            NotificationCenter.default.removeObserver(o)
+            mccr_resultVideoEndObserver = nil
+        }
+        mccr_resultVideoEndObserver = NotificationCenter.default.addObserver(
+            forName: .AVPlayerItemDidPlayToEndTime,
+            object: player.currentItem,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            self.mccr_resultPlayer?.seek(to: .zero)
+            self.mccr_resultPlayer?.play()
+        }
+    }
+
+    private func mccr_urlLooksPlayableHttps(_ raw: String) -> Bool {
+        let t = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard t.isEmpty == false, let u = URL(string: t), let scheme = u.scheme?.lowercased() else { return false }
+        return scheme == "http" || scheme == "https"
+    }
+
+    private func mccr_updateResultPlaybackTransportIcons() {
+        guard let p = mccr_resultPlayer else { return }
+        let playCfg = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
+        let playing = p.rate > 0.01
+        let playName = playing ? "pause.fill" : "play.fill"
+        mccr_playButton.setImage(UIImage(systemName: playName, withConfiguration: playCfg), for: .normal)
+        let volCfg = UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)
+        let volName = p.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill"
+        mccr_volumeButton.setImage(UIImage(systemName: volName, withConfiguration: volCfg), for: .normal)
+    }
+
+    private func mccr_bindSuccessVideoPosterAndPlayer(from run: MCSRunItem) {
+        mccr_cancelPosterLoad()
+        let token = mccr_posterLoadGeneration
+
+        let thumbRaw = run.outputCoverThumbUrl.mcc_normalizedRemoteURL()
+        if thumbRaw.isEmpty == false, let thumbURL = URL(string: thumbRaw) {
+            mccr_blurView.isHidden = true
+            mccr_imageView.image = nil
+            mccr_imageView.sd_setImage(with: thumbURL, placeholderImage: mccr_placeholderImageForMedia(), options: [.retryFailed]) {
+                [weak self] _, _, _, _ in
+                guard let self else { return }
+                guard self.mccr_posterLoadGeneration == token else { return }
+                self.mccr_editThumbHost?.image = self.mccr_imageView.image
+            }
+        } else {
             mccr_blurView.isHidden = true
             mccr_imageView.image = nil
             setPlaceholderImage()
-            mccr_bindPrimaryActionThumbnailIfNeeded(from: run)
+        }
+
+        let mp4Raw = run.mcc_resultSuccessVideoMp4URLString().trimmingCharacters(in: .whitespacesAndNewlines)
+        guard mccr_urlLooksPlayableHttps(mp4Raw), let mp4URL = URL(string: mp4Raw) else {
             return
         }
 
-        mccr_blurView.isHidden = !pick.blurOverlay
-        mccr_imageView.image = nil
-        mccr_imageView.sd_setImage(with: remoteURL, placeholderImage: Self.mccr_placeholderGradient(), options: [.retryFailed]) {
-            [weak self] _, _, _, _ in
-            guard let self else { return }
-            guard self.mccr_posterLoadGeneration == token else { return }
-            self.mccr_editThumbHost?.image = self.mccr_imageView.image
+        let player = mccr_remoteResultMp4Player(url: mp4URL)
+        mccr_resultPlayer = player
+        mccr_mp4SurfaceView.mccr_playerLayer.player = player
+        mccr_mp4SurfaceView.isHidden = false
+        mccr_mediaContainer.bringSubviewToFront(mccr_mp4SurfaceView)
+        mccr_attachResultVideoEndLoop(for: player)
+        player.play()
+        mccr_isPlaying = true
+        mccr_updateResultPlaybackTransportIcons()
+    }
+
+    /// Failed: **`sourceImageUrl`/poster** + blur policy like works-list. Success image: **`outputArtifacts.first.url`** (see `mcc_resultSuccessImageURLString()`). Success video: cover **`outputCoverThumbUrl`**, playback **`mcc_resultSuccessVideoMp4URLString()`** (first artifact).
+    public func mccr_bindPosterFrom(run: MCSRunItem) {
+        switch run.runState {
+        case .failed:
+            mccr_posterLoadGeneration &+= 1
+            let token = mccr_posterLoadGeneration
+            mccr_imageView.sd_cancelCurrentImageLoad()
+
+            let pick = run.mcc_worksListThumbnail()
+            let raw = pick.urlString.mcc_normalizedRemoteURL()
+            guard raw.isEmpty == false, let remoteURL = URL(string: raw) else {
+                mccr_blurView.isHidden = true
+                mccr_imageView.image = nil
+                setPlaceholderImage()
+                mccr_bindPrimaryActionThumbnailIfNeeded(from: run)
+                return
+            }
+
+            mccr_blurView.isHidden = !pick.blurOverlay
+            mccr_imageView.image = nil
+            mccr_imageView.sd_setImage(with: remoteURL, placeholderImage: mccr_placeholderImageForMedia(), options: [.retryFailed]) {
+                [weak self] _, _, _, _ in
+                guard let self else { return }
+                guard self.mccr_posterLoadGeneration == token else { return }
+                self.mccr_editThumbHost?.image = self.mccr_imageView.image
+            }
+            mccr_bindPrimaryActionThumbnailIfNeeded(from: run)
+
+        case .success:
+            if run.contentKind.isToVideo {
+                mccr_bindSuccessVideoPosterAndPlayer(from: run)
+                return
+            }
+            mccr_posterLoadGeneration &+= 1
+            let token = mccr_posterLoadGeneration
+            mccr_imageView.sd_cancelCurrentImageLoad()
+
+            let raw = run.mcc_resultSuccessImageURLString().mcc_normalizedRemoteURL()
+            guard raw.isEmpty == false, let remoteURL = URL(string: raw) else {
+                mccr_blurView.isHidden = true
+                mccr_imageView.image = nil
+                setPlaceholderImage()
+                return
+            }
+
+            mccr_blurView.isHidden = true
+            mccr_imageView.image = nil
+            mccr_imageView.sd_setImage(with: remoteURL, placeholderImage: mccr_placeholderImageForMedia(), options: [.retryFailed]) {
+                [weak self] _, _, _, _ in
+                guard let self else { return }
+                guard self.mccr_posterLoadGeneration == token else { return }
+                self.mccr_editThumbHost?.image = self.mccr_imageView.image
+            }
+
+        default:
+            break
         }
-        mccr_bindPrimaryActionThumbnailIfNeeded(from: run)
     }
 
     private func mccr_bindPrimaryActionThumbnailIfNeeded(from run: MCSRunItem) {
@@ -685,6 +1010,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
     }
 
     private func mccr_applyErrorChrome() {
+        mccr_removeResultVideoPlayback()
         mccr_isVideoMode = false
         mccr_successPill.isHidden = true
         mccr_videoChrome.isHidden = true
@@ -697,21 +1023,19 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_actionGlassBar.snp.remakeConstraints { make in
             make.centerX.equalToSuperview()
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
-                .offset(-MCCCreationResultPreviewMetrics.primaryActionBarBottomInset)
+                .offset(-MCCCreationResultPreviewMetrics.toolbarBottomInsetFromSafeArea)
             make.leading.greaterThanOrEqualToSuperview().offset(MCCCreationResultPreviewMetrics.horizontalInset)
             make.trailing.lessThanOrEqualToSuperview().offset(-MCCCreationResultPreviewMetrics.horizontalInset)
             make.width.equalTo(mccr_actionPrimaryStack.snp.width).offset(
                 MCCCreationResultPreviewMetrics.primaryActionBarInteriorHorizontalPadding * 2
             )
-            make.height.equalTo(mccr_actionPrimaryStack.snp.height).offset(
-                MCCCreationResultPreviewMetrics.primaryActionBarContentVerticalPadding * 2
-            )
+            make.height.equalTo(MCCCreationResultPreviewMetrics.bottomButtonBarHeight)
         }
         mccr_mediaContainer.snp.remakeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(MCCCreationResultPreviewMetrics.topInset)
             make.leading.trailing.equalToSuperview().inset(MCCCreationResultPreviewMetrics.horizontalInset)
-            make.bottom.equalTo(mccr_actionGlassBar.snp.top)
-                .offset(-MCCCreationResultPreviewMetrics.gapImageToPrimaryButton)
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
+                .offset(-MCCCreationResultPreviewMetrics.previewPlateBottomInsetFromSafeArea)
         }
         setPlaceholderImage()
     }
@@ -727,38 +1051,33 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_blurView.isHidden = true
         mccr_statusStack.isHidden = true
         mccr_mediaContainer.layer.cornerRadius = 0
-        mccr_mediaContainer.backgroundColor = .clear
-        mccr_mediaContainer.snp.remakeConstraints { make in
-            if isVideo {
-                make.top.equalTo(safeAreaLayoutGuide.snp.top)
-                make.leading.trailing.equalToSuperview()
-                make.bottom.equalTo(mccr_videoChrome.snp.top)
-            } else {
-                make.top.equalTo(safeAreaLayoutGuide.snp.top)
-                make.leading.trailing.bottom.equalToSuperview()
-            }
+        if isVideo {
+            mccr_mediaContainer.backgroundColor = .clear
+        } else {
+            mccr_mediaContainer.backgroundColor =
+                UIColor(white: 1, alpha: MCCCreationResultPreviewMetrics.previewPlateBackgroundAlpha)
         }
         if !isVideo {
+            mccr_mediaContainer.snp.remakeConstraints { make in
+                make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(MCCCreationResultPreviewMetrics.topInset)
+                make.leading.trailing.equalToSuperview().inset(MCCCreationResultPreviewMetrics.horizontalInset)
+                make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
+                    .offset(-MCCCreationResultPreviewMetrics.previewPlateBottomInsetFromSafeArea)
+            }
+        }
+        if isVideo {
             mccr_successPill.snp.remakeConstraints { make in
                 make.centerX.equalToSuperview()
-                make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-20)
+                make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
+                .offset(-MCCCreationResultPreviewMetrics.toolbarBottomInsetFromSafeArea)
                 make.leading.greaterThanOrEqualToSuperview().offset(24)
                 make.trailing.lessThanOrEqualToSuperview().offset(-24)
-            }
-        } else {
-            mccr_videoChrome.snp.remakeConstraints { make in
-                make.leading.trailing.equalToSuperview()
-                make.bottom.equalTo(mccr_successPill.snp.top).offset(-12)
-            }
-            mccr_successPill.snp.remakeConstraints { make in
-                make.centerX.equalToSuperview()
-                make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-20)
-                make.leading.greaterThanOrEqualToSuperview().offset(24)
-                make.trailing.lessThanOrEqualToSuperview().offset(-24)
+                make.height.equalTo(MCCCreationResultPreviewMetrics.bottomButtonBarHeight)
             }
             mccr_timeLabel.text = "00:00 / " + mccr_formatClock(duration)
             mccr_frameImages = Self.mccr_stripImages(count: 18, duration: duration)
             mccr_frameCollection.reloadData()
+            setNeedsLayout()
         }
         setPlaceholderImage()
         mccr_editThumbHost?.image = mccr_imageView.image
@@ -876,7 +1195,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        CGSize(width: 48, height: 56)
+        CGSize(width: 48, height: MCCCreationResultPreviewMetrics.videoFrameStripHeight)
     }
 
     public func collectionView(
