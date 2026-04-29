@@ -173,6 +173,11 @@ extension MCSRunItem {
         return CGSize(width: o.width, height: o.height)
     }
 
+    /// First **`outputArtifacts`** **`duration`** in **seconds** (video tooling / timers); **0** if missing or non-positive.
+    public func mcc_primaryOutputArtifactDurationSeconds() -> Int {
+        max(0, outputArtifacts.first?.duration ?? 0)
+    }
+
     /// Success video (**`runState == .success`**, **`contentKind.isToVideo`**): **`outputArtifacts`**, first nonempty **`url`** (MP4 from server).
     public func mcc_resultSuccessVideoMp4URLString() -> String {
         for r in outputArtifacts {
