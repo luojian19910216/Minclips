@@ -17,6 +17,18 @@ public enum MCCCreationSuccessToolbarAction: Int {
 
 }
 
+/// Preview metrics for failed/restricted result — aligns with project list thumbnails (`height = width × imageHeightPerWidth`).
+private enum MCCCreationResultPreviewMetrics {
+    static let horizontalInset: CGFloat = 28
+    static let gapImageToPrimaryButton: CGFloat = 32
+
+    /// Same numeric intent as `MCCProjectsLikesListMetrics.imageHeightPerWidth`.
+    static let imageHeightPerWidth: CGFloat = 4.0 / 3.0
+
+    static let primaryButtonSize = CGSize(width: 88, height: 66)
+    static let bottomSafeInsetPrimaryButton: CGFloat = 16
+}
+
 private final class MCCFrameStripCell: UICollectionViewCell {
 
     static let reuseId = "MCCFrameStripCell"
@@ -121,7 +133,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
     private let mccr_actionIconContainer: UIView = {
         let v = UIView()
         v.isUserInteractionEnabled = false
-        v.layer.cornerRadius = 36
+        v.layer.cornerRadius = 22
         v.clipsToBounds = true
         v.backgroundColor = UIColor(white: 0, alpha: 0.35)
         v.layer.borderWidth = 1
@@ -227,6 +239,9 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     private var mccr_isPlaying: Bool = false
 
+    /// Locks `mccr_mediaContainer` to the same **width:height** proportions as project list thumbnails (`height = width × imageHeightPerWidth`).
+    private var mccr_mediaAspectRatioConstraint: NSLayoutConstraint?
+
     public var mccr_onSuccessToolbar: ((MCCCreationSuccessToolbarAction) -> Void)?
 
     public override func mcvw_setupUI() {
@@ -266,11 +281,19 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_successPill.isHidden = true
         mccr_buildSuccessToolbar()
 
-        mccr_mediaContainer.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(12)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(mccr_mediaContainer.snp.width).multipliedBy(4.0 / 3.0)
+        mccr_actionButton.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.size.equalTo(MCCCreationResultPreviewMetrics.primaryButtonSize)
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
+                .offset(-MCCCreationResultPreviewMetrics.bottomSafeInsetPrimaryButton)
         }
+
+        mccr_mediaContainer.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(MCCCreationResultPreviewMetrics.horizontalInset)
+            make.bottom.equalTo(mccr_actionButton.snp.top)
+                .offset(-MCCCreationResultPreviewMetrics.gapImageToPrimaryButton)
+        }
+        mccr_attachPreviewImageAspectRatioConstraint()
 
         mccr_imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
         mccr_blurView.snp.makeConstraints { $0.edges.equalToSuperview() }
@@ -284,26 +307,20 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         layoutIfNeeded()
         setPlaceholderImage()
 
-        mccr_actionButton.snp.makeConstraints { make in
-            make.top.greaterThanOrEqualTo(mccr_mediaContainer.snp.bottom).offset(20)
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-28)
-        }
-
         mccr_actionIconContainer.snp.makeConstraints { make in
             make.top.centerX.equalToSuperview()
-            make.size.equalTo(72)
+            make.size.equalTo(44)
         }
         mccr_actionIconView.snp.makeConstraints { make in
             make.center.equalToSuperview()
-            make.size.equalTo(28)
+            make.size.equalTo(22)
         }
         mccr_actionAvatarView.snp.makeConstraints { make in
             make.center.equalToSuperview()
             make.size.equalTo(32)
         }
         mccr_actionTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(mccr_actionIconContainer.snp.bottom).offset(8)
+            make.top.equalTo(mccr_actionIconContainer.snp.bottom).offset(4)
             make.centerX.equalToSuperview()
             make.bottom.equalToSuperview()
         }
@@ -484,7 +501,26 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         }
     }
 
+    private func mccr_resetPreviewImageAspectRatioConstraint() {
+        mccr_mediaAspectRatioConstraint?.isActive = false
+        mccr_mediaAspectRatioConstraint = nil
+    }
+
+    /// Locks `mccr_mediaContainer` to the same proportional framing as project list cells: `height = width × imageHeightPerWidth` (often described as 「4:3」 in tandem with those cells).
+    private func mccr_attachPreviewImageAspectRatioConstraint() {
+        mccr_resetPreviewImageAspectRatioConstraint()
+        let c = mccr_mediaContainer.heightAnchor.constraint(
+            equalTo: mccr_mediaContainer.widthAnchor,
+            multiplier: MCCCreationResultPreviewMetrics.imageHeightPerWidth
+        )
+        c.priority = .required
+        c.identifier = "MCCR.preview.heightPerWidthAspect"
+        c.isActive = true
+        mccr_mediaAspectRatioConstraint = c
+    }
+
     public func mccr_apply(kind: MCCCreationResultKind) {
+
         switch kind {
         case .failed:
             mccr_applyErrorChrome()
@@ -508,20 +544,23 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_statusStack.isHidden = false
         mccr_iconBase.isHidden = false
         mccr_mediaContainer.layer.cornerRadius = 12
-        mccr_mediaContainer.snp.remakeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(12)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(mccr_mediaContainer.snp.width).multipliedBy(4.0 / 3.0)
-        }
         mccr_actionButton.snp.remakeConstraints { make in
-            make.top.greaterThanOrEqualTo(mccr_mediaContainer.snp.bottom).offset(20)
             make.centerX.equalToSuperview()
-            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-28)
+            make.size.equalTo(MCCCreationResultPreviewMetrics.primaryButtonSize)
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
+                .offset(-MCCCreationResultPreviewMetrics.bottomSafeInsetPrimaryButton)
         }
+        mccr_mediaContainer.snp.remakeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(MCCCreationResultPreviewMetrics.horizontalInset)
+            make.bottom.equalTo(mccr_actionButton.snp.top)
+                .offset(-MCCCreationResultPreviewMetrics.gapImageToPrimaryButton)
+        }
+        mccr_attachPreviewImageAspectRatioConstraint()
         setPlaceholderImage()
     }
 
     private func mccr_applySuccessChrome(isVideo: Bool, duration: TimeInterval) {
+        mccr_resetPreviewImageAspectRatioConstraint()
         mccr_isVideoMode = isVideo
         mccr_videoDuration = duration
         mccr_successPill.isHidden = false
