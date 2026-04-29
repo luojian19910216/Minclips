@@ -29,15 +29,21 @@ private enum MCCCreationResultPreviewMetrics {
     /// Primary bottom bar (**`mccr_actionGlassBar`**, **`mccr_successPill`**) trailing edge inset from bottom **safe area** (**16**).
     static let toolbarBottomInsetFromSafeArea: CGFloat = 16
 
-    /// Bottom compact bar height (**Retry / Edit / Save** — **66** pt).
-    static let bottomButtonBarHeight: CGFloat = 66
-
     /// Gap above the bottom bar (**32**): tools↔pill on video, poster↔bar on failure / success‑image.
     static let previewContentAboveButtonBarGap: CGFloat = 32
 
-    /// **`mccr_mediaContainer`** bottom inset (failure / success‑image): **114** (= **16** + **66** + **32**).
+    /// Bottom toolbar strip (**failed / restricted** primary & **success** Retry·Edit·Save): **上图下文** capsule, **66** pt.
+    static let successToolbarBarHeight: CGFloat = 66
+
+    /// Top/bottom **layoutMargins** on primary & success bottom stacks (fits **上图下文** inside **`successToolbarBarHeight`**).
+    static let toolbarBarStackVerticalMargins: CGFloat = 9
+
+    /// Poster / plate bottom inset when bottom strip is visible (**16 + strip + 32**).
     static let previewPlateBottomInsetFromSafeArea: CGFloat =
-        toolbarBottomInsetFromSafeArea + bottomButtonBarHeight + previewContentAboveButtonBarGap
+        toolbarBottomInsetFromSafeArea + successToolbarBarHeight + previewContentAboveButtonBarGap
+
+    /// Same as **`previewPlateBottomInsetFromSafeArea`** (success-image path命名保留).
+    static let previewPlateBottomInsetWhenSuccessToolbar: CGFloat = previewPlateBottomInsetFromSafeArea
 
     static let previewPlateBackgroundAlpha: CGFloat = 0.06
 
@@ -47,16 +53,25 @@ private enum MCCCreationResultPreviewMetrics {
     /// Title → subtitle, and paragraph gaps inside the subtitle (reason vs credits note).
     static let failureDetailVerticalSpacing: CGFloat = 8
 
-    /// Bottom primary: circular **source thumbnail** (`sourceImageUrl` + fallbacks) + title (failed & restricted share this row).
+    /// Bottom primary row: **`primaryActionIconSize`** (**failed** Retry = **`ic_cm_retry`** only; **restricted** Edit = circular **source thumbnail**).
     static let primaryActionIconSize: CGFloat = 28
+
+    /// Thumbnail ↔ caption: **12** reg caption sits **6** pt below the icon (**failed/restricted** bar & success toolbar columns).
+    static let primaryActionIconToTitleSpacing: CGFloat = 6
 
     /// White hairline stroke on the circular **source thumbnail** (failed Retry & restricted Edit).
     static let primaryActionSourceBorderWidth: CGFloat = 0.5
 
-    /// Padding inside chip (icon↔rounded edge left/right).
-    static let primaryActionBarInteriorHorizontalPadding: CGFloat = 20
+    /// White stroke on **`success`** toolbar **Edit** thumbnail only (**1** pt; Retry/Save icons have no chrome).
+    static let successToolbarEditThumbBorderWidth: CGFloat = 1
 
-    /// Legacy name: vertical inset was used when chip height inferred from stack. Kept **0** — chip height uses `bottomButtonBarHeight`.
+    /// Left/right **layoutMargins** inside **`mccr_successStack`** / **`mccr_actionPrimaryStack`** (**28**).
+    static let primaryActionBarInteriorHorizontalPadding: CGFloat = 28
+
+    /// Gap between Retry / Edit / Save columns (**32** pt).
+    static let successToolbarInterButtonSpacing: CGFloat = 32
+
+    /// Legacy: stack vertical padding unused; strip height uses **`successToolbarBarHeight`**.
     static let primaryActionBarContentVerticalPadding: CGFloat = 0
 
     /// Success video: playback band top inset from **safe area top**.
@@ -65,7 +80,7 @@ private enum MCCCreationResultPreviewMetrics {
     /// Breathing room between **`mccr_mediaContainer`** bottom and **`mccr_videoChrome`** top.
     static let videoChromeTopGapBelowPlaybackBand: CGFloat = 8
 
-    /// Timeline + scrubber strip (**`mccr_videoChrome`**) intrinsic height (**178** pt). Below: **`previewContentAboveButtonBarGap`** then **`bottomButtonBarHeight`**; bottom bar bottom = **`toolbarBottomInsetFromSafeArea`** above safe bottom.
+    /// Timeline + scrubber strip (**`mccr_videoChrome`**) intrinsic height (**178** pt); below **`mccr_successPill`** (**`previewContentAboveButtonBarGap`** + **`successToolbarBarHeight`**).
     static let videoToolsZoneHeight: CGFloat = 178
 
     /// Vertical gap (**32**) between **`mccr_videoChrome`** bottom and **`mccr_successPill`** top.
@@ -269,11 +284,12 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         return b
     }()
 
-    /// Chrome for bottom Retry/Edit (`systemChromeMaterialDark`). Corner radius synced in layout (pill = height / 2).
-    private let mccr_actionGlassBar: UIVisualEffectView = {
-        let v = UIVisualEffectView(effect: UIBlurEffect(style: .systemChromeMaterialDark))
+    /// Bottom **Retry / Edit** strip：与成功条一致 **白 6%**，**上图下文**胶囊。
+    private let mccr_actionGlassBar: UIView = {
+        let v = UIView()
+        v.backgroundColor = UIColor.white.withAlphaComponent(0.06)
+        v.layer.cornerCurve = .continuous
         v.clipsToBounds = true
-        v.layer.masksToBounds = true
         v.isUserInteractionEnabled = true
         v.isHidden = true
         return v
@@ -281,10 +297,17 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     private let mccr_actionPrimaryStack: UIStackView = {
         let s = UIStackView()
-        s.axis = .horizontal
+        s.axis = .vertical
         s.alignment = .center
-        s.spacing = 8
+        s.spacing = MCCCreationResultPreviewMetrics.primaryActionIconToTitleSpacing
         s.isUserInteractionEnabled = false
+        s.isLayoutMarginsRelativeArrangement = true
+        s.layoutMargins = UIEdgeInsets(
+            top: MCCCreationResultPreviewMetrics.toolbarBarStackVerticalMargins,
+            left: MCCCreationResultPreviewMetrics.primaryActionBarInteriorHorizontalPadding,
+            bottom: MCCCreationResultPreviewMetrics.toolbarBarStackVerticalMargins,
+            right: MCCCreationResultPreviewMetrics.primaryActionBarInteriorHorizontalPadding
+        )
         return s
     }()
 
@@ -310,11 +333,13 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         return iv
     }()
 
+    /// Primary Retry/Edit caption: **12 regular**, **white**.
     private let mccr_actionTitleLabel: UILabel = {
         let l = UILabel()
         l.font = .systemFont(ofSize: 12, weight: .regular)
         l.textColor = .white
         l.textAlignment = .center
+        l.numberOfLines = 1
         l.isUserInteractionEnabled = false
         return l
     }()
@@ -324,9 +349,10 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     private var mccr_actionThumbLoadGeneration: UInt = 0
 
-    private let mccr_successPill: UIVisualEffectView = {
-        let v = UIVisualEffectView(effect: UIBlurEffect(style: .systemChromeMaterialDark))
-        v.layer.cornerRadius = MCCCreationResultPreviewMetrics.bottomButtonBarHeight / 2
+    private let mccr_successPill: UIView = {
+        let v = UIView()
+        v.backgroundColor = UIColor.white.withAlphaComponent(0.06)
+        v.layer.cornerCurve = .continuous
         v.clipsToBounds = true
         return v
     }()
@@ -335,12 +361,13 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         let s = UIStackView()
         s.axis = .horizontal
         s.alignment = .center
-        s.distribution = .equalSpacing
+        s.distribution = .fillEqually
+        s.spacing = MCCCreationResultPreviewMetrics.successToolbarInterButtonSpacing
         s.isLayoutMarginsRelativeArrangement = true
         s.layoutMargins = UIEdgeInsets(
-            top: 0,
+            top: MCCCreationResultPreviewMetrics.toolbarBarStackVerticalMargins,
             left: MCCCreationResultPreviewMetrics.primaryActionBarInteriorHorizontalPadding,
-            bottom: 0,
+            bottom: MCCCreationResultPreviewMetrics.toolbarBarStackVerticalMargins,
             right: MCCCreationResultPreviewMetrics.primaryActionBarInteriorHorizontalPadding
         )
         return s
@@ -423,8 +450,6 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     /// Initial layout mirrors `mccr_applyErrorChrome` preview + bottom primary row (blur pill + Retry/Edit).
     private func mccr_installPrimaryActionChromeLayout() {
-        let hInset = MCCCreationResultPreviewMetrics.primaryActionBarInteriorHorizontalPadding
-
         mccr_actionPrimaryStack.snp.makeConstraints { $0.center.equalToSuperview() }
 
         mccr_actionGlassBar.snp.makeConstraints { make in
@@ -433,8 +458,8 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
                 .offset(-MCCCreationResultPreviewMetrics.toolbarBottomInsetFromSafeArea)
             make.leading.greaterThanOrEqualToSuperview().offset(MCCCreationResultPreviewMetrics.horizontalInset)
             make.trailing.lessThanOrEqualToSuperview().offset(-MCCCreationResultPreviewMetrics.horizontalInset)
-            make.width.equalTo(mccr_actionPrimaryStack.snp.width).offset(hInset * 2)
-            make.height.equalTo(MCCCreationResultPreviewMetrics.bottomButtonBarHeight)
+            make.width.equalTo(mccr_actionPrimaryStack.snp.width)
+            make.height.equalTo(MCCCreationResultPreviewMetrics.successToolbarBarHeight)
         }
 
         mccr_actionButton.snp.makeConstraints { $0.edges.equalToSuperview() }
@@ -472,9 +497,9 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_actionIconContainer.addSubview(mccr_actionIconView)
         mccr_actionIconContainer.addSubview(mccr_actionAvatarView)
 
-        // Tap target fills the glass; visual content must be above so label + thumbnails show through.
-        mccr_actionGlassBar.contentView.addSubview(mccr_actionButton)
-        mccr_actionGlassBar.contentView.addSubview(mccr_actionPrimaryStack)
+        // Tap fills the strip; icons + caption sit in the stack (上图下文).
+        mccr_actionGlassBar.addSubview(mccr_actionButton)
+        mccr_actionGlassBar.addSubview(mccr_actionPrimaryStack)
 
         mccr_installPrimaryActionChromeLayout()
 
@@ -488,7 +513,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_videoChrome.addSubview(mccr_playheadView)
 
         addSubview(mccr_successPill)
-        mccr_successPill.contentView.addSubview(mccr_successStack)
+        mccr_successPill.addSubview(mccr_successStack)
         mccr_successPill.isHidden = true
         mccr_buildSuccessToolbar()
 
@@ -500,8 +525,8 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_statusStack.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.centerY.equalToSuperview()
-            make.leading.greaterThanOrEqualToSuperview().offset(24)
-            make.trailing.lessThanOrEqualToSuperview().offset(-24)
+            make.leading.greaterThanOrEqualToSuperview().offset(MCCCreationResultPreviewMetrics.horizontalInset)
+            make.trailing.lessThanOrEqualToSuperview().offset(-MCCCreationResultPreviewMetrics.horizontalInset)
         }
         layoutIfNeeded()
         setPlaceholderImage()
@@ -516,9 +541,9 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
             make.centerX.equalToSuperview()
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
                 .offset(-MCCCreationResultPreviewMetrics.toolbarBottomInsetFromSafeArea)
-            make.leading.greaterThanOrEqualToSuperview().offset(24)
-            make.trailing.lessThanOrEqualToSuperview().offset(-24)
-            make.height.equalTo(MCCCreationResultPreviewMetrics.bottomButtonBarHeight)
+            make.leading.greaterThanOrEqualToSuperview().offset(MCCCreationResultPreviewMetrics.horizontalInset)
+            make.trailing.lessThanOrEqualToSuperview().offset(-MCCCreationResultPreviewMetrics.horizontalInset)
+            make.height.equalTo(MCCCreationResultPreviewMetrics.successToolbarBarHeight)
         }
         mccr_successStack.snp.makeConstraints { make in
             make.edges.equalToSuperview()
@@ -587,6 +612,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
     public override func layoutSubviews() {
         super.layoutSubviews()
         mccr_syncPrimaryActionGlassCorner()
+        mccr_syncSuccessToolbarCorner()
         mccr_relayoutVideoPlaybackAreaIfNeeded()
     }
 
@@ -599,7 +625,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         let bandTopY = safeAreaInsets.top + m.videoPlaybackTopInsetFromSafeArea
         let contentSafeBottomY = bounds.height - safeAreaInsets.bottom
         let pillBottomY = contentSafeBottomY - m.toolbarBottomInsetFromSafeArea
-        let barH = m.bottomButtonBarHeight
+        let barH = m.successToolbarBarHeight
         let vcH = m.videoChromeInteriorHeight
         let pillTopY = pillBottomY - barH
         let chromeTopY = pillTopY - m.videoChromeSpacingToSuccessPill - vcH
@@ -620,8 +646,8 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
             make.centerX.equalToSuperview()
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
                 .offset(-m.toolbarBottomInsetFromSafeArea)
-            make.leading.greaterThanOrEqualToSuperview().offset(24)
-            make.trailing.lessThanOrEqualToSuperview().offset(-24)
+            make.leading.greaterThanOrEqualToSuperview().offset(MCCCreationResultPreviewMetrics.horizontalInset)
+            make.trailing.lessThanOrEqualToSuperview().offset(-MCCCreationResultPreviewMetrics.horizontalInset)
             make.height.equalTo(barH)
         }
 
@@ -639,7 +665,14 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         }
     }
 
-    /// `UIVisualEffectView` needs a nonzero `bounds` before `cornerRadius` clips the blur; use a full pill (height/2).
+    private func mccr_syncSuccessToolbarCorner() {
+        guard mccr_successPill.isHidden == false else { return }
+        let b = mccr_successPill.bounds
+        guard b.width > 1, b.height > 1 else { return }
+        mccr_successPill.layer.cornerRadius = b.height * 0.5
+    }
+
+    /// Failed / restricted bottom strip：**白 6%** 胶囊，`cornerRadius = height/2`。
     private func mccr_syncPrimaryActionGlassCorner() {
         guard mccr_actionGlassBar.isHidden == false else { return }
         let b = mccr_actionGlassBar.bounds
@@ -649,68 +682,87 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         v.layer.cornerRadius = r
         v.layer.cornerCurve = .continuous
         v.layer.masksToBounds = true
-        v.contentView.layer.cornerRadius = r
-        v.contentView.layer.cornerCurve = .continuous
-        v.contentView.layer.masksToBounds = true
     }
 
     private func mccr_buildSuccessToolbar() {
-        let barH = MCCCreationResultPreviewMetrics.bottomButtonBarHeight
-
         mccr_successStack.arrangedSubviews.forEach {
             mccr_successStack.removeArrangedSubview($0)
             $0.removeFromSuperview()
         }
         mccr_successActionButtons.removeAll()
         mccr_editThumbHost = nil
-        let cfg = UIImage.SymbolConfiguration(pointSize: 17, weight: .medium)
 
-        let specs: [(String, String, MCCCreationSuccessToolbarAction, Bool)] = [
-            ("sparkles", "Retry", .retry, false),
-            ("square.and.pencil", "Edit", .edit, true),
-            ("arrow.down.circle.fill", "Save", .save, false)
+        let specs: [(String, MCCCreationSuccessToolbarAction, Bool)] = [
+            ("Retry", .retry, false),
+            ("Edit", .edit, true),
+            ("Save", .save, false)
         ]
-        for (sym, title, action, useEditThumb) in specs {
+        for (title, action, useEditThumb) in specs {
+            let iconSZ = MCCCreationResultPreviewMetrics.primaryActionIconSize
             let circle = UIView()
-            circle.backgroundColor = UIColor(white: 0, alpha: 0.35)
-            circle.layer.cornerRadius = 14
-            circle.snp.makeConstraints { $0.size.equalTo(28) }
+            circle.snp.makeConstraints { $0.size.equalTo(iconSZ) }
             if useEditThumb {
+                circle.backgroundColor = .clear
+                circle.layer.cornerRadius = iconSZ * 0.5
+                circle.layer.cornerCurve = .continuous
+                circle.layer.borderWidth = MCCCreationResultPreviewMetrics.successToolbarEditThumbBorderWidth
+                circle.layer.borderColor = UIColor.white.cgColor
+                circle.clipsToBounds = true
                 let thumb = UIImageView()
                 thumb.contentMode = .scaleAspectFill
                 thumb.clipsToBounds = true
                 thumb.layer.cornerRadius = 10
                 circle.addSubview(thumb)
-                thumb.snp.makeConstraints { $0.edges.equalToSuperview().inset(2) }
+                thumb.snp.makeConstraints { $0.edges.equalToSuperview().inset(3) }
                 mccr_editThumbHost = thumb
             } else {
-                let iv = UIImageView(image: UIImage(systemName: sym, withConfiguration: cfg))
-                iv.tintColor = .white
+                circle.backgroundColor = .clear
+                let iv = UIImageView()
+                switch action {
+                case .retry:
+                    iv.image = UIImage(named: "ic_cm_retry")?.withRenderingMode(.alwaysOriginal)
+                case .save:
+                    iv.image = UIImage(named: "ic_cm_download")?.withRenderingMode(.alwaysOriginal)
+                case .edit:
+                    break
+                }
                 iv.contentMode = .scaleAspectFit
                 circle.addSubview(iv)
                 iv.snp.makeConstraints { make in
                     make.center.equalToSuperview()
-                    make.size.equalTo(18)
+                    make.size.equalTo(iconSZ)
                 }
             }
+
+            let caption = UILabel()
+            caption.text = title
+            caption.font = .systemFont(ofSize: 12, weight: .regular)
+            caption.textColor = .white
+            caption.textAlignment = .center
+            caption.numberOfLines = 1
+
+            let col = UIStackView(arrangedSubviews: [circle, caption])
+            col.axis = .vertical
+            col.alignment = .center
+            col.spacing = MCCCreationResultPreviewMetrics.primaryActionIconToTitleSpacing
 
             let btn = UIButton(type: .custom)
             btn.tag = action.rawValue
             btn.accessibilityLabel = title
             btn.addTarget(self, action: #selector(mccr_successToolbarTap(_:)), for: .touchUpInside)
+
             let wrap = UIView()
-            wrap.addSubview(circle)
-            circle.snp.makeConstraints { $0.center.equalToSuperview() }
+            wrap.addSubview(col)
             wrap.addSubview(btn)
-            btn.snp.makeConstraints { $0.edges.equalToSuperview() }
-            wrap.snp.makeConstraints { make in
-                make.height.equalTo(barH)
-                make.width.equalTo(28)
+            col.snp.makeConstraints { make in
+                make.center.equalToSuperview()
+                make.leading.greaterThanOrEqualToSuperview()
+                make.trailing.lessThanOrEqualToSuperview()
             }
+            btn.snp.makeConstraints { $0.edges.equalToSuperview() }
             mccr_successStack.addArrangedSubview(wrap)
             mccr_successActionButtons.append(btn)
         }
-        mccr_successStack.spacing = 20
     }
 
     private var mccr_editThumbHost: UIImageView?
@@ -1025,8 +1077,19 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         }
     }
 
+    private func mccr_clearPrimaryActionThumbnail() {
+        mccr_actionThumbLoadGeneration &+= 1
+        mccr_actionAvatarView.sd_cancelCurrentImageLoad()
+        mccr_actionAvatarView.image = nil
+    }
+
     private func mccr_bindPrimaryActionThumbnailIfNeeded(from run: MCSRunItem) {
         guard run.runState == .failed else { return }
+        /// User image only for **restricted** (`auditFail` → Edit); plain **failed** Retry uses **`ic_cm_retry`**.
+        guard run.failureCode == .auditFail else {
+            mccr_clearPrimaryActionThumbnail()
+            return
+        }
 
         mccr_actionThumbLoadGeneration &+= 1
         let token = mccr_actionThumbLoadGeneration
@@ -1130,6 +1193,10 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_successPill.isHidden = true
         mccr_videoChrome.isHidden = true
         mccr_actionGlassBar.isHidden = false
+        // Match success-strip columns: thumbnail **above**, caption below (never left–right inline).
+        mccr_actionPrimaryStack.axis = .vertical
+        mccr_actionPrimaryStack.alignment = .center
+        mccr_actionPrimaryStack.spacing = MCCCreationResultPreviewMetrics.primaryActionIconToTitleSpacing
         mccr_actionButton.isHidden = false
         mccr_blurView.isHidden = false
         mccr_statusStack.isHidden = false
@@ -1141,10 +1208,8 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
                 .offset(-MCCCreationResultPreviewMetrics.toolbarBottomInsetFromSafeArea)
             make.leading.greaterThanOrEqualToSuperview().offset(MCCCreationResultPreviewMetrics.horizontalInset)
             make.trailing.lessThanOrEqualToSuperview().offset(-MCCCreationResultPreviewMetrics.horizontalInset)
-            make.width.equalTo(mccr_actionPrimaryStack.snp.width).offset(
-                MCCCreationResultPreviewMetrics.primaryActionBarInteriorHorizontalPadding * 2
-            )
-            make.height.equalTo(MCCCreationResultPreviewMetrics.bottomButtonBarHeight)
+            make.width.equalTo(mccr_actionPrimaryStack.snp.width)
+            make.height.equalTo(MCCCreationResultPreviewMetrics.successToolbarBarHeight)
         }
         mccr_mediaContainer.snp.remakeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(MCCCreationResultPreviewMetrics.topInset)
@@ -1152,6 +1217,8 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
                 .offset(-MCCCreationResultPreviewMetrics.previewPlateBottomInsetFromSafeArea)
         }
+        mccr_actionGlassBar.bringSubviewToFront(mccr_actionPrimaryStack)
+        mccr_actionGlassBar.bringSubviewToFront(mccr_actionButton)
         setPlaceholderImage()
     }
 
@@ -1177,7 +1244,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
                 make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(MCCCreationResultPreviewMetrics.topInset)
                 make.leading.trailing.equalToSuperview().inset(MCCCreationResultPreviewMetrics.horizontalInset)
                 make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
-                    .offset(-MCCCreationResultPreviewMetrics.previewPlateBottomInsetFromSafeArea)
+                    .offset(-MCCCreationResultPreviewMetrics.previewPlateBottomInsetWhenSuccessToolbar)
             }
         }
         if isVideo {
@@ -1185,9 +1252,9 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
                 make.centerX.equalToSuperview()
                 make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
                 .offset(-MCCCreationResultPreviewMetrics.toolbarBottomInsetFromSafeArea)
-                make.leading.greaterThanOrEqualToSuperview().offset(24)
-                make.trailing.lessThanOrEqualToSuperview().offset(-24)
-                make.height.equalTo(MCCCreationResultPreviewMetrics.bottomButtonBarHeight)
+                make.leading.greaterThanOrEqualToSuperview().offset(MCCCreationResultPreviewMetrics.horizontalInset)
+                make.trailing.lessThanOrEqualToSuperview().offset(-MCCCreationResultPreviewMetrics.horizontalInset)
+                make.height.equalTo(MCCCreationResultPreviewMetrics.successToolbarBarHeight)
             }
             mccr_applyResultTimeLabelAttributed(current: 0, total: duration)
             mccr_frameImages = Self.mccr_stripImages(count: 18, duration: duration)
@@ -1260,7 +1327,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         applyRestrictedAction()
     }
 
-    /// Bottom row shared by **failed** (Retry) and **restricted** (Edit): circular `sourceImageUrl`, 0.5pt white stroke.
+    /// Bottom row — **failed** (`Retry`): **`ic_cm_retry`** only, no user image. **Restricted** (`Edit`): circular `sourceImageUrl`, hairline stroke (**`primaryActionSourceBorderWidth`**).
     private func mccr_configurePrimaryActionSourceThumbnail(title: String) {
         let sz = MCCCreationResultPreviewMetrics.primaryActionIconSize
         mccr_actionIconContainer.layer.cornerRadius = sz * 0.5
@@ -1277,8 +1344,26 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_actionTitleLabel.text = title
     }
 
+    /// Failed Retry: **`ic_cm_retry`** only (**`mccr_buildSuccessToolbar`** matches), no thumbnail / gray chip.
+    private func mccr_configurePrimaryActionRetrySymbol() {
+        mccr_actionIconContainer.layer.cornerRadius = 0
+        mccr_actionIconContainer.layer.borderWidth = 0
+        mccr_actionIconContainer.layer.borderColor = nil
+
+        mccr_clearPrimaryActionThumbnail()
+        mccr_actionAvatarView.isHidden = true
+
+        mccr_actionIconView.isHidden = false
+        mccr_actionIconView.image = UIImage(named: "ic_cm_retry")?.withRenderingMode(.alwaysOriginal)
+        mccr_actionIconView.contentMode = .scaleAspectFit
+
+        mccr_actionTitleLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        mccr_actionTitleLabel.textColor = .white
+        mccr_actionTitleLabel.text = "Retry"
+    }
+
     private func applyFailedAction() {
-        mccr_configurePrimaryActionSourceThumbnail(title: "Retry")
+        mccr_configurePrimaryActionRetrySymbol()
     }
 
     private func applyRestrictedAction() {
