@@ -386,6 +386,18 @@ extension MCCProjectsListPageController: UICollectionViewDataSource, UICollectio
         let title = run.mcc_workNavigationTitlePreferringHumanReadable()
         let kind = run.mcc_creationResultPresentationKind()
         let vc = MCCCreationResultController(navigationTitle: title, kind: kind, workRef: run.runId, seedRun: run)
+        vc.mccr_onRunRetired = { [weak self] retiredRef in
+            guard let self else { return }
+            guard self.mcvc_isLikes == false else { return }
+            let tid = retiredRef.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard tid.isEmpty == false else { return }
+            let before = self.mcvc_listState.runItems.count
+            self.mcvc_listState.runItems.removeAll {
+                $0.runId.trimmingCharacters(in: .whitespacesAndNewlines) == tid
+            }
+            guard self.mcvc_listState.runItems.count != before else { return }
+            self.mcvc_applyListUI()
+        }
         navigationController?.pushViewController(vc, animated: true)
     }
 

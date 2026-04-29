@@ -6,20 +6,32 @@ public final class MCCDeleteConfirmPopView: MCCBasePopView {
 
     public let mccd_messageLabel: UILabel = {
         let l = UILabel()
-        l.text = "Deleting it will make it unrecoverable. Are you sure to delete it?"
-        l.textColor = UIColor(white: 1, alpha: 0.92)
-        l.font = .systemFont(ofSize: 14, weight: .regular)
         l.numberOfLines = 0
         return l
     }()
 
+    private static func mccd_messageAttributedText() -> NSAttributedString {
+        let raw = "Deleting it will make it unrecoverable. Are you sure to delete it?"
+        let ps = NSMutableParagraphStyle()
+        ps.alignment = .natural
+        ps.lineSpacing = 4
+        return NSAttributedString(
+            string: raw,
+            attributes: [
+                .font: UIFont.systemFont(ofSize: 16, weight: .regular),
+                .foregroundColor: UIColor.white,
+                .paragraphStyle: ps
+            ]
+        )
+    }
+
     public let mccd_deleteButton: UIButton = {
-        let b = UIButton(type: .system)
+        let b = UIButton(type: .custom)
         b.setTitle("Delete", for: .normal)
-        b.setTitleColor(.white, for: .normal)
+        b.setTitleColor(UIColor(hex: "F54545"), for: .normal)
         b.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
-        b.backgroundColor = UIColor.systemRed
-        b.layer.cornerRadius = 12
+        b.backgroundColor = UIColor.white.withAlphaComponent(0.12)
+        b.layer.cornerCurve = .continuous
         b.clipsToBounds = true
         return b
     }()
@@ -31,21 +43,30 @@ public final class MCCDeleteConfirmPopView: MCCBasePopView {
 
         cardView.addSubview(mccd_messageLabel)
         cardView.addSubview(mccd_deleteButton)
+        mccd_messageLabel.attributedText = Self.mccd_messageAttributedText()
 
         cardView.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(8)
-            make.trailing.equalToSuperview().offset(-16)
-            make.width.greaterThanOrEqualTo(240)
-            make.width.lessThanOrEqualTo(280)
+            make.top.equalToSuperview().offset(8)
+            make.trailing.equalToSuperview().offset(-12)
+            make.width.equalTo(240)
         }
         mccd_messageLabel.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview().inset(16)
+            make.top.equalToSuperview().offset(16)
+            make.leading.equalToSuperview().offset(28)
+            make.trailing.equalToSuperview().offset(-28)
         }
         mccd_deleteButton.snp.makeConstraints { make in
             make.top.equalTo(mccd_messageLabel.snp.bottom).offset(14)
             make.leading.trailing.bottom.equalToSuperview().inset(16)
             make.height.equalTo(44)
         }
+    }
+
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        let h = mccd_deleteButton.bounds.height
+        guard h > 1 else { return }
+        mccd_deleteButton.layer.cornerRadius = h * 0.5
     }
 
 }
@@ -57,12 +78,12 @@ public final class MCCDeleteConfirmPopController: MCCPopController<MCCDeleteConf
     public override func mcvc_init() {
         super.mcvc_init()
         animationStyle = .easeInEaseOut
-        dimmingInsets = .init(
-            top: MCCScreenSize.navigationBarHeight,
-            left: 0,
-            bottom: MCCScreenSize.tabBarHeight,
-            right: 0
-        )
+        dimmingInsets = .init(top: MCCScreenSize.navigationBarHeight, left: 0, bottom: 0, right: 0)
+    }
+
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .clear
     }
 
     public override func mcvc_bind() {

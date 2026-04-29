@@ -15,6 +15,9 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
 
     public let mccr_seedRun: MCSRunItem?
 
+    /// Retire success: called with trimmed **`workRef`** before pop; list removes the row.
+    public var mccr_onRunRetired: ((String) -> Void)?
+
     private lazy var mccr_navTitleLabel: UILabel = {
         let t = UILabel()
         t.textColor = .white
@@ -135,7 +138,12 @@ public final class MCCCreationResultController: MCCViewController<MCCCreationRes
                 },
                 receiveValue: { [weak self, weak pop] _ in
                     pop?.dismiss(animated: true) {
-                        self?.navigationController?.popViewController(animated: true)
+                        guard let self else { return }
+                        let ref = self.mccr_workRef.trimmingCharacters(in: .whitespacesAndNewlines)
+                        if ref.isEmpty == false {
+                            self.mccr_onRunRetired?(ref)
+                        }
+                        self.navigationController?.popViewController(animated: true)
                     }
                 }
             )
