@@ -72,14 +72,15 @@ private enum MCCCreationResultPreviewMetrics {
     static let videoChromeSpacingToSuccessPill: CGFloat =
         previewContentAboveButtonBarGap
 
-    /// Same as **`videoToolsZoneHeight`** (**178** ⌚ row + spacer + strip).
+    /// Same as **`videoToolsZoneHeight`** (**178** = tool row **44** + gap **10** + frame strip **124**，与 **`MCCFeedDetailView`** transport 对齐).
     static let videoChromeInteriorHeight: CGFloat = videoToolsZoneHeight
 
-    static let videoTimelineControlRowHeight: CGFloat = 32
+    /// Top tool row: time / play–pause / mute hits **44**（与 Feed 详情视频控制条一致）.
+    static let videoTimelineControlRowHeight: CGFloat = 44
 
     static let videoTimelineControlToStripGap: CGFloat = 10
 
-    /// Frame strip (**136** with **`videoChromeInteriorHeight`** = **178**, ⌚ **32**, gap **10**).
+    /// Frame strip height derived from **`videoChromeInteriorHeight`** − tool row − gap.
     static let videoFrameStripHeight: CGFloat =
         videoChromeInteriorHeight - videoTimelineControlRowHeight - videoTimelineControlToStripGap
 }
@@ -193,6 +194,12 @@ private final class MCCCreationResultMp4SurfaceView: UIView {
 }
 
 public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+
+    /// Aligned with **`MCCFeedDetailView`** video transport: **44** pt hit, **12** pt image inset (`ic_cm_play_*` / `ic_cm_volume_*`).
+    private enum MCCCreationResultTransport {
+        static let controlHitSide: CGFloat = 44
+        static let controlImageInset: CGFloat = 12
+    }
 
     private let mccr_mediaContainer: UIView = {
         let v = UIView()
@@ -343,28 +350,27 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     private let mccr_videoChrome = UIView()
 
+    /// Top band of **`mccr_videoChrome`**: left time, centered play/pause, right mute (**`videoTimelineControlRowHeight`**).
+    private let mccr_videoToolTopRow = UIView()
+
     private let mccr_timeLabel: UILabel = {
         let l = UILabel()
-        l.font = .monospacedDigitSystemFont(ofSize: 12, weight: .medium)
-        l.textColor = UIColor(white: 1, alpha: 0.85)
+        l.textAlignment = .left
+        l.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         return l
     }()
 
     private let mccr_playButton: UIButton = {
-        let b = UIButton(type: .system)
-
-        let c = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
-        b.setImage(UIImage(systemName: "play.fill", withConfiguration: c), for: .normal)
-        b.tintColor = .white
+        let b = UIButton(type: .custom)
+        b.setImage(UIImage(named: "ic_cm_play_off")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        b.adjustsImageWhenHighlighted = false
         return b
     }()
 
     private let mccr_volumeButton: UIButton = {
-        let b = UIButton(type: .system)
-
-        let c = UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)
-        b.setImage(UIImage(systemName: "speaker.wave.2.fill", withConfiguration: c), for: .normal)
-        b.tintColor = .white
+        let b = UIButton(type: .custom)
+        b.setImage(UIImage(named: "ic_cm_volume_off")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        b.adjustsImageWhenHighlighted = false
         return b
     }()
 
@@ -404,7 +410,14 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     private var mccr_resultPlayer: AVPlayer?
 
+    private var mccr_resultVideoPeriodicObserver: Any?
+
     private var mccr_resultVideoEndObserver: NSObjectProtocol?
+
+    /// Same pattern as **`MCCFeedDetailController`**: avoid redundant `setImage` (touches / performance).
+    private var mccr_lastTransportPlayIconName: String?
+
+    private var mccr_lastTransportMuteIconName: String?
 
     public var mccr_onSuccessToolbar: ((MCCCreationSuccessToolbarAction) -> Void)?
 
@@ -467,10 +480,10 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
         addSubview(mccr_videoChrome)
         mccr_videoChrome.isHidden = true
-        let ctrlRow = UIStackView(arrangedSubviews: [mccr_timeLabel, UIView(), mccr_playButton, UIView(), mccr_volumeButton])
-        ctrlRow.axis = .horizontal
-        ctrlRow.alignment = .center
-        mccr_videoChrome.addSubview(ctrlRow)
+        mccr_videoChrome.addSubview(mccr_videoToolTopRow)
+        mccr_videoToolTopRow.addSubview(mccr_timeLabel)
+        mccr_videoToolTopRow.addSubview(mccr_playButton)
+        mccr_videoToolTopRow.addSubview(mccr_volumeButton)
         mccr_videoChrome.addSubview(mccr_frameCollection)
         mccr_videoChrome.addSubview(mccr_playheadView)
 
@@ -517,14 +530,28 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
                 .offset(-MCCCreationResultPreviewMetrics.videoChromeSpacingToSuccessPill)
             make.height.equalTo(MCCCreationResultPreviewMetrics.videoChromeInteriorHeight)
         }
-        ctrlRow.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.leading.equalToSuperview().offset(20)
-            make.trailing.equalToSuperview().offset(-20)
+        mccr_videoToolTopRow.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview()
             make.height.equalTo(MCCCreationResultPreviewMetrics.videoTimelineControlRowHeight)
         }
+        mccr_timeLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(20)
+            make.centerY.equalToSuperview()
+            make.trailing.lessThanOrEqualTo(mccr_playButton.snp.leading).offset(-8)
+        }
+        mccr_playButton.snp.makeConstraints { make in
+            make.centerX.equalTo(mccr_videoChrome.snp.centerX)
+            make.centerY.equalToSuperview()
+            make.size.equalTo(MCCCreationResultTransport.controlHitSide)
+        }
+        mccr_volumeButton.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().offset(-20)
+            make.centerY.equalToSuperview()
+            make.size.equalTo(MCCCreationResultTransport.controlHitSide)
+            make.leading.greaterThanOrEqualTo(mccr_playButton.snp.trailing).offset(8)
+        }
         mccr_frameCollection.snp.makeConstraints { make in
-            make.top.equalTo(ctrlRow.snp.bottom).offset(MCCCreationResultPreviewMetrics.videoTimelineControlToStripGap)
+            make.top.equalTo(mccr_videoToolTopRow.snp.bottom).offset(MCCCreationResultPreviewMetrics.videoTimelineControlToStripGap)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(MCCCreationResultPreviewMetrics.videoFrameStripHeight)
             make.bottom.equalToSuperview()
@@ -534,6 +561,11 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
             make.top.bottom.equalTo(mccr_frameCollection)
             make.centerX.equalTo(mccr_frameCollection)
         }
+
+        let inset = MCCCreationResultTransport.controlImageInset
+        let pad = UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset)
+        mccr_playButton.contentEdgeInsets = pad
+        mccr_volumeButton.contentEdgeInsets = pad
 
         mccr_playButton.addTarget(self, action: #selector(mccr_togglePlay), for: .touchUpInside)
         mccr_volumeButton.addTarget(self, action: #selector(mccr_toggleResultVideoMute), for: .touchUpInside)
@@ -691,30 +723,63 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
 
     @objc
     private func mccr_togglePlay() {
-        if let p = mccr_resultPlayer {
-            if p.rate > 0.01 {
-                p.pause()
-                mccr_isPlaying = false
-            } else {
-                p.play()
-                mccr_isPlaying = true
+        if let player = mccr_resultPlayer {
+            switch player.timeControlStatus {
+            case .playing:
+                player.pause()
+            default:
+                player.play()
             }
-            mccr_updateResultPlaybackTransportIcons()
+            mccr_refreshResultTransportIcons()
             return
         }
 
         mccr_isPlaying.toggle()
-        let c = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
-
-        let name = mccr_isPlaying ? "pause.fill" : "play.fill"
-        mccr_playButton.setImage(UIImage(systemName: name, withConfiguration: c), for: .normal)
+        let name = mccr_isPlaying ? "ic_cm_play_on" : "ic_cm_play_off"
+        mccr_setPlayIconIfNeeded(name)
+        mccr_setVolumeIconIfNeeded("ic_cm_volume_on")
     }
 
     @objc
     private func mccr_toggleResultVideoMute() {
         guard let p = mccr_resultPlayer else { return }
         p.isMuted.toggle()
-        mccr_updateResultPlaybackTransportIcons()
+        mccr_refreshResultTransportIcons()
+    }
+
+    /// Playback / mute icons: **`ic_cm_play_*`**, **`ic_cm_volume_*`** (same filenames as **`MCCFeedDetailController`**).
+    private func mccr_refreshResultTransportIcons() {
+        guard let p = mccr_resultPlayer else { return }
+
+        let playing = mccr_resultTransportShowsPlaying(p)
+        mccr_setPlayIconIfNeeded(playing ? "ic_cm_play_on" : "ic_cm_play_off")
+        mccr_setVolumeIconIfNeeded(p.isMuted ? "ic_cm_volume_off" : "ic_cm_volume_on")
+    }
+
+    private func mccr_setPlayIconIfNeeded(_ name: String) {
+        if name == mccr_lastTransportPlayIconName { return }
+        mccr_lastTransportPlayIconName = name
+        mccr_playButton.setImage(UIImage(named: name)?.withRenderingMode(.alwaysOriginal), for: .normal)
+    }
+
+    private func mccr_setVolumeIconIfNeeded(_ name: String) {
+        if name == mccr_lastTransportMuteIconName { return }
+        mccr_lastTransportMuteIconName = name
+        mccr_volumeButton.setImage(UIImage(named: name)?.withRenderingMode(.alwaysOriginal), for: .normal)
+    }
+
+    /// Same spirit as **`MCCFeedDetailController.mcvc_mp4TransportShowsPlaying`** (`seek`/buffer spikes stay “playing”).
+    private func mccr_resultTransportShowsPlaying(_ p: AVPlayer) -> Bool {
+        switch p.timeControlStatus {
+        case .paused:
+            return false
+        case .playing:
+            return true
+        case .waitingToPlayAtSpecifiedRate:
+            return true
+        @unknown default:
+            return p.rate > 0.01
+        }
     }
 
     /// When the success toolbar is visible and we are not in video result mode, show a **clear** placeholder so
@@ -757,6 +822,10 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
     }
 
     private func mccr_removeResultVideoPlayback() {
+        if let o = mccr_resultVideoPeriodicObserver, let player = mccr_resultPlayer {
+            player.removeTimeObserver(o)
+        }
+        mccr_resultVideoPeriodicObserver = nil
         if let o = mccr_resultVideoEndObserver {
             NotificationCenter.default.removeObserver(o)
             mccr_resultVideoEndObserver = nil
@@ -765,6 +834,52 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         mccr_resultPlayer = nil
         mccr_mp4SurfaceView.mccr_playerLayer.player = nil
         mccr_mp4SurfaceView.isHidden = true
+        mccr_lastTransportPlayIconName = nil
+        mccr_lastTransportMuteIconName = nil
+    }
+
+    /// Current time (**white**) / total (**white @ 40%**) — **`12pt` `regular`**; total来自 **`run.mcc_primaryOutputArtifactDurationSeconds()`** 与播放器进度。
+    private func mccr_applyResultTimeLabelAttributed(current playhead: TimeInterval, total artifactSeconds: TimeInterval) {
+        let font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        let tot = max(0, artifactSeconds)
+        var cur = max(0, playhead)
+        if tot > 0 {
+            cur = min(cur, tot)
+        }
+        let curS = mccr_formatClock(cur)
+        let totS = mccr_formatClock(tot > 0 ? tot : 0)
+        let m = NSMutableAttributedString()
+        m.append(NSAttributedString(string: curS, attributes: [
+            .font: font,
+            .foregroundColor: UIColor.white
+        ]))
+        m.append(NSAttributedString(string: " / ", attributes: [
+            .font: font,
+            .foregroundColor: UIColor.white.withAlphaComponent(0.4)
+        ]))
+        m.append(NSAttributedString(string: totS, attributes: [
+            .font: font,
+            .foregroundColor: UIColor.white.withAlphaComponent(0.4)
+        ]))
+        mccr_timeLabel.attributedText = m
+    }
+
+    private func mccr_addResultVideoPeriodicObserver(for player: AVPlayer) {
+        if let o = mccr_resultVideoPeriodicObserver {
+            player.removeTimeObserver(o)
+        }
+        mccr_resultVideoPeriodicObserver = nil
+
+        let interval = CMTime(seconds: 0.12, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+        mccr_resultVideoPeriodicObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) {
+            [weak self] _ in
+            guard let self else { return }
+            guard let player = self.mccr_resultPlayer else { return }
+            /// 只做时间文案：**勿**在每拍 `setImage`（与 Feed 一致，避免打断触摸）。
+            let sec = CMTimeGetSeconds(player.currentTime())
+            let cur = sec.isFinite ? sec : 0
+            self.mccr_applyResultTimeLabelAttributed(current: cur, total: self.mccr_videoDuration)
+        }
     }
 
     private func mccr_remoteResultMp4Player(url: URL) -> AVPlayer {
@@ -804,17 +919,6 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
         return scheme == "http" || scheme == "https"
     }
 
-    private func mccr_updateResultPlaybackTransportIcons() {
-        guard let p = mccr_resultPlayer else { return }
-        let playCfg = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
-        let playing = p.rate > 0.01
-        let playName = playing ? "pause.fill" : "play.fill"
-        mccr_playButton.setImage(UIImage(systemName: playName, withConfiguration: playCfg), for: .normal)
-        let volCfg = UIImage.SymbolConfiguration(pointSize: 18, weight: .medium)
-        let volName = p.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill"
-        mccr_volumeButton.setImage(UIImage(systemName: volName, withConfiguration: volCfg), for: .normal)
-    }
-
     private func mccr_bindSuccessVideoPosterAndPlayer(from run: MCSRunItem) {
         mccr_cancelPosterLoad()
         let token = mccr_posterLoadGeneration
@@ -835,20 +939,31 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
             setPlaceholderImage()
         }
 
+        let durSec = run.mcc_primaryOutputArtifactDurationSeconds()
+        if durSec > 0 {
+            mccr_videoDuration = TimeInterval(durSec)
+            mccr_frameImages = Self.mccr_stripImages(count: 18, duration: mccr_videoDuration)
+            mccr_frameCollection.reloadData()
+        }
+        mccr_applyResultTimeLabelAttributed(current: 0, total: mccr_videoDuration)
+
         let mp4Raw = run.mcc_resultSuccessVideoMp4URLString().trimmingCharacters(in: .whitespacesAndNewlines)
         guard mccr_urlLooksPlayableHttps(mp4Raw), let mp4URL = URL(string: mp4Raw) else {
             return
         }
 
         let player = mccr_remoteResultMp4Player(url: mp4URL)
+        mccr_lastTransportPlayIconName = nil
+        mccr_lastTransportMuteIconName = nil
         mccr_resultPlayer = player
         mccr_mp4SurfaceView.mccr_playerLayer.player = player
         mccr_mp4SurfaceView.isHidden = false
         mccr_mediaContainer.bringSubviewToFront(mccr_mp4SurfaceView)
         mccr_attachResultVideoEndLoop(for: player)
+        mccr_addResultVideoPeriodicObserver(for: player)
         player.play()
         mccr_isPlaying = true
-        mccr_updateResultPlaybackTransportIcons()
+        mccr_refreshResultTransportIcons()
     }
 
     /// Failed: **`sourceImageUrl`/poster** + blur policy like works-list. Success image: **`outputArtifacts.first.url`** (see `mcc_resultSuccessImageURLString()`). Success video: cover **`outputCoverThumbUrl`**, playback **`mcc_resultSuccessVideoMp4URLString()`** (first artifact).
@@ -1074,7 +1189,7 @@ public final class MCCCreationResultView: MCCBaseView, UICollectionViewDataSourc
                 make.trailing.lessThanOrEqualToSuperview().offset(-24)
                 make.height.equalTo(MCCCreationResultPreviewMetrics.bottomButtonBarHeight)
             }
-            mccr_timeLabel.text = "00:00 / " + mccr_formatClock(duration)
+            mccr_applyResultTimeLabelAttributed(current: 0, total: duration)
             mccr_frameImages = Self.mccr_stripImages(count: 18, duration: duration)
             mccr_frameCollection.reloadData()
             setNeedsLayout()

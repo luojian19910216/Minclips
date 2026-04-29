@@ -224,8 +224,8 @@ extension MCSRunItem {
             return .successImage
         case .success:
             if contentKind.isToVideo {
-                let s = max(0, outputArtifacts.first?.duration ?? 0)
-                return .successVideo(totalDuration: TimeInterval(max(s, 1)))
+                let s = max(mcc_primaryOutputArtifactDurationSeconds(), 1)
+                return .successVideo(totalDuration: TimeInterval(s))
             }
             return .successImage
         }
