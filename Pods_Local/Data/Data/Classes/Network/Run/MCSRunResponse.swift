@@ -6,6 +6,8 @@ import Foundation
 
 ///
 public struct MCSRunItem: Codable {
+    
+    public init() {}
 
     @MCSSafeDate public var createTime
 
@@ -27,7 +29,7 @@ public struct MCSRunItem: Codable {
     
     @MCSSafeArray<MCSRunResult> public var outputArtifacts: [MCSRunResult] = []
     
-    @MCSSafeInt public var qualityTier: Int
+    @MCSSafeEnum public var qualityTier: MCEClarity
     
     @MCSSafeInt public var pointCost: Int
 
@@ -62,7 +64,7 @@ public struct MCSRunItem: Codable {
 }
 
 ///
-public enum MCERunStatus: Int, CaseIterable, Codable, MCPDefaultInitializable {
+public enum MCERunStatus: Int, CaseIterable, Codable {
     ///
     case generating = 1
     ///
@@ -71,13 +73,17 @@ public enum MCERunStatus: Int, CaseIterable, Codable, MCPDefaultInitializable {
     case failed = 3
 }
 
+extension MCERunStatus: MCPDefaultInitializable {}
+
 ///
-public enum MCERunFailCode: String, CaseIterable, Codable, MCPDefaultInitializable {
+public enum MCERunFailCode: String, CaseIterable, Codable {
     ///
     case fail
     ///
     case reject = "audit_reject"
 }
+
+extension MCERunFailCode: MCPDefaultInitializable {}
 
 ///
 public struct MCSRunResult: Codable, MCPDefaultInitializable {
@@ -117,4 +123,75 @@ public struct MCSWorkRunInputBundleShell: Codable, MCPDefaultInitializable {
 
     @MCSSafeInt public var clipDurationSec: Int = 0
     
+}
+
+extension MCSRunItem {
+
+    /// Thumbnail fallback: outputs → **`sourceImageUrl` (user’s first uploaded image)** → `inputBundle` extras → templates → artifact URLs/watermarks.
+    public func mcc_firstPosterImageURLString() -> String {
+        func pick(_ s: String) -> String? {
+            let u = s.mcc_normalizedRemoteURL()
+            return u.isEmpty ? nil : u
+        }
+        let ordered: [String] = [
+            outputCoverThumbUrl,
+            outputCoverImageUrl,
+            sourceImageUrl,
+            inputBundle.sourceImage0,
+            inputBundle.sourceImage1,
+            inputBundle.sourceImage2,
+            inputBundle.sourceImage3,
+            inputBundle.sourceImage4,
+            inputBundle.sourceImage5,
+            templateCoverThumbUrl,
+            templateCoverImageUrl,
+        ]
+        for s in ordered {
+            if let u = pick(s) { return u }
+        }
+        for r in outputArtifacts {
+            if let u = pick(r.url) { return u }
+            if let u = pick(r.watermarkUrl) { return u }
+        }
+        return ""
+    }
+
+    /// Pending / failed tiles: blurred **only** when the visible URL is `sourceImageUrl` (same field everywhere: user’s first uploaded image). If that is empty, falls back via `mcc_firstPosterImageURLString()` **without** blur—even if extras live in `inputBundle`.
+    public func mcc_worksListThumbnail() -> (urlString: String, blurOverlay: Bool) {
+        func pick(_ s: String) -> String? {
+            let u = s.mcc_normalizedRemoteURL()
+            return u.isEmpty ? nil : u
+        }
+
+        switch runState {
+        case .success:
+            return (mcc_firstPosterImageURLString(), false)
+
+        case .generating, .failed:
+            if let firstUser = pick(sourceImageUrl) {
+                return (firstUser, true)
+            }
+            return (mcc_firstPosterImageURLString(), false)
+        }
+    }
+}
+
+extension String {
+
+    /// Normalize remote URL strings coming from the server: trim whitespace, unescape JSON-style `\/` and unicode `\u002F`, and surrounding quotes if any. **Idempotent** (running it twice is a no-op).
+    public func mcc_normalizedRemoteURL() -> String {
+        var s = self.trimmingCharacters(in: .whitespacesAndNewlines)
+        if s.isEmpty { return s }
+        if s.hasPrefix("\"") && s.hasSuffix("\"") && s.count >= 2 {
+            s = String(s.dropFirst().dropLast())
+        }
+        if s.contains(#"\/"#) {
+            s = s.replacingOccurrences(of: #"\/"#, with: "/")
+        }
+        let lower = s.lowercased()
+        if lower.contains(#"\u002f"#) {
+            s = s.replacingOccurrences(of: #"\u002f"#, with: "/", options: .caseInsensitive)
+        }
+        return s
+    }
 }

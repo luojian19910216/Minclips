@@ -96,7 +96,7 @@ public final class MCCFeedGeneratingSheetController: MCCSheetController<MCCFeedG
 
     private func mcvc_applySeedPreviewAssets() {
         let v = contentView.mcvw_previewImageView
-        let poster = Self.mcvc_posterURLString(from: mcvc_seedRunItem)
+        let poster = mcvc_seedRunItem.mcc_firstPosterImageURLString()
         let fb = mcvc_userPreviewFallbackURLString?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
 
         if let pu = URL(string: poster), !poster.isEmpty {
@@ -110,20 +110,6 @@ public final class MCCFeedGeneratingSheetController: MCCSheetController<MCCFeedG
         }
     }
 
-    private static func mcvc_posterURLString(from item: MCSRunItem) -> String {
-        let trimmed = { (s: String) -> String in s.trimmingCharacters(in: .whitespacesAndNewlines) }
-        let cover = trimmed(item.coverUrl)
-        if !cover.isEmpty { return cover }
-        let img = trimmed(item.imageUrl)
-        if !img.isEmpty { return img }
-        for r in item.result {
-            let u = trimmed(r.url)
-            if !u.isEmpty { return u }
-            let w = trimmed(r.watermarkUrl)
-            if !w.isEmpty { return w }
-        }
-        return ""
-    }
 
     private func mcvc_startProgressSimulation() {
         guard mcvc_progressTicker == nil else { return }

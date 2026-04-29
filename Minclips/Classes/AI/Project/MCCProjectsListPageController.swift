@@ -127,6 +127,15 @@ extension MCCProjectsListPageController {
         (mcvc_projectSegment?.ref ?? "").trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == "likes"
     }
 
+    /// 与服务端约定：clips 列表传 `video`，character 列表传 `image`。
+    private var mcvc_inventoryResultType: String? {
+        switch (mcvc_projectSegment?.ref ?? "").trimmingCharacters(in: .whitespacesAndNewlines).lowercased() {
+        case "clips": return "video"
+        case "character": return "image"
+        default: return nil
+        }
+    }
+
     private func mcvc_canFetch(_ kind: MCCProjectListLoadKind) -> Bool {
         let s = mcvc_listState
         let lk = mcvc_isLikes
@@ -172,6 +181,7 @@ private extension MCCProjectsListPageController {
             mcvc_beginLoadMore()
             var request = MCSRunListRequest()
             request.itemsPerPage = MCCProjectsListLayout.pageSize
+            request.resultType = mcvc_inventoryResultType
             let lastId = mcvc_listState.runItems.last?.runId
                 .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
             if !lastId.isEmpty {
@@ -193,6 +203,7 @@ private extension MCCProjectsListPageController {
 
         var request = MCSRunListRequest()
         request.itemsPerPage = MCCProjectsListLayout.pageSize
+        request.resultType = mcvc_inventoryResultType
         MCCRunAPIManager.shared.inventory(with: request)
             .asLoadState()
             .receive(on: DispatchQueue.main)
@@ -451,15 +462,47 @@ private extension MCCProjectsListPageController {
 private extension MCCProjectsRunCell {
 
     func mcvw_apply(run: MCSRunItem) {
-        mcvw_imageContainer.backgroundColor = UIColor(hex: Self.mcvw_hex(from: run.runId)) ?? .darkGray
+        mcvw_imageContainer.backgroundColor = UIColor.white.withAlphaComponent(0.06)
+
         mcvw_thumbView.sd_cancelCurrentImageLoad()
         mcvw_thumbView.image = nil
+
+        mcvc_configureFailureBadge(for: run)
+
+        let pick = run.mcc_worksListThumbnail()
+        let urlStr = pick.urlString.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard urlStr.isEmpty == false, let u = URL(string: urlStr) else {
+            mcvw_blurOverlay.isHidden = true
+            return
+        }
+
+        mcvw_blurOverlay.isHidden = !pick.blurOverlay
+        mcvw_thumbView.sd_setImage(with: u, placeholderImage: nil, options: [.retryFailed])
     }
 
-    static func mcvw_hex(from id: String) -> String {
-        var h: UInt = 0
-        for c in id.unicodeScalars { h = h &* 31 &+ UInt(c.value) }
-        return String(format: "%06X", h % 0xFFFFFF)
+    func mcvc_configureFailureBadge(for run: MCSRunItem) {
+        guard run.runState == .failed else {
+            mcvw_failureBadgeContainer.isHidden = true
+            mcvw_failureIconView.image = nil
+            mcvw_failureTitleLabel.text = nil
+            mcvw_failureSubtitleLabel.text = nil
+            mcvw_failureSubtitleLabel.isHidden = false
+            return
+        }
+        mcvw_failureBadgeContainer.isHidden = false
+        switch run.failureCode {
+        case .reject:
+            mcvw_failureIconView.image = UIImage(named: "ic_cm_restricted")?.withRenderingMode(.alwaysOriginal)
+            mcvw_failureTitleLabel.text = "Restricted"
+            mcvw_failureTitleLabel.textColor = UIColor(hex: "FFC629")
+        case .fail:
+            mcvw_failureIconView.image = UIImage(named: "ic_cm_failed")?.withRenderingMode(.alwaysOriginal)
+            mcvw_failureTitleLabel.text = "Failed"
+            mcvw_failureTitleLabel.textColor = UIColor(hex: "F54545")
+        }
+        let sub = run.failureReason.trimmingCharacters(in: .whitespacesAndNewlines)
+        mcvw_failureSubtitleLabel.text = sub
+        mcvw_failureSubtitleLabel.isHidden = sub.isEmpty
     }
 }
 

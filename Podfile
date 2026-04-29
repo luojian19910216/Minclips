@@ -64,6 +64,10 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
+      if target.name == 'Data'
+        # Pure Swift pod: stray bridging header makes Swift pull UIKit/Foundation via umbrella and fails the driver.
+        config.build_settings.delete('SWIFT_OBJC_BRIDGING_HEADER')
+      end
       
       xcconfig_path = config.base_configuration_reference.real_path
       xcconfig = File.read(xcconfig_path)

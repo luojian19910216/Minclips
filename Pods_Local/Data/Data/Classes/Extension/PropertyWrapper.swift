@@ -9,23 +9,23 @@ public protocol MCPDefaultInitializable {
     init()
 }
 
-extension MCPDefaultInitializable where Self: ExpressibleByBooleanLiteral {
+public extension MCPDefaultInitializable where Self: ExpressibleByBooleanLiteral {
     public init() { self = false }
 }
 
-extension MCPDefaultInitializable where Self: ExpressibleByIntegerLiteral {
+public extension MCPDefaultInitializable where Self: ExpressibleByIntegerLiteral {
     public init() { self = 0 }
 }
 
-extension MCPDefaultInitializable where Self: ExpressibleByFloatLiteral {
+public extension MCPDefaultInitializable where Self: ExpressibleByFloatLiteral {
     public init() { self = 0 as! Self }
 }
 
-extension MCPDefaultInitializable where Self: ExpressibleByStringLiteral {
+public extension MCPDefaultInitializable where Self: ExpressibleByStringLiteral {
     public init() { self = "" }
 }
 
-extension MCPDefaultInitializable where Self: RawRepresentable & CaseIterable {
+public extension MCPDefaultInitializable where Self: RawRepresentable & CaseIterable {
     public init() { self = Self.allCases.first! }
 }
 
@@ -371,7 +371,7 @@ public struct MCSSafe<T: Codable & MCPDefaultInitializable>: Codable, ColumnCoda
     ///
     public var wrappedValue: T
     ///
-    public init(wrappedValue: T) {
+    public init(wrappedValue: T = T()) {
         self.wrappedValue = wrappedValue
     }
     ///
