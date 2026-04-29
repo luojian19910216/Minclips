@@ -12,5 +12,7 @@
 | 弹窗 | **底部进入** → `MCCSheetController` + PanModal + `MCCBaseView`；**其他** → `MCCPopController` + `MCCBasePopView` |
 | 网络图 | `sd_setImage` 加载 URL 用 **`SDAnimatedImageView`**；纯本地/SF Symbol 用 `UIImageView` |
 | 风格 | 新代码避免中文注释与 `// MARK:` |
+| **底色与卡片** | 普通页 **`#0F0F12`**；底部弹出容器 **`#18181C`**；列表卡片与骨架 **`white` 6%**（详见 `minclips-views.mdc`「Surface colors」） |
+| **主要按钮** | 可点：**`#0077FF`**；不可点：**`white` 6%**（与同页卡片占位一致，`MCCFeedDetailController` Continue 已为示例） |
 
 修改 app 逻辑时以 `Minclips/` 下源码为准；`Pods_Local` 为本地 Pod，改动需与现有模块风格一致。

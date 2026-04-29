@@ -23,6 +23,18 @@ alwaysApply: false
 
 架构层对 Sheet vs Pop 的取舍见 **`minclips-architecture.mdc`「弹窗」**。
 
+## Surface colors（dark UI）
+
+保持一致时优先用 **hex**，与工程中 `UIColor(hex:)` 写法对齐。
+
+| Role | Hex / value | Typical use |
+|------|----------------|-------------|
+| **Primary page background** | `#0F0F12` | Full-screen controllers, tabs, normal list pages. |
+| **Bottom sheet / modal surface** | `#18181C` | Panels that **enter from the bottom** (PanModal sheets, slide-up chrome). Not necessarily every `MCCPopController` inner card unless product says so — default **bottom-sheet** surfaces to `#18181C`. |
+| **Item card & skeleton tiles** | `UIColor.white.withAlphaComponent(0.06)` | List/grid **cell image containers**, card wrappers, skeleton overlay blocks that emulate those tiles. |
+| **Primary button — enabled** | `#0077FF` | Theme accent; main **tappable** / `isEnabled == true` fill (fills, capsule bars). |
+| **Primary button — disabled** | `UIColor.white.withAlphaComponent(0.06)` | Same control when **not** interactive (muted like card fill). Prefer toggling **`isEnabled`** + background swap; **not** `#0077FF` at low alpha unless product overrides. |
+
 ## 网络图片（SDWebImage）
 
 - 通过 **`sd_setImage`** 加载 **URL 内容** 的视图（封面、图标、动图/WebP 等）使用 **`SDAnimatedImageView`**（`UIImageView` 子类），以便 **GIF / 动图 WebP** 正常播放；仅本地 `UIImage` / SF Symbol 的仍用 **`UIImageView`** 即可。
