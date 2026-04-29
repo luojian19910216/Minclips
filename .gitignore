@@ -16,6 +16,8 @@ xcuserdata/
 profile
 *.moved-aside
 DerivedData
+# Local xcodebuild -derivedDataPath (e.g. CI/sandbox); not project source
+.derivedData-ci/
 *.hmap
 *.ipa
 

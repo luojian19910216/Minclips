@@ -103,6 +103,8 @@ public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
 
     /// Bumps on reuse and on each thumbnail bind so stray `sd_setImage` completions are ignored.
     private var mcvw_thumbLoadGeneration: UInt = 0
+
+    private let mcvw_topImageGradientView = MCCListItemImageTopFadeView(frame: .zero)
     
     public let mcvw_imageContainer: UIView = {
         let v = UIView()
@@ -195,6 +197,7 @@ public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
     public override func mcvw_setupUI() {
         contentView.addSubview(mcvw_imageContainer)
         mcvw_imageContainer.addSubview(mcvw_thumbView)
+        mcvw_imageContainer.addSubview(mcvw_topImageGradientView)
         mcvw_imageContainer.addSubview(mcvw_blurOverlay)
         mcvw_imageContainer.addSubview(mcvw_successDurationLabel)
         mcvw_imageContainer.addSubview(mcvw_successQualityPill)
@@ -206,6 +209,10 @@ public final class MCCProjectsRunCell: MCCBaseCollectionViewCell {
         
         mcvw_imageContainer.snp.makeConstraints { $0.edges.equalToSuperview() }
         mcvw_thumbView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        mcvw_topImageGradientView.snp.makeConstraints { make in
+            make.leading.trailing.top.equalToSuperview()
+            make.height.equalTo(MCCShotsListItemMetrics.listItemImageTopGradientHeight)
+        }
         mcvw_blurOverlay.snp.makeConstraints { $0.edges.equalToSuperview() }
 
         mcvw_successDurationLabel.snp.makeConstraints {

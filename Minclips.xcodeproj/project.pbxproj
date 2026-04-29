@@ -263,6 +263,10 @@
 		F6E3C1122FC2000002C4F70 /* MCCShotsWaterfallLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3C1102FC2000002C4F70 /* MCCShotsWaterfallLayout.swift */; };
 		F6E3C1132FC2000002C4F70 /* MCCShotsWaterfallLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3C1102FC2000002C4F70 /* MCCShotsWaterfallLayout.swift */; };
 		F6E3C1142FC2000002C4F70 /* MCCShotsWaterfallLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3C1102FC2000002C4F70 /* MCCShotsWaterfallLayout.swift */; };
+		F6E3C1162FC2000002C4F70 /* MCCListItemImageTopFadeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3C1152FC2000002C4F70 /* MCCListItemImageTopFadeView.swift */; };
+		F6E3C1172FC2000002C4F70 /* MCCListItemImageTopFadeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3C1152FC2000002C4F70 /* MCCListItemImageTopFadeView.swift */; };
+		F6E3C1182FC2000002C4F70 /* MCCListItemImageTopFadeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3C1152FC2000002C4F70 /* MCCListItemImageTopFadeView.swift */; };
+		F6E3C1192FC2000002C4F70 /* MCCListItemImageTopFadeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3C1152FC2000002C4F70 /* MCCListItemImageTopFadeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -346,6 +350,7 @@
 		F6E2E0942FC0200002C4F70 /* MCCProSkeletonOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProSkeletonOverlay.swift; sourceTree = "<group>"; };
 		F6E3B1012FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCGradientHomeSkeletonOverlay.swift; sourceTree = "<group>"; };
 		F6E3C1102FC2000002C4F70 /* MCCShotsWaterfallLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsWaterfallLayout.swift; sourceTree = "<group>"; };
+		F6E3C1152FC2000002C4F70 /* MCCListItemImageTopFadeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCListItemImageTopFadeView.swift; sourceTree = "<group>"; };
 		F72C010043D4413B9E5D4761 /* Pods-Minclips_D.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_D.release.xcconfig"; path = "Target Support Files/Pods-Minclips_D/Pods-Minclips_D.release.xcconfig"; sourceTree = "<group>"; };
 		FD04B3C983B934D49261DA0A /* Pods-Minclips_P.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_P.debug.xcconfig"; path = "Target Support Files/Pods-Minclips_P/Pods-Minclips_P.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -417,6 +422,7 @@
 				C0050000000100000000E000 /* MCCShotsCarouselHeaderView.swift */,
 				F6E2B0132FA20301002C4F70 /* MCCShotsController.swift */,
 				F6E2B04A2FA20501002C4F70 /* MCCShotsListPageView.swift */,
+				F6E3C1152FC2000002C4F70 /* MCCListItemImageTopFadeView.swift */,
 				F6E2B0392FA20301002C4F70 /* MCCShotsListPageController.swift */,
 				F6E2D1082FC0100002C4F70 /* MCCFeedDetailView.swift */,
 				F6E2D1092FC0100002C4F70 /* MCCFeedDetailController.swift */,
@@ -1039,6 +1045,7 @@
 				F6E2B03A2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */,
 				F6E3C1112FC2000002C4F70 /* MCCShotsWaterfallLayout.swift in Sources */,
 				F6E2B0582FA20501002C4F70 /* MCCShotsListPageView.swift in Sources */,
+				F6E3C1162FC2000002C4F70 /* MCCListItemImageTopFadeView.swift in Sources */,
 				F6E2C1202FC0010002C4F70 /* MCCProjectsView.swift in Sources */,
 				F6E2C1242FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
 				F6E2C1282FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
@@ -1102,6 +1109,7 @@
 				F6E2B03B2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */,
 				F6E3C1122FC2000002C4F70 /* MCCShotsWaterfallLayout.swift in Sources */,
 				F6E2B0592FA20501002C4F70 /* MCCShotsListPageView.swift in Sources */,
+				F6E3C1172FC2000002C4F70 /* MCCListItemImageTopFadeView.swift in Sources */,
 				F6E2C1212FC0010002C4F70 /* MCCProjectsView.swift in Sources */,
 				F6E2C1252FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
 				F6E2C1292FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
@@ -1171,6 +1179,7 @@
 				F6E2B03C2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */,
 				F6E3C1132FC2000002C4F70 /* MCCShotsWaterfallLayout.swift in Sources */,
 				F6E2B05A2FA20501002C4F70 /* MCCShotsListPageView.swift in Sources */,
+				F6E3C1182FC2000002C4F70 /* MCCListItemImageTopFadeView.swift in Sources */,
 				F6E2C1222FC0010002C4F70 /* MCCProjectsView.swift in Sources */,
 				F6E2C1262FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
 				F6E2C12A2FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
@@ -1237,6 +1246,7 @@
 				F6E2B03D2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */,
 				F6E3C1142FC2000002C4F70 /* MCCShotsWaterfallLayout.swift in Sources */,
 				F6E2B05B2FA20501002C4F70 /* MCCShotsListPageView.swift in Sources */,
+				F6E3C1192FC2000002C4F70 /* MCCListItemImageTopFadeView.swift in Sources */,
 				F6E2C1232FC0010002C4F70 /* MCCProjectsView.swift in Sources */,
 				F6E2C1272FC0010002C4F70 /* MCCProjectsController.swift in Sources */,
 				F6E2C12B2FC0010002C4F70 /* MCCProjectsListPageView.swift in Sources */,
