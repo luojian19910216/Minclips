@@ -4,10 +4,15 @@ import SnapKit
 
 public final class MCCFeedGeneratingView: MCCBaseView {
 
-    public let mcvw_closeButton: UIButton = {
-        let b = UIButton(type: .custom)
-        b.setImage(UIImage(named: "ic_cm_close")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        b.tintColor = UIColor.white.withAlphaComponent(0.9)
+    public let mcvw_closeButton: MCCNavCapsuleButton = {
+        let b = MCCNavCapsuleButton(type: .custom)
+        b.mcvw_apply(
+            icon: UIImage(named: "ic_cm_close")?.withRenderingMode(.alwaysTemplate),
+            title: nil,
+            titleColor: .white
+        )
+        b.mcvw_useStandaloneCapsule()
+        b.tintColor = .white
         return b
     }()
 

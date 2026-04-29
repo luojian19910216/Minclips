@@ -36,7 +36,10 @@ public final class MCCCreatePromptFlowController: MCCViewController<MCCCreatePro
         title.sizeToFit()
         navigationItem.titleView = title
         navigationItem.leftBarButtonItem = mcvc_circleBackItem()
-        navigationItem.rightBarButtonItem = MCCRootTabNavChrome.feedCreditsBarButtonItem(amount: "+ 9999", target: nil, action: nil)
+        navigationItem.rightBarButtonItem = MCCRootTabNavChrome.capsuleBarButtonItem(
+            icon: UIImage(named: "ic_cm_credits")?.withRenderingMode(.alwaysOriginal),
+            title: "+ 9999"
+        )
     }
 
     public override func mcvc_setupLocalization() {

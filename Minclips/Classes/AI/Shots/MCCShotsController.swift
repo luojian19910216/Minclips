@@ -30,10 +30,11 @@ public final class MCCShotsController: MCCViewController<MCCShotsView, MCCEmptyV
         super.mcvc_configureNav()
 
         tabBarController?.navigationItem.leftBarButtonItem = MCCRootTabNavChrome.leftTitleBarButtonItem(title: "Shots")
-        tabBarController?.navigationItem.rightBarButtonItem = MCCRootTabNavChrome.proBarButtonItem(
+        tabBarController?.navigationItem.rightBarButtonItem = MCCRootTabNavChrome.capsuleBarButtonItem(
+            icon: UIImage(named: "ic_nav_pro"),
+            title: "PRO",
             target: self,
-            action: #selector(mcvc_onProTapped),
-            titleColor: .white
+            action: #selector(mcvc_onProTapped)
         )
         mcvc_resyncNavigationBarWithPinHeaderAfterGeometryChange()
     }

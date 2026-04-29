@@ -46,7 +46,7 @@ extension UITabBar {
 
         switch style {
         case .glassDark:
-            barTintColor = UIColor.black.withAlphaComponent(0.6)
+            barTintColor = UIColor.white.withAlphaComponent(0.06)
             let accent = UIColor.white
             normalTintColor = accent
             selectedTintColor = accent
@@ -86,6 +86,7 @@ extension UITabBar {
             let accent = UIColor.white
             let appearance = UITabBarAppearance()
             appearance.configureWithDefaultBackground()
+            appearance.backgroundColor = UIColor.white.withAlphaComponent(0.06)
             appearance.shadowColor = .clear
             appearance.stackedLayoutAppearance.normal.iconColor = accent
             appearance.stackedLayoutAppearance.selected.iconColor = accent

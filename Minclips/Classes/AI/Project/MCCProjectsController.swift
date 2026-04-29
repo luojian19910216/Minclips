@@ -26,7 +26,8 @@ public class MCCProjectsController: MCCViewController<MCCProjectsView, MCCEmptyV
         
         self.tabBarController?.navigationItem.leftBarButtonItem = MCCRootTabNavChrome.leftTitleBarButtonItem(title: "Projects")
         
-        self.tabBarController?.navigationItem.rightBarButtonItem = MCCRootTabNavChrome.settingsBarButtonItem(
+        self.tabBarController?.navigationItem.rightBarButtonItem = MCCRootTabNavChrome.capsuleBarButtonItem(
+            icon: UIImage(named: "ic_nav_setting")?.withRenderingMode(.alwaysTemplate),
             target: self,
             action: #selector(mcvc_onSettingsTapped)
         )

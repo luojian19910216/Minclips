@@ -37,7 +37,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     private var mcvc_activeCharacterSlotIndex: Int = 0
     private var mcvc_characterSelectionTapGestures: [UITapGestureRecognizer] = []
 
-    private var mcvc_navCreditsBarButton: UIButton?
+    private var mcvc_navCreditsBarItem: UIBarButtonItem?
 
     /// 已展示在 Recent 磁贴上的 `localIdentifier`，避免重复向 Photos 拉取。
     private var mcvc_recentTileSyncedAssetId: String?
@@ -64,32 +64,23 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
     public override func mcvc_configureNav() {
         super.mcvc_configureNav()
-        
-        guard navigationController != nil else { return }
-        navigationItem.largeTitleDisplayMode = .never
-        navigationController?.navigationBar.prefersLargeTitles = false
-
-        let back = UIBarButtonItem(
-            image: UIImage(named: "ic_nav_back")?.withRenderingMode(.alwaysTemplate),
-            style: .plain,
-            target: self,
-            action: #selector(mcvc_detailBackTapped)
-        )
-        back.tintColor = .white
-        navigationItem.leftBarButtonItems = nil
-        navigationItem.leftBarButtonItem = back
-
-        let creditsBar = MCCRootTabNavChrome.feedCreditsBarButtonItem(
-            amount: mcvc_navCreditsDisplayText(),
+ 
+        let creditsBar = MCCRootTabNavChrome.capsuleBarButtonItem(
+            icon: UIImage(named: "ic_cm_credits")?.withRenderingMode(.alwaysOriginal),
+            title: mcvc_navCreditsDisplayText(),
             target: self,
             action: #selector(mcvc_navCreditsTapped)
         )
-        mcvc_navCreditsBarButton = creditsBar.customView as? UIButton
+        mcvc_navCreditsBarItem = creditsBar
 
         let betweenCreditsAndReport = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
         betweenCreditsAndReport.width = 8
         navigationItem.rightBarButtonItems = [
-            MCCRootTabNavChrome.feedReportBarButtonItem(target: self, action: #selector(mcvc_reportTapped)),
+            MCCRootTabNavChrome.capsuleBarButtonItem(
+                icon: UIImage(named: "ic_nav_report")?.withRenderingMode(.alwaysOriginal),
+                target: self,
+                action: #selector(mcvc_reportTapped)
+            ),
             betweenCreditsAndReport,
             creditsBar
         ]
@@ -114,7 +105,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
     private func mcvc_refreshNavCreditsDisplay() {
         let t = mcvc_navCreditsDisplayText()
-        MCCRootTabNavChrome.updateFeedCreditsBarButtonSizing(mcvc_navCreditsBarButton, amount: t)
+        MCCRootTabNavChrome.updateCapsuleBarButtonItem(mcvc_navCreditsBarItem, title: t)
     }
 
     /// 进入详情拉取 `integralStatement`，更新本地 `MCSUser.pointsBalance`（`MCCAccountService` 落库 + 广播，导航栏积分自动刷新）。

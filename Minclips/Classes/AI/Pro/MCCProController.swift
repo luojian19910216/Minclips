@@ -19,43 +19,20 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
     private static let mcvc_proSkeletonMinDisplay: TimeInterval = 0.15
     private var mcvc_proSkeletonShownAt: CFTimeInterval?
 
-    public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
-
     public override var transactionStyle: MCETransactionStyle { .bottom }
-
-    public override func mcvc_init() {
-        super.mcvc_init()
-        fd_prefersNavigationBarHidden = false
-    }
-
+    
     public override func mcvc_needLeftBarButtonItem() -> Bool { false }
-
+    
     public override func mcvc_configureNav() {
-        guard let nav = navigationController else { return }
-        nav.navigationBar.mc_shadowHidden = true
-        nav.navigationBar.mc_barStyle = .transparentLight
+        super.mcvc_configureNav()
+        
         navigationItem.setHidesBackButton(true, animated: false)
-        navigationItem.largeTitleDisplayMode = .never
-        nav.navigationBar.prefersLargeTitles = false
-        navigationItem.title = nil
-        let img = ["multiply", "xmark"]
-            .compactMap { UIImage(systemName: $0)?.withRenderingMode(.alwaysTemplate) }
-            .first
-        if let img {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(
-                image: img,
-                style: .plain,
-                target: self,
-                action: #selector(mcvc_leftBarButtonItemAction)
-            )
-        } else {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(
-                title: "\u{2715}",
-                style: .plain,
-                target: self,
-                action: #selector(mcvc_leftBarButtonItemAction)
-            )
-        }
+        navigationItem.leftBarButtonItem = nil
+        navigationItem.rightBarButtonItem = MCCRootTabNavChrome.capsuleBarButtonItem(
+            icon: UIImage(named: "ic_cm_close")?.withRenderingMode(.alwaysTemplate),
+            target: self,
+            action: #selector(mcvc_leftBarButtonItemAction)
+        )
         navigationItem.rightBarButtonItem?.tintColor = .white
     }
 

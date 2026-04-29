@@ -22,10 +22,11 @@ public final class MCCToolsController: MCCViewController<MCCToolsView, MCCEmptyV
 
         self.tabBarController?.navigationItem.leftBarButtonItem = MCCRootTabNavChrome.leftTitleBarButtonItem(title: "Studio")
 
-        self.tabBarController?.navigationItem.rightBarButtonItem = MCCRootTabNavChrome.proBarButtonItem(
+        self.tabBarController?.navigationItem.rightBarButtonItem = MCCRootTabNavChrome.capsuleBarButtonItem(
+            icon: UIImage(named: "ic_nav_pro"),
+            title: "PRO",
             target: self,
-            action: #selector(mcvc_onProTapped),
-            titleColor: .white
+            action: #selector(mcvc_onProTapped)
         )
     }
 

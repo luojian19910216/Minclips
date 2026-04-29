@@ -51,18 +51,18 @@ public enum MCEEnvironment {
     ///
     public var baseAPIUrl: String {
         switch self {
-        case .D: return "https://gw-rd.minclips.video"
-        case .T: return "https://gw-rd.minclips.video"
-        case .P: return "https://gw-rd.minclips.video"
+        case .D: return "https://gw.minclips.video"
+        case .T: return "https://gw.minclips.video"
+        case .P: return "https://gw.minclips.video"
         case .R: return "https://gw.minclips.video"
         }
     }
     ///
     public var pushAPIUrl: String {
         switch self {
-        case .D: return "https://push-rd.minclips.video"
-        case .T: return "https://push-rd.minclips.video"
-        case .P: return "https://push-rd.minclips.video"
+        case .D: return "https://push.minclips.video"
+        case .T: return "https://push.minclips.video"
+        case .P: return "https://push.minclips.video"
         case .R: return "https://push.minclips.video"
         }
     }

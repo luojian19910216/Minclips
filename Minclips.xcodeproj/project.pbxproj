@@ -18,11 +18,55 @@
 		03F019692F8CF6E90096831D /* MCSGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019672F8CF6E90096831D /* MCSGuide.swift */; };
 		686EBC214DA29B9D78E427C8 /* Pods_Minclips_R.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88268EC85C6220BF5E9A10ED /* Pods_Minclips_R.framework */; };
 		959A695D1D1E2D4AA7550A53 /* Pods_Minclips_P.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0335A246D2DC973F502DDD40 /* Pods_Minclips_P.framework */; };
+		A0F7900102FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */; };
+		A0F7900202FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */; };
+		A0F7900302FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */; };
+		A0F7900402FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */; };
+		A0F7900502FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */; };
+		A0F7900602FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */; };
+		A0F7900702FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */; };
+		A0F7900802FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */; };
+		A0F7900902FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */; };
+		A0F7900A02FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */; };
+		A0F7900B02FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */; };
+		A0F7900C02FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */; };
+		A0F7900D02FD000100AA0004 /* MCCCreatePromptFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */; };
+		A0F7900E02FD000100AA0004 /* MCCCreatePromptFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */; };
+		A0F7900F02FD000100AA0004 /* MCCCreatePromptFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */; };
+		A0F7911002FD000100AA0004 /* MCCCreatePromptFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */; };
+		A0F7911102FD000100AA0005 /* MCCShotsStockPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */; };
+		A0F7911202FD000100AA0005 /* MCCShotsStockPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */; };
+		A0F7911302FD000100AA0005 /* MCCShotsStockPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */; };
+		A0F7911402FD000100AA0005 /* MCCShotsStockPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */; };
+		A0F7911502FD000100AA0006 /* MCCShotsStockPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */; };
+		A0F7911602FD000100AA0006 /* MCCShotsStockPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */; };
+		A0F7911702FD000100AA0006 /* MCCShotsStockPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */; };
+		A0F7911802FD000100AA0006 /* MCCShotsStockPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */; };
+		A0F7911902FD000100AA0007 /* MCCShotsStockPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */; };
+		A0F7911A02FD000100AA0007 /* MCCShotsStockPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */; };
+		A0F7911B02FD000100AA0007 /* MCCShotsStockPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */; };
+		A0F7911C02FD000100AA0007 /* MCCShotsStockPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */; };
 		A1AB0FE7DD6E52D6A44ED061 /* Pods_Minclips_T.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAF81274419AE998A3C9FC1F /* Pods_Minclips_T.framework */; };
 		C0010001000100000000A001 /* MCCOSSImageUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0010000000100000000A000 /* MCCOSSImageUploader.swift */; };
 		C0010002000100000000A002 /* MCCOSSImageUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0010000000100000000A000 /* MCCOSSImageUploader.swift */; };
 		C0010003000100000000A003 /* MCCOSSImageUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0010000000100000000A000 /* MCCOSSImageUploader.swift */; };
 		C0010004000100000000A004 /* MCCOSSImageUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0010000000100000000A000 /* MCCOSSImageUploader.swift */; };
+		C0020001000100000000B001 /* MCCFeedResolutionPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0020000000100000000B000 /* MCCFeedResolutionPopController.swift */; };
+		C0020002000100000000B002 /* MCCFeedResolutionPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0020000000100000000B000 /* MCCFeedResolutionPopController.swift */; };
+		C0020003000100000000B003 /* MCCFeedResolutionPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0020000000100000000B000 /* MCCFeedResolutionPopController.swift */; };
+		C0020004000100000000B004 /* MCCFeedResolutionPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0020000000100000000B000 /* MCCFeedResolutionPopController.swift */; };
+		C0030001000100000000C001 /* MCCFeedDurationPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0030000000100000000C000 /* MCCFeedDurationPopController.swift */; };
+		C0030002000100000000C002 /* MCCFeedDurationPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0030000000100000000C000 /* MCCFeedDurationPopController.swift */; };
+		C0030003000100000000C003 /* MCCFeedDurationPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0030000000100000000C000 /* MCCFeedDurationPopController.swift */; };
+		C0030004000100000000C004 /* MCCFeedDurationPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0030000000100000000C000 /* MCCFeedDurationPopController.swift */; };
+		C0040001000100000000D001 /* MCCFeedModePopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0040000000100000000D000 /* MCCFeedModePopController.swift */; };
+		C0040002000100000000D002 /* MCCFeedModePopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0040000000100000000D000 /* MCCFeedModePopController.swift */; };
+		C0040003000100000000D003 /* MCCFeedModePopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0040000000100000000D000 /* MCCFeedModePopController.swift */; };
+		C0040004000100000000D004 /* MCCFeedModePopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0040000000100000000D000 /* MCCFeedModePopController.swift */; };
+		C0050001000100000000E001 /* MCCShotsCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0050000000100000000E000 /* MCCShotsCarouselHeaderView.swift */; };
+		C0050002000100000000E002 /* MCCShotsCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0050000000100000000E000 /* MCCShotsCarouselHeaderView.swift */; };
+		C0050003000100000000E003 /* MCCShotsCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0050000000100000000E000 /* MCCShotsCarouselHeaderView.swift */; };
+		C0050004000100000000E004 /* MCCShotsCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0050000000100000000E000 /* MCCShotsCarouselHeaderView.swift */; };
 		F614F84F2F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F614F84E2F9B495600A31DB4 /* MCCBaseViewModel.swift */; };
 		F614F8502F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F614F84E2F9B495600A31DB4 /* MCCBaseViewModel.swift */; };
 		F614F8512F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F614F84E2F9B495600A31DB4 /* MCCBaseViewModel.swift */; };
@@ -111,6 +155,10 @@
 		F6D5476D2F9B478A002C4F70 /* MCCPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547612F9B478A002C4F70 /* MCCPopController.swift */; };
 		F6D5476E2F9B478A002C4F70 /* MCCSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547622F9B478A002C4F70 /* MCCSheetController.swift */; };
 		F6D5476F2F9B478A002C4F70 /* MCCViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547632F9B478A002C4F70 /* MCCViewController.swift */; };
+		F6D548012F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D548002F9B478A002C4F70 /* MCCRootTabNavChrome.swift */; };
+		F6D548022F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D548002F9B478A002C4F70 /* MCCRootTabNavChrome.swift */; };
+		F6D548032F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D548002F9B478A002C4F70 /* MCCRootTabNavChrome.swift */; };
+		F6D548042F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D548002F9B478A002C4F70 /* MCCRootTabNavChrome.swift */; };
 		F6D547712F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
 		F6D547722F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
 		F6D547732F9B4796002C4F70 /* MCCBaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D547702F9B4796002C4F70 /* MCCBaseView.swift */; };
@@ -151,34 +199,6 @@
 		F6E2C1312FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1042FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift */; };
 		F6E2C1322FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1042FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift */; };
 		F6E2C1332FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C1042FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift */; };
-		A0F7900102FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */; };
-		A0F7900202FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */; };
-		A0F7900302FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */; };
-		A0F7900402FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */; };
-		A0F7900502FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */; };
-		A0F7900602FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */; };
-		A0F7900702FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */; };
-		A0F7900802FD000100AA0002 /* MCCStoryClipsComposerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */; };
-		A0F7900902FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */; };
-		A0F7900A02FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */; };
-		A0F7900B02FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */; };
-		A0F7900C02FD000100AA0003 /* MCCCreatePromptFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */; };
-		A0F7900D02FD000100AA0004 /* MCCCreatePromptFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */; };
-		A0F7900E02FD000100AA0004 /* MCCCreatePromptFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */; };
-		A0F7900F02FD000100AA0004 /* MCCCreatePromptFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */; };
-		A0F7911002FD000100AA0004 /* MCCCreatePromptFlowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */; };
-		A0F7911102FD000100AA0005 /* MCCShotsStockPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */; };
-		A0F7911202FD000100AA0005 /* MCCShotsStockPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */; };
-		A0F7911302FD000100AA0005 /* MCCShotsStockPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */; };
-		A0F7911402FD000100AA0005 /* MCCShotsStockPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */; };
-		A0F7911502FD000100AA0006 /* MCCShotsStockPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */; };
-		A0F7911602FD000100AA0006 /* MCCShotsStockPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */; };
-		A0F7911702FD000100AA0006 /* MCCShotsStockPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */; };
-		A0F7911802FD000100AA0006 /* MCCShotsStockPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */; };
-		A0F7911902FD000100AA0007 /* MCCShotsStockPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */; };
-		A0F7911A02FD000100AA0007 /* MCCShotsStockPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */; };
-		A0F7911B02FD000100AA0007 /* MCCShotsStockPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */; };
-		A0F7911C02FD000100AA0007 /* MCCShotsStockPickerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */; };
 		F6E2C2102FC0020002C4F70 /* MCCToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2002FC0020002C4F70 /* MCCToolsView.swift */; };
 		F6E2C2112FC0020002C4F70 /* MCCToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2002FC0020002C4F70 /* MCCToolsView.swift */; };
 		F6E2C2122FC0020002C4F70 /* MCCToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2C2002FC0020002C4F70 /* MCCToolsView.swift */; };
@@ -219,22 +239,6 @@
 		F6E2D13022FC0100002C4F70 /* MCCFeedOptionPopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13012FC0100002C4F70 /* MCCFeedOptionPopView.swift */; };
 		F6E2D13032FC0100002C4F70 /* MCCFeedOptionPopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13012FC0100002C4F70 /* MCCFeedOptionPopView.swift */; };
 		F6E2D13042FC0100002C4F70 /* MCCFeedOptionPopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13012FC0100002C4F70 /* MCCFeedOptionPopView.swift */; };
-		C0020001000100000000B001 /* MCCFeedResolutionPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0020000000100000000B000 /* MCCFeedResolutionPopController.swift */; };
-		C0020002000100000000B002 /* MCCFeedResolutionPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0020000000100000000B000 /* MCCFeedResolutionPopController.swift */; };
-		C0020003000100000000B003 /* MCCFeedResolutionPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0020000000100000000B000 /* MCCFeedResolutionPopController.swift */; };
-		C0020004000100000000B004 /* MCCFeedResolutionPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0020000000100000000B000 /* MCCFeedResolutionPopController.swift */; };
-		C0030001000100000000C001 /* MCCFeedDurationPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0030000000100000000C000 /* MCCFeedDurationPopController.swift */; };
-		C0030002000100000000C002 /* MCCFeedDurationPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0030000000100000000C000 /* MCCFeedDurationPopController.swift */; };
-		C0030003000100000000C003 /* MCCFeedDurationPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0030000000100000000C000 /* MCCFeedDurationPopController.swift */; };
-		C0030004000100000000C004 /* MCCFeedDurationPopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0030000000100000000C000 /* MCCFeedDurationPopController.swift */; };
-		C0040001000100000000D001 /* MCCFeedModePopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0040000000100000000D000 /* MCCFeedModePopController.swift */; };
-		C0040002000100000000D002 /* MCCFeedModePopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0040000000100000000D000 /* MCCFeedModePopController.swift */; };
-		C0040003000100000000D003 /* MCCFeedModePopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0040000000100000000D000 /* MCCFeedModePopController.swift */; };
-		C0040004000100000000D004 /* MCCFeedModePopController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0040000000100000000D000 /* MCCFeedModePopController.swift */; };
-		C0050001000100000000E001 /* MCCShotsCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0050000000100000000E000 /* MCCShotsCarouselHeaderView.swift */; };
-		C0050002000100000000E002 /* MCCShotsCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0050000000100000000E000 /* MCCShotsCarouselHeaderView.swift */; };
-		C0050003000100000000E003 /* MCCShotsCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0050000000100000000E000 /* MCCShotsCarouselHeaderView.swift */; };
-		C0050004000100000000E004 /* MCCShotsCarouselHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0050000000100000000E000 /* MCCShotsCarouselHeaderView.swift */; };
 		F6E2D13052FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */; };
 		F6E2D13072FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */; };
 		F6E2D13082FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */; };
@@ -286,7 +290,18 @@
 		88268EC85C6220BF5E9A10ED /* Pods_Minclips_R.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Minclips_R.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B54C93040CA0719D543B830 /* Pods-Minclips_D.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_D.debug.xcconfig"; path = "Target Support Files/Pods-Minclips_D/Pods-Minclips_D.debug.xcconfig"; sourceTree = "<group>"; };
 		9777C1A4F928B398B2C962C7 /* Pods-Minclips_R.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_R.debug.xcconfig"; path = "Target Support Files/Pods-Minclips_R/Pods-Minclips_R.debug.xcconfig"; sourceTree = "<group>"; };
+		A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCStoryClipsComposerView.swift; sourceTree = "<group>"; };
+		A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCStoryClipsComposerController.swift; sourceTree = "<group>"; };
+		A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCCreatePromptFlowView.swift; sourceTree = "<group>"; };
+		A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCCreatePromptFlowController.swift; sourceTree = "<group>"; };
+		A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsStockPickerCell.swift; sourceTree = "<group>"; };
+		A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsStockPickerView.swift; sourceTree = "<group>"; };
+		A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsStockPickerController.swift; sourceTree = "<group>"; };
 		C0010000000100000000A000 /* MCCOSSImageUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCOSSImageUploader.swift; sourceTree = "<group>"; };
+		C0020000000100000000B000 /* MCCFeedResolutionPopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedResolutionPopController.swift; sourceTree = "<group>"; };
+		C0030000000100000000C000 /* MCCFeedDurationPopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedDurationPopController.swift; sourceTree = "<group>"; };
+		C0040000000100000000D000 /* MCCFeedModePopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedModePopController.swift; sourceTree = "<group>"; };
+		C0050000000100000000E000 /* MCCShotsCarouselHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsCarouselHeaderView.swift; sourceTree = "<group>"; };
 		CAF81274419AE998A3C9FC1F /* Pods_Minclips_T.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Minclips_T.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBA4D02B7FA316776A765569 /* Pods-Minclips_T.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_T.debug.xcconfig"; path = "Target Support Files/Pods-Minclips_T/Pods-Minclips_T.debug.xcconfig"; sourceTree = "<group>"; };
 		F614F84E2F9B495600A31DB4 /* MCCBaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCBaseViewModel.swift; sourceTree = "<group>"; };
@@ -316,6 +331,7 @@
 		F6D547612F9B478A002C4F70 /* MCCPopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCPopController.swift; sourceTree = "<group>"; };
 		F6D547622F9B478A002C4F70 /* MCCSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCSheetController.swift; sourceTree = "<group>"; };
 		F6D547632F9B478A002C4F70 /* MCCViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCViewController.swift; sourceTree = "<group>"; };
+		F6D548002F9B478A002C4F70 /* MCCRootTabNavChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCRootTabNavChrome.swift; sourceTree = "<group>"; };
 		F6D547702F9B4796002C4F70 /* MCCBaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCBaseView.swift; sourceTree = "<group>"; };
 		F6E2B0122FA20301002C4F70 /* MCCShotsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsView.swift; sourceTree = "<group>"; };
 		F6E2B0132FA20301002C4F70 /* MCCShotsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsController.swift; sourceTree = "<group>"; };
@@ -326,13 +342,6 @@
 		F6E2C1022FC0010002C4F70 /* MCCProjectsListPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProjectsListPageView.swift; sourceTree = "<group>"; };
 		F6E2C1032FC0010002C4F70 /* MCCProjectsListPageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProjectsListPageController.swift; sourceTree = "<group>"; };
 		F6E2C1042FC0010002C4F70 /* MCCProjectsRunGeneratingDecoration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCProjectsRunGeneratingDecoration.swift; sourceTree = "<group>"; };
-		A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCStoryClipsComposerView.swift; sourceTree = "<group>"; };
-		A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCStoryClipsComposerController.swift; sourceTree = "<group>"; };
-		A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCCreatePromptFlowView.swift; sourceTree = "<group>"; };
-		A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCCreatePromptFlowController.swift; sourceTree = "<group>"; };
-		A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsStockPickerCell.swift; sourceTree = "<group>"; };
-		A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsStockPickerView.swift; sourceTree = "<group>"; };
-		A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsStockPickerController.swift; sourceTree = "<group>"; };
 		F6E2C2002FC0020002C4F70 /* MCCToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCToolsView.swift; sourceTree = "<group>"; };
 		F6E2C2012FC0020002C4F70 /* MCCToolsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCToolsController.swift; sourceTree = "<group>"; };
 		F6E2C22E2FC0030002C4F70 /* MCCCreationResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCCreationResultView.swift; sourceTree = "<group>"; };
@@ -343,10 +352,6 @@
 		F6E2D10A2FC0100002C4F70 /* MCCSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCSettingsView.swift; sourceTree = "<group>"; };
 		F6E2D10B2FC0100002C4F70 /* MCCSettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCSettingsController.swift; sourceTree = "<group>"; };
 		F6E2D13012FC0100002C4F70 /* MCCFeedOptionPopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedOptionPopView.swift; sourceTree = "<group>"; };
-		C0020000000100000000B000 /* MCCFeedResolutionPopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedResolutionPopController.swift; sourceTree = "<group>"; };
-		C0030000000100000000C000 /* MCCFeedDurationPopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedDurationPopController.swift; sourceTree = "<group>"; };
-		C0040000000100000000D000 /* MCCFeedModePopController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedModePopController.swift; sourceTree = "<group>"; };
-		C0050000000100000000E000 /* MCCShotsCarouselHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsCarouselHeaderView.swift; sourceTree = "<group>"; };
 		F6E2D13062FC0100002C4F70 /* MCCFeedGeneratingSheetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedGeneratingSheetController.swift; sourceTree = "<group>"; };
 		F6E2D131B2FC0100002C4F70 /* MCCWebpPlaybackHandoff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCWebpPlaybackHandoff.swift; sourceTree = "<group>"; };
 		F6E2D13382FC0100002C4F70 /* MCCFeedGeneratingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCFeedGeneratingView.swift; sourceTree = "<group>"; };
@@ -460,6 +465,20 @@
 			path = AI;
 			sourceTree = "<group>";
 		};
+		A0F7902502FD000100AA0000 /* StoryComposer */ = {
+			isa = PBXGroup;
+			children = (
+				A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */,
+				A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */,
+				A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */,
+				A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */,
+				A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */,
+				A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */,
+				A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */,
+			);
+			path = StoryComposer;
+			sourceTree = "<group>";
+		};
 		B0D36159DDD01BDC90144D9D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -568,6 +587,7 @@
 				F6D5475C2F9B462C002C4F70 /* MCCNavigationController.swift */,
 				F6588BB92EFA402B00A094B5 /* MCCTabBarController.swift */,
 				F6D547632F9B478A002C4F70 /* MCCViewController.swift */,
+				F6D548002F9B478A002C4F70 /* MCCRootTabNavChrome.swift */,
 				F6D547622F9B478A002C4F70 /* MCCSheetController.swift */,
 				F6D547612F9B478A002C4F70 /* MCCPopController.swift */,
 				F6588BB32EFA401200A094B5 /* MCCLaunchController.swift */,
@@ -652,20 +672,6 @@
 				F6E2D10B2FC0100002C4F70 /* MCCSettingsController.swift */,
 			);
 			path = Settings;
-			sourceTree = "<group>";
-		};
-		A0F7902502FD000100AA0000 /* StoryComposer */ = {
-			isa = PBXGroup;
-			children = (
-				A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */,
-				A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */,
-				A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */,
-				A0F7902172FD000100AA0004 /* MCCCreatePromptFlowController.swift */,
-				A0F7902192FD000100AA0005 /* MCCShotsStockPickerCell.swift */,
-				A0F7902212FD000100AA0006 /* MCCShotsStockPickerView.swift */,
-				A0F7902232FD000100AA0007 /* MCCShotsStockPickerController.swift */,
-			);
-			path = StoryComposer;
 			sourceTree = "<group>";
 		};
 		F6E2E0902FC0200002C4F70 /* Pro */ = {
@@ -853,13 +859,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_P/Pods-Minclips_P-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_P/Pods-Minclips_P-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -940,13 +942,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_R/Pods-Minclips_R-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_R/Pods-Minclips_R-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -961,13 +959,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_T/Pods-Minclips_T-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_T/Pods-Minclips_T-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -982,13 +976,9 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_D/Pods-Minclips_D-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Minclips_D/Pods-Minclips_D-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -1031,6 +1021,7 @@
 				F6D5476A2F9B478A002C4F70 /* MCCPopController.swift in Sources */,
 				F6D5476B2F9B478A002C4F70 /* MCCSheetController.swift in Sources */,
 				F6D5476C2F9B478A002C4F70 /* MCCViewController.swift in Sources */,
+				F6D548032F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */,
 				F65888C82EF5548800A094B5 /* MCCAppDelegate.swift in Sources */,
 				F614F84F2F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */,
 				03F019692F8CF6E90096831D /* MCSGuide.swift in Sources */,
@@ -1111,6 +1102,7 @@
 				F6D547642F9B478A002C4F70 /* MCCPopController.swift in Sources */,
 				F6D547652F9B478A002C4F70 /* MCCSheetController.swift in Sources */,
 				F6D547662F9B478A002C4F70 /* MCCViewController.swift in Sources */,
+				F6D548012F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */,
 				F6E2B0262FA20301002C4F70 /* MCCShotsView.swift in Sources */,
 				F6E2B02A2FA20301002C4F70 /* MCCShotsController.swift in Sources */,
 				F6E2B03B2FA20301002C4F70 /* MCCShotsListPageController.swift in Sources */,
@@ -1167,6 +1159,7 @@
 				F6D547672F9B478A002C4F70 /* MCCPopController.swift in Sources */,
 				F6D547682F9B478A002C4F70 /* MCCSheetController.swift in Sources */,
 				F6D547692F9B478A002C4F70 /* MCCViewController.swift in Sources */,
+				F6D548022F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */,
 				F6D5460F2F90B9B8002C4F70 /* MCCAppDelegate.swift in Sources */,
 				F614F8502F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */,
 				F6D546162F90B9B8002C4F70 /* MCSGuide.swift in Sources */,
@@ -1235,6 +1228,7 @@
 				F6D5476D2F9B478A002C4F70 /* MCCPopController.swift in Sources */,
 				F6D5476E2F9B478A002C4F70 /* MCCSheetController.swift in Sources */,
 				F6D5476F2F9B478A002C4F70 /* MCCViewController.swift in Sources */,
+				F6D548042F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */,
 				F6D546712F90B9C9002C4F70 /* MCCAppDelegate.swift in Sources */,
 				F614F8512F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */,
 				F6D546782F90B9C9002C4F70 /* MCSGuide.swift in Sources */,
