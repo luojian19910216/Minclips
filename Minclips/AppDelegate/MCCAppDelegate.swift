@@ -239,7 +239,12 @@ public class MCCSceneDelegate: UIResponder, UIWindowSceneDelegate {
                 case .guide:
                     self.window?.rootViewController = MCCGuideController.init()
                 case .main:
-                    self.window?.rootViewController = MCCNavigationController(rootViewController: MCCTabBarController())
+                    let nav = MCCNavigationController(rootViewController: MCCTabBarController())
+                    self.window?.rootViewController = nav
+                    
+                    guard MCCAccountService.shared.currentUser.value?.membershipActive ?? false == false else {return}
+                    let pro = MCCProController()
+                    nav.pushViewController(pro, animated: false)
                 }
             }
             .store(in: &cancellables)
