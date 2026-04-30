@@ -127,6 +127,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
     @objc
     private func mcvc_reportTapped() {
+        MCCToastManager.showToast("Thanks for your feedback.", in: self.view)
     }
 
     public override func mcvc_bind() {
