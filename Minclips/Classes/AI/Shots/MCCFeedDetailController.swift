@@ -191,13 +191,15 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         var request = MCSRunListRequest()
         request.outputKind = "image"
         request.itemsPerPage = 20
+        request.runState = "2"
 
         mcvc_imageWorkInventoryCancellable = MCCRunAPIManager.shared.inventory(with: request)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { _ in }, receiveValue: { [weak self] page in
                 guard let self else { return }
                 guard generation == self.mcvc_imageWorkInventoryGeneration else { return }
-                let capped = Array(page.items.prefix(20))
+                let successOnly = page.items.filter { $0.runState == .success }
+                let capped = Array(successOnly.prefix(20))
                 let urls = self.mcvc_thumbnailURLStringsForImageRuns(capped)
                 self.mcvc_imageWorkPickCoverURLs = urls
                 self.contentView.mcvw_setImageWorkPickTileCoverURLs(urls)

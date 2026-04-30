@@ -28,6 +28,8 @@ public struct MCSRunListRequest: Codable {
     public var resumeAfterId: String?
     /// image/video
     public var outputKind: String?
+    ///
+    public var runState: String?
 }
 
 ///
