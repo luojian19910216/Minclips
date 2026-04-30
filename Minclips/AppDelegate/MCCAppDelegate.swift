@@ -133,7 +133,7 @@ extension MCCAppDelegate {
 
     private func login(next: (() -> Void)?) {
         if MCCAppConfig.shared.loginStatus {
-            MCCStoreKitTransactionUpdatesObserver.shared.startIfNeeded()
+            MCCStoreKitSubscription.startTransactionUpdatesListeningIfNeeded()
             next?()
             return
         }
@@ -145,7 +145,7 @@ extension MCCAppDelegate {
             } receiveValue: { response in
                 MCCAccountService.shared.updateCurrentUser(response)
                 MCCAppConfig.shared.loginStatus = true
-                MCCStoreKitTransactionUpdatesObserver.shared.startIfNeeded()
+                MCCStoreKitSubscription.startTransactionUpdatesListeningIfNeeded()
                 next?()
             }
             .store(in: &cancellables)

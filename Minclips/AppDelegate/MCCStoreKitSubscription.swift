@@ -5,9 +5,7 @@ import StoreKit
 
 // MARK: - 订阅 / Restore / 服务端核销（billingNotify）
 
-/// StoreKit 2 与各界面订阅、恢复的**唯一**业务入口：`purchase`、`restorePurchases`、`syncBillingWithServer`（`billingNotify` + `finish`）。
-///
-/// **`Transaction.updates`**：由 `MCCStoreKitTransactionUpdatesObserver` 监听；须在登录成功后调用其 `startIfNeeded()`。
+/// StoreKit 2 与各界面订阅、恢复的**唯一**入口：购买/恢复、`billingNotify`、`Transaction.updates`（登录成功后调用 `startTransactionUpdatesListeningIfNeeded()` 一次）。
 public enum MCCStoreKitSubscription {
 
     public enum PurchaseOutcome: Equatable {
@@ -188,5 +186,56 @@ public enum MCCStoreKitSubscription {
             return .failure(.storeUnderlying(m))
         }
         return .success(count)
+    }
+
+    /// 登录成功后调用一次；消费 `Transaction.updates` 并与 `syncBillingWithServer` 对齐。
+    public static func startTransactionUpdatesListeningIfNeeded() {
+        _TransactionUpdatesListening.shared.startIfNeeded()
+    }
+}
+
+// MARK: - Transaction.updates
+
+private final class _TransactionUpdatesListening {
+
+    fileprivate static let shared = _TransactionUpdatesListening()
+
+    private var updatesTask: Task<Void, Never>?
+
+    private init() {}
+
+    fileprivate func startIfNeeded() {
+        guard updatesTask == nil else { return }
+        updatesTask = Task(priority: .utility) { await self.consumeUpdatesLoop() }
+    }
+
+    private func consumeUpdatesLoop() async {
+        for await verification in Transaction.updates {
+            if Task.isCancelled { break }
+            await process(verification)
+        }
+    }
+
+    private func process(_ verification: VerificationResult<Transaction>) async {
+        let txn: Transaction
+        do {
+            txn = try MCCStoreKitSubscription.verifiedTransaction(from: verification)
+        } catch {
+            return
+        }
+        if txn.revocationDate != nil {
+            return
+        }
+        guard MCCStoreKitSubscription.isSupportedPersistentIAP(txn) else { return }
+
+        let pid = txn.productID.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !pid.isEmpty else { return }
+
+        do {
+            try await MCCStoreKitSubscription.syncBillingWithServer(productId: pid, transaction: txn)
+            await txn.finish()
+        } catch {
+            // 失败不 finish；无 Toast。
+        }
     }
 }

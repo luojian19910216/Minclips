@@ -80,10 +80,6 @@
 		F6E991122FA30430002C4F70 /* MCCStoreKitSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E991102FA30430002C4F70 /* MCCStoreKitSubscription.swift */; };
 		F6E991132FA30430002C4F70 /* MCCStoreKitSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E991102FA30430002C4F70 /* MCCStoreKitSubscription.swift */; };
 		F6E991142FA30430002C4F70 /* MCCStoreKitSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E991102FA30430002C4F70 /* MCCStoreKitSubscription.swift */; };
-		F6E990112FA30429002C4F70 /* MCCStoreKitTransactionUpdatesObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E990002FA30429002C4F70 /* MCCStoreKitTransactionUpdatesObserver.swift */; };
-		F6E990122FA30429002C4F70 /* MCCStoreKitTransactionUpdatesObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E990002FA30429002C4F70 /* MCCStoreKitTransactionUpdatesObserver.swift */; };
-		F6E990132FA30429002C4F70 /* MCCStoreKitTransactionUpdatesObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E990002FA30429002C4F70 /* MCCStoreKitTransactionUpdatesObserver.swift */; };
-		F6E990142FA30429002C4F70 /* MCCStoreKitTransactionUpdatesObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E990002FA30429002C4F70 /* MCCStoreKitTransactionUpdatesObserver.swift */; };
 		F65888C92EF5548800A094B5 /* MCCAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C62EF5548800A094B5 /* MCCAppConfig.swift */; };
 		F65888CA2EF5548800A094B5 /* MCCAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C62EF5548800A094B5 /* MCCAppConfig.swift */; };
 		F65889512EF8E26600A094B5 /* MCCAppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65889502EF8E26600A094B5 /* MCCAppRouter.swift */; };
@@ -320,7 +316,6 @@
 		F658866C2EF5475A00A094B5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCAppDelegate.swift; sourceTree = "<group>"; };
 		F6E991102FA30430002C4F70 /* MCCStoreKitSubscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCStoreKitSubscription.swift; sourceTree = "<group>"; };
-		F6E990002FA30429002C4F70 /* MCCStoreKitTransactionUpdatesObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCStoreKitTransactionUpdatesObserver.swift; sourceTree = "<group>"; };
 		F65888C62EF5548800A094B5 /* MCCAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCAppConfig.swift; sourceTree = "<group>"; };
 		F658894E2EF8E05300A094B5 /* Minclips_T.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Minclips_T.entitlements; sourceTree = "<group>"; };
 		F658894F2EF8E06400A094B5 /* Minclips_R.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Minclips_R.entitlements; sourceTree = "<group>"; };
@@ -526,7 +521,6 @@
 				F65888C62EF5548800A094B5 /* MCCAppConfig.swift */,
 				F65889502EF8E26600A094B5 /* MCCAppRouter.swift */,
 				F6E991102FA30430002C4F70 /* MCCStoreKitSubscription.swift */,
-				F6E990002FA30429002C4F70 /* MCCStoreKitTransactionUpdatesObserver.swift */,
 				F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */,
 			);
 			path = AppDelegate;
@@ -1042,7 +1036,6 @@
 				F6D5476B2F9B478A002C4F70 /* MCCSheetController.swift in Sources */,
 				F6D5476C2F9B478A002C4F70 /* MCCViewController.swift in Sources */,
 				F6D548032F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */,
-				F6E990112FA30429002C4F70 /* MCCStoreKitTransactionUpdatesObserver.swift in Sources */,
 				F6E991112FA30430002C4F70 /* MCCStoreKitSubscription.swift in Sources */,
 				F65888C82EF5548800A094B5 /* MCCAppDelegate.swift in Sources */,
 				F614F84F2F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */,
@@ -1106,7 +1099,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F6D5467A2F90B9B8002C4F70 /* MCCAppDelegate.swift in Sources */,
-				F6E990122FA30429002C4F70 /* MCCStoreKitTransactionUpdatesObserver.swift in Sources */,
 				F6E991122FA30430002C4F70 /* MCCStoreKitSubscription.swift in Sources */,
 				F614F8522F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */,
 				F6D547722F9B4796002C4F70 /* MCCBaseView.swift in Sources */,
@@ -1185,7 +1177,6 @@
 				F6D547692F9B478A002C4F70 /* MCCViewController.swift in Sources */,
 				F6D548022F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */,
 				F6D5460F2F90B9B8002C4F70 /* MCCAppDelegate.swift in Sources */,
-				F6E990132FA30429002C4F70 /* MCCStoreKitTransactionUpdatesObserver.swift in Sources */,
 				F6E991132FA30430002C4F70 /* MCCStoreKitSubscription.swift in Sources */,
 				F614F8502F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */,
 				F6D546162F90B9B8002C4F70 /* MCSGuide.swift in Sources */,
@@ -1256,7 +1247,6 @@
 				F6D5476F2F9B478A002C4F70 /* MCCViewController.swift in Sources */,
 				F6D548042F9B478A002C4F70 /* MCCRootTabNavChrome.swift in Sources */,
 				F6D546712F90B9C9002C4F70 /* MCCAppDelegate.swift in Sources */,
-				F6E990142FA30429002C4F70 /* MCCStoreKitTransactionUpdatesObserver.swift in Sources */,
 				F6E991142FA30430002C4F70 /* MCCStoreKitSubscription.swift in Sources */,
 				F614F8512F9B495600A31DB4 /* MCCBaseViewModel.swift in Sources */,
 				F6D546782F90B9C9002C4F70 /* MCSGuide.swift in Sources */,
