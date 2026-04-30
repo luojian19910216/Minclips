@@ -1,6 +1,7 @@
 import UIKit
 import SafariServices
 import QuartzCore
+import StoreKit
 import Common
 import Combine
 import FDFullscreenPopGesture
@@ -19,6 +20,8 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
     /// 目录接口可能从缓存**同一 run loop**内就回调，会抢在首帧布局前关掉骨架，看起来像「再也不出来」。用下次 run + 最短展示时间兜底。
     private static let mcvc_proSkeletonMinDisplay: TimeInterval = 0.15
     private var mcvc_proSkeletonShownAt: CFTimeInterval?
+
+    private var mcvc_storeKitLocalizedPriceByProductId: [String: String] = [:]
 
     public override var transactionStyle: MCETransactionStyle { .bottom }
     
@@ -85,6 +88,9 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
     }
 
     private func mcvc_applyCatalogForUI(_ r: MCSSubscriptionCatalogResponse?) {
+        if MCCNetworkConfig.shared.channel == .develop {
+            mcvc_storeKitLocalizedPriceByProductId = [:]
+        }
         mcvc_lastCatalog = r
         let list = r?.offers.filter { $0.offerCategory == Self.mcvc_proOfferCategory } ?? []
         mcvc_proListOffers = Array(list.reversed())
@@ -96,6 +102,7 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
         mcvc_applyBackFeatureTitles()
         mcvc_applyCTATitle()
         mcvc_reloadProList()
+        mcvc_refreshStoreKitPricesIfNeeded()
         let shownAt = mcvc_proSkeletonShownAt
         mcvc_proSkeletonShownAt = nil
         let minDelay: TimeInterval
@@ -145,10 +152,117 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
         }
     }
 
+    private func mcvc_refreshStoreKitPricesIfNeeded() {
+        guard MCCNetworkConfig.shared.channel == .isolation else { return }
+        let ids = Set(
+            mcvc_proListOffers
+                .map { $0.offerId.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+        )
+        guard !ids.isEmpty else {
+            mcvc_storeKitLocalizedPriceByProductId = [:]
+            return
+        }
+        Task { [weak self] in
+            guard let self else { return }
+            do {
+                let products = try await Product.products(for: Array(ids))
+                var next: [String: String] = [:]
+                for p in products {
+                    next[p.id] = p.displayPrice
+                }
+                await MainActor.run {
+                    self.mcvc_storeKitLocalizedPriceByProductId = next
+                    self.mcvc_reloadProList()
+                }
+            } catch {
+                await MainActor.run {
+                    self.mcvc_storeKitLocalizedPriceByProductId = [:]
+                }
+            }
+        }
+    }
+
     private func mcvc_reloadProList() {
         let n = mcvc_proListOffers.count
         contentView.mcvw_collectionView.isScrollEnabled = n > 3
         contentView.mcvw_collectionView.reloadData()
+    }
+
+    private func mcvc_proPlanPriceLeading(from row: MCSSubscriptionRow) -> String {
+        if MCCNetworkConfig.shared.channel == .develop {
+            return mcvc_proPlanPriceLeadingFromCatalog(from: row)
+        }
+        let pid = row.offerId.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !pid.isEmpty,
+           let localized = mcvc_storeKitLocalizedPriceByProductId[pid],
+           !localized.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return localized
+        }
+        return mcvc_proPlanPriceLeadingFromCatalog(from: row)
+    }
+
+    private func mcvc_proPlanPriceLeadingFromCatalog(from row: MCSSubscriptionRow) -> String {
+        let sign = row.currencySign.trimmingCharacters(in: .whitespacesAndNewlines)
+        let current = row.currentPrice.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !current.isEmpty {
+            return mcvc_proCatalogPriceAppendingCurrencySignIfNeeded(current, sign: sign)
+        }
+        let headline = row.priceHeadline.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !headline.isEmpty {
+            return mcvc_proCatalogPriceAppendingCurrencySignIfNeeded(headline, sign: sign)
+        }
+        let list = row.listPrice.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !list.isEmpty {
+            return mcvc_proCatalogPriceAppendingCurrencySignIfNeeded(list, sign: sign)
+        }
+        let line = row.priceLine.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !line.isEmpty {
+            return mcvc_proCatalogPriceAppendingCurrencySignIfNeeded(line, sign: sign)
+        }
+        return "—"
+    }
+
+    /// Catalog often returns `currentPrice` as a bare number; `currencySign` is the unit (e.g. `$`, `¥`).
+    private func mcvc_proCatalogPriceAppendingCurrencySignIfNeeded(_ value: String, sign: String) -> String {
+        let v = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        let s = sign.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !v.isEmpty else { return v }
+        guard !s.isEmpty else { return v }
+        if v.hasPrefix(s) { return v }
+        if let first = v.unicodeScalars.first, mcvc_proUnicodeScalarLikelyCurrencySymbol(first) {
+            return v
+        }
+        if v.hasPrefix("US$") || v.hasPrefix("HK$") || v.hasPrefix("NT$") {
+            return v
+        }
+        guard mcvc_proCatalogStringLooksLikePlainNumericAmount(v) else { return v }
+        return s + v
+    }
+
+    private func mcvc_proCatalogStringLooksLikePlainNumericAmount(_ v: String) -> Bool {
+        v.range(of: "^[0-9]+([.,][0-9]+)?$", options: .regularExpression) != nil
+    }
+
+    private func mcvc_proUnicodeScalarLikelyCurrencySymbol(_ scalar: Unicode.Scalar) -> Bool {
+        let code = scalar.value
+        switch code {
+        case 0x0024: return true
+        case 0x00A2...0x00A5: return true
+        case 0x058F: return true
+        case 0x060B: return true
+        case 0x09F2...0x09F3: return true
+        case 0x0AF1: return true
+        case 0x0BF9: return true
+        case 0x0E3F: return true
+        case 0x17DB: return true
+        case 0x20A0...0x20C0: return true
+        case 0xA838: return true
+        case 0xFDFC: return true
+        case 0xFE69, 0xFF04, 0xFFE0...0xFFE6: return true
+        case 0x11FDD...0x11FE0: return true
+        default: return false
+        }
     }
 
     @objc private func mcvc_onCTATapped() {}
@@ -178,7 +292,7 @@ extension MCCProController: UICollectionViewDataSource, UICollectionViewDelegate
         c.mcvw_setSelection(indexPath.item == mcvc_selectedOfferIndex)
         let row = mcvc_proListOffers[indexPath.item]
         c.mcvw_titleLabel.text = row.displayName
-        c.mcvw_setRightLine(leading: "$0.00", trailing: "/" + row.planPeriod.rawValue)
+        c.mcvw_setRightLine(leading: mcvc_proPlanPriceLeading(from: row), trailing: "/" + row.planPeriod.rawValue)
         let corner = row.cornerBadge.trimmingCharacters(in: .whitespacesAndNewlines)
         if corner.isEmpty {
             c.mcvw_popularPill.isHidden = true

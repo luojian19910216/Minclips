@@ -30,8 +30,8 @@ public class MCCAppConfig: NSObject {
     
     public var service: String = "https://www.minclips.video/termsofservice.html"
     
-    public var contactEmail: String = ""
+    public var contactEmail: String = "support@minclips.video"
     
-    public var feedback: String = ""
+    public var feedback: String = "https://tally.so/r/441zQd"
     
 }
