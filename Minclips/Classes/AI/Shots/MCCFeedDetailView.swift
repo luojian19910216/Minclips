@@ -607,6 +607,23 @@ public final class MCCFeedDetailView: MCCBaseView {
         }
     }
 
+    public func mcvw_applyPresetGalleryInventoryThumbnails(remoteURLs: [String]) {
+        guard !mcvw_presetGalleryTileWraps.isEmpty else { return }
+        let px = UIScreen.main.scale * 168
+        let thumbPx = CGSize(width: px, height: px)
+        let ctx: [SDWebImageContextOption: Any] = [
+            .imageThumbnailPixelSize: NSValue(cgSize: thumbPx),
+            .imagePreserveAspectRatio: true,
+        ]
+        for (i, wrap) in mcvw_presetGalleryTileWraps.enumerated() {
+            guard i < remoteURLs.count else { continue }
+            let raw = remoteURLs[i].trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !raw.isEmpty, let u = URL(string: raw) else { continue }
+            guard let hintIv = wrap.subviews.compactMap({ $0 as? UIImageView }).first else { continue }
+            hintIv.sd_setImage(with: u, placeholderImage: hintIv.image, options: [], context: ctx)
+        }
+    }
+
     private func mcvw_applyGalleryTileIntrinsicSize(_ v: UIView, width: CGFloat, height: CGFloat) {
         v.snp.makeConstraints { make in
             make.width.equalTo(width)

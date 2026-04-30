@@ -43,21 +43,21 @@ public class MCCTabBarController: UITabBarController {
 
     public lazy var firstVC: MCCShotsController = {
         let vc = MCCShotsController()
-        vc.tabBarItem.image = UIImage(named: "ic_tab_home")?.withRenderingMode(.alwaysTemplate)
+        vc.tabBarItem.image = UIImage(named: "ic_tab_shot")?.withRenderingMode(.alwaysTemplate)
         vc.tabBarItem.title = "Shots"
         return vc
     }()
 
     public lazy var secondVC: MCCToolsController = {
         let vc = MCCToolsController()
-        vc.tabBarItem.image = UIImage(named: "ic_tab_home")?.withRenderingMode(.alwaysTemplate)
+        vc.tabBarItem.image = UIImage(named: "ic_tab_studio")?.withRenderingMode(.alwaysTemplate)
         vc.tabBarItem.title = "Studio"
         return vc
     }()
 
     public lazy var thirdVC: MCCProjectsController = {
         let vc = MCCProjectsController()
-        vc.tabBarItem.image = UIImage(named: "ic_tab_home")?.withRenderingMode(.alwaysTemplate)
+        vc.tabBarItem.image = UIImage(named: "ic_tab_project")?.withRenderingMode(.alwaysTemplate)
         vc.tabBarItem.title = "Projects"
         return vc
     }()

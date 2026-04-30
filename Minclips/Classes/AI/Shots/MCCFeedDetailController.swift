@@ -18,6 +18,8 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     private var mcvc_integralCancellable: AnyCancellable?
     private var mcvc_favoriteCancellable: AnyCancellable?
     private var mcvc_composeSeedCancellable: AnyCancellable?
+    private var mcvc_presetGalleryInventoryCancellable: AnyCancellable?
+    private var mcvc_presetGalleryInventoryGeneration: UInt = 0
     private var mcvc_mp4Player: AVPlayer?
     private var mcvc_mp4PeriodicObserver: Any?
     private var mcvc_mp4EndObserver: NSObjectProtocol?
@@ -55,6 +57,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         mcvc_integralCancellable?.cancel()
         mcvc_favoriteCancellable?.cancel()
         mcvc_composeSeedCancellable?.cancel()
+        mcvc_presetGalleryInventoryCancellable?.cancel()
         mcvc_removeMp4ObserversAndPlayer()
     }
 
@@ -165,6 +168,39 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         mcvc_resizeCharacterSlotImages(count: n)
         mcvc_bindCharacterCircleRemoveButtons()
         mcvc_bindCharacterSlotSelectionGestures()
+        mcvc_fetchPresetGalleryInventoryThumbnails(slotCount: n)
+    }
+
+    private func mcvc_thumbnailURLStringsForImageRuns(_ items: [MCSRunItem]) -> [String] {
+        items.map { row in
+            let a = row.outputCoverThumbUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !a.isEmpty { return a }
+            let b = row.outputCoverImageUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !b.isEmpty { return b }
+            return row.sourceImageUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+    }
+
+    private func mcvc_fetchPresetGalleryInventoryThumbnails(slotCount n: Int) {
+        mcvc_presetGalleryInventoryCancellable?.cancel()
+        mcvc_presetGalleryInventoryGeneration += 1
+        let generation = mcvc_presetGalleryInventoryGeneration
+        guard n >= 1 else { return }
+
+        var request = MCSRunListRequest()
+        request.outputKind = "image"
+        request.itemsPerPage = max(1, min(n, 50))
+
+        mcvc_presetGalleryInventoryCancellable = MCCRunAPIManager.shared.inventory(with: request)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { _ in }, receiveValue: { [weak self] page in
+                guard let self else { return }
+                guard generation == self.mcvc_presetGalleryInventoryGeneration else { return }
+                guard self.contentView.mcvw_presetGalleryTileWraps.count == n else { return }
+                let capped = Array(page.items.prefix(n))
+                let urls = self.mcvc_thumbnailURLStringsForImageRuns(capped)
+                self.contentView.mcvw_applyPresetGalleryInventoryThumbnails(remoteURLs: urls)
+            })
     }
 
     private func mcvc_resizeCharacterSlotImages(count: Int) {

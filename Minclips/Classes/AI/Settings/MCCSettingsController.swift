@@ -58,7 +58,7 @@ public final class MCCSettingsController: MCCViewController<MCCSettingsView, MCC
         .store(in: &cancellables)
 
         v.mcvw_feedbackRow.controlEventPublisher(for: .touchUpInside)
-            .sink { [weak self] in self?.mcvc_openSafariIfPresent(MCVCSettingsURL.feedback) }
+            .sink { [weak self] in self?.mcvc_onFeedbackTapped() }
             .store(in: &cancellables)
         v.mcvw_contactRow.controlEventPublisher(for: .touchUpInside)
             .sink { [weak self] in self?.mcvc_openContactMail() }
@@ -77,16 +77,18 @@ public final class MCCSettingsController: MCCViewController<MCCSettingsView, MCC
         MCCToastManager.showToast("Copied", in: view)
     }
 
-    private func mcvc_openContactMail() {
-        guard let url = URL(string: "mailto:support@miniclips.com?subject=Minclips") else { return }
-        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+    @objc private func mcvc_onFeedbackTapped() {
+        guard let url = URL(string: MCCAppConfig.shared.feedback) else {return}
+        self.present(SFSafariViewController(url: url), animated: true)
     }
-
-    private func mcvc_openSafariIfPresent(_ url: URL?) {
-        guard let url else { return }
-        let sf = SFSafariViewController(url: url)
-        sf.preferredControlTintColor = .white
-        present(sf, animated: true)
+    
+    private func mcvc_openContactMail() {
+        guard
+            let userId = MCCAccountService.shared.currentUser.value?.userId,
+            let urlString = "mailto:\(MCCAppConfig.shared.contactEmail)?subject=User+Feedback+by+\(userId)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+            let url = URL(string: urlString)
+        else {return}
+        self.present(SFSafariViewController(url: url), animated: true)
     }
     
     @objc private func mcvc_onTermsTapped() {
@@ -99,10 +101,4 @@ public final class MCCSettingsController: MCCViewController<MCCSettingsView, MCC
         self.present(SFSafariViewController(url: url), animated: true)
     }
 
-}
-
-private enum MCVCSettingsURL {
-    static let termsOfService: URL? = nil
-    static let privacyPolicy: URL? = nil
-    static let feedback: URL? = nil
 }
