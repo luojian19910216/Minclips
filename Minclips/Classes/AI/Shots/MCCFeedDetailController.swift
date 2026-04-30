@@ -18,8 +18,8 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
     private var mcvc_integralCancellable: AnyCancellable?
     private var mcvc_favoriteCancellable: AnyCancellable?
     private var mcvc_composeSeedCancellable: AnyCancellable?
-    private var mcvc_presetGalleryInventoryCancellable: AnyCancellable?
-    private var mcvc_presetGalleryInventoryGeneration: UInt = 0
+    private var mcvc_imageWorkInventoryCancellable: AnyCancellable?
+    private var mcvc_imageWorkInventoryGeneration: UInt = 0
     private var mcvc_mp4Player: AVPlayer?
     private var mcvc_mp4PeriodicObserver: Any?
     private var mcvc_mp4EndObserver: NSObjectProtocol?
@@ -34,6 +34,9 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
     private var mcvc_characterCircleImages: [UIImage?] = [nil]
     private var mcvc_characterRemoteImageURLs: [String?] = [nil]
+
+    /// Mirrors `inventory` covers shown after Recent (same index order).
+    private var mcvc_imageWorkPickCoverURLs: [String] = []
 
     /// 当前选中的上传槽（蓝框）；默认 0，点击图片框或头像圈可切换。
     private var mcvc_activeCharacterSlotIndex: Int = 0
@@ -57,7 +60,7 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         mcvc_integralCancellable?.cancel()
         mcvc_favoriteCancellable?.cancel()
         mcvc_composeSeedCancellable?.cancel()
-        mcvc_presetGalleryInventoryCancellable?.cancel()
+        mcvc_imageWorkInventoryCancellable?.cancel()
         mcvc_removeMp4ObserversAndPlayer()
     }
 
@@ -150,6 +153,9 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         mcvc_bindCharacterCircleRemoveButtons()
         mcvc_refreshContinueButtonState()
         mcvc_bindCharacterSlotSelectionGestures()
+        v.mcvw_onImageWorkPickTileTapped = { [weak self] index in
+            self?.mcvc_onImageWorkPickTileTapped(index: index)
+        }
     }
 
     private func mcvc_bindCharacterCircleRemoveButtons() {
@@ -162,44 +168,39 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
 
     private func mcvc_applyPresetGallerySlotsFromFeedItem() {
         let pg = mcvc_feedItem?.presetGallery ?? []
-        let n = max(1, pg.count)
+        let circleCount = max(1, pg.count)
         mcvc_removeCharacterSelectionGestures()
-        contentView.mcvw_reloadPresetGallerySlotUI(slotCount: n, entries: pg)
-        mcvc_resizeCharacterSlotImages(count: n)
+        mcvc_imageWorkPickCoverURLs = []
+        contentView.mcvw_reloadCharacterCircleSlots(slotCount: circleCount)
+        contentView.mcvw_setImageWorkPickTileCoverURLs([])
+        mcvc_resizeCharacterSlotImages(count: circleCount)
         mcvc_bindCharacterCircleRemoveButtons()
         mcvc_bindCharacterSlotSelectionGestures()
-        mcvc_fetchPresetGalleryInventoryThumbnails(slotCount: n)
+        mcvc_fetchImageWorkInventoryThumbnails()
     }
 
     private func mcvc_thumbnailURLStringsForImageRuns(_ items: [MCSRunItem]) -> [String] {
-        items.map { row in
-            let a = row.outputCoverThumbUrl.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !a.isEmpty { return a }
-            let b = row.outputCoverImageUrl.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !b.isEmpty { return b }
-            return row.sourceImageUrl.trimmingCharacters(in: .whitespacesAndNewlines)
-        }
+        items.map { $0.outputCoverImageUrl.trimmingCharacters(in: .whitespacesAndNewlines) }
     }
 
-    private func mcvc_fetchPresetGalleryInventoryThumbnails(slotCount n: Int) {
-        mcvc_presetGalleryInventoryCancellable?.cancel()
-        mcvc_presetGalleryInventoryGeneration += 1
-        let generation = mcvc_presetGalleryInventoryGeneration
-        guard n >= 1 else { return }
+    private func mcvc_fetchImageWorkInventoryThumbnails() {
+        mcvc_imageWorkInventoryCancellable?.cancel()
+        mcvc_imageWorkInventoryGeneration += 1
+        let generation = mcvc_imageWorkInventoryGeneration
 
         var request = MCSRunListRequest()
         request.outputKind = "image"
-        request.itemsPerPage = max(1, min(n, 50))
+        request.itemsPerPage = 20
 
-        mcvc_presetGalleryInventoryCancellable = MCCRunAPIManager.shared.inventory(with: request)
+        mcvc_imageWorkInventoryCancellable = MCCRunAPIManager.shared.inventory(with: request)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { _ in }, receiveValue: { [weak self] page in
                 guard let self else { return }
-                guard generation == self.mcvc_presetGalleryInventoryGeneration else { return }
-                guard self.contentView.mcvw_presetGalleryTileWraps.count == n else { return }
-                let capped = Array(page.items.prefix(n))
+                guard generation == self.mcvc_imageWorkInventoryGeneration else { return }
+                let capped = Array(page.items.prefix(20))
                 let urls = self.mcvc_thumbnailURLStringsForImageRuns(capped)
-                self.contentView.mcvw_applyPresetGalleryInventoryThumbnails(remoteURLs: urls)
+                self.mcvc_imageWorkPickCoverURLs = urls
+                self.contentView.mcvw_setImageWorkPickTileCoverURLs(urls)
             })
     }
 
@@ -838,15 +839,40 @@ public final class MCCFeedDetailController: MCCViewController<MCCFeedDetailView,
         mcvc_syncCharacterCirclesAppearance()
     }
 
+    private func mcvc_offerRemoteCoverURLToActiveCharacterSlot(_ remoteCoverURL: String) {
+        let trimmed = remoteCoverURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        guard !mcvc_characterCircleImages.isEmpty else { return }
+        let target = mcvc_clampCharacterSlotIndex(mcvc_activeCharacterSlotIndex)
+        mcvc_characterCircleImages[target] = nil
+        mcvc_characterRemoteImageURLs[target] = trimmed
+        mcvc_advanceActiveSlotAfterFill(filledAt: target)
+        mcvc_syncCharacterCirclesAppearance()
+    }
+
+    private func mcvc_onImageWorkPickTileTapped(index: Int) {
+        guard mcvc_imageWorkPickCoverURLs.indices.contains(index) else { return }
+        let trimmed = mcvc_imageWorkPickCoverURLs[index].trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        mcvc_offerRemoteCoverURLToActiveCharacterSlot(trimmed)
+    }
+
+    private func mcvc_characterSlotIsVacant(at index: Int) -> Bool {
+        guard mcvc_characterCircleImages.indices.contains(index) else { return true }
+        let hasPic = mcvc_characterCircleImages[index] != nil
+        let url = mcvc_characterRemoteImageURLs[index]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return !hasPic && url.isEmpty
+    }
+
     private func mcvc_advanceActiveSlotAfterFill(filledAt index: Int) {
         guard !mcvc_characterCircleImages.isEmpty else { return }
         let n = mcvc_characterCircleImages.count
-        guard mcvc_characterCircleImages.contains(where: { $0 == nil }) else { return }
-        if index + 1 < n, let j = (index + 1 ..< n).first(where: { mcvc_characterCircleImages[$0] == nil }) {
+        guard (0 ..< n).contains(where: { mcvc_characterSlotIsVacant(at: $0) }) else { return }
+        if index + 1 < n, let j = (index + 1 ..< n).first(where: { mcvc_characterSlotIsVacant(at: $0) }) {
             mcvc_activeCharacterSlotIndex = j
             return
         }
-        if let j = mcvc_characterCircleImages.indices.first(where: { mcvc_characterCircleImages[$0] == nil }) {
+        if let j = mcvc_characterCircleImages.indices.first(where: { mcvc_characterSlotIsVacant(at: $0) }) {
             mcvc_activeCharacterSlotIndex = j
         }
     }

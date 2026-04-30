@@ -294,7 +294,10 @@ public final class MCCFeedDetailView: MCCBaseView {
 
     public private(set) var mcvw_characterCircleSlots: [MCCFeedDetailCharacterAvatarSlotView] = []
 
-    public private(set) var mcvw_presetGalleryTileWraps: [UIView] = []
+    public private(set) var mcvw_imageWorkPickTileWraps: [UIView] = []
+
+    /// Index aligns with URLs passed into `mcvw_setImageWorkPickTileCoverURLs` (order after Recent).
+    public var mcvw_onImageWorkPickTileTapped: ((Int) -> Void)?
 
     private let mcvw_characterSlotsScrollView: UIScrollView = {
         let s = UIScrollView()
@@ -441,7 +444,8 @@ public final class MCCFeedDetailView: MCCBaseView {
         mcvw_characterSlotsStack.addArrangedSubview(album)
         mcvw_characterSlotsStack.addArrangedSubview(mcvw_characterRecentTile)
 
-        mcvw_reloadPresetGallerySlotUI(slotCount: 1, entries: [])
+        mcvw_reloadCharacterCircleSlots(slotCount: 1)
+        mcvw_setImageWorkPickTileCoverURLs([])
 
         mcvw_characterSlotsScrollView.addSubview(mcvw_characterSlotsStack)
         mcvw_characterSlotsStack.snp.makeConstraints { make in
@@ -536,11 +540,8 @@ public final class MCCFeedDetailView: MCCBaseView {
         }
     }
 
-    public func mcvw_reloadPresetGallerySlotUI(slotCount raw: Int, entries: [MCSFeedPresetGalleryEntry]) {
-        let tileWidth: CGFloat = 72
-        let tileHeight: CGFloat = 96
+    public func mcvw_reloadCharacterCircleSlots(slotCount raw: Int) {
         let n = max(1, raw)
-
         mcvw_characterCirclesStack.arrangedSubviews.forEach {
             mcvw_characterCirclesStack.removeArrangedSubview($0)
             $0.removeFromSuperview()
@@ -552,14 +553,26 @@ public final class MCCFeedDetailView: MCCBaseView {
             built.append(slot)
         }
         mcvw_characterCircleSlots = built
+    }
 
-        for w in mcvw_presetGalleryTileWraps {
+    public func mcvw_setImageWorkPickTileCoverURLs(_ remoteURLs: [String]) {
+        let tileWidth: CGFloat = 72
+        let tileHeight: CGFloat = 96
+
+        for w in mcvw_imageWorkPickTileWraps {
             mcvw_characterSlotsStack.removeArrangedSubview(w)
             w.removeFromSuperview()
         }
-        mcvw_presetGalleryTileWraps.removeAll()
+        mcvw_imageWorkPickTileWraps.removeAll()
 
-        for i in 0 ..< n {
+        let px = UIScreen.main.scale * 192
+        let thumbPx = CGSize(width: px, height: px)
+        let ctx: [SDWebImageContextOption: Any] = [
+            .imageThumbnailPixelSize: NSValue(cgSize: thumbPx),
+            .imagePreserveAspectRatio: true,
+        ]
+
+        for (tileIndex, raw) in remoteURLs.enumerated() {
             let wrap = UIView()
             wrap.clipsToBounds = true
             wrap.layer.cornerRadius = 10
@@ -571,56 +584,24 @@ public final class MCCFeedDetailView: MCCBaseView {
             hintIv.contentMode = .scaleAspectFill
             hintIv.clipsToBounds = true
             hintIv.backgroundColor = UIColor.white.withAlphaComponent(0.04)
+            hintIv.isUserInteractionEnabled = false
 
-            let caption = UILabel()
-            caption.font = .systemFont(ofSize: 11, weight: .regular)
-            caption.textColor = UIColor.white.withAlphaComponent(0.72)
-            caption.textAlignment = .center
-            caption.numberOfLines = 2
-            if i < entries.count {
-                let t = entries[i].presetDescription.trimmingCharacters(in: .whitespacesAndNewlines)
-                caption.text = t.isEmpty ? nil : t
-            } else {
-                caption.text = nil
-            }
-            caption.isHidden = (caption.text?.isEmpty ?? true)
+            wrap.tag = tileIndex
+            wrap.isUserInteractionEnabled = true
+            let tap = UITapGestureRecognizer(target: self, action: #selector(mcvw_handleImageWorkPickTileTap(_:)))
+            wrap.addGestureRecognizer(tap)
 
             wrap.addSubview(hintIv)
-            wrap.addSubview(caption)
             hintIv.snp.makeConstraints { $0.edges.equalToSuperview() }
-            caption.snp.makeConstraints { make in
-                make.leading.trailing.equalToSuperview().inset(4)
-                make.bottom.equalToSuperview().offset(-8)
-            }
-
-            if i < entries.count {
-                let libs = entries[i].imageLibrary
-                let rawUrl = libs.first?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-                if !rawUrl.isEmpty, let u = URL(string: rawUrl) {
-                    hintIv.sd_setImage(with: u, placeholderImage: nil)
-                }
-            }
 
             mcvw_applyGalleryTileIntrinsicSize(wrap, width: tileWidth, height: tileHeight)
             mcvw_characterSlotsStack.addArrangedSubview(wrap)
-            mcvw_presetGalleryTileWraps.append(wrap)
-        }
-    }
+            mcvw_imageWorkPickTileWraps.append(wrap)
 
-    public func mcvw_applyPresetGalleryInventoryThumbnails(remoteURLs: [String]) {
-        guard !mcvw_presetGalleryTileWraps.isEmpty else { return }
-        let px = UIScreen.main.scale * 168
-        let thumbPx = CGSize(width: px, height: px)
-        let ctx: [SDWebImageContextOption: Any] = [
-            .imageThumbnailPixelSize: NSValue(cgSize: thumbPx),
-            .imagePreserveAspectRatio: true,
-        ]
-        for (i, wrap) in mcvw_presetGalleryTileWraps.enumerated() {
-            guard i < remoteURLs.count else { continue }
-            let raw = remoteURLs[i].trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !raw.isEmpty, let u = URL(string: raw) else { continue }
-            guard let hintIv = wrap.subviews.compactMap({ $0 as? UIImageView }).first else { continue }
-            hintIv.sd_setImage(with: u, placeholderImage: hintIv.image, options: [], context: ctx)
+            let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmed.isEmpty, let u = URL(string: trimmed) {
+                hintIv.sd_setImage(with: u, placeholderImage: nil, options: [], context: ctx)
+            }
         }
     }
 
@@ -631,7 +612,13 @@ public final class MCCFeedDetailView: MCCBaseView {
         }
     }
 
-    /// 仅头像圈有高亮选中；底部预设参考图为固定描边。
+    @objc
+    private func mcvw_handleImageWorkPickTileTap(_ g: UITapGestureRecognizer) {
+        guard let v = g.view else { return }
+        mcvw_onImageWorkPickTileTapped?(v.tag)
+    }
+
+    /// Avatar slots show the active selection highlight; image-work tiles use a fixed border style.
     public func mcvw_applyCharacterSlotsSelection(activeSlotIndex: Int) {
         let n = mcvw_characterCircleSlots.count
         guard n > 0 else { return }
