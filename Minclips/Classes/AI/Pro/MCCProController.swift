@@ -1,4 +1,5 @@
 import UIKit
+import SafariServices
 import QuartzCore
 import Common
 import Combine
@@ -154,9 +155,15 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
 
     @objc private func mcvc_onRestoreTapped() {}
 
-    @objc private func mcvc_onTermsTapped() {}
+    @objc private func mcvc_onTermsTapped() {
+        guard let url = URL(string: MCCAppConfig.shared.service) else {return}
+        self.present(SFSafariViewController(url: url), animated: true)
+    }
 
-    @objc private func mcvc_onPolicyTapped() {}
+    @objc private func mcvc_onPolicyTapped() {
+        guard let url = URL(string: MCCAppConfig.shared.policy) else {return}
+        self.present(SFSafariViewController(url: url), animated: true)
+    }
 
 }
 

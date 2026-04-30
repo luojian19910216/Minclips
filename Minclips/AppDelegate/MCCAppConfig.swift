@@ -25,5 +25,13 @@ public class MCCAppConfig: NSObject {
 
     @MCCUserDefaultsPublished(key: "guide", default: false)
     public var guideFlag: Bool
-
+    
+    public var policy: String = "https://www.minclips.video/privacypolicy.html"
+    
+    public var service: String = "https://www.minclips.video/termsofservice.html"
+    
+    public var contactEmail: String = ""
+    
+    public var feedback: String = ""
+    
 }

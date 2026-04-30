@@ -64,10 +64,10 @@ public final class MCCSettingsController: MCCViewController<MCCSettingsView, MCC
             .sink { [weak self] in self?.mcvc_openContactMail() }
             .store(in: &cancellables)
         v.mcvw_termsRow.controlEventPublisher(for: .touchUpInside)
-            .sink { [weak self] in self?.mcvc_openSafariIfPresent(MCVCSettingsURL.termsOfService) }
+            .sink { [weak self] in self?.mcvc_onTermsTapped() }
             .store(in: &cancellables)
         v.mcvw_privacyRow.controlEventPublisher(for: .touchUpInside)
-            .sink { [weak self] in self?.mcvc_openSafariIfPresent(MCVCSettingsURL.privacyPolicy) }
+            .sink { [weak self] in self?.mcvc_onPolicyTapped() }
             .store(in: &cancellables)
     }
 
@@ -87,6 +87,16 @@ public final class MCCSettingsController: MCCViewController<MCCSettingsView, MCC
         let sf = SFSafariViewController(url: url)
         sf.preferredControlTintColor = .white
         present(sf, animated: true)
+    }
+    
+    @objc private func mcvc_onTermsTapped() {
+        guard let url = URL(string: MCCAppConfig.shared.service) else {return}
+        self.present(SFSafariViewController(url: url), animated: true)
+    }
+
+    @objc private func mcvc_onPolicyTapped() {
+        guard let url = URL(string: MCCAppConfig.shared.policy) else {return}
+        self.present(SFSafariViewController(url: url), animated: true)
     }
 
 }
