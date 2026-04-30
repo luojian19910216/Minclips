@@ -133,6 +133,7 @@ extension MCCAppDelegate {
 
     private func login(next: (() -> Void)?) {
         if MCCAppConfig.shared.loginStatus {
+            MCCStoreKitTransactionUpdatesObserver.shared.startIfNeeded()
             next?()
             return
         }
@@ -144,6 +145,7 @@ extension MCCAppDelegate {
             } receiveValue: { response in
                 MCCAccountService.shared.updateCurrentUser(response)
                 MCCAppConfig.shared.loginStatus = true
+                MCCStoreKitTransactionUpdatesObserver.shared.startIfNeeded()
                 next?()
             }
             .store(in: &cancellables)
@@ -180,14 +182,14 @@ extension MCCAppDelegate {
         alert.overrideUserInterfaceStyle = .dark
         alert.setValue({
             let att: NSMutableAttributedString = .init()
-            att.append(.init(string: "程序初始化失败", attributes: [
+            att.append(.init(string: "Initialization failed", attributes: [
                 .font: UIFont.systemFont(ofSize: 16, weight: .bold),
                 .foregroundColor: UIColor.white
             ]))
             att.append(.init(string: "\n \n", attributes: [
                 .font: UIFont.systemFont(ofSize: 1)
             ]))
-            att.append(.init(string: "请检查网络后重试", attributes: [
+            att.append(.init(string: "Check your connection and try again.", attributes: [
                 .font: UIFont.systemFont(ofSize: 12, weight: .medium),
                 .foregroundColor: UIColor.white.withAlphaComponent(0.6)
             ]))
@@ -202,7 +204,7 @@ extension MCCAppDelegate {
             return att
         }(), forKey: "attributedMessage")
         alert.addAction({
-            let action = UIAlertAction(title: "重新加载", style: .default) { [weak self] _ in
+            let action = UIAlertAction(title: "Retry", style: .default) { [weak self] _ in
                 self?.loadData()
             }
             action.setValue(UIColor.white, forKey: "_titleTextColor")

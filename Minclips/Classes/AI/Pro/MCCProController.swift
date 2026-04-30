@@ -23,6 +23,10 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
 
     private var mcvc_storeKitLocalizedPriceByProductId: [String: String] = [:]
 
+    private var mcvc_storeKitProductsByProductId: [String: Product] = [:]
+
+    private var mcvc_subscriptionPipelineBusy = false
+
     public override var transactionStyle: MCETransactionStyle { .bottom }
     
     public override func mcvc_needLeftBarButtonItem() -> Bool { false }
@@ -90,6 +94,7 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
     private func mcvc_applyCatalogForUI(_ r: MCSSubscriptionCatalogResponse?) {
         if MCCNetworkConfig.shared.channel == .develop {
             mcvc_storeKitLocalizedPriceByProductId = [:]
+            mcvc_storeKitProductsByProductId = [:]
         }
         mcvc_lastCatalog = r
         let list = r?.offers.filter { $0.offerCategory == Self.mcvc_proOfferCategory } ?? []
@@ -167,17 +172,21 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
             guard let self else { return }
             do {
                 let products = try await Product.products(for: Array(ids))
-                var next: [String: String] = [:]
+                var nextPrices: [String: String] = [:]
+                var nextProducts: [String: Product] = [:]
                 for p in products {
-                    next[p.id] = p.displayPrice
+                    nextPrices[p.id] = p.displayPrice
+                    nextProducts[p.id] = p
                 }
                 await MainActor.run {
-                    self.mcvc_storeKitLocalizedPriceByProductId = next
+                    self.mcvc_storeKitLocalizedPriceByProductId = nextPrices
+                    self.mcvc_storeKitProductsByProductId = nextProducts
                     self.mcvc_reloadProList()
                 }
             } catch {
                 await MainActor.run {
                     self.mcvc_storeKitLocalizedPriceByProductId = [:]
+                    self.mcvc_storeKitProductsByProductId = [:]
                 }
             }
         }
@@ -265,9 +274,89 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
         }
     }
 
-    @objc private func mcvc_onCTATapped() {}
+    @MainActor
+    private func mcvc_runPurchasePipeline() async {
+        guard !mcvc_subscriptionPipelineBusy else { return }
+        guard mcvc_proListOffers.indices.contains(mcvc_selectedOfferIndex) else { return }
+        let pid = mcvc_proListOffers[mcvc_selectedOfferIndex].offerId.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !pid.isEmpty else {
+            MCCToastManager.showToast("Plan unavailable.", in: view)
+            return
+        }
+        mcvc_subscriptionPipelineBusy = true
+        mcvc_applySubscriptionChromeBusy(true)
+        MCCToastManager.showHUD(in: view)
+        defer {
+            mcvc_subscriptionPipelineBusy = false
+            mcvc_applySubscriptionChromeBusy(false)
+        }
+        switch await MCCStoreKitSubscription.purchase(productId: pid) {
+        case .success(.activated):
+            MCCToastManager.showToast("Subscription activated.", in: view)
+            mcvc_popIfMembershipActive()
+        case .success(.userCancelled):
+            MCCToastManager.hide()
+        case .success(.pendingApproval):
+            MCCToastManager.showToast("Purchase is pending approval.", in: view)
+        case .success(.unrecognizedPurchaseResult):
+            MCCToastManager.hide()
+        case .failure(let err):
+            MCCToastManager.showToast(err.userFacingMessage, in: view)
+        }
+    }
 
-    @objc private func mcvc_onRestoreTapped() {}
+    @MainActor
+    private func mcvc_runRestorePipeline() async {
+        guard !mcvc_subscriptionPipelineBusy else { return }
+        mcvc_subscriptionPipelineBusy = true
+        mcvc_applySubscriptionChromeBusy(true)
+        MCCToastManager.showHUD(in: view)
+        defer {
+            mcvc_subscriptionPipelineBusy = false
+            mcvc_applySubscriptionChromeBusy(false)
+        }
+        let catalogIds = Set(
+            mcvc_proListOffers.map { $0.offerId.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+        )
+        let filterIds: Set<String>? = {
+            let s = catalogIds
+            return s.isEmpty ? nil : s
+        }()
+        switch await MCCStoreKitSubscription.restorePurchases(filterProductIds: filterIds) {
+        case .success(let n):
+            if n > 0 {
+                MCCToastManager.showToast("Purchases restored.", in: view)
+                mcvc_popIfMembershipActive()
+            } else {
+                MCCToastManager.showToast("No purchases to restore.", in: view)
+            }
+        case .failure(let err):
+            MCCToastManager.showToast(err.userFacingMessage, in: view)
+        }
+    }
+
+    private func mcvc_applySubscriptionChromeBusy(_ busy: Bool) {
+        contentView.mcvw_ctaButton.isUserInteractionEnabled = !busy
+        contentView.mcvw_restoreButton.isUserInteractionEnabled = !busy
+    }
+
+    private func mcvc_popIfMembershipActive() {
+        if MCCAccountService.shared.currentUser.value?.membershipActive == true {
+            navigationController?.popViewController(animated: true)
+        }
+    }
+
+    @objc private func mcvc_onCTATapped() {
+        Task { @MainActor in
+            await mcvc_runPurchasePipeline()
+        }
+    }
+
+    @objc private func mcvc_onRestoreTapped() {
+        Task { @MainActor in
+            await mcvc_runRestorePipeline()
+        }
+    }
 
     @objc private func mcvc_onTermsTapped() {
         guard let url = URL(string: MCCAppConfig.shared.service) else {return}
@@ -280,6 +369,7 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
     }
 
 }
+
 
 extension MCCProController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
 
