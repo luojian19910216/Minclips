@@ -18,6 +18,7 @@
 		03F019692F8CF6E90096831D /* MCSGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F019672F8CF6E90096831D /* MCSGuide.swift */; };
 		686EBC214DA29B9D78E427C8 /* Pods_Minclips_R.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88268EC85C6220BF5E9A10ED /* Pods_Minclips_R.framework */; };
 		959A695D1D1E2D4AA7550A53 /* Pods_Minclips_P.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0335A246D2DC973F502DDD40 /* Pods_Minclips_P.framework */; };
+		A02195C82FA361DE005E9325 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02195C72FA361DE005E9325 /* StoreKit.framework */; };
 		A0F7900102FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */; };
 		A0F7900202FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */; };
 		A0F7900302FD000100AA0001 /* MCCStoryClipsComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */; };
@@ -76,10 +77,6 @@
 		F65886732EF5475A00A094B5 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F65886652EF5475A00A094B5 /* Images.xcassets */; };
 		F65886742EF5475A00A094B5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F65886672EF5475A00A094B5 /* LaunchScreen.storyboard */; };
 		F65888C82EF5548800A094B5 /* MCCAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */; };
-		F6E991112FA30430002C4F70 /* MCCStoreKitSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E991102FA30430002C4F70 /* MCCStoreKitSubscription.swift */; };
-		F6E991122FA30430002C4F70 /* MCCStoreKitSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E991102FA30430002C4F70 /* MCCStoreKitSubscription.swift */; };
-		F6E991132FA30430002C4F70 /* MCCStoreKitSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E991102FA30430002C4F70 /* MCCStoreKitSubscription.swift */; };
-		F6E991142FA30430002C4F70 /* MCCStoreKitSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E991102FA30430002C4F70 /* MCCStoreKitSubscription.swift */; };
 		F65888C92EF5548800A094B5 /* MCCAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C62EF5548800A094B5 /* MCCAppConfig.swift */; };
 		F65888CA2EF5548800A094B5 /* MCCAppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65888C62EF5548800A094B5 /* MCCAppConfig.swift */; };
 		F65889512EF8E26600A094B5 /* MCCAppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65889502EF8E26600A094B5 /* MCCAppRouter.swift */; };
@@ -279,6 +276,10 @@
 		F6E3C1172FC2000002C4F70 /* MCCListItemImageTopFadeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3C1152FC2000002C4F70 /* MCCListItemImageTopFadeView.swift */; };
 		F6E3C1182FC2000002C4F70 /* MCCListItemImageTopFadeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3C1152FC2000002C4F70 /* MCCListItemImageTopFadeView.swift */; };
 		F6E3C1192FC2000002C4F70 /* MCCListItemImageTopFadeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E3C1152FC2000002C4F70 /* MCCListItemImageTopFadeView.swift */; };
+		F6E991112FA30430002C4F70 /* MCCStoreKitSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E991102FA30430002C4F70 /* MCCStoreKitSubscription.swift */; };
+		F6E991122FA30430002C4F70 /* MCCStoreKitSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E991102FA30430002C4F70 /* MCCStoreKitSubscription.swift */; };
+		F6E991132FA30430002C4F70 /* MCCStoreKitSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E991102FA30430002C4F70 /* MCCStoreKitSubscription.swift */; };
+		F6E991142FA30430002C4F70 /* MCCStoreKitSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E991102FA30430002C4F70 /* MCCStoreKitSubscription.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -294,6 +295,7 @@
 		88268EC85C6220BF5E9A10ED /* Pods_Minclips_R.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Minclips_R.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B54C93040CA0719D543B830 /* Pods-Minclips_D.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_D.debug.xcconfig"; path = "Target Support Files/Pods-Minclips_D/Pods-Minclips_D.debug.xcconfig"; sourceTree = "<group>"; };
 		9777C1A4F928B398B2C962C7 /* Pods-Minclips_R.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_R.debug.xcconfig"; path = "Target Support Files/Pods-Minclips_R/Pods-Minclips_R.debug.xcconfig"; sourceTree = "<group>"; };
+		A02195C72FA361DE005E9325 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		A0F7902102FD000100AA0001 /* MCCStoryClipsComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCStoryClipsComposerView.swift; sourceTree = "<group>"; };
 		A0F7902132FD000100AA0002 /* MCCStoryClipsComposerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCStoryClipsComposerController.swift; sourceTree = "<group>"; };
 		A0F7902152FD000100AA0003 /* MCCCreatePromptFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCCreatePromptFlowView.swift; sourceTree = "<group>"; };
@@ -315,7 +317,6 @@
 		F65886662EF5475A00A094B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F658866C2EF5475A00A094B5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F65888C52EF5548800A094B5 /* MCCAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCAppDelegate.swift; sourceTree = "<group>"; };
-		F6E991102FA30430002C4F70 /* MCCStoreKitSubscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCStoreKitSubscription.swift; sourceTree = "<group>"; };
 		F65888C62EF5548800A094B5 /* MCCAppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCAppConfig.swift; sourceTree = "<group>"; };
 		F658894E2EF8E05300A094B5 /* Minclips_T.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Minclips_T.entitlements; sourceTree = "<group>"; };
 		F658894F2EF8E06400A094B5 /* Minclips_R.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Minclips_R.entitlements; sourceTree = "<group>"; };
@@ -366,6 +367,7 @@
 		F6E3B1012FC1000002C4F70 /* MCCGradientHomeSkeletonOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCGradientHomeSkeletonOverlay.swift; sourceTree = "<group>"; };
 		F6E3C1102FC2000002C4F70 /* MCCShotsWaterfallLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCShotsWaterfallLayout.swift; sourceTree = "<group>"; };
 		F6E3C1152FC2000002C4F70 /* MCCListItemImageTopFadeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCListItemImageTopFadeView.swift; sourceTree = "<group>"; };
+		F6E991102FA30430002C4F70 /* MCCStoreKitSubscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCStoreKitSubscription.swift; sourceTree = "<group>"; };
 		F72C010043D4413B9E5D4761 /* Pods-Minclips_D.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_D.release.xcconfig"; path = "Target Support Files/Pods-Minclips_D/Pods-Minclips_D.release.xcconfig"; sourceTree = "<group>"; };
 		FD04B3C983B934D49261DA0A /* Pods-Minclips_P.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Minclips_P.debug.xcconfig"; path = "Target Support Files/Pods-Minclips_P/Pods-Minclips_P.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -384,6 +386,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				686EBC214DA29B9D78E427C8 /* Pods_Minclips_R.framework in Frameworks */,
+				A02195C82FA361DE005E9325 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -472,6 +475,7 @@
 		B0D36159DDD01BDC90144D9D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A02195C72FA361DE005E9325 /* StoreKit.framework */,
 				413CC65523E70A841D7E6C8A /* Pods_Minclips_D.framework */,
 				0335A246D2DC973F502DDD40 /* Pods_Minclips_P.framework */,
 				88268EC85C6220BF5E9A10ED /* Pods_Minclips_R.framework */,
@@ -1357,7 +1361,8 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1405,7 +1410,8 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1571,16 +1577,18 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Minclips/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Minclips;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Choose a photo to personalize your story and for quick access to recent picks later.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.02.00;
+				MARKETING_VERSION = 1.00.00;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zhanqi.minclips;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -1620,16 +1628,18 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Minclips/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Minclips;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Choose a photo to personalize your story and for quick access to recent picks later.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.02.00;
+				MARKETING_VERSION = 1.00.00;
 				PRODUCT_BUNDLE_IDENTIFIER = com.zhanqi.minclips;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -1671,7 +1681,8 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1719,7 +1730,8 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1767,7 +1779,8 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1815,7 +1828,8 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
