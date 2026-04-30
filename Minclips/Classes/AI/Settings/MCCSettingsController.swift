@@ -88,7 +88,7 @@ public final class MCCSettingsController: MCCViewController<MCCSettingsView, MCC
             let urlString = "mailto:\(MCCAppConfig.shared.contactEmail)?subject=User+Feedback+by+\(userId)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
             let url = URL(string: urlString)
         else {return}
-        self.present(SFSafariViewController(url: url), animated: true)
+        UIApplication.shared.open(url)
     }
     
     @objc private func mcvc_onTermsTapped() {
