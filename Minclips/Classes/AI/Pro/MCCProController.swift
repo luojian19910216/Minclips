@@ -187,6 +187,7 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
                 await MainActor.run {
                     self.mcvc_storeKitLocalizedPriceByProductId = [:]
                     self.mcvc_storeKitProductsByProductId = [:]
+                    self.mcvc_reloadProList()
                 }
             }
         }
@@ -198,17 +199,20 @@ public final class MCCProController: MCCViewController<MCCProView, MCCEmptyViewM
         contentView.mcvw_collectionView.reloadData()
     }
 
+    /// Isolation 下列表价仅来自 StoreKit；未拉到 `displayPrice` 时占位，不回落目录价。
+    private static let mcvc_proStoreKitPricePlaceholder = "-.--"
+
     private func mcvc_proPlanPriceLeading(from row: MCSSubscriptionRow) -> String {
         if MCCNetworkConfig.shared.channel == .develop {
             return mcvc_proPlanPriceLeadingFromCatalog(from: row)
         }
         let pid = row.offerId.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !pid.isEmpty,
-           let localized = mcvc_storeKitLocalizedPriceByProductId[pid],
-           !localized.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        guard !pid.isEmpty else { return Self.mcvc_proStoreKitPricePlaceholder }
+        let localized = mcvc_storeKitLocalizedPriceByProductId[pid]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if !localized.isEmpty {
             return localized
         }
-        return mcvc_proPlanPriceLeadingFromCatalog(from: row)
+        return Self.mcvc_proStoreKitPricePlaceholder
     }
 
     private func mcvc_proPlanPriceLeadingFromCatalog(from row: MCSSubscriptionRow) -> String {

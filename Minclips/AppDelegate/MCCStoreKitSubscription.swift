@@ -5,7 +5,7 @@ import StoreKit
 
 // MARK: - 订阅 / Restore / 服务端核销（billingNotify）
 
-/// StoreKit 2 与各界面订阅、恢复的**唯一**入口：购买/恢复、`billingNotify`、`Transaction.updates`（登录成功后调用 `startTransactionUpdatesListeningIfNeeded()` 一次）。
+/// StoreKit 2 与各界面订阅、恢复的入口：登录后 `startTransactionUpdatesListeningIfNeeded()` 会 **`Transaction.unfinished` 核销** + 持续 **`Transaction.updates`**。
 public enum MCCStoreKitSubscription {
 
     public enum PurchaseOutcome: Equatable {
@@ -74,9 +74,9 @@ public enum MCCStoreKitSubscription {
             var token: AnyCancellable?
             var finished = false
             var rq = MCSSubscriptionBillingRequest()
-            rq.productKey = productId.trimmingCharacters(in: .whitespacesAndNewlines)
-            rq.txnId = String(transaction.id)
-            rq.payPayload = 1
+            rq.productId = productId.trimmingCharacters(in: .whitespacesAndNewlines)
+            rq.transactionId = String(transaction.id)
+            rq.payment = 1
             token = MCCSubscriptionAPIManager.shared.billingNotify(with: rq)
                 .receive(on: DispatchQueue.main)
                 .sink(
@@ -188,7 +188,7 @@ public enum MCCStoreKitSubscription {
         return .success(count)
     }
 
-    /// 登录成功后调用一次；消费 `Transaction.updates` 并与 `syncBillingWithServer` 对齐。
+    /// 登录成功后调用一次：先排空本地 **未 finish** 的交易，再监听 `updates`。
     public static func startTransactionUpdatesListeningIfNeeded() {
         _TransactionUpdatesListening.shared.startIfNeeded()
     }
@@ -206,7 +206,21 @@ private final class _TransactionUpdatesListening {
 
     fileprivate func startIfNeeded() {
         guard updatesTask == nil else { return }
-        updatesTask = Task(priority: .utility) { await self.consumeUpdatesLoop() }
+        updatesTask = Task(priority: .utility) { await self.runListeningAndDrain() }
+    }
+
+    private func runListeningAndDrain() async {
+        await drainUnfinishedTransactionsThenSync()
+        await consumeUpdatesLoop()
+    }
+
+    /// 文档：`Transaction.updates` 主要面向运行时；本地未交付交易以 `Transaction.unfinished` 为准。
+    private func drainUnfinishedTransactionsThenSync() async {
+        try? await AppStore.sync()
+        for await verification in Transaction.unfinished {
+            if Task.isCancelled { break }
+            await process(verification)
+        }
     }
 
     private func consumeUpdatesLoop() async {

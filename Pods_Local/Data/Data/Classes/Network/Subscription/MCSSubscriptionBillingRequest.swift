@@ -9,9 +9,9 @@ public struct MCSSubscriptionBillingRequest: Codable {
     ///
     public init() {}
     /// productId
-    public var productKey: String = ""
+    public var productId: String = ""
     /// transactionId
-    public var txnId: String = ""
+    public var transactionId: String = ""
     /// payment
-    public var payPayload: Int = 1
+    public var payment: Int = 1
 }
